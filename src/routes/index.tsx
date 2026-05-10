@@ -756,12 +756,15 @@ function StickyCta() {
   }, []);
   return (
     <div
-      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
-      className={`fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-background/95 backdrop-blur transition-transform duration-200 will-change-transform sm:hidden ${
-        show ? "translate-y-0" : "translate-y-full"
+      aria-hidden={!show}
+      className={`sticky-mobile-cta sm:hidden border-t border-line bg-background/95 backdrop-blur transition-opacity duration-200 ${
+        show ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
-      <div className="px-4 py-3 flex items-center gap-3">
+      <div
+        className="px-4 py-3 flex items-center gap-3"
+        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
+      >
         <div className="flex-1 text-[13px] leading-tight">
           <div className="font-semibold text-ink">JJ's 12-Week Transformation</div>
           <div className="text-ink-faint">
