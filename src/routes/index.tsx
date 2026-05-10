@@ -253,7 +253,7 @@ function PartnersMarquee() {
   ];
   const track = [...logos, ...logos];
   return (
-    <div className="bg-white border-y border-line py-8 sm:py-10 mt-12">
+    <div className="bg-white border-y border-line py-8 sm:py-10 mt-12 -mx-5">
       <p className="text-center text-[12px] sm:text-[13px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
         5+ million pounds lost · #1 NY Times bestselling author · As seen on
       </p>
