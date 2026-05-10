@@ -16,6 +16,14 @@ import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
+import partnerEssence from "@/assets/landing/partners/essence.png";
+import partnerFox from "@/assets/landing/partners/fox.png";
+import partnerDrOz from "@/assets/landing/partners/droz.png";
+import partnerNbc from "@/assets/landing/partners/nbc.png";
+import partnerTheView from "@/assets/landing/partners/theview.png";
+import partnerSteveHarvey from "@/assets/landing/partners/steveharvey.png";
+import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
+import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -222,33 +230,49 @@ function Hero() {
         </p>
 
         <div className="mt-8 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] text-brand-deep font-serif italic leading-relaxed text-left">
-          Sister,{" "}
-          <strong className="not-italic font-semibold font-sans">this is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone. The next cohort won't open for another 90 days.
+          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone.
         </div>
 
         <TransformationsStrip />
+      </div>
+      <PartnersMarquee />
+    </section>
+  );
+}
 
-        <div className="mt-10 pt-8 border-t border-line grid gap-3 sm:grid-cols-3">
-          {[
-            "5+ million pounds lost in our community",
-            "#1 NY Times bestselling author",
-            "As seen on Dr. Oz, Steve Harvey, The View",
-          ].map((t) => (
-            <div
-              key={t}
-              className="flex items-start gap-2.5 text-left bg-bg-soft rounded-xl px-4 py-3.5"
-            >
-              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-white">
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
-              <span className="text-[13px] sm:text-[13.5px] font-medium text-ink leading-snug">
-                {t}
-              </span>
-            </div>
+function PartnersMarquee() {
+  const logos = [
+    { src: partnerNyTimes, alt: "The New York Times" },
+    { src: partnerDrOz, alt: "The Dr. Oz Show" },
+    { src: partnerSteveHarvey, alt: "Steve Harvey" },
+    { src: partnerTheView, alt: "The View" },
+    { src: partnerNbc, alt: "NBC" },
+    { src: partnerFox, alt: "FOX" },
+    { src: partnerEssence, alt: "Essence" },
+    { src: partnerWomansWorld, alt: "Woman's World" },
+  ];
+  const track = [...logos, ...logos];
+  return (
+    <div className="bg-white border-y border-line py-8 sm:py-10 mt-12">
+      <p className="text-center text-[12px] sm:text-[13px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
+        5+ million pounds lost · #1 NY Times bestselling author · As seen on
+      </p>
+      <div className="relative overflow-hidden">
+        <div className="flex w-max gap-14 sm:gap-20 animate-marquee items-center">
+          {track.map((l, i) => (
+            <img
+              key={i}
+              src={l.src}
+              alt={l.alt}
+              className="h-12 sm:h-16 w-auto object-contain opacity-80 shrink-0"
+              loading="lazy"
+            />
           ))}
         </div>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent" />
       </div>
-    </section>
+    </div>
   );
 }
 
