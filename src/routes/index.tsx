@@ -302,34 +302,26 @@ function HugQuote() {
 }
 
 function _TransformationsStripImpl() {
-  const items = [
-    { src: t1, caption: "-17.6 lbs in 6 weeks" },
-    { src: t4, caption: "-12.2 lbs in 6 weeks" },
-    { src: t7, caption: "-10.3 lbs in 6 weeks" },
-    { src: t8, caption: "-7.6 lbs in 6 weeks" },
-  ];
+  const items = [t1, t4, t7, t8, t9, t10, t11, t12, tTammi, tGirosalee];
+  const track = [...items, ...items];
   return (
-    <div className="relative -mx-5 mt-12 bg-brand-deep py-7">
-      <div
-        className="flex gap-4 overflow-x-auto px-5 snap-x snap-mandatory scroll-px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {items.map((it) => (
+    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden">
+      <div className="flex w-max gap-4 animate-marquee-slow">
+        {track.map((src, i) => (
           <figure
-            key={it.caption}
-            className="relative shrink-0 w-[180px] sm:w-[220px] snap-start rounded-2xl overflow-hidden bg-black/30 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]"
+            key={i}
+            className="relative shrink-0 w-[280px] sm:w-[340px] rounded-2xl overflow-hidden bg-black/30 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]"
           >
             <img
-              src={it.src}
-              alt={`Transformation ${it.caption}`}
-              className="block w-full h-[260px] sm:h-[300px] object-cover"
+              src={src}
+              alt="Sister transformation before and after"
+              className="block w-full h-[300px] sm:h-[360px] object-cover"
               loading="lazy"
             />
-            <figcaption className="absolute left-2 right-2 bottom-2 rounded-lg bg-white/95 text-ink text-[13px] sm:text-[14px] font-semibold text-center py-2 px-2">
-              {it.caption}
-            </figcaption>
           </figure>
         ))}
       </div>
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-brand-deep to-transparent" />
       <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
     </div>
   );
