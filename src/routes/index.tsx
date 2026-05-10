@@ -187,13 +187,17 @@ function Hero() {
           <CountdownPill />
         </div>
 
-        <h1 className="font-serif font-medium text-[34px] sm:text-[50px] leading-[1.05] tracking-[-0.025em] mb-6">
-          12-Week Body Transformation.
+        <h1 className="font-serif font-medium text-[32px] sm:text-[50px] leading-[1.08] tracking-[-0.025em] mb-6">
+          12-Week Body
           <br />
-          <em className="not-italic" style={{ color: "oklch(0.62 0.18 5)" }}>Lose up to 30 pounds</em> in 12 weeks.
+          Transformation
+          <br />
+          <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>Lose up to 30 pounds</em>
+          <br />
+          in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
+        <p className="font-serif italic text-[17px] sm:text-[24px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
           <mark className="bg-brand/15 text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark className="bg-brand/15 text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
 
@@ -359,7 +363,7 @@ function RealTalk() {
       <div className="text-center">
         <Eyebrow center>Real talk</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Sister to sister, <em className="not-italic text-brand">why im doing this</em>.
+          <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>Sister to sister,</em> <em className="not-italic text-brand">why im doing this</em>.
         </h2>
       </div>
       <figure className="mb-10 -mx-5 sm:mx-0">
@@ -455,7 +459,7 @@ function Steps() {
       <div className="text-center">
         <Eyebrow center>Here's how it works, sister</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-12 max-w-[580px] mx-auto">
-          This is what our 12 weeks together will <em className="not-italic text-brand">actually feel like</em>.
+          This is what our <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>12 weeks together</em> will <em className="not-italic text-brand">actually feel like</em>.
         </h2>
       </div>
       <div className="space-y-6">
@@ -481,7 +485,7 @@ function JJReveal() {
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
         <h2 className="font-serif text-[30px] sm:text-[38px] leading-[1.15] mb-10 max-w-[580px] mx-auto">
-          Sister to sister, why and how I'm doing this.
+          <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>Sister to sister,</em> <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
       <div className="bg-card rounded-2xl p-7 sm:p-9 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)]">
@@ -530,7 +534,7 @@ function Transformations() {
       <div className="text-center">
         <Eyebrow center>Real sisters, real transformations</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-6 max-w-[580px] mx-auto">
-          Here's what happens after <em className="not-italic text-brand">12 weeks</em>.
+          Here's what happens after <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>12 weeks</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-12 max-w-[580px] mx-auto">
           When you make it through 12 weeks with a plan built for your body and someone walking with you the whole way, this is what happens:
@@ -602,7 +606,7 @@ function Offer() {
       <div className="text-center">
         <Eyebrow center>The offer</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Sister, how close do you want me?
+          <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>Sister,</em> how close do you <em className="not-italic text-brand">want me?</em>
         </h2>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
@@ -702,7 +706,7 @@ function Faq() {
       <div className="text-center">
         <Eyebrow center>Questions sisters ask me</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Let me answer what's on your mind.
+          Let me <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>answer</em> what's <em className="not-italic text-brand">on your mind</em>.
         </h2>
       </div>
       <Accordion type="single" collapsible defaultValue="q-0" className="w-full">
@@ -730,7 +734,7 @@ function LastCall() {
         </div>
         <Eyebrow center>Last call</Eyebrow>
         <h2 className="font-serif text-[36px] sm:text-[48px] leading-[1.05] mb-7">
-          Your next 12 weeks are <em className="not-italic text-brand">happening either way</em>.
+          Your <em className="not-italic" style={{ color: "oklch(0.6 0.12 355)" }}>next 12 weeks</em> are <em className="not-italic text-brand">happening either way</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] mx-auto">
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
