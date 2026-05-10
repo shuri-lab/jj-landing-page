@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Check } from "lucide-react";
+import { Heart, Play } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
