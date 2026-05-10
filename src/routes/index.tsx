@@ -15,6 +15,7 @@ import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
+import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -126,10 +127,11 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <PromiseQuote eyebrow="Something brand new">
+        <PromiseQuote>
           This is different from anything I've ever done before.
         </PromiseQuote>
-        <PromiseQuote eyebrow="My promise to you" bg="warm" signature>
+        <HugSignup />
+        <PromiseQuote bg="warm" signature>
           Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
         </PromiseQuote>
         <RealTalk />
@@ -290,7 +292,7 @@ function PromiseQuote({
   bg = "soft",
   signature = false,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   children: React.ReactNode;
   bg?: "soft" | "warm";
   signature?: boolean;
@@ -300,7 +302,7 @@ function PromiseQuote({
       <span aria-hidden className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none">"</span>
       <span aria-hidden className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180">"</span>
       <div className="mx-auto max-w-[640px] relative">
-        <Eyebrow center>{eyebrow}</Eyebrow>
+        {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
         <p className="font-serif italic text-[28px] sm:text-[34px] leading-[1.3] max-w-[580px] mx-auto mb-5">
           {children}
         </p>
