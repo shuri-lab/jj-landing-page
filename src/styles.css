@@ -84,14 +84,14 @@
   /* Palette extracted from JJ Smith logo: light pink "JJ" + deep plum "SMITH",
    * accented with the coral pink used across her sales pages. */
   /* Palette anchored on the logo plum #4b415b with soft light-pink accents. */
-  --background: oklch(0.992 0.003 320);
+  --background: oklch(0.96 0.022 20);
   --foreground: oklch(0.459 0.059 300.6);
-  --bg-soft: oklch(0.97 0.012 340);
-  --bg-warm: oklch(0.94 0.022 350);
+  --bg-soft: oklch(0.94 0.028 18);
+  --bg-warm: oklch(0.92 0.035 20);
   --ink: oklch(0.459 0.059 300.6);
   --ink-soft: oklch(0.55 0.05 300.6);
   --ink-faint: oklch(0.66 0.04 302);
-  --line: oklch(0.9 0.015 320);
+  --line: oklch(0.88 0.025 20);
   --brand: oklch(0.459 0.059 300.6);
   --brand-deep: oklch(0.36 0.055 300.6);
   --brand-pink: oklch(0.9 0.045 355);
