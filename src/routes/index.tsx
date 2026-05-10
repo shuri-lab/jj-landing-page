@@ -17,6 +17,7 @@ import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjLaughingClient from "@/assets/landing/jj-laughing-client.jpg";
+import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -160,7 +161,13 @@ function Nav() {
   return (
     <div className="border-b border-line bg-background">
       <div className="mx-auto max-w-[640px] px-5 py-4 flex items-center justify-center">
-        <span className="font-serif text-[20px] tracking-[0.18em]">JJ SMITH</span>
+        <img
+          src={jjSmithLogo}
+          alt="JJ Smith"
+          className="h-7 sm:h-8 w-auto"
+          width={240}
+          height={64}
+        />
       </div>
     </div>
   );
