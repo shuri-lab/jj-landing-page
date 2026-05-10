@@ -776,8 +776,8 @@ function StickyCta() {
       >
         <div className="flex-1 text-[13px] leading-tight">
           <div className="font-semibold text-ink">JJ's 12-Week Transformation</div>
-          <div className="text-ink-faint">
-            Closes in <CountdownInline className="tabular-nums" />
+          <div className="text-brand font-semibold">
+            Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
         </div>
         <button
