@@ -20,7 +20,6 @@ import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
-import jjLaughingClient from "@/assets/landing/jj-laughing-client.jpg";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
 import jjTightWaist from "@/assets/landing/jj-tight-waist.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
@@ -149,10 +148,9 @@ function Landing() {
             Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
           </PromiseQuote>
         </div>
-        <RealTalk />
+        <JJReveal />
         <Promise2 />
         <Steps />
-        <JJReveal />
         <Transformations />
         <Offer />
         <Guarantee />
@@ -375,43 +373,6 @@ function PromiseQuote({
   );
 }
 
-function RealTalk() {
-  return (
-    <Section>
-      <div className="text-center">
-        <Eyebrow center>Real talk</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why I'm doing this</em>.
-        </h2>
-      </div>
-      <figure className="mb-10 -mx-5 sm:mx-0 lg:max-w-[900px] lg:mx-auto">
-        <div className="overflow-hidden sm:rounded-2xl shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
-          <img
-            src={jjLaughingClient}
-            alt="JJ Smith laughing on stage with a sister from the community"
-            className="block w-full h-auto"
-            loading="lazy"
-          />
-        </div>
-      </figure>
-      <div className="space-y-6 text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] lg:max-w-[760px] lg:mx-auto">
-        <p>You already know what to do. You've read the books. You've done the cleanses. You've signed up for the challenges. You've started over a Monday more times than you can count.</p>
-        <p>So why hasn't it stuck?</p>
-        <p><strong className="text-ink font-semibold">Because every program leaves you on a Tuesday night.</strong></p>
-        <p>Sunday you're motivated. Monday you're locked in. Tuesday is fine. Then Wednesday hits, the kids, the work, the stress, and by Thursday at 9pm you're standing in front of the fridge, alone, fixing to undo everything you started.</p>
-        <p>That's where every program loses you. Not because the information was wrong. <strong className="text-ink font-semibold">Because nobody was there with you.</strong></p>
-        <p>Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed up for and why this time was supposed to be different. Just you, by yourself, doing what you've always done.</p>
-        <p className="text-ink font-medium text-[20px] pt-2">That's the part I'm fixing this time.</p>
-      </div>
-      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">
-          Reserve my spot
-        </BigCta>
-      </div>
-    </Section>
-  );
-}
-
 function Promise2() {
   return (
     <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
@@ -503,7 +464,7 @@ function JJReveal() {
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
         <h2 className="font-serif text-[30px] sm:text-[38px] lg:text-[48px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
-          <em className="not-italic text-brand">How I'm doing this</em>.
+          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
       <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
@@ -518,20 +479,25 @@ function JJReveal() {
           />
         </div>
         <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
-          <p>For 15 years I've been writing the books, building the programs, and giving you everything I've learned. Together we've lost more than 5 million pounds. And I am so proud of every single one.</p>
-          <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world and slip back without me.</strong> And every time, I wished I could be there with you. On your shoulder on the hard days. In your pocket on the random Tuesday nights when nobody else is.</p>
-          <p>For years, that was impossible. There's only one of me, and millions of you.</p>
-          <p>So I spent two years building something nobody's built before, <strong className="text-ink font-semibold">a way for me to actually show up for every single one of you.</strong> In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at 9pm.</p>
-          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
+          <p>For 15 years I've been writing the books, building the programs, and doing the work right alongside you. Together we've lost more than 5 million pounds. And I am so proud of every single one of them.</p>
+          <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world — and slip back without me.</strong> Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off and Tuesday night came, I wasn't there.</p>
+          <p>And I knew that. For years, it was the part that hurt me the most. I could write another book. I could record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check on you. There's only one of me, and millions of you.</p>
+          <p>So I spent the last two years building something nobody's built before. <strong className="text-ink font-semibold">A way for me to actually show up for every single one of you.</strong> In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at 9pm.</p>
+          <p>It's not a chatbot. It's not a tool. It's me — finally available to every sister who needs me.</p>
         </div>
         <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
+          That's why this time is different, sister. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
         </blockquote>
         <p className="mt-7 font-serif italic text-[19px] text-ink">
           Love,
           <br />
           JJ
         </p>
+      </div>
+      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
+        <BigCta sub="14-day money-back · Only 500 spots">
+          Reserve my spot
+        </BigCta>
       </div>
     </Section>
   );
