@@ -245,13 +245,13 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[240px] sm:max-w-[300px] lg:max-w-none mx-auto overflow-hidden">
+    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[240px] sm:max-w-[300px] lg:max-w-none mx-auto">
       <div
         aria-hidden
-        className="absolute inset-0 pointer-events-none"
+        className="absolute -inset-[40%] pointer-events-none z-0"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(255, 192, 203, 0.35) 0%, rgba(255, 218, 224, 0.18) 45%, rgba(255, 255, 255, 0) 75%)",
+            "radial-gradient(ellipse at center, rgba(255, 182, 193, 0.7) 0%, rgba(255, 200, 210, 0.45) 30%, rgba(255, 220, 228, 0.2) 55%, rgba(255, 255, 255, 0) 80%)",
         }}
       />
       <img
