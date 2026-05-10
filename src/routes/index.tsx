@@ -197,7 +197,7 @@ function Hero() {
           in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[17px] sm:text-[24px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
+        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
           <mark className="bg-brand/15 text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark className="bg-brand/15 text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
 
