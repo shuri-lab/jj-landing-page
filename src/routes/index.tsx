@@ -363,7 +363,7 @@ function RealTalk() {
       <div className="text-center">
         <Eyebrow center>Real talk</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why im doing this</em>.
+          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why I'm doing this</em>.
         </h2>
       </div>
       <figure className="mb-10 -mx-5 sm:mx-0">
@@ -485,7 +485,7 @@ function JJReveal() {
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
         <h2 className="font-serif text-[30px] sm:text-[38px] leading-[1.15] mb-10 max-w-[580px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why and how I'm doing this</em>.
+          <em className="not-italic text-brand">How I'm doing this</em>.
         </h2>
       </div>
       <div className="bg-card rounded-2xl p-7 sm:p-9 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)]">
@@ -537,33 +537,25 @@ function Transformations() {
           Here's what happens after <em className="not-italic" style={{ color: "#c9635c" }}>12 weeks</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-12 max-w-[580px] mx-auto">
-          When you make it through 12 weeks with a plan built for your body and someone walking with you the whole way, this is what happens:
+          With a plan built for your body and me walking with you the whole way
         </p>
       </div>
-      <div className="-mx-5">
-        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 gap-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-          {slides.map((s, i) => (
-            <figure
-              key={i}
-              className="shrink-0 w-[88%] sm:w-[600px] snap-center"
-            >
-              <p className="font-serif italic text-[22px] sm:text-[26px] leading-[1.3] text-ink mb-5 text-center min-h-[80px]">
-                {s.headline}
-              </p>
-              <div className="rounded-2xl overflow-hidden bg-bg-soft shadow-[0_20px_40px_-20px_rgba(70,30,110,0.3)]">
-                <img
-                  src={s.src}
-                  alt="Sister transformation before and after"
-                  className="block w-full h-auto"
-                  loading="lazy"
-                />
-              </div>
-            </figure>
-          ))}
-        </div>
-        <p className="text-center text-[12px] uppercase tracking-[0.2em] text-ink-faint mt-6">
-          Swipe to see more →
-        </p>
+      <div className="flex flex-col gap-12 max-w-[600px] mx-auto">
+        {slides.map((s, i) => (
+          <figure key={i}>
+            <p className="font-serif italic text-[22px] sm:text-[26px] leading-[1.3] text-ink mb-5 text-center">
+              {s.headline}
+            </p>
+            <div className="rounded-2xl overflow-hidden bg-bg-soft shadow-[0_20px_40px_-20px_rgba(70,30,110,0.3)]">
+              <img
+                src={s.src}
+                alt="Sister transformation before and after"
+                className="block w-full h-auto"
+                loading="lazy"
+              />
+            </div>
+          </figure>
+        ))}
       </div>
       <div className="mt-14">
         <BigCta sub="14-day money-back · Only 500 spots">
@@ -578,8 +570,8 @@ function Offer() {
   const plans = [
     {
       name: "Essential",
-      price: "$137",
-      perMonth: "or $49 / month",
+      price: "$197",
+      perMonth: "or $77 / month",
       tagline: "One call per week with JJ",
       featured: false,
       items: [
@@ -591,8 +583,8 @@ function Offer() {
     },
     {
       name: "Plus",
-      price: "$167",
-      perMonth: "or $56 / month",
+      price: "$347",
+      perMonth: "or $147 / month",
       tagline: "Two calls per week with JJ",
       featured: true,
       items: [
@@ -604,9 +596,9 @@ function Offer() {
   return (
     <Section id="offer" bg="soft">
       <div className="text-center">
-        <Eyebrow center>The offer</Eyebrow>
+        <Eyebrow center>Only 500 spots</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister,</em> how close do you <em className="not-italic text-brand">want me?</em>
+          <em className="not-italic text-brand">Yes! I'm ready!</em>
         </h2>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
