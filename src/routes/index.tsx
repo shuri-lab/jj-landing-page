@@ -708,7 +708,7 @@ function LastCall() {
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] mx-auto">
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
-        <BigCta sub="14-day money-back guarantee · Only 500 spots · Cohort starts March 3">
+        <BigCta sub="14-day money-back guarantee · Only 500 spots">
           Reserve my spot
         </BigCta>
       </div>
