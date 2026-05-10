@@ -143,10 +143,12 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <HugQuote />
-        <PromiseQuote bg="warm" signature>
-          Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
-        </PromiseQuote>
+        <div className="lg:grid lg:grid-cols-2 lg:items-stretch">
+          <HugQuote />
+          <PromiseQuote bg="warm" signature>
+            Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
+          </PromiseQuote>
+        </div>
         <RealTalk />
         <Promise2 />
         <Steps />
@@ -189,7 +191,7 @@ function Hero() {
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
         <div className="lg:order-1">
-        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[64px] leading-[1.08] tracking-[-0.025em] mb-6">
+        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
           12-Week Body
           <br />
           Transformation
@@ -324,6 +326,7 @@ function _TransformationsStripImpl() {
   const track = [...items, ...items];
   return (
     <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden">
+      <div className="lg:hidden">
       <div className="flex w-max gap-4 animate-marquee-slow">
         {track.map((src, i) => (
           <figure
@@ -338,6 +341,7 @@ function _TransformationsStripImpl() {
             />
           </figure>
         ))}
+      </div>
       </div>
       <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-brand-deep to-transparent" />
       <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
