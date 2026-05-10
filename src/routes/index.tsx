@@ -184,7 +184,7 @@ function Hero() {
         </h1>
 
         <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
-          <strong className="not-italic font-semibold text-brand-deep">But this time… I'm with you every step of the way.</strong> Not in a group. Not from a distance. <strong className="not-italic font-semibold text-brand-deep">Actually right there with you.</strong>
+          <mark className="bg-brand/15 text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark className="bg-brand/15 text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
 
         <div className="relative rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
@@ -592,6 +592,9 @@ function Offer() {
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
           Pick the plan that's right for you.
         </h2>
+      </div>
+      <div className="text-center">
+        <Eyebrow center>The offer</Eyebrow>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {plans.map((p) => (
