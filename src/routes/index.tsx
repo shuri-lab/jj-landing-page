@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import heroJJ from "@/assets/landing/hero-jj.png";
-import jjPortrait from "@/assets/landing/jj-portrait.jpg";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -20,7 +19,6 @@ import t11 from "@/assets/landing/transformation-11.jpg";
 import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
-import jjOwn from "@/assets/landing/jj-own-transformation.png";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjLaughingClient from "@/assets/landing/jj-laughing-client.jpg";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
