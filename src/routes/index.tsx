@@ -167,10 +167,14 @@ function Hero() {
         </div>
 
         <h1 className="font-serif font-medium text-[40px] sm:text-[58px] leading-[1.02] tracking-[-0.025em] mb-6">
-          12-Week Body Transformation Challenge.
+          12-Week Body Transformation.
           <br />
           <em className="not-italic text-brand">Lose up to 30 pounds</em> in 12 weeks.
         </h1>
+
+        <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
+          But this time… I'm with you every step of the way. Not in a group. Not from a distance. Actually right there with you.
+        </p>
 
         <div className="relative rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
           <img
@@ -190,14 +194,6 @@ function Hero() {
             </span>
           </button>
         </div>
-
-        <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-5 max-w-[560px] mx-auto">
-          This time… I'm with you every step of the way. Not in a group. Not from a distance. Actually right there with you.
-        </p>
-
-        <p className="text-[18px] sm:text-[19px] text-ink-soft leading-relaxed max-w-[520px] mx-auto mb-8">
-          With one big difference from anything I've ever done before.
-        </p>
 
         <div className="flex flex-wrap justify-center gap-2 mb-8">
           {[
