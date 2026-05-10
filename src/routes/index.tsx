@@ -251,6 +251,8 @@ function Hero() {
 }
 
 function PromiseQuote({
+  ...args
+}: never): never;
   eyebrow,
   children,
   bg = "soft",
