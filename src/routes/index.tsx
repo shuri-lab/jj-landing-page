@@ -187,10 +187,10 @@ function Hero() {
           <CountdownPill />
         </div>
 
-        <h1 className="font-serif font-medium text-[40px] sm:text-[58px] leading-[1.02] tracking-[-0.025em] mb-6">
+        <h1 className="font-serif font-medium text-[34px] sm:text-[50px] leading-[1.05] tracking-[-0.025em] mb-6">
           12-Week Body Transformation.
           <br />
-          <em className="not-italic text-brand">Lose up to 30 pounds</em> in 12 weeks.
+          <em className="not-italic" style={{ color: "oklch(0.62 0.18 5)" }}>Lose up to 30 pounds</em> in 12 weeks.
         </h1>
 
         <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
