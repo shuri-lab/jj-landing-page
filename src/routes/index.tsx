@@ -187,7 +187,7 @@ function Hero() {
           <CountdownPill />
         </div>
 
-        <h1 className="font-serif font-medium text-[32px] sm:text-[50px] leading-[1.08] tracking-[-0.025em] mb-6">
+        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] leading-[1.08] tracking-[-0.025em] mb-6">
           12-Week Body
           <br />
           Transformation
