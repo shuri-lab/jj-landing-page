@@ -16,6 +16,7 @@ import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
+import jjLaughingClient from "@/assets/landing/jj-laughing-client.jpg";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -183,7 +184,7 @@ function Hero() {
         </h1>
 
         <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
-          But this time… I'm with you every step of the way. Not in a group. Not from a distance. Actually right there with you.
+          <strong className="not-italic font-semibold text-brand-deep">But this time… I'm with you every step of the way.</strong> Not in a group. Not from a distance. <strong className="not-italic font-semibold text-brand-deep">Actually right there with you.</strong>
         </p>
 
         <div className="relative rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
@@ -222,7 +223,7 @@ function Hero() {
         </div>
 
         <BigCta sub="14-day money-back · Only 500 spots">
-          Yes, I want you in my corner
+          Yes JJ, I want you in my corner!
         </BigCta>
 
         <p className="text-[14px] text-ink-faint mt-4">
@@ -264,7 +265,7 @@ function PartnersMarquee() {
               key={i}
               src={l.src}
               alt={l.alt}
-              className="h-12 sm:h-16 w-auto object-contain opacity-80 shrink-0"
+              className="h-16 sm:h-24 w-auto object-contain opacity-90 shrink-0"
               loading="lazy"
             />
           ))}
@@ -417,7 +418,7 @@ const STEPS = [
   },
   {
     n: "03",
-    title: "Then I'm calling you, once or twice a week",
+    title: "Then I'm calling you every week",
     text: (
       <>
         This is where it all changes, sister. I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
