@@ -131,8 +131,8 @@ function Section({
 }) {
   const bgClass = bg === "soft" ? "bg-bg-soft" : bg === "warm" ? "bg-bg-warm" : "";
   return (
-    <section id={id} className={`px-5 py-20 sm:py-24 ${bgClass} ${className}`}>
-      <div className="mx-auto max-w-[640px]">{children}</div>
+    <section id={id} className={`px-5 py-20 sm:py-24 lg:py-28 ${bgClass} ${className}`}>
+      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">{children}</div>
     </section>
   );
 }
@@ -166,7 +166,7 @@ function Landing() {
 function Nav() {
   return (
     <div className="border-b border-line bg-background">
-      <div className="mx-auto max-w-[640px] px-5 py-4 flex items-center justify-center">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center">
         <img
           src={jjSmithLogo}
           alt="JJ Smith"
@@ -181,13 +181,15 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 text-center">
-      <div className="mx-auto max-w-[640px]">
-        <div className="mb-7 flex justify-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
+        <div className="mb-7 flex justify-center lg:justify-center">
           <CountdownPill />
         </div>
 
-        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] leading-[1.08] tracking-[-0.025em] mb-6">
+        <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
+        <div className="lg:order-1">
+        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[64px] leading-[1.08] tracking-[-0.025em] mb-6">
           12-Week Body
           <br />
           Transformation
@@ -197,11 +199,21 @@ function Hero() {
           in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
+        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto lg:mx-0">
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
+        <div className="hidden lg:block">
+          <BigCta sub="14-day money-back · Only 500 spots">
+            Yes JJ, I want you in my corner!
+          </BigCta>
+          <p className="text-[14px] text-ink-faint mt-4">
+            Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+          </p>
+        </div>
+        </div>
+        <div className="lg:order-2">
 
-        <div className="relative aspect-video rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
+        <div className="relative aspect-video rounded-2xl overflow-hidden bg-bg-soft mb-8 lg:mb-0 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
           <img
             src={heroJJ}
             alt="JJ Smith"
@@ -219,16 +231,20 @@ function Hero() {
             </span>
           </button>
         </div>
+        </div>
+        </div>
 
-        <BigCta sub="14-day money-back · Only 500 spots">
-          Yes JJ, I want you in my corner!
-        </BigCta>
+        <div className="lg:hidden">
+          <BigCta sub="14-day money-back · Only 500 spots">
+            Yes JJ, I want you in my corner!
+          </BigCta>
 
-        <p className="text-[14px] text-ink-faint mt-4">
-          Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
-        </p>
+          <p className="text-[14px] text-ink-faint mt-4">
+            Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+          </p>
+        </div>
 
-        <div className="mt-8 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] text-brand-deep font-serif italic leading-relaxed text-left">
+        <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
           <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone.
         </div>
 
@@ -282,18 +298,18 @@ function TransformationsStrip() {
 
 function HugQuote() {
   return (
-    <section className="px-5 py-12 sm:py-16 bg-bg-soft">
-      <div className="mx-auto max-w-[640px]">
+    <section className="px-5 py-12 sm:py-16 lg:py-20 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">
         <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
-            className="block w-full h-auto"
+            className="block w-full h-auto lg:max-h-[560px] lg:object-cover"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
-            <p className="font-serif italic text-white text-[24px] sm:text-[34px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
+            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[44px] leading-[1.25] max-w-[520px] lg:max-w-[700px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               This is different from anything I've ever done before.
             </p>
           </div>
@@ -341,12 +357,12 @@ function PromiseQuote({
   signature?: boolean;
 }) {
   return (
-    <section className={`relative px-5 py-20 text-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}>
+    <section className={`relative px-5 py-20 lg:py-28 text-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}>
       <span aria-hidden className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none">"</span>
       <span aria-hidden className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180">"</span>
-      <div className="mx-auto max-w-[640px] relative">
+      <div className="mx-auto max-w-[640px] lg:max-w-[900px] relative">
         {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
-        <p className="font-serif italic text-[28px] sm:text-[34px] leading-[1.3] max-w-[580px] mx-auto mb-5">
+        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.3] max-w-[580px] lg:max-w-[820px] mx-auto mb-5">
           {children}
         </p>
         {signature && (
@@ -362,11 +378,11 @@ function RealTalk() {
     <Section>
       <div className="text-center">
         <Eyebrow center>Real talk</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
+        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why I'm doing this</em>.
         </h2>
       </div>
-      <figure className="mb-10 -mx-5 sm:mx-0">
+      <figure className="mb-10 -mx-5 sm:mx-0 lg:max-w-[900px] lg:mx-auto">
         <div className="overflow-hidden sm:rounded-2xl shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjLaughingClient}
@@ -376,7 +392,7 @@ function RealTalk() {
           />
         </div>
       </figure>
-      <div className="space-y-6 text-[18px] sm:text-[19px] text-ink-soft leading-[1.7]">
+      <div className="space-y-6 text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] lg:max-w-[760px] lg:mx-auto">
         <p>You already know what to do. You've read the books. You've done the cleanses. You've signed up for the challenges. You've started over a Monday more times than you can count.</p>
         <p>So why hasn't it stuck?</p>
         <p><strong className="text-ink font-semibold">Because every program leaves you on a Tuesday night.</strong></p>
@@ -385,7 +401,7 @@ function RealTalk() {
         <p>Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed up for and why this time was supposed to be different. Just you, by yourself, doing what you've always done.</p>
         <p className="text-ink font-medium text-[20px] pt-2">That's the part I'm fixing this time.</p>
       </div>
-      <div className="mt-12">
+      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
         <BigCta sub="14-day money-back · Only 500 spots">
           Reserve my spot
         </BigCta>
@@ -396,12 +412,12 @@ function RealTalk() {
 
 function Promise2() {
   return (
-    <section className="px-5 py-16 text-center bg-bg-soft">
-      <div className="mx-auto max-w-[640px]">
-        <p className="font-serif italic text-[26px] sm:text-[32px] leading-snug text-ink max-w-[580px] mx-auto">
+    <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1000px]">
+        <p className="font-serif italic text-[26px] sm:text-[32px] lg:text-[40px] leading-snug text-ink max-w-[580px] lg:max-w-[820px] mx-auto">
           This time, I'm giving you me… and I'm not leaving.
         </p>
-        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)]">
+        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)] lg:max-w-[820px] lg:mx-auto">
           <img
             src={jjTightWaist}
             alt="JJ Smith"
@@ -458,11 +474,11 @@ function Steps() {
     <Section>
       <div className="text-center">
         <Eyebrow center>Here's how it works, sister</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-12 max-w-[580px] mx-auto">
+        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-12 max-w-[580px] lg:max-w-[820px] mx-auto">
           This is what our <em className="not-italic" style={{ color: "#c9635c" }}>12 weeks together</em> will <em className="not-italic text-brand">actually feel like</em>.
         </h2>
       </div>
-      <div className="space-y-6">
+      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
           <div key={s.n} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
             <div className="font-serif italic font-medium text-[52px] text-brand leading-none mb-4">
@@ -484,11 +500,11 @@ function JJReveal() {
     <Section bg="warm">
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
-        <h2 className="font-serif text-[30px] sm:text-[38px] leading-[1.15] mb-10 max-w-[580px] mx-auto">
+        <h2 className="font-serif text-[30px] sm:text-[38px] lg:text-[48px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
           <em className="not-italic text-brand">How I'm doing this</em>.
         </h2>
       </div>
-      <div className="bg-card rounded-2xl p-7 sm:p-9 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)]">
+      <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
         <div className="flex justify-center -mt-16 mb-6">
           <img
             src={jjSelfieSun}
@@ -540,7 +556,7 @@ function Transformations() {
           With a plan built for your body and me walking with you the whole way
         </p>
       </div>
-      <div className="flex flex-col gap-12 max-w-[600px] mx-auto">
+      <div className="flex flex-col gap-12 max-w-[600px] mx-auto lg:max-w-none lg:grid lg:grid-cols-2 lg:gap-x-10 lg:gap-y-14">
         {slides.map((s, i) => (
           <figure key={i}>
             <p className="font-serif italic text-[22px] sm:text-[26px] leading-[1.3] text-ink mb-5 text-center">
@@ -557,7 +573,7 @@ function Transformations() {
           </figure>
         ))}
       </div>
-      <div className="mt-14">
+      <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
         <BigCta sub="14-day money-back · Only 500 spots">
           Yes, I want this to be me
         </BigCta>
@@ -597,11 +613,11 @@ function Offer() {
     <Section id="offer" bg="soft">
       <div className="text-center">
         <Eyebrow center>Only 500 spots</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
+        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
           <em className="not-italic text-brand">Yes! I'm ready!</em>
         </h2>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2">
+      <div className="grid gap-6 sm:grid-cols-2 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => (
           <div
             key={p.name}
@@ -655,11 +671,11 @@ function Guarantee() {
   return (
     <Section>
       <Eyebrow center>My personal guarantee</Eyebrow>
-      <div className="bg-bg-soft rounded-2xl p-7 sm:p-9 flex gap-5 items-start max-w-[580px] mx-auto">
+      <div className="bg-bg-soft rounded-2xl p-7 sm:p-9 lg:p-12 flex gap-5 items-start max-w-[580px] lg:max-w-[760px] mx-auto">
         <div className="text-brand shrink-0">
           <Heart className="h-10 w-10 fill-brand" />
         </div>
-        <p className="font-serif italic text-[18px] sm:text-[20px] leading-[1.65] text-ink">
+        <p className="font-serif italic text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.65] text-ink">
           "Sister, I need you to be confident this is right for you. So if you're not 100% thrilled within 14 days, I want to send your money back. If you're not happy, I'm not happy. No reason needed. That's my promise."
           <br />
           <br />
@@ -697,11 +713,11 @@ function Faq() {
     <Section bg="soft">
       <div className="text-center">
         <Eyebrow center>Questions sisters ask me</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
+        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
           Let me <em className="not-italic" style={{ color: "#c9635c" }}>answer</em> what's <em className="not-italic text-brand">on your mind</em>.
         </h2>
       </div>
-      <Accordion type="single" collapsible defaultValue="q-0" className="w-full">
+      <Accordion type="single" collapsible defaultValue="q-0" className="w-full lg:max-w-[860px] lg:mx-auto">
         {items.map((it, i) => (
           <AccordionItem key={i} value={`q-${i}`} className="border-line">
             <AccordionTrigger className="text-left text-[18px] sm:text-[19px] font-semibold font-sans hover:no-underline py-6">
@@ -719,21 +735,23 @@ function Faq() {
 
 function LastCall() {
   return (
-    <section className="px-5 py-24 text-center">
-      <div className="mx-auto max-w-[640px]">
+    <section className="px-5 py-24 lg:py-32 text-center">
+      <div className="mx-auto max-w-[640px] lg:max-w-[900px]">
         <div className="mb-7 flex justify-center">
           <CountdownPill />
         </div>
         <Eyebrow center>Last call</Eyebrow>
-        <h2 className="font-serif text-[36px] sm:text-[48px] leading-[1.05] mb-7">
+        <h2 className="font-serif text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mb-7">
           Your <em className="not-italic" style={{ color: "#c9635c" }}>next 12 weeks</em> are <em className="not-italic text-brand">happening either way</em>.
         </h2>
-        <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] mx-auto">
+        <p className="text-[18px] sm:text-[19px] lg:text-[20px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] lg:max-w-[720px] mx-auto">
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
-        <BigCta sub="14-day money-back guarantee · Only 500 spots">
-          Reserve my spot
-        </BigCta>
+        <div className="lg:max-w-[560px] lg:mx-auto">
+          <BigCta sub="14-day money-back guarantee · Only 500 spots">
+            Reserve my spot
+          </BigCta>
+        </div>
       </div>
     </section>
   );
