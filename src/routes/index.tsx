@@ -489,9 +489,9 @@ function JJReveal() {
       <div className="bg-card rounded-2xl p-7 sm:p-9 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)]">
         <div className="flex justify-center -mt-16 mb-6">
           <img
-            src={jjPortrait}
+            src={jjSelfieSun}
             alt="JJ Smith portrait"
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-card shadow-md"
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-top border-4 border-card shadow-md"
             width={128}
             height={128}
             loading="lazy"
