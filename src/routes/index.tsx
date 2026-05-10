@@ -187,11 +187,11 @@ function Hero() {
           <mark className="bg-brand/15 text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark className="bg-brand/15 text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
 
-        <div className="relative rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
+        <div className="relative aspect-video rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
           <img
             src={heroJJ}
             alt="JJ Smith"
-            className="w-full h-auto block"
+            className="absolute inset-0 w-full h-full object-cover block"
             width={1024}
             height={1024}
           />
@@ -756,7 +756,8 @@ function StickyCta() {
   }, []);
   return (
     <div
-      className={`fixed bottom-0 inset-x-0 z-40 border-t border-line bg-background/95 backdrop-blur transition-transform sm:hidden ${
+      style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
+      className={`fixed bottom-0 left-0 right-0 z-40 border-t border-line bg-background/95 backdrop-blur transition-transform duration-200 will-change-transform sm:hidden ${
         show ? "translate-y-0" : "translate-y-full"
       }`}
     >
