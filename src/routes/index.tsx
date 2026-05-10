@@ -610,6 +610,7 @@ function Offer() {
         "Everything in Essential",
         "2 calls / week with JJ",
       ],
+      note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
     },
   ];
   return (
@@ -657,6 +658,11 @@ function Offer() {
                 </li>
               ))}
             </ul>
+            {p.note && (
+              <p className="mt-5 text-[14px] italic text-ink-soft leading-snug text-center">
+                {p.note}
+              </p>
+            )}
             <BigCta sub="14-day money-back guarantee" className="mt-6">
               Reserve my spot, {p.price}
             </BigCta>
