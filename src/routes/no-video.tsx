@@ -203,7 +203,7 @@ function Hero() {
           in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink -mb-10 lg:mb-8 max-w-[560px] mx-auto lg:mx-0">
+        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-2 lg:mb-8 max-w-[560px] mx-auto lg:mx-0">
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
         <div className="hidden lg:block">
@@ -245,7 +245,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[320px] sm:max-w-[380px] lg:max-w-none mx-auto overflow-hidden">
+    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[240px] sm:max-w-[300px] lg:max-w-none mx-auto overflow-hidden">
       <img
         src={heroJJNoVideo}
         alt="JJ Smith"
