@@ -262,7 +262,8 @@ function PartnersMarquee() {
               src={l.src}
               alt={l.alt}
               className="h-16 sm:h-24 w-auto object-contain opacity-90 shrink-0"
-              loading="lazy"
+              loading="eager"
+              decoding="async"
             />
           ))}
         </div>
