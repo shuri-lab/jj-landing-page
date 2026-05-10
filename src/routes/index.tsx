@@ -369,6 +369,16 @@ function RealTalk() {
           Sister to sister, <em className="not-italic text-brand">why im doing this</em>.
         </h2>
       </div>
+      <figure className="mb-10 -mx-5 sm:mx-0">
+        <div className="overflow-hidden sm:rounded-2xl shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
+          <img
+            src={jjLaughingClient}
+            alt="JJ Smith laughing on stage with a sister from the community"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
+      </figure>
       <div className="space-y-6 text-[18px] sm:text-[19px] text-ink-soft leading-[1.7]">
         <p>You already know what to do. You've read the books. You've done the cleanses. You've signed up for the challenges. You've started over a Monday more times than you can count.</p>
         <p>So why hasn't it stuck?</p>
