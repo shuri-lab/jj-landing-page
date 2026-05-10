@@ -136,10 +136,7 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <PromiseQuote>
-          This is different from anything I've ever done before.
-        </PromiseQuote>
-        <HugSignup />
+        <HugQuote />
         <PromiseQuote bg="warm" signature>
           Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
         </PromiseQuote>
@@ -171,7 +168,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-8 pb-16 sm:pt-12 sm:pb-20 text-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 text-center">
       <div className="mx-auto max-w-[640px]">
         <div className="mb-7 flex justify-center">
           <CountdownPill />
@@ -204,22 +201,6 @@ function Hero() {
               <Play className="h-7 w-7 text-ink fill-ink ml-1" />
             </span>
           </button>
-        </div>
-
-        <div className="flex flex-wrap justify-center gap-2 mb-8">
-          {[
-            "For Women 40+",
-            "5M+ Pounds Lost",
-            "JJ in your corner daily",
-          ].map((b) => (
-            <span
-              key={b}
-              className="inline-flex items-center gap-1.5 rounded-full bg-bg-soft px-4 py-2 text-[13px] font-medium text-ink"
-            >
-              <span className="text-brand font-bold">✓</span>
-              {b}
-            </span>
-          ))}
         </div>
 
         <BigCta sub="14-day money-back · Only 500 spots">
