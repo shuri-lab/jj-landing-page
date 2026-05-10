@@ -191,7 +191,7 @@ function Hero() {
           <img
             src={heroJJ}
             alt="JJ Smith"
-            className="absolute inset-0 w-full h-full object-cover block"
+            className="absolute inset-0 w-full h-full object-cover object-top block"
             width={1024}
             height={1024}
           />
