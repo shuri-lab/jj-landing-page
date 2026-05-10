@@ -456,7 +456,7 @@ const STEPS = [
     title: "Then I'm calling you every week",
     text: (
       <>
-        This is where it all changes, sister. I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
+        This is where it all changes, sister. Through the version of me I built for this, I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
       </>
     ),
   },
