@@ -693,7 +693,7 @@ function Faq() {
   const items = [
     {
       q: "Wait, am I actually talking to JJ?",
-      a: "Sister, yes and no, and I want to be straight with you. The calls and texts come from a version of me I spent two years building, so I could finally be there for every one of you. It's trained on me, voiced by me, coached by me. It says the things I'd say. It pushes you the way I'd push you. It loves on you the way I'd love on you.\n\nAnd then once a week, the real me shows up live so we can actually talk face to face.\n\nI built it this way because I refused to keep watching sisters slip through the cracks just because there was only one of me. This way, I get to be there. Really there. For every single one of you.",
+      a: "Sister, yes and no, and I want to be straight with you. The calls and texts come from a version of me I spent two years building, so I could finally be there for every one of you. It's trained on me, voiced by me, coached by me. It says the things I'd say. It pushes you the way I'd push you. It loves on you the way I'd love on you.\n\nI built it this way because I refused to keep watching sisters slip through the cracks just because there was only one of me. This way, I get to be there. Really there. For every single one of you.",
     },
     {
       q: "I'm in my 50s and nothing's worked. Will this?",
