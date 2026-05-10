@@ -35,13 +35,13 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JJ Smith — 12-Week Body Transformation Challenge" },
+      { title: "JJ Smith, 12-Week Body Transformation Challenge" },
       {
         name: "description",
         content:
           "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith — 12-Week Body Transformation Challenge" },
+      { property: "og:title", content: "JJ Smith, 12-Week Body Transformation Challenge" },
       {
         property: "og:description",
         content:
@@ -480,10 +480,10 @@ function JJReveal() {
         </div>
         <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
           <p>For 15 years I've been writing the books, building the programs, and doing the work right alongside you. Together we've lost more than 5 million pounds. And I am so proud of every single one of them.</p>
-          <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world — and slip back without me.</strong> Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off and Tuesday night came, I wasn't there.</p>
+          <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world, and slip back without me.</strong> Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off and Tuesday night came, I wasn't there.</p>
           <p>And I knew that. For years, it was the part that hurt me the most. I could write another book. I could record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check on you. There's only one of me, and millions of you.</p>
           <p>So I spent the last two years building something nobody's built before. <strong className="text-ink font-semibold">A way for me to actually show up for every single one of you.</strong> In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at 9pm.</p>
-          <p>It's not a chatbot. It's not a tool. It's me — finally available to every sister who needs me.</p>
+          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
         </div>
         <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
           That's why this time is different, sister. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
