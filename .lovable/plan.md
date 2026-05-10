@@ -1,62 +1,67 @@
-## JJ Smith — 12-Week Body Transformation Landing Page
+## What's wrong now
 
-A single, long-scroll, mobile-first landing page at `/` that uses the supplied copy verbatim (in JJ's "sister to sister" voice), styled with the warm, editorial Jynfits look (cream/ivory background, serif display type, soft coral accent), and structured around the high-converting Petra Fitness layout (urgency bar, multi-CTA, week-by-week roadmap, value stack, comparison, guarantee, sticky mobile CTA).
+I (a) added sections that aren't in your copy doc, and (b) leaned on the doc's HTML styling instead of taking design cues from Petra + Jynfits. Fixing both.
 
-### Visual direction (Jynfits-inspired)
+## Copy fixes (verbatim from your HTML)
 
-- Background `#faf7f2` cream, warm card surfaces, `#b85042` coral accent, deep ink `#1a1715` for primary buttons
-- Display: Fraunces serif (italic for emotional pulls). Body: Inter
-- Generous whitespace, thin separators, big editorial H1, photo-led
-- All tokens added to `src/styles.css` as oklch CSS variables (`--accent`, `--accent-deep`, `--bg-warm`, `--ink-soft`, etc.); no hardcoded colors in components
-- Mobile-first: single column max-w ~760px, sticky bottom CTA on mobile
+Remove these invented sections entirely:
+- "Sister, this is for you if…" qualifier checklist
+- "Your 12-week roadmap" (WK 1–3, 4–6, 7–9, 10–12)
+- "What's included" 6-card icon grid
+- "Why this is different" comparison table
+- "The sisterhood" community-proof block (jjFans / jjHug)
+- Stacked value-stack pricing ($2,791 strikethrough, per-line dollar values)
 
-### Page sections (in order)
+Keep ONLY the sections that exist in your HTML, in this order:
 
-1. **Sticky urgency bar** — "Spring cohort closes in HH:MM:SS · Only 500 spots" with live countdown
-2. **Nav** — JJ SMITH wordmark + minimal links
-3. **Hero** — Eyebrow, H1 ("12-Week Body Transformation Challenge — lose up to 30 pounds in 12 weeks"), subhead, italic twist line, hero image (`new_JJ_hero_image.png`), primary CTA, scarcity line, trust strip ("5M+ pounds lost", "#1 NYT bestseller", "As seen on Dr. Oz, Steve Harvey, The View")
-4. **"This is for you if…"** checklist (Petra tactic, JJ voice) — 4–5 bullets + CTA
-5. **Real Talk** — full "Tuesday night" copy block from the file
-6. **Promise pull-quote** — "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
-7. **How it works — the 4 steps** (Welcome call → Personalized plan → Weekly calls → Daily texts)
-8. **Week-by-week roadmap** (Petra-style, JJ voice): Wk 1–3 Foundation · Wk 4–6 Momentum · Wk 7–9 Transformation · Wk 10–12 Lifestyle
-9. **Soft reveal / from JJ** — circular JJ portrait (`jj_tight_weist_1.jpg`), the personal letter, signoff
-10. **Transformations grid** — five themed groups, using `transformation_1/4/7/8.jpg` and `jj_own_body_transformation_photos.PNG`; lazy-loaded, responsive 2/3-col grid
-11. **What's included** — icon grid (welcome call, personal plan, weekly calls, daily texts, private community, accountability)
-12. **Comparison table** — "Other programs vs. JJ's 12-Week Challenge" (Petra tactic)
-13. **Community proof** — `jj_photo_with_fans.jpg` + `jj_hugging_client.jpg` collage with caption
-14. **Offer card** — stacked value ($1,000+ value), strikethrough, $497 or 3×$179, included list with check rows, full-width CTA, cohort start + spots remaining
-15. **Guarantee** — 14-day money-back card in JJ's voice
-16. **FAQ** — 5 questions from the file (accordion, first one open)
-17. **Last call** — "Your next 12 weeks are happening either way." + final CTA
-18. **Footer** — copyright, contact, terms/privacy links
-19. **Sticky mobile CTA bar** — appears after hero scrolled past: "Reserve my spot — $497"
+1. Top urgency bar / Nav
+2. Hero (eyebrow, H1, sub, italic twist, video, CTA, scarcity line, trust strip)
+3. "Something brand new" pull line
+4. Promise block ("Sister, I've spent 15 years…")
+5. Real talk — **change H2 to: "Sister to sister — why im doing this"** (per your note)
+6. Second promise pull ("This time, I'm giving you me… and I'm not leaving.")
+7. The 4 steps (01–04, copy unchanged)
+8. JJ reveal letter (heading stays: "Sister to sister — why and how I'm doing this.")
+9. Transformations — 5 themed groups (restore the 5th: "My health came back — pre-diabetes reversed…"); 6 photos per group as in HTML
+10. Offer card — simple version from HTML: $497 / "or 3 payments of $179", 4-item checklist (welcome call, personalized plan, weekly calls, daily texts), full-width CTA, "Only 500 spots · Cohort starts March 3". No strikethrough, no value stack.
+11. Guarantee box (heart icon + JJ quote)
+12. FAQ (5 Qs verbatim)
+13. Last call
+14. Footer + sticky mobile CTA
 
-### Conversion tactics applied (from Petra)
+All body copy, headings, eyebrows, button labels: word-for-word from the HTML. No paraphrasing, no additions.
 
-- Countdown timer in top bar + repeated near each CTA
-- 6+ CTA buttons throughout, each with a microcopy reassurance ("14-day guarantee · Only 500 spots")
-- "This is for you if" qualifier
-- Week-by-week roadmap to reduce uncertainty
-- Visual value-stack with crossed-out anchor price
-- Comparison table
-- Risk reversal (guarantee box)
-- Sticky bottom CTA on mobile
-- Social proof clusters (transformations + fans photo + trust strip)
+## Design direction (Petra structure, Jynfits palette)
 
-### Technical implementation
+Take from **Petra**:
+- Centered single-column layout (no max-w 760 left-aligned editorial feel)
+- Big bold display headlines with one or two emphasized words (italic serif accent on key words like *Confident* / *20 Pounds*)
+- Prominent pill-shaped countdown badge above the H1 ("● SIGN-UPS CLOSE IN: 07:59:53")
+- Large video/hero image block, rounded, with soft glow/shadow
+- Row of small check-pill badges under the hero ("✓ For Women 40+", "✓ 5M+ Pounds Lost", "✓ JJ in your corner daily")
+- Big, bright, full-width pill CTA button repeated frequently with sub-line ("Cancel Anytime + 14-Day Money Back")
+- "Doors close in HH:MM:SS" line beneath every CTA
+- Before/after photos as a flowing tilted-card collage rather than a strict editorial grid
+- Generous vertical rhythm, lots of breathing room, centered text
 
-- Route: replace placeholder `src/routes/index.tsx` with the landing page; full SEO `head()` (title, description, og:title, og:description, og:image using hero)
-- Components in `src/components/landing/`: `UrgencyBar`, `Hero`, `ForYou`, `RealTalk`, `Promise`, `Steps`, `Roadmap`, `JJReveal`, `Transformations`, `Included`, `Comparison`, `OfferCard`, `Guarantee`, `Faq`, `LastCall`, `StickyCta`, `Footer`
-- `useCountdown` hook for the timer (target date constant, falls back to 24h rolling if past)
-- FAQ uses existing `src/components/ui/accordion.tsx`
-- Buttons via existing `src/components/ui/button.tsx` with a custom `cta` variant added (ink bg, coral hover)
-- Images copied from uploads to `src/assets/landing/` and imported as ES6 modules; `loading="lazy"` on all below-the-fold images, explicit `width`/`height` to prevent CLS
-- All copy from the attached HTML used verbatim; new sections (For-you checklist, Roadmap, Comparison, Included grid) written in the same "sister to sister" voice
-- Semantic HTML: single `<h1>`, `<section>` per block, alt text on every image
+Take from **Jynfits**:
+- Soft warm palette: cream/blush background `#faf3f0`, deep ink `#1a1715`, dusty-rose accent `#d4a5a0` / coral `#b85042` for emphasis words and badges
+- Oversized serif display headlines (Fraunces) mixed with bold sans for emphasis words
+- Soft rounded cards, subtle pink shadows, no harsh borders
+- Pastel section backgrounds alternating cream / blush
+- Decorative serif italic pull-quotes
+- Friendly, editorial, light — NOT dark/neon like Petra's actual look
 
-### Out of scope (this pass)
+Net result: Petra's conversion-page *structure and rhythm* (countdown pill, centered hero, big CTA, badge row, collage) wrapped in Jynfits' *cream + blush + serif* aesthetic.
 
-- Real checkout / Stripe wiring (CTA buttons scroll to offer card; can be wired later)
-- CMS / admin
-- A/B testing infrastructure
+Mobile-first, single column always. Desktop just centers the same column at ~640px max width.
+
+## Files I'll touch
+
+- `src/routes/index.tsx` — delete ForYou, Roadmap, Included, Comparison, CommunityProof; restore 5th transformation group; rewrite Hero, Offer, RealTalk heading; restructure layout to centered Petra rhythm
+- `src/styles.css` — adjust palette toward Jynfits blush/cream, add countdown-pill + check-badge + big-CTA utilities
+- No new assets needed (reuse existing landing images; jjFans/jjHug become unused — leave files in place)
+
+## Out of scope
+
+Real Stripe checkout, video player wiring (still placeholder), CMS.
