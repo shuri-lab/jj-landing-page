@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import heroJJ from "@/assets/landing/hero-jj.png";
+import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -36,7 +37,8 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/no-video")({
   head: () => ({
     meta: [
-      { title: "JJ Smith — 12-Week Body Transformation Challenge" },
+      { title: "JJ Smith — 12-Week Body Transformation Challenge — v2" },
+      { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
@@ -215,24 +217,7 @@ function Hero() {
         </div>
         <div className="lg:order-2">
 
-        <div className="relative aspect-video rounded-2xl overflow-hidden bg-bg-soft mb-8 lg:mb-0 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
-          <img
-            src={heroJJ}
-            alt="JJ Smith"
-            className="absolute inset-0 w-full h-full object-cover object-top block"
-            width={1024}
-            height={1024}
-          />
-          <button
-            aria-label="Play intro video"
-            className="absolute inset-0 flex items-center justify-center group"
-            onClick={scrollToOffer}
-          >
-            <span className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-white/95 flex items-center justify-center shadow-xl transition-transform group-hover:scale-105">
-              <Play className="h-7 w-7 text-ink fill-ink ml-1" />
-            </span>
-          </button>
-        </div>
+        <HeroImageWithLogoBackdrop />
         </div>
         </div>
 
@@ -254,6 +239,43 @@ function Hero() {
       </div>
       <PartnersMarquee />
     </section>
+  );
+}
+
+
+function HeroImageWithLogoBackdrop() {
+  const row = "JJ SMITH ".repeat(8);
+  const rows = Array.from({ length: 9 });
+  return (
+    <div className="relative mb-8 lg:mb-0 aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden">
+      <div
+        aria-hidden
+        className="pointer-events-none select-none absolute inset-0 -rotate-[8deg] scale-125 flex flex-col justify-center items-center overflow-hidden"
+        style={{
+          maskImage:
+            "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+          WebkitMaskImage:
+            "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
+        }}
+      >
+        {rows.map((_, i) => (
+          <div
+            key={i}
+            className="whitespace-nowrap font-sans font-black uppercase tracking-tight leading-[0.95] text-brand"
+            style={{ fontSize: "clamp(48px, 11vw, 110px)", opacity: 0.1 }}
+          >
+            {row}
+          </div>
+        ))}
+      </div>
+      <img
+        src={heroJJNoVideo}
+        alt="JJ Smith"
+        className="relative z-10 w-full h-full object-contain object-bottom"
+        width={1024}
+        height={1024}
+      />
+    </div>
   );
 }
 
