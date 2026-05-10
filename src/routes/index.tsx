@@ -139,14 +139,16 @@ function Section({
 
 function Landing() {
   return (
-    <div className="bg-background text-foreground">
+    <div className="bg-background text-foreground overflow-x-hidden">
       <Nav />
       <main>
         <Hero />
-        <HugQuote />
-        <PromiseQuote bg="warm" signature>
-          Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
-        </PromiseQuote>
+        <div className="lg:grid lg:grid-cols-2 lg:items-stretch">
+          <HugQuote />
+          <PromiseQuote bg="warm" signature>
+            Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
+          </PromiseQuote>
+        </div>
         <RealTalk />
         <Promise2 />
         <Steps />
@@ -189,7 +191,7 @@ function Hero() {
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
         <div className="lg:order-1">
-        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[64px] leading-[1.08] tracking-[-0.025em] mb-6">
+        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
           12-Week Body
           <br />
           Transformation
@@ -298,18 +300,18 @@ function TransformationsStrip() {
 
 function HugQuote() {
   return (
-    <section className="px-5 py-12 sm:py-16 lg:py-20 bg-bg-soft">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
+    <section className="px-5 py-12 sm:py-16 lg:py-16 bg-bg-soft lg:h-full lg:flex lg:items-center">
+      <div className="mx-auto max-w-[640px] lg:max-w-[560px] w-full">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)] lg:aspect-[4/5]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
-            className="block w-full h-auto lg:max-h-[560px] lg:object-cover"
+            className="block w-full h-auto lg:absolute lg:inset-0 lg:h-full lg:object-cover"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
-            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[44px] leading-[1.25] max-w-[520px] lg:max-w-[700px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-8">
+            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[28px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
               This is different from anything I've ever done before.
             </p>
           </div>
@@ -323,7 +325,7 @@ function _TransformationsStripImpl() {
   const items = [t1, t4, t7, t8, t9, t10, t11, t12, tTammi, tGirosalee];
   const track = [...items, ...items];
   return (
-    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden">
+    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden lg:w-screen lg:left-1/2 lg:right-1/2 lg:-ml-[50vw] lg:-mr-[50vw] lg:mx-0">
       <div className="flex w-max gap-4 animate-marquee-slow">
         {track.map((src, i) => (
           <figure
@@ -357,12 +359,12 @@ function PromiseQuote({
   signature?: boolean;
 }) {
   return (
-    <section className={`relative px-5 py-20 lg:py-28 text-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}>
+    <section className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}>
       <span aria-hidden className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none">"</span>
       <span aria-hidden className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180">"</span>
-      <div className="mx-auto max-w-[640px] lg:max-w-[900px] relative">
+      <div className="mx-auto max-w-[640px] lg:max-w-[560px] relative w-full">
         {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
-        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[40px] leading-[1.3] max-w-[580px] lg:max-w-[820px] mx-auto mb-5">
+        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[32px] leading-[1.3] max-w-[580px] mx-auto mb-5">
           {children}
         </p>
         {signature && (
@@ -417,7 +419,7 @@ function Promise2() {
         <p className="font-serif italic text-[26px] sm:text-[32px] lg:text-[40px] leading-snug text-ink max-w-[580px] lg:max-w-[820px] mx-auto">
           This time, I'm giving you me… and I'm not leaving.
         </p>
-        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)] lg:max-w-[820px] lg:mx-auto">
+        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)] lg:max-w-[480px] lg:mx-auto">
           <img
             src={jjTightWaist}
             alt="JJ Smith"
