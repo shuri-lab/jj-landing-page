@@ -521,7 +521,8 @@ function JJReveal() {
           <p>For 15 years I've been writing the books, building the programs, and giving you everything I've learned. Together we've lost more than 5 million pounds. And I am so proud of every single one.</p>
           <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world and slip back without me.</strong> And every time, I wished I could be there with you. On your shoulder on the hard days. In your pocket on the random Tuesday nights when nobody else is.</p>
           <p>For years, that was impossible. There's only one of me, and millions of you.</p>
-          <p>So we built something. <strong className="text-ink font-semibold">Something that lets me actually be with you</strong>, calling you, texting you, checking in on you, the way I would if it was just you and me. It's me, in your pocket, every day for 12 weeks. Finally.</p>
+          <p>So I spent two years building something nobody's built before, <strong className="text-ink font-semibold">a way for me to actually show up for every single one of you.</strong> In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at 9pm.</p>
+          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
         </div>
         <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
           That's why this time is different. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
