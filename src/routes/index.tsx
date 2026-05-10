@@ -374,43 +374,6 @@ function PromiseQuote({
   );
 }
 
-function RealTalk() {
-  return (
-    <Section>
-      <div className="text-center">
-        <Eyebrow center>Real talk</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why I'm doing this</em>.
-        </h2>
-      </div>
-      <figure className="mb-10 -mx-5 sm:mx-0 lg:max-w-[900px] lg:mx-auto">
-        <div className="overflow-hidden sm:rounded-2xl shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
-          <img
-            src={jjLaughingClient}
-            alt="JJ Smith laughing on stage with a sister from the community"
-            className="block w-full h-auto"
-            loading="lazy"
-          />
-        </div>
-      </figure>
-      <div className="space-y-6 text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] lg:max-w-[760px] lg:mx-auto">
-        <p>You already know what to do. You've read the books. You've done the cleanses. You've signed up for the challenges. You've started over a Monday more times than you can count.</p>
-        <p>So why hasn't it stuck?</p>
-        <p><strong className="text-ink font-semibold">Because every program leaves you on a Tuesday night.</strong></p>
-        <p>Sunday you're motivated. Monday you're locked in. Tuesday is fine. Then Wednesday hits, the kids, the work, the stress, and by Thursday at 9pm you're standing in front of the fridge, alone, fixing to undo everything you started.</p>
-        <p>That's where every program loses you. Not because the information was wrong. <strong className="text-ink font-semibold">Because nobody was there with you.</strong></p>
-        <p>Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed up for and why this time was supposed to be different. Just you, by yourself, doing what you've always done.</p>
-        <p className="text-ink font-medium text-[20px] pt-2">That's the part I'm fixing this time.</p>
-      </div>
-      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">
-          Reserve my spot
-        </BigCta>
-      </div>
-    </Section>
-  );
-}
-
 function Promise2() {
   return (
     <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
