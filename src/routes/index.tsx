@@ -208,8 +208,8 @@ function Hero() {
           <BigCta sub="14-day money-back · Only 500 spots">
             Yes JJ, I want you in my corner!
           </BigCta>
-          <p className="text-[14px] text-ink-faint mt-4">
-            Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+          <p className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg-warm border border-line text-[13px] text-ink-soft">
+            Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
           </p>
         </div>
         </div>
@@ -241,8 +241,8 @@ function Hero() {
             Yes JJ, I want you in my corner!
           </BigCta>
 
-          <p className="text-[14px] text-ink-faint mt-4">
-            Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+          <p className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg-warm border border-line text-[13px] text-ink-soft">
+            Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
           </p>
         </div>
 
@@ -789,8 +789,8 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-semibold text-ink">JJ's 12-Week Transformation</div>
-          <div className="text-brand font-semibold">
+          <div className="font-normal text-ink-soft">JJ's 12-Week Transformation</div>
+          <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
         </div>
