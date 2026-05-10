@@ -262,17 +262,23 @@ function TransformationsStrip() {
   return _TransformationsStripImpl();
 }
 
-function HugSignup() {
+function HugQuote() {
   return (
-    <section className="px-5 py-10 sm:py-14 bg-bg-soft">
-      <div className="mx-auto max-w-[560px]">
-        <div className="rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
+    <section className="px-5 py-12 sm:py-16 bg-bg-soft">
+      <div className="mx-auto max-w-[640px]">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
             className="block w-full h-auto"
             loading="lazy"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10">
+            <p className="font-serif italic text-white text-[24px] sm:text-[34px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+              This is different from anything I've ever done before.
+            </p>
+          </div>
         </div>
       </div>
     </section>
