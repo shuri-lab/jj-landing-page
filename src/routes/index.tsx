@@ -250,9 +250,41 @@ function Hero() {
   );
 }
 
+function TransformationsStrip() {
+  const items = [
+    { src: t1, caption: "-17.6 lbs in 6 weeks" },
+    { src: t4, caption: "-12.2 lbs in 6 weeks" },
+    { src: t7, caption: "-10.3 lbs in 6 weeks" },
+    { src: t8, caption: "-7.6 lbs in 6 weeks" },
+  ];
+  return (
+    <div className="relative -mx-5 mt-12 bg-brand-deep py-7">
+      <div
+        className="flex gap-4 overflow-x-auto px-5 snap-x snap-mandatory scroll-px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {items.map((it) => (
+          <figure
+            key={it.caption}
+            className="relative shrink-0 w-[180px] sm:w-[220px] snap-start rounded-2xl overflow-hidden bg-black/30 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]"
+          >
+            <img
+              src={it.src}
+              alt={`Transformation ${it.caption}`}
+              className="block w-full h-[260px] sm:h-[300px] object-cover"
+              loading="lazy"
+            />
+            <figcaption className="absolute left-2 right-2 bottom-2 rounded-lg bg-white/95 text-ink text-[13px] sm:text-[14px] font-semibold text-center py-2 px-2">
+              {it.caption}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+      <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
+    </div>
+  );
+}
+
 function PromiseQuote({
-  ...args
-}: never): never;
   eyebrow,
   children,
   bg = "soft",
