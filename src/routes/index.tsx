@@ -9,14 +9,20 @@ import {
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import heroJJ from "@/assets/landing/hero-jj.png";
-import jjPortrait from "@/assets/landing/jj-portrait.jpg";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
-import jjOwn from "@/assets/landing/jj-own-transformation.png";
+import t9 from "@/assets/landing/transformation-9.jpg";
+import t10 from "@/assets/landing/transformation-10.jpg";
+import t11 from "@/assets/landing/transformation-11.jpg";
+import t12 from "@/assets/landing/transformation-12.jpg";
+import tTammi from "@/assets/landing/transformation-tammi.jpg";
+import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjLaughingClient from "@/assets/landing/jj-laughing-client.jpg";
+import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
+import jjTightWaist from "@/assets/landing/jj-tight-waist.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
@@ -164,7 +170,7 @@ function Nav() {
         <img
           src={jjSmithLogo}
           alt="JJ Smith"
-          className="h-7 sm:h-8 w-auto"
+          className="h-5 sm:h-6 w-auto"
           width={240}
           height={64}
         />
@@ -254,7 +260,8 @@ function PartnersMarquee() {
               src={l.src}
               alt={l.alt}
               className="h-16 sm:h-24 w-auto object-contain opacity-90 shrink-0"
-              loading="lazy"
+              loading="eager"
+              decoding="async"
             />
           ))}
         </div>
@@ -293,34 +300,26 @@ function HugQuote() {
 }
 
 function _TransformationsStripImpl() {
-  const items = [
-    { src: t1, caption: "-17.6 lbs in 6 weeks" },
-    { src: t4, caption: "-12.2 lbs in 6 weeks" },
-    { src: t7, caption: "-10.3 lbs in 6 weeks" },
-    { src: t8, caption: "-7.6 lbs in 6 weeks" },
-  ];
+  const items = [t1, t4, t7, t8, t9, t10, t11, t12, tTammi, tGirosalee];
+  const track = [...items, ...items];
   return (
-    <div className="relative -mx-5 mt-12 bg-brand-deep py-7">
-      <div
-        className="flex gap-4 overflow-x-auto px-5 snap-x snap-mandatory scroll-px-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
-      >
-        {items.map((it) => (
+    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden">
+      <div className="flex w-max gap-4 animate-marquee-slow">
+        {track.map((src, i) => (
           <figure
-            key={it.caption}
-            className="relative shrink-0 w-[180px] sm:w-[220px] snap-start rounded-2xl overflow-hidden bg-black/30 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]"
+            key={i}
+            className="relative shrink-0 w-[280px] sm:w-[340px] rounded-2xl overflow-hidden bg-black/30 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]"
           >
             <img
-              src={it.src}
-              alt={`Transformation ${it.caption}`}
-              className="block w-full h-[260px] sm:h-[300px] object-cover"
+              src={src}
+              alt="Sister transformation before and after"
+              className="block w-full h-[300px] sm:h-[360px] object-cover"
               loading="lazy"
             />
-            <figcaption className="absolute left-2 right-2 bottom-2 rounded-lg bg-white/95 text-ink text-[13px] sm:text-[14px] font-semibold text-center py-2 px-2">
-              {it.caption}
-            </figcaption>
           </figure>
         ))}
       </div>
+      <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-brand-deep to-transparent" />
       <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
     </div>
   );
@@ -394,9 +393,19 @@ function RealTalk() {
 function Promise2() {
   return (
     <section className="px-5 py-16 text-center bg-bg-soft">
-      <p className="font-serif italic text-[26px] sm:text-[32px] leading-snug text-ink max-w-[580px] mx-auto">
-        This time, I'm giving you me… and I'm not leaving.
-      </p>
+      <div className="mx-auto max-w-[640px]">
+        <p className="font-serif italic text-[26px] sm:text-[32px] leading-snug text-ink max-w-[580px] mx-auto">
+          This time, I'm giving you me… and I'm not leaving.
+        </p>
+        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)]">
+          <img
+            src={jjTightWaist}
+            alt="JJ Smith"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
+      </div>
     </section>
   );
 }
@@ -478,9 +487,9 @@ function JJReveal() {
       <div className="bg-card rounded-2xl p-7 sm:p-9 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)]">
         <div className="flex justify-center -mt-16 mb-6">
           <img
-            src={jjPortrait}
+            src={jjSelfieSun}
             alt="JJ Smith portrait"
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover border-4 border-card shadow-md"
+            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-top border-4 border-card shadow-md"
             width={128}
             height={128}
             loading="lazy"
@@ -506,12 +515,15 @@ function JJReveal() {
 }
 
 function Transformations() {
-  const groups = [
-    { headline: '"My waist comes back, my belly fat finally lets go."', imgs: [t1, t8] },
-    { headline: '"I get my curves back, snatched, not skinny."', imgs: [t4, jjOwn] },
-    { headline: '"My clothes fit again, and I look 10 years younger."', imgs: [t8, t7] },
-    { headline: '"My energy is back, and my confidence with it."', imgs: [jjOwn, t1] },
-    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', imgs: [t7, t4] },
+  const slides = [
+    { headline: '"My waist comes back, my belly fat finally lets go."', src: t1 },
+    { headline: '"I get my curves back, snatched, not skinny."', src: t4 },
+    { headline: '"My clothes fit again, and I look 10 years younger."', src: t8 },
+    { headline: '"My energy is back, and my confidence with it."', src: t10 },
+    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', src: t7 },
+    { headline: '"Down the size I haven\'t worn in a decade."', src: t12 },
+    { headline: '"Smiling in pictures again, dressing up again."', src: t9 },
+    { headline: '"Lighter, stronger, finally me again."', src: tTammi },
   ];
   return (
     <Section id="stories">
@@ -524,26 +536,30 @@ function Transformations() {
           When you make it through 12 weeks with a plan built for your body and someone walking with you the whole way, this is what happens:
         </p>
       </div>
-      <div className="space-y-16">
-        {groups.map((g) => (
-          <div key={g.headline}>
-            <p className="font-serif italic text-[26px] sm:text-[30px] leading-[1.25] text-ink mb-7 text-center max-w-[560px] mx-auto">
-              {g.headline}
-            </p>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {g.imgs.map((src, i) => (
-                <div key={i} className="aspect-[3/4] overflow-hidden rounded-xl bg-bg-soft">
-                  <img
-                    src={src}
-                    alt="Sister transformation before and after"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="-mx-5">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 gap-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {slides.map((s, i) => (
+            <figure
+              key={i}
+              className="shrink-0 w-[88%] sm:w-[600px] snap-center"
+            >
+              <p className="font-serif italic text-[22px] sm:text-[26px] leading-[1.3] text-ink mb-5 text-center min-h-[80px]">
+                {s.headline}
+              </p>
+              <div className="rounded-2xl overflow-hidden bg-bg-soft shadow-[0_20px_40px_-20px_rgba(70,30,110,0.3)]">
+                <img
+                  src={s.src}
+                  alt="Sister transformation before and after"
+                  className="block w-full h-auto"
+                  loading="lazy"
+                />
+              </div>
+            </figure>
+          ))}
+        </div>
+        <p className="text-center text-[12px] uppercase tracking-[0.2em] text-ink-faint mt-6">
+          Swipe to see more →
+        </p>
       </div>
       <div className="mt-14">
         <BigCta sub="14-day money-back · Only 500 spots">
@@ -559,25 +575,25 @@ function Offer() {
     {
       name: "Essential",
       price: "$137",
-      perMonth: "≈ $46 / month",
-      tagline: "One coaching call per week with JJ",
+      perMonth: "or $49 / month",
+      tagline: "One call per week with JJ",
       featured: false,
       items: [
         "Welcome call to get to know you",
         "Personalized meal plan & movement plan",
-        "1 coaching call / week with JJ",
+        "1 call / week with JJ",
         "Daily text check-ins from JJ",
       ],
     },
     {
       name: "Plus",
       price: "$167",
-      perMonth: "≈ $56 / month",
-      tagline: "Two coaching calls per week with JJ",
+      perMonth: "or $56 / month",
+      tagline: "Two calls per week with JJ",
       featured: true,
       items: [
         "Everything in Essential",
-        "2 coaching calls / week with JJ",
+        "2 calls / week with JJ",
       ],
     },
   ];
@@ -586,11 +602,8 @@ function Offer() {
       <div className="text-center">
         <Eyebrow center>The offer</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Choose how close you want me, sister.
+          Sister, how close do you want me?
         </h2>
-        <p className="-mt-6 mb-10 text-[15px] sm:text-[16px] text-ink-soft max-w-[520px] mx-auto">
-          One payment for the <strong className="text-ink font-semibold">full 12-week program</strong> with JJ. Not monthly — that's the whole thing.
-        </p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {plans.map((p) => (
@@ -615,7 +628,7 @@ function Offer() {
                 <span className="text-[13px] text-ink-soft font-medium">total</span>
               </div>
               <p className="-mt-4 mb-2 text-[13px] text-ink-faint">
-                for the full 12-week program <span className="text-ink-soft">· {p.perMonth} if you'd rather break it up</span>
+                for the full 12-week program <span className="text-ink-soft">· {p.perMonth}</span>
               </p>
             </div>
             <ul className="border-t border-dashed border-line flex-1">
@@ -761,8 +774,8 @@ function StickyCta() {
       >
         <div className="flex-1 text-[13px] leading-tight">
           <div className="font-semibold text-ink">JJ's 12-Week Transformation</div>
-          <div className="text-ink-faint">
-            Closes in <CountdownInline className="tabular-nums" />
+          <div className="text-brand font-semibold">
+            Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
         </div>
         <button
