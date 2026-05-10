@@ -190,8 +190,12 @@
   animation: marquee 35s linear infinite;
 }
 .animate-marquee:hover { animation-play-state: paused; }
+.animate-marquee-slow {
+  animation: marquee 50s linear infinite;
+}
+.animate-marquee-slow:hover { animation-play-state: paused; }
 @media (prefers-reduced-motion: reduce) {
-  .animate-marquee { animation: none; }
+  .animate-marquee, .animate-marquee-slow { animation: none; }
 }
 
 /*
