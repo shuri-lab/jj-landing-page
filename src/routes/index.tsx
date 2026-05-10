@@ -15,6 +15,7 @@ import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
+import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -126,10 +127,11 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <PromiseQuote eyebrow="Something brand new">
+        <PromiseQuote>
           This is different from anything I've ever done before.
         </PromiseQuote>
-        <PromiseQuote eyebrow="My promise to you" bg="warm" signature>
+        <HugSignup />
+        <PromiseQuote bg="warm" signature>
           Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
         </PromiseQuote>
         <RealTalk />
@@ -251,6 +253,27 @@ function Hero() {
 }
 
 function TransformationsStrip() {
+  return _TransformationsStripImpl();
+}
+
+function HugSignup() {
+  return (
+    <section className="px-5 py-10 sm:py-14 bg-bg-soft">
+      <div className="mx-auto max-w-[560px]">
+        <div className="rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
+          <img
+            src={jjHugSignup}
+            alt="JJ Smith hugging a sister from the community"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function _TransformationsStripImpl() {
   const items = [
     { src: t1, caption: "-17.6 lbs in 6 weeks" },
     { src: t4, caption: "-12.2 lbs in 6 weeks" },
@@ -290,7 +313,7 @@ function PromiseQuote({
   bg = "soft",
   signature = false,
 }: {
-  eyebrow: string;
+  eyebrow?: string;
   children: React.ReactNode;
   bg?: "soft" | "warm";
   signature?: boolean;
@@ -300,7 +323,7 @@ function PromiseQuote({
       <span aria-hidden className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none">"</span>
       <span aria-hidden className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180">"</span>
       <div className="mx-auto max-w-[640px] relative">
-        <Eyebrow center>{eyebrow}</Eyebrow>
+        {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
         <p className="font-serif italic text-[28px] sm:text-[34px] leading-[1.3] max-w-[580px] mx-auto mb-5">
           {children}
         </p>
