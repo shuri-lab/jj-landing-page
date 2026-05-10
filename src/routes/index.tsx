@@ -517,12 +517,15 @@ function JJReveal() {
 }
 
 function Transformations() {
-  const groups = [
-    { headline: '"My waist comes back, my belly fat finally lets go."', imgs: [t1, t8] },
-    { headline: '"I get my curves back, snatched, not skinny."', imgs: [t4, jjOwn] },
-    { headline: '"My clothes fit again, and I look 10 years younger."', imgs: [t8, t7] },
-    { headline: '"My energy is back, and my confidence with it."', imgs: [jjOwn, t1] },
-    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', imgs: [t7, t4] },
+  const slides = [
+    { headline: '"My waist comes back, my belly fat finally lets go."', src: t1 },
+    { headline: '"I get my curves back, snatched, not skinny."', src: t4 },
+    { headline: '"My clothes fit again, and I look 10 years younger."', src: t8 },
+    { headline: '"My energy is back, and my confidence with it."', src: t10 },
+    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', src: t7 },
+    { headline: '"Down the size I haven\'t worn in a decade."', src: t12 },
+    { headline: '"Smiling in pictures again, dressing up again."', src: t9 },
+    { headline: '"Lighter, stronger, finally me again."', src: tTammi },
   ];
   return (
     <Section id="stories">
@@ -535,26 +538,30 @@ function Transformations() {
           When you make it through 12 weeks with a plan built for your body and someone walking with you the whole way, this is what happens:
         </p>
       </div>
-      <div className="space-y-16">
-        {groups.map((g) => (
-          <div key={g.headline}>
-            <p className="font-serif italic text-[26px] sm:text-[30px] leading-[1.25] text-ink mb-7 text-center max-w-[560px] mx-auto">
-              {g.headline}
-            </p>
-            <div className="grid grid-cols-2 gap-3 sm:gap-4">
-              {g.imgs.map((src, i) => (
-                <div key={i} className="aspect-[3/4] overflow-hidden rounded-xl bg-bg-soft">
-                  <img
-                    src={src}
-                    alt="Sister transformation before and after"
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-              ))}
-            </div>
-          </div>
-        ))}
+      <div className="-mx-5">
+        <div className="flex overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 gap-5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {slides.map((s, i) => (
+            <figure
+              key={i}
+              className="shrink-0 w-[88%] sm:w-[600px] snap-center"
+            >
+              <p className="font-serif italic text-[22px] sm:text-[26px] leading-[1.3] text-ink mb-5 text-center min-h-[80px]">
+                {s.headline}
+              </p>
+              <div className="rounded-2xl overflow-hidden bg-bg-soft shadow-[0_20px_40px_-20px_rgba(70,30,110,0.3)]">
+                <img
+                  src={s.src}
+                  alt="Sister transformation before and after"
+                  className="block w-full h-auto"
+                  loading="lazy"
+                />
+              </div>
+            </figure>
+          ))}
+        </div>
+        <p className="text-center text-[12px] uppercase tracking-[0.2em] text-ink-faint mt-6">
+          Swipe to see more →
+        </p>
       </div>
       <div className="mt-14">
         <BigCta sub="14-day money-back · Only 500 spots">
