@@ -208,7 +208,7 @@ function Hero() {
           <BigCta sub="14-day money-back · Only 500 spots">
             Yes JJ, I want you in my corner!
           </BigCta>
-          <p className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg-warm border border-line text-[13px] text-ink-soft">
+          <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
           </p>
         </div>
@@ -241,7 +241,7 @@ function Hero() {
             Yes JJ, I want you in my corner!
           </BigCta>
 
-          <p className="mt-4 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-bg-warm border border-line text-[13px] text-ink-soft">
+          <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
           </p>
         </div>
