@@ -139,7 +139,7 @@ function Section({
 
 function Landing() {
   return (
-    <div className="bg-background text-foreground">
+    <div className="bg-background text-foreground overflow-x-hidden">
       <Nav />
       <main>
         <Hero />
