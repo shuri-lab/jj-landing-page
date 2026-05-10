@@ -395,9 +395,19 @@ function RealTalk() {
 function Promise2() {
   return (
     <section className="px-5 py-16 text-center bg-bg-soft">
-      <p className="font-serif italic text-[26px] sm:text-[32px] leading-snug text-ink max-w-[580px] mx-auto">
-        This time, I'm giving you me… and I'm not leaving.
-      </p>
+      <div className="mx-auto max-w-[640px]">
+        <p className="font-serif italic text-[26px] sm:text-[32px] leading-snug text-ink max-w-[580px] mx-auto">
+          This time, I'm giving you me… and I'm not leaving.
+        </p>
+        <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)]">
+          <img
+            src={jjTightWaist}
+            alt="JJ Smith"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
+      </div>
     </section>
   );
 }
