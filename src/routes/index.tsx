@@ -325,8 +325,7 @@ function _TransformationsStripImpl() {
   const items = [t1, t4, t7, t8, t9, t10, t11, t12, tTammi, tGirosalee];
   const track = [...items, ...items];
   return (
-    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden">
-      <div className="lg:hidden">
+    <div className="relative -mx-5 mt-12 bg-brand-deep py-7 overflow-hidden lg:w-screen lg:left-1/2 lg:right-1/2 lg:-ml-[50vw] lg:-mr-[50vw] lg:mx-0">
       <div className="flex w-max gap-4 animate-marquee-slow">
         {track.map((src, i) => (
           <figure
@@ -341,7 +340,6 @@ function _TransformationsStripImpl() {
             />
           </figure>
         ))}
-      </div>
       </div>
       <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-brand-deep to-transparent" />
       <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
