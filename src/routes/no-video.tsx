@@ -203,7 +203,7 @@ function Hero() {
           in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto lg:mx-0">
+        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-1 lg:mb-8 max-w-[560px] mx-auto lg:mx-0">
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
         <div className="hidden lg:block">
@@ -244,13 +244,13 @@ function Hero() {
 
 
 function HeroImageWithLogoBackdrop() {
-  const row = "JJ SMITH ".repeat(8);
-  const rows = Array.from({ length: 9 });
+  const logosPerRow = 4;
+  const rows = Array.from({ length: 7 });
   return (
-    <div className="relative mb-8 lg:mb-0 aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden">
+    <div className="relative mb-0 lg:mb-0 aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden">
       <div
         aria-hidden
-        className="pointer-events-none select-none absolute inset-0 -rotate-[8deg] scale-125 flex flex-col justify-center items-center overflow-hidden"
+        className="pointer-events-none select-none absolute inset-0 -rotate-[8deg] scale-125 flex flex-col justify-center items-center gap-4 overflow-hidden"
         style={{
           maskImage:
             "linear-gradient(to bottom, transparent 0%, black 18%, black 82%, transparent 100%)",
@@ -259,12 +259,16 @@ function HeroImageWithLogoBackdrop() {
         }}
       >
         {rows.map((_, i) => (
-          <div
-            key={i}
-            className="whitespace-nowrap font-sans font-black uppercase tracking-tight leading-[0.95] text-brand"
-            style={{ fontSize: "clamp(48px, 11vw, 110px)", opacity: 0.1 }}
-          >
-            {row}
+          <div key={i} className="flex items-center gap-6 shrink-0">
+            {Array.from({ length: logosPerRow }).map((_, j) => (
+              <img
+                key={j}
+                src={jjSmithLogo}
+                alt=""
+                aria-hidden
+                className="h-[clamp(28px,6vw,64px)] w-auto opacity-15 shrink-0"
+              />
+            ))}
           </div>
         ))}
       </div>
