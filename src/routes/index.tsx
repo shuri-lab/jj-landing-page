@@ -253,6 +253,27 @@ function Hero() {
 }
 
 function TransformationsStrip() {
+  return _TransformationsStripImpl();
+}
+
+function HugSignup() {
+  return (
+    <section className="px-5 py-10 sm:py-14 bg-bg-soft">
+      <div className="mx-auto max-w-[560px]">
+        <div className="rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
+          <img
+            src={jjHugSignup}
+            alt="JJ Smith hugging a sister from the community"
+            className="block w-full h-auto"
+            loading="lazy"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function _TransformationsStripImpl() {
   const items = [
     { src: t1, caption: "-17.6 lbs in 6 weeks" },
     { src: t4, caption: "-12.2 lbs in 6 weeks" },
