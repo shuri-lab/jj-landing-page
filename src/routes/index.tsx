@@ -184,7 +184,7 @@ function Hero() {
         </h1>
 
         <p className="font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto">
-          <strong className="not-italic font-semibold text-brand-deep">But this time… I'm with you every step of the way.</strong> Not in a group. Not from a distance. <strong className="not-italic font-semibold text-brand-deep">Actually right there with you.</strong>
+          <mark className="bg-brand/15 text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark className="bg-brand/15 text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
 
         <div className="relative rounded-2xl overflow-hidden bg-bg-soft mb-8 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
@@ -565,6 +565,7 @@ function Offer() {
     {
       name: "Essential",
       price: "$137",
+      perMonth: "≈ $46 / month",
       tagline: "One coaching call per week with JJ",
       featured: false,
       items: [
@@ -577,6 +578,7 @@ function Offer() {
     {
       name: "Plus",
       price: "$167",
+      perMonth: "≈ $56 / month",
       tagline: "Two coaching calls per week with JJ",
       featured: true,
       items: [
@@ -590,8 +592,11 @@ function Offer() {
       <div className="text-center">
         <Eyebrow center>The offer</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Pick the plan that's right for you.
+          Choose how close you want me, sister.
         </h2>
+        <p className="-mt-6 mb-10 text-[15px] sm:text-[16px] text-ink-soft max-w-[520px] mx-auto">
+          One payment for the <strong className="text-ink font-semibold">full 12-week program</strong> with JJ. Not monthly — that's the whole thing.
+        </p>
       </div>
       <div className="grid gap-6 sm:grid-cols-2">
         {plans.map((p) => (
@@ -613,7 +618,11 @@ function Offer() {
               <p className="text-[14px] text-ink-soft mt-2 min-h-[40px]">{p.tagline}</p>
               <div className="flex items-baseline justify-center gap-2 my-6">
                 <span className="font-serif text-[56px] sm:text-[64px] font-medium leading-none">{p.price}</span>
+                <span className="text-[13px] text-ink-soft font-medium">total</span>
               </div>
+              <p className="-mt-4 mb-2 text-[13px] text-ink-faint">
+                for the full 12-week program <span className="text-ink-soft">· {p.perMonth} if you'd rather break it up</span>
+              </p>
             </div>
             <ul className="border-t border-dashed border-line flex-1">
               {p.items.map((label) => (
