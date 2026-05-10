@@ -203,7 +203,7 @@ function Hero() {
           in 12 weeks.
         </h1>
 
-        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink -mb-6 lg:mb-8 max-w-[560px] mx-auto lg:mx-0">
+        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink -mb-16 lg:mb-8 max-w-[560px] mx-auto lg:mx-0">
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
         <div className="hidden lg:block">
@@ -244,8 +244,8 @@ function Hero() {
 
 
 function HeroImageWithLogoBackdrop() {
-  const logosPerRow = 4;
-  const rows = Array.from({ length: 7 });
+  const logosPerRow = 2;
+  const rows = Array.from({ length: 4 });
   return (
     <div className="relative mb-0 lg:mb-0 aspect-[4/5] sm:aspect-square lg:aspect-[4/5] overflow-hidden">
       <div
@@ -259,14 +259,14 @@ function HeroImageWithLogoBackdrop() {
         }}
       >
         {rows.map((_, i) => (
-          <div key={i} className="flex items-center gap-6 shrink-0">
+          <div key={i} className="flex items-center gap-8 shrink-0">
             {Array.from({ length: logosPerRow }).map((_, j) => (
               <img
                 key={j}
                 src={jjSmithLogo}
                 alt=""
                 aria-hidden
-                className="h-[clamp(28px,6vw,64px)] w-auto opacity-[0.06] shrink-0"
+                className="h-[clamp(64px,14vw,140px)] w-auto opacity-[0.06] shrink-0"
               />
             ))}
           </div>
