@@ -182,3 +182,23 @@
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee { animation: none; }
 }
+
+/*
+ * iOS-safe sticky bottom CTA.
+ * Using position: fixed with transform-based show/hide caused the bar to
+ * detach from the viewport bottom on iPhone Safari while scrolling. We
+ * pin it with fixed positioning anchored to the safe-area bottom and use
+ * opacity to hide/show instead of transform.
+ */
+.sticky-mobile-cta {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 40;
+}
+
+@media (max-width: 639px) {
+  /* Reserve space so content isn't hidden behind the fixed CTA bar. */
+  body { padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px)); }
+}
