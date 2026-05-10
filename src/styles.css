@@ -85,22 +85,22 @@
    * accented with the coral pink used across her sales pages. */
   /* Palette anchored on the logo plum #4b415b with soft light-pink accents. */
   --background: oklch(0.992 0.003 320);
-  --foreground: oklch(0.36 0.025 295);
+  --foreground: oklch(0.38 0.04 300);
   --bg-soft: oklch(0.97 0.012 340);
   --bg-warm: oklch(0.94 0.022 350);
-  --ink: oklch(0.36 0.025 295);
-  --ink-soft: oklch(0.46 0.025 295);
-  --ink-faint: oklch(0.6 0.02 300);
+  --ink: oklch(0.38 0.04 300);
+  --ink-soft: oklch(0.5 0.035 300);
+  --ink-faint: oklch(0.62 0.03 305);
   --line: oklch(0.9 0.015 320);
-  --brand: oklch(0.36 0.025 295);
-  --brand-deep: oklch(0.28 0.025 295);
+  --brand: oklch(0.38 0.045 300);
+  --brand-deep: oklch(0.3 0.045 300);
   --brand-pink: oklch(0.9 0.04 355);
-  --brand-plum: oklch(0.36 0.025 295);
+  --brand-plum: oklch(0.38 0.045 300);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.32 0.04 310);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.32 0.04 310);
-  --primary: oklch(0.36 0.025 295);
+  --primary: oklch(0.38 0.045 300);
   --primary-foreground: oklch(0.99 0.005 340);
   --secondary: oklch(0.94 0.025 340);
   --secondary-foreground: oklch(0.32 0.04 310);
@@ -112,7 +112,7 @@
   --destructive-foreground: oklch(0.984 0.003 247.858);
   --border: oklch(0.9 0.025 340);
   --input: oklch(0.9 0.025 340);
-  --ring: oklch(0.36 0.025 295);
+  --ring: oklch(0.38 0.045 300);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
