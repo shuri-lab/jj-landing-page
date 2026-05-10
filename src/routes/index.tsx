@@ -172,7 +172,7 @@ function Nav() {
         <img
           src={jjSmithLogo}
           alt="JJ Smith"
-          className="h-7 sm:h-8 w-auto"
+          className="h-5 sm:h-6 w-auto"
           width={240}
           height={64}
         />
