@@ -224,6 +224,8 @@ function Hero() {
           <strong className="not-italic font-semibold font-sans">this is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone. The next cohort won't open for another 90 days.
         </div>
 
+        <TransformationsStrip />
+
         <div className="mt-10 pt-8 border-t border-line grid gap-3 sm:grid-cols-3">
           {[
             "5+ million pounds lost in our community",
