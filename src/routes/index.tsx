@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Check } from "lucide-react";
+import { Heart, Play } from "lucide-react";
 import {
   Accordion,
   AccordionContent,
@@ -16,6 +16,14 @@ import t7 from "@/assets/landing/transformation-7.jpg";
 import t8 from "@/assets/landing/transformation-8.jpg";
 import jjOwn from "@/assets/landing/jj-own-transformation.png";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
+import partnerEssence from "@/assets/landing/partners/essence.png";
+import partnerFox from "@/assets/landing/partners/fox.png";
+import partnerDrOz from "@/assets/landing/partners/droz.png";
+import partnerNbc from "@/assets/landing/partners/nbc.png";
+import partnerTheView from "@/assets/landing/partners/theview.png";
+import partnerSteveHarvey from "@/assets/landing/partners/steveharvey.png";
+import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
+import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -222,33 +230,49 @@ function Hero() {
         </p>
 
         <div className="mt-8 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] text-brand-deep font-serif italic leading-relaxed text-left">
-          Sister,{" "}
-          <strong className="not-italic font-semibold font-sans">this is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone. The next cohort won't open for another 90 days.
+          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone.
         </div>
 
         <TransformationsStrip />
+      </div>
+      <PartnersMarquee />
+    </section>
+  );
+}
 
-        <div className="mt-10 pt-8 border-t border-line grid gap-3 sm:grid-cols-3">
-          {[
-            "5+ million pounds lost in our community",
-            "#1 NY Times bestselling author",
-            "As seen on Dr. Oz, Steve Harvey, The View",
-          ].map((t) => (
-            <div
-              key={t}
-              className="flex items-start gap-2.5 text-left bg-bg-soft rounded-xl px-4 py-3.5"
-            >
-              <span className="mt-0.5 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand text-white">
-                <Check className="h-3 w-3" strokeWidth={3} />
-              </span>
-              <span className="text-[13px] sm:text-[13.5px] font-medium text-ink leading-snug">
-                {t}
-              </span>
-            </div>
+function PartnersMarquee() {
+  const logos = [
+    { src: partnerNyTimes, alt: "The New York Times" },
+    { src: partnerDrOz, alt: "The Dr. Oz Show" },
+    { src: partnerSteveHarvey, alt: "Steve Harvey" },
+    { src: partnerTheView, alt: "The View" },
+    { src: partnerNbc, alt: "NBC" },
+    { src: partnerFox, alt: "FOX" },
+    { src: partnerEssence, alt: "Essence" },
+    { src: partnerWomansWorld, alt: "Woman's World" },
+  ];
+  const track = [...logos, ...logos];
+  return (
+    <div className="bg-white border-y border-line py-8 sm:py-10 mt-12 -mx-5">
+      <p className="text-center text-[12px] sm:text-[13px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
+        5+ million pounds lost · #1 NY Times bestselling author · As seen on
+      </p>
+      <div className="relative overflow-hidden">
+        <div className="flex w-max gap-14 sm:gap-20 animate-marquee items-center">
+          {track.map((l, i) => (
+            <img
+              key={i}
+              src={l.src}
+              alt={l.alt}
+              className="h-12 sm:h-16 w-auto object-contain opacity-80 shrink-0"
+              loading="lazy"
+            />
           ))}
         </div>
+        <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent" />
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent" />
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -355,7 +379,7 @@ function RealTalk() {
       </div>
       <div className="mt-12">
         <BigCta sub="14-day money-back · Only 500 spots">
-          Reserve my spot, $497
+          Reserve my spot
         </BigCta>
       </div>
     </Section>
@@ -526,58 +550,80 @@ function Transformations() {
 }
 
 function Offer() {
-  const items = [
-    "A welcome call to get to know you",
-    "Your personalized meal plan and movement plan",
-    "Weekly calls from JJ",
-    "Daily text check-ins from JJ",
+  const plans = [
+    {
+      name: "Essential",
+      price: "$137",
+      tagline: "One coaching call per week with JJ",
+      featured: false,
+      items: [
+        "Welcome call to get to know you",
+        "Personalized meal plan & movement plan",
+        "1 coaching call / week with JJ",
+        "Daily text check-ins from JJ",
+      ],
+    },
+    {
+      name: "Plus",
+      price: "$167",
+      tagline: "Two coaching calls per week with JJ",
+      featured: true,
+      items: [
+        "Everything in Essential",
+        "2 coaching calls / week with JJ",
+      ],
+    },
   ];
   return (
     <Section id="offer" bg="soft">
       <div className="text-center">
         <Eyebrow center>The offer</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-10 max-w-[580px] mx-auto">
-          Here's everything that's included.
+          Pick the plan that's right for you.
         </h2>
       </div>
-      <div className="rounded-2xl bg-card border-2 border-ink p-7 sm:p-9 shadow-[0_30px_60px_-25px_rgba(0,0,0,0.18)]">
-        <div className="text-center">
-          <span className="inline-block bg-bg-warm text-brand-deep text-[12px] tracking-[0.16em] font-semibold px-3.5 py-1.5 rounded-full mb-5">
-            SPRING COHORT · STARTS MARCH 3
-          </span>
-          <h3 className="font-serif text-[24px] sm:text-[30px] leading-tight">JJ's 12-Week Body Transformation</h3>
-          <p className="text-[16px] text-ink-soft mt-3 max-w-[440px] mx-auto">
-            Personalized for your body. JJ with you every step of the way.
-          </p>
-
-          <div className="flex items-baseline justify-center gap-3 flex-wrap my-7">
-            <span className="font-serif text-[64px] sm:text-[72px] font-medium leading-none">$497</span>
-            <span className="text-[15px] text-ink-soft">or 3 payments of $179</span>
+      <div className="grid gap-6 sm:grid-cols-2">
+        {plans.map((p) => (
+          <div
+            key={p.name}
+            className={`relative rounded-2xl bg-card p-7 sm:p-8 flex flex-col ${
+              p.featured
+                ? "border-2 border-ink shadow-[0_30px_60px_-25px_rgba(0,0,0,0.22)]"
+                : "border border-line shadow-[0_20px_40px_-25px_rgba(0,0,0,0.15)]"
+            }`}
+          >
+            {p.featured && (
+              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-[11px] tracking-[0.18em] font-semibold px-3 py-1 rounded-full uppercase">
+                Most personal
+              </span>
+            )}
+            <div className="text-center">
+              <h3 className="font-serif text-[22px] sm:text-[26px] leading-tight">{p.name}</h3>
+              <p className="text-[14px] text-ink-soft mt-2 min-h-[40px]">{p.tagline}</p>
+              <div className="flex items-baseline justify-center gap-2 my-6">
+                <span className="font-serif text-[56px] sm:text-[64px] font-medium leading-none">{p.price}</span>
+              </div>
+            </div>
+            <ul className="border-t border-dashed border-line flex-1">
+              {p.items.map((label) => (
+                <li
+                  key={label}
+                  className="flex items-center gap-3 py-3.5 text-[16px] text-ink border-b border-dashed border-line last:border-b-0"
+                >
+                  <span className="text-brand font-bold w-5 text-center text-[18px]">✓</span>
+                  <span className="flex-1">{label}</span>
+                </li>
+              ))}
+            </ul>
+            <BigCta sub="14-day money-back guarantee" className="mt-6">
+              Reserve my spot, {p.price}
+            </BigCta>
           </div>
-        </div>
-
-        <ul className="border-t border-dashed border-line">
-          {items.map((label) => (
-            <li
-              key={label}
-              className="flex items-center gap-3 py-4 text-[17px] text-ink border-b border-dashed border-line last:border-b-0"
-            >
-              <span className="text-brand font-bold w-5 text-center text-[18px]">✓</span>
-              <span className="flex-1">{label}</span>
-            </li>
-          ))}
-        </ul>
-
-        <BigCta sub="14-day money-back guarantee" className="mt-8">
-          Reserve my spot, $497
-        </BigCta>
-        <p className="text-center text-[14px] text-ink-faint mt-4">
-          Only 500 spots · Cohort starts March 3
-        </p>
-        <p className="text-center text-[14px] text-ink-faint mt-1">
-          Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
-        </p>
+        ))}
       </div>
+      <p className="text-center text-[14px] text-ink-faint mt-6">
+        Only 500 spots · Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+      </p>
     </Section>
   );
 }
@@ -621,7 +667,7 @@ function Faq() {
     },
     {
       q: "What if I miss this cohort?",
-      a: "I only run 4 cohorts a year so we can give every sister the real attention she deserves. The next one won't open for another 90 days.",
+      a: "I keep enrollment small so every sister gets the real attention she deserves. Once these 500 spots are gone, you'll have to wait until I open the next round.",
     },
   ];
   return (
@@ -662,8 +708,8 @@ function LastCall() {
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] mx-auto">
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
-        <BigCta sub="14-day money-back guarantee · Only 500 spots · Cohort starts March 3">
-          Reserve my spot, $497
+        <BigCta sub="14-day money-back guarantee · Only 500 spots">
+          Reserve my spot
         </BigCta>
       </div>
     </section>
@@ -696,7 +742,7 @@ function StickyCta() {
     >
       <div className="px-4 py-3 flex items-center gap-3">
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-semibold text-ink">Spring cohort · $497</div>
+          <div className="font-semibold text-ink">JJ's 12-Week Transformation</div>
           <div className="text-ink-faint">
             Closes in <CountdownInline className="tabular-nums" />
           </div>
