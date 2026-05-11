@@ -247,7 +247,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative -mt-2 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
+    <div className="relative -mt-10 sm:-mt-14 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
       <div
         aria-hidden
         className="absolute -inset-[40%] pointer-events-none z-0"
