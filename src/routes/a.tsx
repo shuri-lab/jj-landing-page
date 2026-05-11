@@ -112,7 +112,7 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to} search={search} className={cls}>
+        <Link to={to as string} search={search as never} className={cls}>
           {content}
         </Link>
       ) : href ? (
