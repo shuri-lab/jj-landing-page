@@ -99,7 +99,7 @@ function CheckoutPage() {
         <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 h-14 flex items-center justify-center gap-4 overflow-hidden">
           <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" />
           <span className="h-5 w-px bg-line" aria-hidden />
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-10 sm:h-11 w-auto scale-150 origin-center" />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-10 sm:h-11 w-auto scale-150 origin-left ml-3" />
         </div>
       </div>
 
