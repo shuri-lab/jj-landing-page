@@ -86,24 +86,36 @@ function BigCta({
   children,
   sub,
   className = "",
+  href,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
   className?: string;
+  href?: string;
 }) {
+  const content = (
+    <>
+      {children}
+      {sub && (
+        <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">
+          {sub}
+        </span>
+      )}
+    </>
+  );
+  const cls =
+    "block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep text-center";
   return (
     <div className={`w-full ${className}`}>
-      <button
-        onClick={scrollToOffer}
-        className="block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep"
-      >
-        {children}
-        {sub && (
-          <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">
-            {sub}
-          </span>
-        )}
-      </button>
+      {href ? (
+        <a href={href} className={cls}>
+          {content}
+        </a>
+      ) : (
+        <button onClick={scrollToOffer} className={cls}>
+          {content}
+        </button>
+      )}
     </div>
   );
 }
@@ -641,7 +653,7 @@ function Offer() {
                 {p.note}
               </p>
             )}
-            <BigCta sub="14-day money-back guarantee" className="mt-6">
+            <BigCta sub="14-day money-back guarantee" className="mt-6" href="https://yoplatform.ai/signup">
               Reserve my spot, {p.price}
             </BigCta>
           </div>
