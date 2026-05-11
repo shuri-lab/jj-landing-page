@@ -99,7 +99,7 @@ function CheckoutPage() {
         <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 h-14 flex items-center justify-center gap-4 overflow-hidden">
           <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" />
           <span className="h-5 w-px bg-line" aria-hidden />
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-10 sm:h-11 w-auto" />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-10 sm:h-11 w-auto scale-150 origin-center" />
         </div>
       </div>
 
@@ -114,7 +114,7 @@ function CheckoutPage() {
               {planInfo.price}
             </div>
           </div>
-          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] sm:text-[12px] text-ink-soft">
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[13px] sm:text-[14px] text-ink-soft">
             <span className="inline-flex items-center gap-1.5">
               <span className="text-brand font-bold">✓</span> 14-day money-back guarantee
             </span>
