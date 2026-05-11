@@ -10,11 +10,23 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NoVideoRouteImport } from './routes/no-video'
+import { Route as BRouteImport } from './routes/b'
+import { Route as ARouteImport } from './routes/a'
 import { Route as IndexRouteImport } from './routes/index'
 
 const NoVideoRoute = NoVideoRouteImport.update({
   id: '/no-video',
   path: '/no-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BRoute = BRouteImport.update({
+  id: '/b',
+  path: '/b',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ARoute = ARouteImport.update({
+  id: '/a',
+  path: '/a',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -25,27 +37,35 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/a': typeof ARoute
+  '/b': typeof BRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/a': typeof ARoute
+  '/b': typeof BRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/a': typeof ARoute
+  '/b': typeof BRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/no-video'
+  fullPaths: '/' | '/a' | '/b' | '/no-video'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/no-video'
-  id: '__root__' | '/' | '/no-video'
+  to: '/' | '/a' | '/b' | '/no-video'
+  id: '__root__' | '/' | '/a' | '/b' | '/no-video'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ARoute: typeof ARoute
+  BRoute: typeof BRoute
   NoVideoRoute: typeof NoVideoRoute
 }
 
@@ -56,6 +76,20 @@ declare module '@tanstack/react-router' {
       path: '/no-video'
       fullPath: '/no-video'
       preLoaderRoute: typeof NoVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/b': {
+      id: '/b'
+      path: '/b'
+      fullPath: '/b'
+      preLoaderRoute: typeof BRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/a': {
+      id: '/a'
+      path: '/a'
+      fullPath: '/a'
+      preLoaderRoute: typeof ARouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -70,6 +104,8 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ARoute: ARoute,
+  BRoute: BRoute,
   NoVideoRoute: NoVideoRoute,
 }
 export const routeTree = rootRouteImport
