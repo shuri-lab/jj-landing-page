@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
+import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
@@ -58,9 +59,6 @@ export const Route = createFileRoute("/no-video")({
 
 const COHORT_DEADLINE = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
-function scrollToOffer() {
-  document.getElementById("offer")?.scrollIntoView({ behavior: "smooth", block: "start" });
-}
 
 function CountdownInline({ className = "" }: { className?: string }) {
   const { days, hours, minutes, seconds } = useCountdown(COHORT_DEADLINE);
@@ -627,7 +625,7 @@ function Offer() {
   ];
 
   return (
-    <Section id="offer" bg="soft">
+    <Section id="offer" bg="soft" className="scroll-mt-20">
       <div className="text-center">
         <Eyebrow center>Only 500 spots</Eyebrow>
         <h2 className="font-serif text-[26px] sm:text-[36px] lg:text-[44px] leading-[1.1] mb-5 max-w-[580px] lg:max-w-[820px] mx-auto">
