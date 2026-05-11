@@ -84,7 +84,7 @@ function GoogleG({ className = "" }: { className?: string }) {
 }
 
 function CheckoutPage() {
-  const { plan } = Route.useSearch();
+  const { plan } = Route.useSearch() as { plan: PlanId };
   const planInfo = PLANS[plan];
   const [googleSignedIn, setGoogleSignedIn] = useState(false);
   const [email, setEmail] = useState("");
