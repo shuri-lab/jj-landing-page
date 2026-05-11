@@ -96,39 +96,36 @@ function CheckoutPage() {
     <div className="bg-background text-foreground overflow-x-hidden min-h-screen">
       {/* Top bar */}
       <div className="border-b border-line bg-background">
-        <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center gap-5">
-          <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" />
-          <span className="h-5 w-px bg-line" aria-hidden />
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-5 sm:h-6 w-auto" />
+        <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-2.5 flex items-center justify-center gap-4">
+          <img src={jjSmithLogo} alt="JJ Smith" className="h-6 sm:h-7 w-auto" />
+          <span className="h-6 w-px bg-line" aria-hidden />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-9 sm:h-10 w-auto" />
         </div>
       </div>
 
       <main className="px-5 pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10">
         <div className="mx-auto max-w-[640px]">
           {/* Order summary */}
-          <div className="rounded-2xl border border-line bg-card shadow-[0_20px_40px_-25px_rgba(0,0,0,0.18)] p-5 sm:p-6">
-            <div className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-ink-faint font-semibold mb-1">
-                  Your order
+          <div className="rounded-2xl border border-line bg-card shadow-[0_20px_40px_-25px_rgba(0,0,0,0.18)] px-4 py-3 sm:px-5 sm:py-3.5">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-ink-faint font-semibold">
+                  Your order · {planInfo.name}
                 </p>
-                <h2 className="font-serif text-[20px] sm:text-[22px] leading-tight">
+                <h2 className="font-serif text-[16px] sm:text-[18px] leading-tight truncate">
                   12-Week Body Transformation
                 </h2>
-                <p className="text-[14px] text-ink-soft mt-1">
-                  {planInfo.name} plan
-                </p>
               </div>
               <div className="text-right shrink-0">
-                <div className="font-serif text-[28px] sm:text-[32px] leading-none">
+                <div className="font-serif text-[22px] sm:text-[24px] leading-none">
                   {planInfo.price}
                 </div>
-                <div className="text-[12px] text-ink-faint mt-1">
+                <div className="text-[11px] text-ink-faint mt-0.5">
                   or {planInfo.perMonth}
                 </div>
               </div>
             </div>
-            <div className="mt-4 pt-4 border-t border-dashed border-line flex flex-wrap gap-x-4 gap-y-1 text-[12px] sm:text-[13px] text-ink-soft">
+            <div className="mt-2.5 pt-2.5 border-t border-dashed border-line flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] sm:text-[12px] text-ink-soft">
               <span className="inline-flex items-center gap-1.5">
                 <span className="text-brand font-bold">✓</span> 14-day money-back guarantee
               </span>
@@ -152,7 +149,7 @@ function CheckoutPage() {
           </div>
 
           {/* Hero image */}
-          <div className="relative mt-2 aspect-square max-w-[360px] sm:max-w-[440px] mx-auto">
+          <div className="relative -mt-4 sm:-mt-6 aspect-square max-w-[360px] sm:max-w-[440px] mx-auto">
             <div
               aria-hidden
               className="absolute -inset-[40%] pointer-events-none z-0"
@@ -169,7 +166,7 @@ function CheckoutPage() {
           </div>
 
           {/* Sign-in block, flush with hero */}
-          <div className="-mt-4 sm:-mt-6">
+          <div className="relative z-20 mt-2 sm:mt-4">
             <button
               type="button"
               onClick={() => setGoogleSignedIn(true)}
