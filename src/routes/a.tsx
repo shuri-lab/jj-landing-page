@@ -10,6 +10,7 @@ import {
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
+import heroA from "@/assets/hero-a.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -271,7 +272,7 @@ function HeroImageWithLogoBackdrop() {
         }}
       />
       <img
-        src={heroJJNoVideo}
+        src={heroA}
         alt="JJ Smith"
         className="relative z-10 w-full h-full object-contain object-bottom"
         width={1024}
