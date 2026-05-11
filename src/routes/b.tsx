@@ -10,6 +10,7 @@ import {
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
+import heroA from "@/assets/hero-a.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -191,7 +192,7 @@ function Hero() {
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
         <div className="lg:order-1">
-        <div className="text-[11px] uppercase tracking-[0.22em] text-brand font-semibold mb-4">
+        <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
           12-Week Body Transformation
         </div>
         <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
@@ -203,23 +204,8 @@ function Hero() {
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every week on the phone.</mark> <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every day by text.</mark> A plan built around <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">what you actually eat, what you actually love</mark>, what you actually struggle with.
         </p>
 
-        <ul className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5 max-w-[560px] mx-auto lg:mx-0 text-left">
-          <li className="flex items-center gap-2 rounded-xl bg-bg-warm border border-line px-4 py-3">
-            <span className="text-[20px]" aria-hidden>📞</span>
-            <span className="text-[14px] sm:text-[15px] font-semibold text-ink leading-tight">Weekly call with JJ</span>
-          </li>
-          <li className="flex items-center gap-2 rounded-xl bg-bg-warm border border-line px-4 py-3">
-            <span className="text-[20px]" aria-hidden>💬</span>
-            <span className="text-[14px] sm:text-[15px] font-semibold text-ink leading-tight">Daily text from JJ</span>
-          </li>
-          <li className="flex items-center gap-2 rounded-xl bg-bg-warm border border-line px-4 py-3">
-            <span className="text-[20px]" aria-hidden>📝</span>
-            <span className="text-[14px] sm:text-[15px] font-semibold text-ink leading-tight">A plan made for YOUR real life</span>
-          </li>
-        </ul>
-
-        <p className="text-[15px] sm:text-[16px] text-ink-soft mb-6 max-w-[560px] mx-auto lg:mx-0">
-          Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>. Me, literally talking you through it.
+        <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
+          Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>.
         </p>
 
         <div className="hidden lg:block">
@@ -261,7 +247,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[240px] sm:max-w-[300px] lg:max-w-none mx-auto">
+    <div className="relative -mt-16 sm:-mt-20 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
       <div
         aria-hidden
         className="absolute -inset-[40%] pointer-events-none z-0"
@@ -271,7 +257,7 @@ function HeroImageWithLogoBackdrop() {
         }}
       />
       <img
-        src={heroJJNoVideo}
+        src={heroA}
         alt="JJ Smith"
         className="relative z-10 w-full h-full object-contain object-bottom"
         width={1024}
