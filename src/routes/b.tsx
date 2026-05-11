@@ -8,7 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
-import { useCoachPrograms, formatPrice, signupUrl, type CoachProgram } from "@/lib/coach-programs";
+import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
 import heroA from "@/assets/hero-a.png";
@@ -576,10 +576,13 @@ function Transformations() {
   );
 }
 
+type PaymentMode = "full" | "monthly";
+
 type OfferPlan = {
   name: string;
-  price: string;
-  tagline: string;
+  fullPrice: number;
+  monthlyPrice: number;
+  monthlyMonths: number;
   featured: boolean;
   items: string[];
   note?: string;
@@ -589,97 +592,136 @@ type OfferPlan = {
 
 function Offer() {
   const { basic, premium } = useCoachPrograms();
+  const [mode, setMode] = useState<Record<string, PaymentMode>>({});
 
   const buildPlan = (
     program: CoachProgram | null,
-    base: Omit<OfferPlan, "price" | "href" | "loading">,
+    base: Omit<OfferPlan, "href" | "loading">,
   ): OfferPlan => ({
     ...base,
-    price: program ? formatPrice(program.priceAmount, program.priceCurrency) : "—",
     href: program ? signupUrl(program.id) : "#",
     loading: !program,
   });
 
   const plans: OfferPlan[] = [
     buildPlan(basic, {
-      name: "Essential",
-      tagline: "One call per week with JJ",
+      name: "Standard",
+      fullPrice: 197,
+      monthlyPrice: 77,
+      monthlyMonths: 3,
       featured: false,
       items: [
-        "Welcome call to get to know you",
-        "Personalized meal plan & movement plan",
         "1 call / week with JJ",
+        "Personalized meal & movement plan",
         "Daily text check-ins from JJ",
       ],
     }),
     buildPlan(premium, {
-      name: "Plus",
-      tagline: "Two calls per week with JJ",
+      name: "Premium",
+      fullPrice: 347,
+      monthlyPrice: 147,
+      monthlyMonths: 3,
       featured: true,
       items: [
-        "Everything in Essential",
+        "Everything in Standard",
         "2 calls / week with JJ",
       ],
       note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
     }),
   ];
+
   return (
     <Section id="offer" bg="soft">
       <div className="text-center">
         <Eyebrow center>Only 500 spots</Eyebrow>
-        <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
+        <h2 className="font-serif text-[26px] sm:text-[36px] lg:text-[44px] leading-[1.1] mb-5 max-w-[580px] lg:max-w-[820px] mx-auto">
           <em className="not-italic text-brand">Yes! I'm ready!</em>
         </h2>
       </div>
-      <div className="grid gap-6 sm:grid-cols-2 lg:max-w-[900px] lg:mx-auto lg:gap-8">
-        {plans.map((p) => (
-          <div
-            key={p.name}
-            className={`relative rounded-2xl bg-card p-7 sm:p-8 flex flex-col ${
-              p.featured
-                ? "border-2 border-ink shadow-[0_30px_60px_-25px_rgba(0,0,0,0.22)]"
-                : "border border-line shadow-[0_20px_40px_-25px_rgba(0,0,0,0.15)]"
-            }`}
-          >
-            {p.featured && (
-              <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-[11px] tracking-[0.18em] font-semibold px-3 py-1 rounded-full uppercase">
-                Most personal
-              </span>
-            )}
-            <div className="text-center">
-              <h3 className="font-serif text-[22px] sm:text-[26px] leading-tight">{p.name}</h3>
-              <p className="text-[14px] text-ink-soft mt-2 min-h-[40px]">{p.tagline}</p>
-              <div className="flex items-baseline justify-center gap-2 my-6">
-                <span className="font-serif text-[56px] sm:text-[64px] font-medium leading-none">{p.price}</span>
-                <span className="text-[13px] text-ink-soft font-medium">total</span>
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
+        {plans.map((p) => {
+          const selected = mode[p.name] ?? "full";
+          const isFull = selected === "full";
+          const monthlyTotal = p.monthlyPrice * p.monthlyMonths;
+          const savings = monthlyTotal - p.fullPrice;
+          const ctaPrice = isFull ? `$${p.fullPrice}` : `$${p.monthlyPrice}/month`;
+          return (
+            <div
+              key={p.name}
+              className={`relative rounded-2xl bg-card p-4 sm:p-6 flex flex-col ${
+                p.featured
+                  ? "border-2 border-ink shadow-[0_30px_60px_-25px_rgba(0,0,0,0.22)]"
+                  : "border border-line shadow-[0_20px_40px_-25px_rgba(0,0,0,0.15)]"
+              }`}
+            >
+              {p.featured && (
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-[11px] tracking-[0.18em] font-semibold px-3 py-1 rounded-full uppercase">
+                  Most personal
+                </span>
+              )}
+              <div className="text-center">
+                <h3 className="font-serif text-[20px] sm:text-[24px] leading-tight">{p.name}</h3>
               </div>
-              <p className="-mt-4 mb-2 text-[13px] text-ink-faint">
-                for the full 12-week program
-              </p>
-            </div>
-            <ul className="border-t border-dashed border-line flex-1">
-              {p.items.map((label) => (
-                <li
-                  key={label}
-                  className="flex items-center gap-3 py-3.5 text-[16px] text-ink border-b border-dashed border-line last:border-b-0"
+              <div className="mt-3 space-y-2">
+                <button
+                  type="button"
+                  onClick={() => setMode((m) => ({ ...m, [p.name]: "full" }))}
+                  className={`w-full rounded-xl border px-3 py-2.5 text-left transition-colors ${
+                    isFull ? "border-brand bg-brand/5" : "border-line bg-transparent"
+                  }`}
                 >
-                  <span className="text-brand font-bold w-5 text-center text-[18px]">✓</span>
-                  <span className="flex-1">{label}</span>
-                </li>
-              ))}
-            </ul>
-            {p.note && (
-              <p className="mt-5 text-[14px] italic text-ink-soft leading-snug text-center">
-                {p.note}
-              </p>
-            )}
-            <BigCta sub="14-day money-back guarantee" className="mt-6" href={p.loading ? undefined : p.href}>
-              {p.loading ? "Loading…" : `Reserve my spot, ${p.price}`}
-            </BigCta>
-          </div>
-        ))}
+                  <div className="flex items-center gap-3">
+                    <span className={`h-4 w-4 rounded-full border-2 shrink-0 ${isFull ? "border-brand" : "border-line"} flex items-center justify-center`}>
+                      {isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
+                    </span>
+                    <div className="flex-1 flex items-baseline justify-between gap-2">
+                      <span className="text-[12px] uppercase tracking-[0.14em] text-ink-soft font-semibold">Pay in full</span>
+                      <span className="font-serif text-[32px] sm:text-[38px] font-medium leading-none">${p.fullPrice}</span>
+                    </div>
+                  </div>
+                  <p className="mt-1 ml-7 text-[12px] text-brand font-medium">Save ${savings} vs monthly</p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setMode((m) => ({ ...m, [p.name]: "monthly" }))}
+                  className={`w-full rounded-xl border px-3 py-2 text-left transition-colors ${
+                    !isFull ? "border-brand bg-brand/5" : "border-line bg-transparent"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <span className={`h-4 w-4 rounded-full border-2 shrink-0 ${!isFull ? "border-brand" : "border-line"} flex items-center justify-center`}>
+                      {!isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
+                    </span>
+                    <span className="flex-1 text-[13px] text-ink-soft">
+                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span> for {p.monthlyMonths} months
+                    </span>
+                  </div>
+                </button>
+              </div>
+              <ul className="mt-4 border-t border-dashed border-line">
+                {p.items.map((label) => (
+                  <li
+                    key={label}
+                    className="flex items-center gap-3 py-2 text-[14px] sm:text-[15px] text-ink border-b border-dashed border-line last:border-b-0"
+                  >
+                    <span className="text-brand font-bold w-4 text-center text-[16px]">✓</span>
+                    <span className="flex-1">{label}</span>
+                  </li>
+                ))}
+              </ul>
+              {p.note && (
+                <p className="mt-3 text-[13px] italic text-ink-soft leading-snug text-center">
+                  {p.note}
+                </p>
+              )}
+              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : p.href}>
+                {p.loading ? "Loading…" : `Reserve my spot — ${ctaPrice}`}
+              </BigCta>
+            </div>
+          );
+        })}
       </div>
-      <p className="text-center text-[14px] text-ink-faint mt-6">
+      <p className="text-center text-[13px] text-ink-faint mt-4">
         Only 500 spots · Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
       </p>
     </Section>
