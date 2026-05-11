@@ -195,7 +195,7 @@ function Hero() {
         <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
           12-Week Body Transformation
         </div>
-        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
+        <h1 className="font-serif font-medium text-[32px] sm:text-[52px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
           I've spent 15 years giving you the information. This time,{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>I'm giving you me.</em>
         </h1>
