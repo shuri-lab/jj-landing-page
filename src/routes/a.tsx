@@ -204,8 +204,8 @@ function Hero() {
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every week on the phone.</mark> <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every day by text.</mark> A plan built around <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">what you actually eat, what you actually love</mark>, what you actually struggle with.
         </p>
 
-        <p className="text-[15px] sm:text-[16px] text-ink-soft mb-6 max-w-[560px] mx-auto lg:mx-0">
-          Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>. Me, literally talking you through it.
+        <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
+          Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>.
         </p>
 
         <div className="hidden lg:block">
@@ -247,7 +247,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative mb-0 aspect-square lg:aspect-[4/5] max-w-[240px] sm:max-w-[300px] lg:max-w-none mx-auto">
+    <div className="relative -mt-2 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
       <div
         aria-hidden
         className="absolute -inset-[40%] pointer-events-none z-0"
