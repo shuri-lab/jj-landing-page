@@ -8,6 +8,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
+import { useCoachPrograms, formatPrice, signupUrl, type CoachProgram } from "@/lib/coach-programs";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
 import heroA from "@/assets/hero-a.png";
@@ -583,12 +584,33 @@ function Transformations() {
   );
 }
 
+type OfferPlan = {
+  name: string;
+  price: string;
+  tagline: string;
+  featured: boolean;
+  items: string[];
+  note?: string;
+  href: string;
+  loading: boolean;
+};
+
 function Offer() {
-  const plans = [
-    {
+  const { basic, premium } = useCoachPrograms();
+
+  const buildPlan = (
+    program: CoachProgram | null,
+    base: Omit<OfferPlan, "price" | "href" | "loading">,
+  ): OfferPlan => ({
+    ...base,
+    price: program ? formatPrice(program.priceAmount, program.priceCurrency) : "—",
+    href: program ? signupUrl(program.id) : "#",
+    loading: !program,
+  });
+
+  const plans: OfferPlan[] = [
+    buildPlan(basic, {
       name: "Essential",
-      price: "$197",
-      perMonth: "or $77 / month",
       tagline: "One call per week with JJ",
       featured: false,
       items: [
@@ -597,11 +619,9 @@ function Offer() {
         "1 call / week with JJ",
         "Daily text check-ins from JJ",
       ],
-    },
-    {
+    }),
+    buildPlan(premium, {
       name: "Plus",
-      price: "$347",
-      perMonth: "or $147 / month",
       tagline: "Two calls per week with JJ",
       featured: true,
       items: [
@@ -609,7 +629,7 @@ function Offer() {
         "2 calls / week with JJ",
       ],
       note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
-    },
+    }),
   ];
   return (
     <Section id="offer" bg="soft">
@@ -642,7 +662,7 @@ function Offer() {
                 <span className="text-[13px] text-ink-soft font-medium">total</span>
               </div>
               <p className="-mt-4 mb-2 text-[13px] text-ink-faint">
-                for the full 12-week program <span className="text-ink-soft">· {p.perMonth}</span>
+                for the full 12-week program
               </p>
             </div>
             <ul className="border-t border-dashed border-line flex-1">
