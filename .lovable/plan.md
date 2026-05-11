@@ -1,45 +1,62 @@
-# /no-video A/B Variant Landing Page
+## Goal
 
-Create a duplicate landing page at `/no-video` for A/B testing. Identical to the current `/` page except the hero swaps the video-style image+play-button for a hero image (the JJ photo you uploaded) sitting in front of a repeating, faded "JJ SMITH" wordmark backdrop — same vibe as the reference screenshot and jynfits.com.
+Replace the external `https://yoplatform.ai/signup` link on the two priced "Reserve my spot, $197 / $347" buttons in `/a` with an internal in-app checkout/signup screen at a new route. The screen mirrors the visual style of the `/a` hero section and acts as a mock pre-payment step (no real auth, no real payment).
 
-## Files
+Only `/a` is affected. `/b`, `/`, and `/no-video` keep their current behavior.
 
-1. **Add hero image asset**
-   - Copy `user-uploads://Yobody_logos_4.png` → `src/assets/landing/hero-jj-no-video.png`
+## Route & navigation
 
-2. **Create `src/routes/no-video.tsx`**
-   - Duplicate of `src/routes/index.tsx` (route path `/no-video`).
-   - Distinct `head()` metadata (title suffix " — v2 / no-video", noindex meta so the A/B variant doesn't compete in SEO).
-   - Same `Landing` composition; only the `Hero` component differs.
+- New route file: `src/routes/checkout.tsx` → URL `/checkout`.
+- It accepts a `plan` search param: `essential` (default) or `plus`.
+- In `src/routes/a.tsx`, change the two `BigCta` priced buttons (currently `href="https://yoplatform.ai/signup"`) to use TanStack `<Link to="/checkout" search={{ plan: p.id }}>` instead, so the BigCta renders as an internal link. The `BigCta` component gets a small extension to support an internal `to`/`search` target in addition to (or replacing) `href`.
+- `head()` for `/checkout` sets a distinct title and `noindex`.
 
-3. **Route auto-registers** via TanStack file-based routing — no edits to `routeTree.gen.ts`.
+## Screen layout (top to bottom)
 
-## Hero changes (only difference vs. `/`)
+All sections use the same tokens, fonts, brand color, gradients, and spacing scale already used in the `/a` hero so it feels like a continuation.
 
-Replace the `aspect-video` card containing `heroJJ` + the Play button with:
+1. **Top bar** — same container, padding, and border treatment as the landing top bar, but content is just two logos centered side by side: existing `jjSmithLogo` and the new YoPlatform logo. No nav links, no CTA. Sticky behavior matches the landing.
 
-```text
-┌─────────────────────────────────┐
-│  JJ SMITH JJ SMITH JJ SMITH ... │  ← repeating wordmark, very faded
-│  SMITH JJ SMITH JJ SMITH JJ ... │     (brand color, ~8–12% opacity)
-│  JJ SMITH JJ SMITH JJ SMITH ... │
-│         ┌──────────┐            │
-│         │  JJ      │            │  ← cut-out hero photo on top,
-│         │  photo   │            │     no card/shadow background
-│         └──────────┘            │
-│  SMITH JJ SMITH JJ SMITH JJ ... │
-└─────────────────────────────────┘
-```
+2. **Order Summary card** — compact card, same surface/radius/shadow language as the bottom sticky reservation card on mobile in `/a`. Contents:
+   - Program: "12-Week Body Transformation"
+   - Plan: "Essential" or "Plus" (driven by `plan` search param)
+   - Price line: `$197 total · or $77/month` (Essential) / `$347 total · or $127/month` (Plus) — pulled from the same plan data already defined in `a.tsx`, extracted into a tiny shared module so both files stay in sync.
+   - Trust row: `✓ 14-day money-back guarantee · ✓ Only 500 spots`
 
-Implementation:
-- Outer wrapper: `relative` container, transparent background (no rounded card, no shadow), preserves current responsive sizing.
-- Background layer: absolutely-positioned div containing the text "JJ SMITH" repeated many times across multiple rows, wrapping to fill the box. Uppercase, bold, tight letter-spacing, large font (~clamp 56–96px), color = brand with low opacity (~0.10), `pointer-events-none`, `select-none`, `overflow-hidden`, slight rotation (-6deg) like the reference. Use a `mask-image` linear gradient so edges fade out softly.
-- Foreground layer: the new `hero-jj-no-video.png` (transparent PNG of JJ), `relative z-10`, `object-contain`, anchored bottom-center, sized to fill the hero column height.
-- No play button overlay (this is the no-video variant).
-- Keep all surrounding hero layout (countdown pill, headline, subhead, CTA, "Doors close in…", warm callout, transformations strip, partners marquee) identical to `/`.
+3. **Headline + subhead** — same typography as the `/a` hero `<h1>` and subhead (same font sizes, leading, tracking, colors, mobile/desktop scaling).
+   - H1: "You're almost in. Let's get you set up."
+   - Sub: "We just need your email to send your program access and receipt."
 
-## Notes
+4. **JJ hero image** — reuse `heroA` with the exact same gradient/background treatment as in the `/a` hero block (same wrapper, same gradient layer, same sizing). No play button overlay.
 
-- All other sections (`HugQuote`, `RealTalk`, `Steps`, `JJReveal`, `Transformations`, `Offer`, `Guarantee`, `Faq`, `LastCall`, `Footer`, `StickyCta`) are reused as-is from the duplicate file.
-- Both CTAs continue to scroll to `#offer` on the same page.
-- Add `{ name: "robots", content: "noindex" }` on `/no-video` to keep the variant out of search results during testing.
+5. **Sign-in block** (positioned so the hero image sits flush on top of the Google button, no gap — matching how the hero sits on top of the "Yes JJ, I want you in my corner" CTA in `/a`):
+   - **Google button** (primary, white background, Google "G" logo, dark text). Mock behavior:
+     - Click → swap label to "Signed in as test@email.com", swap the Google "G" for a green check icon, mark Google-auth state = true.
+     - Once in this state, the email field is hidden/disabled and the primary CTA is enabled.
+   - **Divider**: thin rule with centered "OR CONTINUE WITH EMAIL" label, styled like the reference screenshot (muted color, uppercase, letter-spacing).
+   - **Email input** — large rounded white field, placeholder `your@email.com`, matches the reference screenshot.
+     - Real-time typo detection: simple in-file mailcheck-style suggester for common domains (`gmail.com`, `yahoo.com`, `hotmail.com`, `outlook.com`, `icloud.com`, `aol.com`). When the typed domain is close (Levenshtein ≤ 2) but not exact, render a small line under the field: `Did you mean test@gmail.com?` (clickable to accept). Plain TS, no extra deps.
+
+6. **Primary CTA** — "Continue to Payment →"
+   - Disabled visual state until either Google mock-signed-in OR the email field has at least one character (per spec: "if they enter just a letter the button becomes active").
+   - Active state uses the exact same styling as the `/a` "Reserve my spot" `BigCta` (deep brand color, same radius, shadow, hover).
+   - On click in mock mode: no real navigation — just keep it inert (or, optionally, log to console). Spec doesn't require a destination; we leave it as a non-functional mock so the screen reads as the final pre-payment step.
+
+7. **Trust footer** — small muted line directly under the CTA: `🔒 Secure checkout · Powered by Stripe · 14-day money-back guarantee`.
+
+No global footer, no FAQ, no testimonials — this screen is intentionally focused.
+
+## Assets
+
+- New logo: copy `user-uploads://black_letters.png` → `src/assets/landing/yoplatform-logo.png` and import as ES module.
+- Reuse `heroA`, `jjSmithLogo`, brand tokens, and existing gradient utility classes — no new colors added to `src/styles.css`.
+- Google "G" icon: small inline SVG (no new dependency). Green check uses `lucide-react`'s `Check` (already in the project's icon set).
+
+## Technical notes
+
+- File created: `src/routes/checkout.tsx` (single self-contained component with the small `Mailcheck`-style helper inline).
+- File edited: `src/routes/a.tsx` — only the two priced BigCta usages and a minor `BigCta` prop addition to support internal `to` + `search` (keeps existing `href` and onClick paths intact for the other variants and pages).
+- Plan data (`Essential` / `Plus` name + price + monthly) is duplicated minimally in `checkout.tsx` keyed by the `plan` search param to avoid a larger refactor; values match `a.tsx` exactly.
+- All styling via existing Tailwind tokens and brand classes already in `src/styles.css`. No design-token additions.
+- Responsive: layout is mobile-first (matches `/a` viewport behavior the user is currently in), scales up to desktop with the same max-widths used in the `/a` hero column.
+- TanStack: `validateSearch` on the route narrows `plan` to `"essential" | "plus"` with `essential` default.
