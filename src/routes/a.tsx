@@ -36,7 +36,7 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/a")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Week Body Transformation Challenge, v2" },
+      { title: "JJ Smith, 12-Week Body Transformation Challenge, A" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
