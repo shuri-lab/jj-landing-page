@@ -99,38 +99,37 @@ function CheckoutPage() {
         <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center gap-4">
           <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" />
           <span className="h-5 w-px bg-line" aria-hidden />
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-5 sm:h-6 w-auto" />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-8 sm:h-9 w-auto" />
+        </div>
+      </div>
+
+      {/* Order summary — flush with top bar */}
+      <div className="border-b border-line bg-card">
+        <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-3">
+          <div className="flex items-center justify-between gap-3">
+            <h2 className="font-serif text-[16px] sm:text-[18px] leading-tight truncate min-w-0">
+              12-Week Body Transformation
+            </h2>
+            <div className="font-serif text-[22px] sm:text-[24px] leading-none shrink-0">
+              {planInfo.price}
+            </div>
+          </div>
+          <div className="mt-2 flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] sm:text-[12px] text-ink-soft">
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-brand font-bold">✓</span> 14-day money-back guarantee
+            </span>
+            <span className="inline-flex items-center gap-1.5">
+              <span className="text-brand font-bold">✓</span> Limited spots
+            </span>
+          </div>
         </div>
       </div>
 
       <main className="px-5 pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10">
         <div className="mx-auto max-w-[640px]">
-          {/* Order summary */}
-          <div className="rounded-2xl border border-line bg-card shadow-[0_20px_40px_-25px_rgba(0,0,0,0.18)] px-4 py-3 sm:px-5 sm:py-3.5">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <h2 className="font-serif text-[16px] sm:text-[18px] leading-tight truncate">
-                  12-Week Body Transformation
-                </h2>
-              </div>
-              <div className="text-right shrink-0">
-                <div className="font-serif text-[22px] sm:text-[24px] leading-none">
-                  {planInfo.price}
-                </div>
-              </div>
-            </div>
-            <div className="mt-2.5 pt-2.5 border-t border-dashed border-line flex flex-wrap gap-x-4 gap-y-0.5 text-[11px] sm:text-[12px] text-ink-soft">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="text-brand font-bold">✓</span> 14-day money-back guarantee
-              </span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="text-brand font-bold">✓</span> Limited spots
-              </span>
-            </div>
-          </div>
 
           {/* Headline */}
-          <div className="text-center mt-10 sm:mt-12">
+          <div className="text-center">
             <h1 className="font-serif font-medium text-[34px] sm:text-[52px] leading-[1.08] tracking-[-0.025em] mb-5">
               You're almost in.{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
