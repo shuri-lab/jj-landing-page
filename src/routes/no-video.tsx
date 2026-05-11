@@ -407,7 +407,7 @@ const STEPS = [
     title: "We'll start with a call, just you and me",
     text: (
       <>
-        Sister, before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love eating and what you can't stand. What's been holding you back. <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
+        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love eating and what you can't stand. What's been holding you back. <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
       </>
     ),
   },
@@ -425,7 +425,7 @@ const STEPS = [
     title: "Then I'm calling you every week",
     text: (
       <>
-        This is where it all changes, sister. Through the version of me I built for this, I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
+        This is where it all changes. Through the version of me I built for this, I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
       </>
     ),
   },
@@ -444,7 +444,7 @@ function Steps() {
   return (
     <Section>
       <div className="text-center">
-        <Eyebrow center>Here's how it works, sister</Eyebrow>
+        <Eyebrow center>Here's how it works</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-12 max-w-[580px] lg:max-w-[820px] mx-auto">
           This is what our <em className="not-italic" style={{ color: "#c9635c" }}>12 weeks together</em> will <em className="not-italic text-brand">actually feel like</em>.
         </h2>
@@ -494,7 +494,7 @@ function JJReveal() {
           <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
         </div>
         <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different, sister. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
+          That's why this time is different. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
         </blockquote>
         <p className="mt-7 font-serif italic text-[19px] text-ink">
           Love,
