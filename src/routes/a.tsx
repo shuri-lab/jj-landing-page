@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, Play } from "lucide-react";
 import {
@@ -87,11 +87,15 @@ function BigCta({
   sub,
   className = "",
   href,
+  to,
+  search,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
   className?: string;
   href?: string;
+  to?: string;
+  search?: Record<string, string>;
 }) {
   const content = (
     <>
@@ -107,7 +111,11 @@ function BigCta({
     "block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep text-center";
   return (
     <div className={`w-full ${className}`}>
-      {href ? (
+      {to ? (
+        <Link to={to} search={search} className={cls}>
+          {content}
+        </Link>
+      ) : href ? (
         <a href={href} className={cls}>
           {content}
         </a>
@@ -653,7 +661,7 @@ function Offer() {
                 {p.note}
               </p>
             )}
-            <BigCta sub="14-day money-back guarantee" className="mt-6" href="https://yoplatform.ai/signup">
+            <BigCta sub="14-day money-back guarantee" className="mt-6" to="/checkout" search={{ plan: p.name.toLowerCase() }}>
               Reserve my spot, {p.price}
             </BigCta>
           </div>
