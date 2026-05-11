@@ -593,8 +593,8 @@ function Offer() {
     base: Omit<OfferPlan, "href" | "loading">,
   ): OfferPlan => ({
     ...base,
-    href: program ? signupUrl(program.id) : "#",
-    loading: !program,
+    href: "/checkout",
+    loading: false,
   });
 
   const plans: OfferPlan[] = [
