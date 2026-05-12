@@ -10,6 +10,9 @@ export interface CoachProgram {
   pricingTier: PricingTier;
   priceAmount: number;
   priceCurrency: string;
+  durationWeeks?: number;
+  monthlyPriceAmount?: number;
+  fullProgramPriceAmount?: number;
 }
 
 const ENDPOINT = "https://api.yoplatform.ai/helpers/public/coach-programs";
@@ -68,6 +71,8 @@ export function formatPrice(amount: number, currency: string) {
   }
 }
 
-export function signupUrl(programId: string) {
-  return `https://yoplatform.ai?signup?coachProgramConfigId=${programId}`;
+export type SignupBillingInterval = "MONTHLY" | "FULL_PROGRAM";
+
+export function signupUrl(programId: string, billingInterval: SignupBillingInterval) {
+  return `https://yoplatform.ai/signup?coachProgramConfigId=${programId}&billingInterval=${billingInterval}`;
 }
