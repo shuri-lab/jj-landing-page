@@ -574,46 +574,68 @@ type OfferPlan = {
   note?: string;
   href: string;
   loading: boolean;
+  fullHref: string;
+  monthlyHref: string;
+  hasFull: boolean;
 };
 
 function Offer() {
   const { basic, premium } = useCoachPrograms();
   const [mode, setMode] = useState<Record<string, PaymentMode>>({});
 
-  const buildPlan = (
+  const planFromProgram = (
     program: CoachProgram | null,
-    base: Omit<OfferPlan, "href" | "loading">,
-  ): OfferPlan => ({
-    ...base,
-    href: "/checkout",
-    loading: false,
+    fallback: { fullPrice: number; monthlyPrice: number; monthlyMonths: number },
+  ) => {
+    const fullPrice = program?.fullProgramPriceAmount ?? fallback.fullPrice;
+    const monthlyPrice =
+      program?.monthlyPriceAmount ?? program?.priceAmount ?? fallback.monthlyPrice;
+    const monthlyMonths = program?.durationWeeks
+      ? Math.max(1, Math.round(program.durationWeeks / 4))
+      : fallback.monthlyMonths;
+    const hasFull =
+      typeof program?.fullProgramPriceAmount === "number" && program.fullProgramPriceAmount > 0;
+    const fullHref = program ? signupUrl(program.id, "FULL_PROGRAM") : "/checkout";
+    const monthlyHref = program ? signupUrl(program.id, "MONTHLY") : "/checkout";
+    return { fullPrice, monthlyPrice, monthlyMonths, hasFull, fullHref, monthlyHref };
+  };
+
+  const basicPricing = planFromProgram(basic, {
+    fullPrice: 197,
+    monthlyPrice: 77,
+    monthlyMonths: 3,
+  });
+  const premiumPricing = planFromProgram(premium, {
+    fullPrice: 347,
+    monthlyPrice: 147,
+    monthlyMonths: 3,
   });
 
   const plans: OfferPlan[] = [
-    buildPlan(basic, {
+    {
       name: "Standard",
-      fullPrice: 197,
-      monthlyPrice: 77,
-      monthlyMonths: 3,
+      ...basicPricing,
       featured: false,
       items: [
         "1 call / week with JJ",
         "Personalized meal & movement plan",
         "Daily text check-ins from JJ",
       ],
-    }),
-    buildPlan(premium, {
+      href: "/checkout",
+      loading: !basic,
+    },
+    {
       name: "Premium",
-      fullPrice: 347,
-      monthlyPrice: 147,
-      monthlyMonths: 3,
+      ...premiumPricing,
       featured: true,
       items: [
         "Everything in Standard",
         "2 calls / week with JJ",
       ],
       note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
-    }),
+      href: "/checkout",
+      loading: !premium,
+    },
   ];
 
   return (
@@ -627,10 +649,11 @@ function Offer() {
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => {
           const selected = mode[p.name] ?? "full";
-          const isFull = selected === "full";
+          const isFull = p.hasFull && selected === "full";
           const monthlyTotal = p.monthlyPrice * p.monthlyMonths;
           const savings = monthlyTotal - p.fullPrice;
           const ctaPrice = isFull ? `$${p.fullPrice}` : `$${p.monthlyPrice}/month`;
+          const ctaHref = isFull ? p.fullHref : p.monthlyHref;
           return (
             <div
               key={p.name}
@@ -700,7 +723,7 @@ function Offer() {
                   {p.note}
                 </p>
               )}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : p.href}>
+              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot — ${ctaPrice}`}
               </BigCta>
             </div>
