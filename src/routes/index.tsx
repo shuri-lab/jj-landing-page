@@ -641,7 +641,7 @@ function Offer() {
 
   const plans: OfferPlan[] = [
     {
-      name: "Standard",
+      name: "Essential",
       ...basicPricing,
       featured: false,
       items: ["1 call / week with JJ", "Personalized meal & movement plan", "Daily text check-ins from JJ"],
@@ -649,7 +649,7 @@ function Offer() {
       loading: !basic,
     },
     {
-      name: "Premium",
+      name: "Plus",
       ...premiumPricing,
       featured: true,
       items: ["Everything in Standard", "2 calls / week with JJ"],
