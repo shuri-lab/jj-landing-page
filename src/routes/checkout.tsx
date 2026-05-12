@@ -101,22 +101,28 @@ function CheckoutPage() {
           <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-ink-faint">
             powered by
           </span>
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-6 sm:h-7 w-auto" />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-8 sm:h-10 w-auto" />
         </div>
       </div>
 
       {/* Order summary — flush with top bar */}
       <div className="border-b border-line bg-card">
-        <div className="mx-auto max-w-[640px] lg:max-w-[1100px] px-5 py-3">
-          <h2 className="font-serif text-[16px] sm:text-[18px] leading-tight">
-            12-Week Body Transformation
-          </h2>
-          <div className="mt-1 text-[13px] sm:text-[14px] text-ink-soft">
-            <span className="font-semibold tracking-wide">
-              {plan === "plus" ? "PLUS" : "STANDARD"}
-            </span>
-            {" — Pay in full "}
-            <span className="text-ink font-semibold">{planInfo.price}</span>
+        <div className="mx-auto max-w-[640px] lg:max-w-[1100px] px-5 py-3 flex items-start justify-between gap-4">
+          <div className="min-w-0">
+            <div className="text-[11px] sm:text-[12px] font-semibold tracking-[0.18em] uppercase text-ink-soft">
+              {plan === "plus" ? "PLUS PLAN" : "STANDARD PLAN"}
+            </div>
+            <div className="font-serif text-[16px] sm:text-[18px] leading-tight">
+              12-Week Body Transformation
+            </div>
+          </div>
+          <div className="text-right shrink-0">
+            <div className="font-serif text-[20px] sm:text-[22px] leading-tight">
+              {planInfo.price}
+            </div>
+            <div className="text-[12px] sm:text-[13px] text-ink-soft">
+              Pay in full
+            </div>
           </div>
         </div>
       </div>
@@ -124,10 +130,8 @@ function CheckoutPage() {
       <main className="px-5 pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10">
         <div className="mx-auto max-w-[640px] lg:max-w-[1100px] lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
 
-          {/* Left column: headline + sign-in */}
-          <div className="lg:order-1">
-          {/* Headline */}
-          <div className="text-center lg:text-left">
+          {/* Headline (left column on desktop, vertically centered) */}
+          <div className="text-center lg:text-left lg:col-start-1 lg:row-start-1 lg:self-center">
             <h1 className="font-serif font-medium text-[34px] sm:text-[52px] leading-[1.08] tracking-[-0.025em] mb-5">
               <span className="block">You're almost in.</span>
               <em className="not-italic block" style={{ color: "#c9635c" }}>
@@ -139,8 +143,11 @@ function CheckoutPage() {
             </p>
           </div>
 
-          {/* Hero image — mobile/tablet only (desktop renders in right column) */}
-          <div className="relative -mt-10 sm:-mt-14 aspect-square max-w-[260px] sm:max-w-[320px] mx-auto lg:hidden">
+          {/* Right column on desktop: hero + sign-in */}
+          <div className="lg:col-start-2 lg:row-start-1">
+
+          {/* Hero image */}
+          <div className="relative -mt-10 sm:-mt-14 lg:mt-0 aspect-square max-w-[260px] sm:max-w-[320px] lg:max-w-[420px] mx-auto">
             <div
               aria-hidden
               className="absolute -inset-[40%] pointer-events-none z-0"
@@ -157,7 +164,7 @@ function CheckoutPage() {
           </div>
 
           {/* Sign-in block, flush with hero */}
-          <div className="relative z-20 -mt-4 sm:-mt-6 lg:mt-8">
+          <div className="relative z-20 -mt-4 sm:-mt-6">
             <button
               type="button"
               onClick={() => setGoogleSignedIn(true)}
@@ -224,7 +231,7 @@ function CheckoutPage() {
               Continue to Payment →
             </button>
 
-            <p className="mt-5 text-center lg:text-left text-[12px] text-ink-faint w-full flex flex-wrap items-center justify-center lg:justify-start gap-x-1.5 gap-y-1">
+            <p className="mt-5 text-center text-[12px] text-ink-faint w-full flex flex-wrap items-center justify-center gap-x-1.5 gap-y-1">
               <span className="inline-flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5" />
                 Secure checkout · Powered by Stripe
@@ -233,25 +240,6 @@ function CheckoutPage() {
               <span className="block w-full sm:w-auto sm:inline">14-day money-back guarantee</span>
             </p>
           </div>
-          </div>
-
-          {/* Right column (desktop only): hero image */}
-          <div className="hidden lg:flex lg:order-2 lg:justify-center">
-            <div className="relative aspect-square w-full max-w-[440px]">
-              <div
-                aria-hidden
-                className="absolute -inset-[30%] pointer-events-none z-0"
-                style={{
-                  background:
-                    "radial-gradient(ellipse at center, rgba(255, 182, 193, 0.7) 0%, rgba(255, 200, 210, 0.45) 30%, rgba(255, 220, 228, 0.2) 55%, rgba(255, 255, 255, 0) 80%)",
-                }}
-              />
-              <img
-                src={heroA}
-                alt="JJ Smith"
-                className="relative z-10 w-full h-full object-contain object-bottom"
-              />
-            </div>
           </div>
         </div>
       </main>
