@@ -690,9 +690,7 @@ function Offer() {
                 </span>
               )}
               <div className="text-center">
-                <h3 className="font-serif text-[20px] sm:text-[24px] leading-tight">
-                  {p.name == "BASIC" ? "Essential" : "Plus"}
-                </h3>
+                <h3 className="font-serif text-[20px] sm:text-[24px] leading-tight">{p.name}</h3>
               </div>
               <div className="mt-3 space-y-2">
                 <button
