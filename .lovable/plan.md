@@ -1,70 +1,68 @@
 ## Scope
 
-All changes are in `src/routes/checkout.tsx`. No other files affected. Mobile and tablet layouts remain visually unchanged except for the explicit text-content tweaks (1, 2, 3, 5, 6).
+All changes in `src/routes/checkout.tsx`. Mobile/tablet untouched except items 1 and 2 (which are content/layout tweaks the user explicitly wants on all viewports).
 
 ## Changes
 
-### 1. Top bar — "powered by" branding
-Replace the vertical divider line between the JJ Smith logo and the YoPlatform "black letters" logo with the text "powered by", and shrink the YoPlatform logo slightly.
+### 1. Bigger YoPlatform "black letters" logo
+Top bar currently: `h-6 sm:h-7`. Bump to `h-8 sm:h-10` so the wordmark reads larger next to the JJ Smith logo and "powered by" label. Container height stays 14 (`h-14`); logos still vertically centered.
 
-- Remove `<span className="h-5 w-px bg-line" />`.
-- Insert `<span className="text-[11px] uppercase tracking-[0.18em] text-ink-faint">powered by</span>`.
-- Reduce YoPlatform logo from `h-10 sm:h-11 ... scale-150` to roughly `h-7 sm:h-8 w-auto` (no scale), keep alt text.
-
-### 2. Headline line break
-Currently: `You're almost in. Let's get you set up.` on one flowing line.
-Change to two explicit lines:
-```
-You're almost in.
-Let's get you set up.   (in brand color, italic styling kept)
-```
-Insert `<br />` (or split into two block spans) between the two sentences. The `em`/color treatment on the second sentence stays.
-
-### 3. Order summary card simplification
-Remove the price on the right and the "14-day money-back guarantee · Limited spots" row. Keep only two lines stacked:
-- Line 1: `12-Week Body Transformation` (existing serif styling)
-- Line 2: `STANDARD — Pay in full $197` (smaller, ink-soft) for Essential, or `PLUS — Pay in full $347` for Plus.
-
-The plan label uses the existing `PLANS[plan]` data. "STANDARD" maps to Essential, "PLUS" maps to Plus. Price comes from `planInfo.price`.
-
-### 4. Desktop two-column layout (≥ lg, 1024px+)
-Mobile/tablet layout stays exactly as-is. At `lg:` and above, restructure `<main>` into a 2-column grid:
+### 2. Order summary bar — two-line, left/right justified
+Replace the current two-line stacked block with a single row that has two stacked lines on each side:
 
 ```text
-┌─────────────────────────┬─────────────────────────┐
-│  LEFT COLUMN            │  RIGHT COLUMN           │
-│  - Headline             │  - Hero image (smaller, │
-│  - Subtext              │    contained in column) │
-│  - Google button        │                         │
-│  - Divider + email      │                         │
-│  - Continue to Payment  │                         │
-│  - Secure footer text   │                         │
-└─────────────────────────┴─────────────────────────┘
+STANDARD PLAN                             $197
+12-Week Body Transformation          Pay in full
 ```
 
-Implementation:
-- Wrap inner content in a `lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center` container with `lg:max-w-[1100px] mx-auto`.
-- Move the headline + subtext + sign-in block into the left column (`lg:text-left`, remove `text-center` only at `lg`).
-- Move the hero image into the right column; on `lg` drop the negative margin (`lg:mt-0`) and increase max width to fit the column (~`lg:max-w-[440px]`).
-- Sign-in block: remove negative top margin at `lg` (`lg:mt-0`); buttons stay full-width within their column.
+Markup:
+```tsx
+<div className="flex items-start justify-between gap-4">
+  <div className="min-w-0">
+    <div className="text-[11px] sm:text-[12px] font-semibold tracking-[0.18em] uppercase text-ink-soft">
+      {plan === "plus" ? "PLUS PLAN" : "STANDARD PLAN"}
+    </div>
+    <div className="font-serif text-[16px] sm:text-[18px] leading-tight">
+      12-Week Body Transformation
+    </div>
+  </div>
+  <div className="text-right shrink-0">
+    <div className="font-serif text-[20px] sm:text-[22px] leading-tight">
+      {planInfo.price}
+    </div>
+    <div className="text-[12px] sm:text-[13px] text-ink-soft">
+      Pay in full
+    </div>
+  </div>
+</div>
+```
 
-Order summary card on desktop: constrain to a sensible width (e.g. `lg:max-w-[1100px] mx-auto`) so it does not stretch full-screen, matching the main content container width. The full-bleed border-bottom band stays, only the inner content is constrained — this matches the existing pattern (`max-w-[640px] lg:max-w-[1200px]`), tightened to `lg:max-w-[1100px]` to align with the new grid.
+No "/" separators. Left column left-aligned, right column right-aligned, vertically aligned to the top so the small label and the price line up.
 
-Top bar inner container similarly aligns to `lg:max-w-[1100px]` for visual consistency (optional polish, no behavioral change).
+### 3. Desktop two-column rebalance
+Currently the desktop grid puts headline + sub-text + Google button + email + CTA + footer all in the LEFT column, hero in the right. User wants the LEFT column to contain ONLY the headline and sub-text (vertically centered), and the RIGHT column to hold hero image + Google button + email + CTA + secure footer.
 
-### 5. Continue with Google — larger text
-Bump the button label font size. Change the button's text classes from `text-[16px] sm:text-[18px]` to `text-[18px] sm:text-[20px]`. Padding/height unchanged.
+Restructure `<main>` for `lg:` (mobile/tablet markup unchanged):
 
-### 6. Mobile secure-checkout footer break
-Currently one long line. Split into two lines on mobile, keep single line on `sm+`:
-- Line 1: `Secure checkout · Powered by Stripe`
-- Line 2: `14-day money-back guarantee`
+- Left column (`lg:order-1`): only `<h1>` + sub-paragraph, with `lg:self-center` (or `lg:items-center` on grid + content vertically centered).
+- Right column (`lg:order-2`): hero image stack on top, then sign-in block (Google btn, divider, email, CTA, secure footer).
 
-Implementation: replace the single `<p>` content with two `<span className="block sm:inline">` segments (with the `·` separator only shown on `sm+`), or use `<br className="sm:hidden" />`. Keep the lock icon at the start of line 1.
+Implementation approach to avoid duplicating mobile markup:
+- Keep the existing single linear column for mobile/tablet. At `lg:` use CSS grid to "pull" the hero + sign-in block into the right column via `lg:col-start-2 lg:row-start-1` and headline into `lg:col-start-1 lg:row-start-1 lg:self-center`. The current desktop-only hero `<div className="hidden lg:flex …">` is removed; instead, the existing hero `<div className="… lg:hidden">` loses `lg:hidden` and gets repositioned via grid placement on its parent wrapper.
+- Simpler alternative: keep two separate hero blocks (current mobile one + existing desktop-only one), but move the sign-in block markup into the right column at `lg:` by using `display: contents` style restructuring. To keep this clean, the plan is:
+  1. Wrap the headline + sub-paragraph in a `<section>` with `lg:col-start-1 lg:row-start-1 lg:self-center lg:text-left`.
+  2. Wrap the (mobile hero + sign-in block) into another `<section>` with `lg:col-start-2 lg:row-start-1`.
+  3. In that right section, the existing mobile hero loses `lg:hidden` and instead drops the negative `-mt-*` at `lg:` (`lg:mt-0`) and gets a larger desktop max-width (`lg:max-w-[420px] lg:mx-auto`).
+  4. Delete the current standalone `hidden lg:flex` desktop-only hero block (now redundant).
+- Sign-in block: remove `lg:mt-8` override (it was added when hero wasn't above it on desktop); restore the natural `-mt-4 sm:-mt-6` flow so the buttons hug the hero on desktop too.
+- Secure footer: revert to `text-center` on desktop as well (was `lg:text-left`), since right column content is centered under the hero.
+
+### 4. Order summary container width on desktop
+No change required — already constrained to `lg:max-w-[1100px]` from the previous turn, which matches the new main grid width. Verify the new two-column row balances visually inside that width; if it looks too sparse, tighten to `lg:max-w-[960px]` to match a slightly narrower main content area. Decision: keep `lg:max-w-[1100px]` for both the order bar and main grid so they align edge-to-edge.
 
 ## Files
-- `src/routes/checkout.tsx` — all six changes above.
+- `src/routes/checkout.tsx` — items 1, 2, 3, 4.
 
 ## Out of scope
-- No logic, routing, validation, or pricing changes.
-- No tablet/mobile visual changes beyond items 1, 2, 3, 5, 6.
+- No pricing, routing, or business-logic changes.
+- No tablet/mobile visual changes beyond items 1 and 2 (which are intentional content/layout updates).
