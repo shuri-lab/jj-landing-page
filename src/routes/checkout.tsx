@@ -128,26 +128,23 @@ function CheckoutPage() {
       </div>
 
       <main className="px-5 pt-6 pb-16 sm:pt-8 sm:pb-20 lg:pt-10">
-        <div className="mx-auto max-w-[640px] lg:max-w-[1100px] lg:grid lg:grid-cols-2 lg:gap-12 lg:items-center">
+        <div className="mx-auto max-w-[640px] lg:max-w-[520px]">
 
-          {/* Headline (left column on desktop, vertically centered) */}
-          <div className="text-center lg:text-left lg:col-start-1 lg:row-start-1 lg:self-center">
+          {/* Headline */}
+          <div className="text-center">
             <h1 className="font-serif font-medium text-[34px] sm:text-[52px] leading-[1.08] tracking-[-0.025em] mb-5">
               <span className="block">You're almost in.</span>
               <em className="not-italic block" style={{ color: "#c9635c" }}>
                 Let's get you set up.
               </em>
             </h1>
-            <p className="font-serif italic text-[18px] sm:text-[22px] leading-snug text-ink max-w-[520px] mx-auto lg:mx-0">
+            <p className="font-serif italic text-[18px] sm:text-[22px] leading-snug text-ink max-w-[520px] mx-auto">
               We just need your email to send your program access and receipt.
             </p>
           </div>
 
-          {/* Right column on desktop: hero + sign-in */}
-          <div className="lg:col-start-2 lg:row-start-1">
-
           {/* Hero image */}
-          <div className="relative -mt-10 sm:-mt-14 lg:mt-0 aspect-square max-w-[260px] sm:max-w-[320px] lg:max-w-[420px] mx-auto">
+          <div className="relative -mt-10 sm:-mt-14 aspect-square max-w-[260px] sm:max-w-[320px] mx-auto">
             <div
               aria-hidden
               className="absolute -inset-[40%] pointer-events-none z-0"
@@ -239,7 +236,6 @@ function CheckoutPage() {
               <span className="hidden sm:inline">·</span>
               <span className="block w-full sm:w-auto sm:inline">14-day money-back guarantee</span>
             </p>
-          </div>
           </div>
         </div>
       </main>
