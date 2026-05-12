@@ -101,7 +101,7 @@ function CheckoutPage() {
           <span className="text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-ink-faint">
             powered by
           </span>
-          <img src={yoplatformLogo} alt="YoPlatform" className="h-8 sm:h-10 w-auto" />
+          <img src={yoplatformLogo} alt="YoPlatform" className="h-12 sm:h-14 w-auto" />
         </div>
       </div>
 
