@@ -206,7 +206,7 @@ function Hero() {
               </mark>
             </p>
             <div className="hidden lg:block">
-              <BigCta sub="14-day money-back · Only 500 spots">Yes JJ, I want you in my corner!</BigCta>
+              <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner!</BigCta>
               <p className="mt-4 text-[13px] text-ink-soft">
                 Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
               </p>
@@ -235,7 +235,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Only 500 spots">Yes JJ, I want you in my corner!</BigCta>
+          <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner!</BigCta>
 
           <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
@@ -244,7 +244,7 @@ function Hero() {
 
         <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
           <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening
-          500 spots. Once they're gone, they're gone.
+          Limited spots. Once they're gone, they're gone.
         </div>
 
         <TransformationsStrip />
@@ -536,7 +536,7 @@ function JJReveal() {
         </p>
       </div>
       <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">Reserve my spot</BigCta>
+        <BigCta sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
       </div>
     </Section>
   );
@@ -586,7 +586,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">Yes, I want this to be me</BigCta>
+        <BigCta sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
       </div>
     </Section>
   );
@@ -662,7 +662,7 @@ function Offer() {
   return (
     <Section id="offer" bg="soft" className="scroll-mt-20">
       <div className="text-center">
-        <Eyebrow center>Only 500 spots</Eyebrow>
+        <Eyebrow center>Limited spots</Eyebrow>
         <h2 className="font-serif text-[26px] sm:text-[36px] lg:text-[44px] leading-[1.1] mb-5 max-w-[580px] lg:max-w-[820px] mx-auto">
           <em className="not-italic text-brand">Yes! I'm ready!</em>
         </h2>
@@ -757,7 +757,7 @@ function Offer() {
         })}
       </div>
       <p className="text-center text-[13px] text-ink-faint mt-4">
-        Only 500 spots · Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
+        Limited spots · Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
       </p>
     </Section>
   );
@@ -807,7 +807,7 @@ function Faq() {
     },
     {
       q: "What if I miss this cohort?",
-      a: "I keep enrollment small so every sister gets the real attention she deserves. Once these 500 spots are gone, you'll have to wait until I open the next round.",
+      a: "I keep enrollment small so every sister gets the real attention she deserves. Once these limited spots are gone, you'll have to wait until I open the next round.",
     },
   ];
   return (
@@ -858,7 +858,7 @@ function LastCall() {
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Only 500 spots">Reserve my spot</BigCta>
+          <BigCta sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
         </div>
       </div>
     </section>
