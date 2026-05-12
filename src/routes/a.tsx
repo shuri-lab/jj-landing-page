@@ -1,12 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, Play } from "lucide-react";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
@@ -60,7 +55,6 @@ export const Route = createFileRoute("/a")({
 
 const COHORT_DEADLINE = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
 
-
 function CountdownInline({ className = "" }: { className?: string }) {
   const { days, hours, minutes, seconds } = useCountdown(COHORT_DEADLINE);
   return (
@@ -100,9 +94,7 @@ function BigCta({
     <>
       {children}
       {sub && (
-        <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">
-          {sub}
-        </span>
+        <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">{sub}</span>
       )}
     </>
   );
@@ -130,9 +122,7 @@ function BigCta({
 function Eyebrow({ children, center = false }: { children: React.ReactNode; center?: boolean }) {
   return (
     <div
-      className={`text-[12px] uppercase tracking-[0.22em] text-brand font-semibold mb-5 ${
-        center ? "text-center" : ""
-      }`}
+      className={`text-[12px] uppercase tracking-[0.22em] text-brand font-semibold mb-5 ${center ? "text-center" : ""}`}
     >
       {children}
     </div>
@@ -189,13 +179,7 @@ function Nav() {
   return (
     <div className="border-b border-line bg-background">
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center">
-        <img
-          src={jjSmithLogo}
-          alt="JJ Smith"
-          className="h-5 sm:h-6 w-auto"
-          width={240}
-          height={64}
-        />
+        <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" width={240} height={64} />
       </div>
     </div>
   );
@@ -210,42 +194,49 @@ function Hero() {
         </div>
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
-        <div className="lg:order-1">
-        <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
-          12-Week Body Transformation
-        </div>
-        <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
-          Sister. This time,{" "}
-          <em className="not-italic" style={{ color: "#c9635c" }}>I'm actually with you.</em>
-        </h1>
+          <div className="lg:order-1">
+            <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
+              12-Week Body Transformation
+            </div>
+            <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
+              Sister. This time,{" "}
+              <em className="not-italic" style={{ color: "#c9635c" }}>
+                I'm actually with you.
+              </em>
+            </h1>
 
-        <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
-          <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every week on the phone.</mark> <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Every day by text.</mark> A plan built around <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">what you actually eat, what you actually love</mark>, what you actually struggle with.
-        </p>
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                Every week on the phone.
+              </mark>{" "}
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                Every day by text.
+              </mark>{" "}
+              A plan built around{" "}
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                what you actually eat, what you actually love
+              </mark>
+              , what you actually struggle with.
+            </p>
 
-        <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
-          Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>.
-        </p>
+            <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
+              Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>.
+            </p>
 
-        <div className="hidden lg:block">
-          <BigCta sub="14-day money-back · Only 500 spots">
-            Yes JJ, I want you in my corner
-          </BigCta>
-          <p className="mt-4 text-[13px] text-ink-soft">
-            Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-          </p>
-        </div>
-        </div>
-        <div className="lg:order-2">
-
-        <HeroImageWithLogoBackdrop />
-        </div>
+            <div className="hidden lg:block">
+              <BigCta sub="14-day money-back · Only 500 spots">Yes JJ, I want you in my corner</BigCta>
+              <p className="mt-4 text-[13px] text-ink-soft">
+                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
+              </p>
+            </div>
+          </div>
+          <div className="lg:order-2">
+            <HeroImageWithLogoBackdrop />
+          </div>
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Only 500 spots">
-            Yes JJ, I want you in my corner
-          </BigCta>
+          <BigCta sub="14-day money-back · Only 500 spots">Yes JJ, I want you in my corner</BigCta>
 
           <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
@@ -253,7 +244,8 @@ function Hero() {
         </div>
 
         <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
-          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening 500 spots. Once they're gone, they're gone.
+          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening
+          500 spots. Once they're gone, they're gone.
         </div>
 
         <TransformationsStrip />
@@ -262,7 +254,6 @@ function Hero() {
     </section>
   );
 }
-
 
 function HeroImageWithLogoBackdrop() {
   return (
@@ -388,17 +379,27 @@ function PromiseQuote({
   signature?: boolean;
 }) {
   return (
-    <section className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}>
-      <span aria-hidden className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none">"</span>
-      <span aria-hidden className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180">"</span>
+    <section
+      className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}
+    >
+      <span
+        aria-hidden
+        className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none"
+      >
+        "
+      </span>
+      <span
+        aria-hidden
+        className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180"
+      >
+        "
+      </span>
       <div className="mx-auto max-w-[640px] lg:max-w-[560px] relative w-full">
         {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
         <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[32px] leading-[1.3] max-w-[580px] mx-auto mb-5">
           {children}
         </p>
-        {signature && (
-          <p className="text-[14px] text-ink-faint tracking-[0.18em]">JJ</p>
-        )}
+        {signature && <p className="text-[14px] text-ink-faint tracking-[0.18em]">JJ</p>}
       </div>
     </section>
   );
@@ -412,12 +413,7 @@ function Promise2() {
           This time, I'm giving you me… and I'm not leaving.
         </p>
         <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)] lg:max-w-[480px] lg:mx-auto">
-          <img
-            src={jjTightWaist}
-            alt="JJ Smith"
-            className="block w-full h-auto"
-            loading="lazy"
-          />
+          <img src={jjTightWaist} alt="JJ Smith" className="block w-full h-auto" loading="lazy" />
         </div>
       </div>
     </section>
@@ -430,7 +426,9 @@ const STEPS = [
     title: "We'll start with a call, just you and me",
     text: (
       <>
-        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love eating and what you can't stand. What's been holding you back. <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
+        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love
+        eating and what you can't stand. What's been holding you back.{" "}
+        <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
       </>
     ),
   },
@@ -439,7 +437,11 @@ const STEPS = [
     title: "I'll build your meal plan and movement plan, just for you",
     text: (
       <>
-        From everything you tell me, I'll put together a meal plan and a movement plan that's all <em>you</em>. Not a cookie-cutter PDF I send to everybody. Not a generic challenge plan from a book. <strong className="text-ink font-medium">A plan designed around your body, your life, the foods you actually love.</strong>
+        From everything you tell me, I'll put together a meal plan and a movement plan that's all <em>you</em>. Not a
+        cookie-cutter PDF I send to everybody. Not a generic challenge plan from a book.{" "}
+        <strong className="text-ink font-medium">
+          A plan designed around your body, your life, the foods you actually love.
+        </strong>
       </>
     ),
   },
@@ -448,7 +450,10 @@ const STEPS = [
     title: "Then I'm calling you every week",
     text: (
       <>
-        This is where it all changes. Through the version of me I built for this, I'm going to be calling you. Not to throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way real sisters do.
+        This is where it all changes. Through the version of me I built for this, I'm going to be calling you. Not to
+        throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see
+        how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way
+        real sisters do.
       </>
     ),
   },
@@ -457,7 +462,10 @@ const STEPS = [
     title: "And I'll be texting you every day",
     text: (
       <>
-        Every. Single. Day. A check-in in the morning. A pick-me-up in the afternoon. A "you good?" on the days that look hard. <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if we catch the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got here again.
+        Every. Single. Day. A check-in in the morning. A pick-me-up in the afternoon. A "you good?" on the days that
+        look hard. <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if
+        we catch the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got
+        here again.
       </>
     ),
   },
@@ -469,18 +477,18 @@ function Steps() {
       <div className="text-center">
         <Eyebrow center>Here's how it works</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-12 max-w-[580px] lg:max-w-[820px] mx-auto">
-          This is what our <em className="not-italic" style={{ color: "#c9635c" }}>12 weeks together</em> will <em className="not-italic text-brand">actually feel like</em>.
+          This is what our{" "}
+          <em className="not-italic" style={{ color: "#c9635c" }}>
+            12 weeks together
+          </em>{" "}
+          will <em className="not-italic text-brand">actually feel like</em>.
         </h2>
       </div>
       <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
           <div key={s.n} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
-            <div className="font-serif italic font-medium text-[52px] text-brand leading-none mb-4">
-              {s.n}
-            </div>
-            <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">
-              {s.title}
-            </h3>
+            <div className="font-serif italic font-medium text-[52px] text-brand leading-none mb-4">{s.n}</div>
+            <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
             <p className="text-[17px] sm:text-[18px] text-ink-soft leading-[1.7]">{s.text}</p>
           </div>
         ))}
@@ -495,7 +503,10 @@ function JJReveal() {
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
         <h2 className="font-serif text-[30px] sm:text-[38px] lg:text-[48px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
-          <em className="not-italic" style={{ color: "#c9635c" }}>Sister to sister,</em> <em className="not-italic text-brand">why and how I'm doing this</em>.
+          <em className="not-italic" style={{ color: "#c9635c" }}>
+            Sister to sister,
+          </em>{" "}
+          <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
       <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
@@ -510,14 +521,36 @@ function JJReveal() {
           />
         </div>
         <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
-          <p>For 15 years I've been writing the books, building the programs, and doing the work right alongside you. Together we've lost more than 5 million pounds. And I am so proud of every single one of them.</p>
-          <p>But here's the truth, sister. <strong className="text-ink font-semibold">Every single time, I've watched you sign up with all the hope in the world, and slip back without me.</strong> Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off and Tuesday night came, I wasn't there.</p>
-          <p>And I knew that. For years, it was the part that hurt me the most. I could write another book. I could record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check on you. There's only one of me, and millions of you.</p>
-          <p>So I spent the last two years building something nobody's built before. <strong className="text-ink font-semibold">A way for me to actually show up for every single one of you.</strong> In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at 9pm.</p>
+          <p>
+            For 15 years I've been writing the books, building the programs, and doing the work right alongside you.
+            Together we've lost more than 5 million pounds. And I am so proud of every single one of them.
+          </p>
+          <p>
+            But here's the truth, sister.{" "}
+            <strong className="text-ink font-semibold">
+              Every single time, I've watched you sign up with all the hope in the world, and slip back without me.
+            </strong>{" "}
+            Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off
+            and Tuesday night came, I wasn't there.
+          </p>
+          <p>
+            And I knew that. For years, it was the part that hurt me the most. I could write another book. I could
+            record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check
+            on you. There's only one of me, and millions of you.
+          </p>
+          <p>
+            So I spent the last two years building something nobody's built before.{" "}
+            <strong className="text-ink font-semibold">
+              A way for me to actually show up for every single one of you.
+            </strong>{" "}
+            In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at
+            9pm.
+          </p>
           <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
         </div>
         <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different. Because this time, I'm not handing you another program and saying good luck. I'm walking with you the whole way.
+          That's why this time is different. Because this time, I'm not handing you another program and saying good
+          luck. I'm walking with you the whole way.
         </blockquote>
         <p className="mt-7 font-serif italic text-[19px] text-ink">
           Love,
@@ -526,9 +559,7 @@ function JJReveal() {
         </p>
       </div>
       <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">
-          Reserve my spot
-        </BigCta>
+        <BigCta sub="14-day money-back · Only 500 spots">Reserve my spot</BigCta>
       </div>
     </Section>
   );
@@ -550,7 +581,11 @@ function Transformations() {
       <div className="text-center">
         <Eyebrow center>Real sisters, real transformations</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-6 max-w-[580px] mx-auto">
-          Here's what happens after <em className="not-italic" style={{ color: "#c9635c" }}>12 weeks</em>.
+          Here's what happens after{" "}
+          <em className="not-italic" style={{ color: "#c9635c" }}>
+            12 weeks
+          </em>
+          .
         </h2>
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-12 max-w-[580px] mx-auto">
           With a plan built for your body and me walking with you the whole way
@@ -574,9 +609,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Only 500 spots">
-          Yes, I want this to be me
-        </BigCta>
+        <BigCta sub="14-day money-back · Only 500 spots">Yes, I want this to be me</BigCta>
       </div>
     </Section>
   );
@@ -600,10 +633,7 @@ function Offer() {
   const { basic, premium } = useCoachPrograms();
   const [mode, setMode] = useState<Record<string, PaymentMode>>({});
 
-  const buildPlan = (
-    program: CoachProgram | null,
-    base: Omit<OfferPlan, "href" | "loading">,
-  ): OfferPlan => ({
+  const buildPlan = (program: CoachProgram | null, base: Omit<OfferPlan, "href" | "loading">): OfferPlan => ({
     ...base,
     href: "/checkout",
     loading: false,
@@ -611,27 +641,20 @@ function Offer() {
 
   const plans: OfferPlan[] = [
     buildPlan(basic, {
-      name: "Standard",
+      name: "Essential",
       fullPrice: 197,
       monthlyPrice: 77,
       monthlyMonths: 3,
       featured: false,
-      items: [
-        "1 call / week with JJ",
-        "Personalized meal & movement plan",
-        "Daily text check-ins from JJ",
-      ],
+      items: ["1 call / week with JJ", "Personalized meal & movement plan", "Daily text check-ins from JJ"],
     }),
     buildPlan(premium, {
-      name: "Premium",
+      name: "Essential",
       fullPrice: 347,
       monthlyPrice: 147,
       monthlyMonths: 3,
       featured: true,
-      items: [
-        "Everything in Standard",
-        "2 calls / week with JJ",
-      ],
+      items: ["Everything in Standard", "2 calls / week with JJ"],
       note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
     }),
   ];
@@ -677,12 +700,18 @@ function Offer() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`h-4 w-4 rounded-full border-2 shrink-0 ${isFull ? "border-brand" : "border-line"} flex items-center justify-center`}>
+                    <span
+                      className={`h-4 w-4 rounded-full border-2 shrink-0 ${isFull ? "border-brand" : "border-line"} flex items-center justify-center`}
+                    >
                       {isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
                     </span>
                     <div className="flex-1 flex items-baseline justify-between gap-2">
-                      <span className="text-[12px] uppercase tracking-[0.14em] text-ink-soft font-semibold">Pay in full</span>
-                      <span className="font-serif text-[32px] sm:text-[38px] font-medium leading-none">${p.fullPrice}</span>
+                      <span className="text-[12px] uppercase tracking-[0.14em] text-ink-soft font-semibold">
+                        Pay in full
+                      </span>
+                      <span className="font-serif text-[32px] sm:text-[38px] font-medium leading-none">
+                        ${p.fullPrice}
+                      </span>
                     </div>
                   </div>
                   <p className="mt-1 ml-7 text-[12px] text-brand font-medium">Save ${savings} vs monthly</p>
@@ -695,11 +724,14 @@ function Offer() {
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span className={`h-4 w-4 rounded-full border-2 shrink-0 ${!isFull ? "border-brand" : "border-line"} flex items-center justify-center`}>
+                    <span
+                      className={`h-4 w-4 rounded-full border-2 shrink-0 ${!isFull ? "border-brand" : "border-line"} flex items-center justify-center`}
+                    >
                       {!isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
                     </span>
                     <span className="flex-1 text-[13px] text-ink-soft">
-                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span> for {p.monthlyMonths} months
+                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span> for {p.monthlyMonths}{" "}
+                      months
                     </span>
                   </div>
                 </button>
@@ -715,11 +747,7 @@ function Offer() {
                   </li>
                 ))}
               </ul>
-              {p.note && (
-                <p className="mt-3 text-[13px] italic text-ink-soft leading-snug text-center">
-                  {p.note}
-                </p>
-              )}
+              {p.note && <p className="mt-3 text-[13px] italic text-ink-soft leading-snug text-center">{p.note}</p>}
               <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : p.href}>
                 {p.loading ? "Loading…" : `Reserve my spot — ${ctaPrice}`}
               </BigCta>
@@ -743,7 +771,8 @@ function Guarantee() {
           <Heart className="h-10 w-10 fill-brand" />
         </div>
         <p className="font-serif italic text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.65] text-ink">
-          "Sister, I need you to be confident this is right for you. So if you're not 100% thrilled within 14 days, I want to send your money back. If you're not happy, I'm not happy. No reason needed. That's my promise."
+          "Sister, I need you to be confident this is right for you. So if you're not 100% thrilled within 14 days, I
+          want to send your money back. If you're not happy, I'm not happy. No reason needed. That's my promise."
           <br />
           <br />
           <span className="not-italic font-sans text-[14px] text-ink-faint tracking-[0.16em]">JJ</span>
@@ -785,7 +814,11 @@ function Faq() {
       <div className="text-center">
         <Eyebrow center>Questions sisters ask me</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
-          Let me <em className="not-italic" style={{ color: "#c9635c" }}>answer</em> what's <em className="not-italic text-brand">on your mind</em>.
+          Let me{" "}
+          <em className="not-italic" style={{ color: "#c9635c" }}>
+            answer
+          </em>{" "}
+          what's <em className="not-italic text-brand">on your mind</em>.
         </h2>
       </div>
       <Accordion type="single" collapsible defaultValue="q-0" className="w-full lg:max-w-[860px] lg:mx-auto">
@@ -813,15 +846,18 @@ function LastCall() {
         </div>
         <Eyebrow center>Last call</Eyebrow>
         <h2 className="font-serif text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mb-7">
-          Your <em className="not-italic" style={{ color: "#c9635c" }}>next 12 weeks</em> are <em className="not-italic text-brand">happening either way</em>.
+          Your{" "}
+          <em className="not-italic" style={{ color: "#c9635c" }}>
+            next 12 weeks
+          </em>{" "}
+          are <em className="not-italic text-brand">happening either way</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] lg:text-[20px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] lg:max-w-[720px] mx-auto">
-          You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
+          You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday
+          morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Only 500 spots">
-            Reserve my spot
-          </BigCta>
+          <BigCta sub="14-day money-back guarantee · Only 500 spots">Reserve my spot</BigCta>
         </div>
       </div>
     </section>
@@ -832,8 +868,13 @@ function Footer() {
   return (
     <footer className="px-5 py-10 border-t border-line text-[13px] text-ink-faint text-center">
       © {new Date().getFullYear()} JJ Smith. All rights reserved. ·{" "}
-      <a href="#" className="underline">Terms</a> ·{" "}
-      <a href="#" className="underline">Privacy</a>
+      <a href="#" className="underline">
+        Terms
+      </a>{" "}
+      ·{" "}
+      <a href="#" className="underline">
+        Privacy
+      </a>
     </footer>
   );
 }
