@@ -105,9 +105,9 @@ function CheckoutPage() {
         </div>
       </div>
 
-      {/* Order summary — flush with top bar */}
-      <div className="border-b border-line bg-card">
-        <div className="mx-auto max-w-[640px] lg:max-w-[1100px] px-5 py-3 flex items-start justify-between gap-4">
+      {/* Order summary — flush with top bar (mobile/tablet); centered card on desktop */}
+      <div className="border-b border-line bg-card lg:border-b-0 lg:bg-transparent lg:pt-6">
+        <div className="mx-auto max-w-[640px] lg:max-w-[520px] px-5 py-3 flex items-start justify-between gap-4 lg:px-5 lg:py-4 lg:border lg:border-line lg:rounded-xl lg:bg-card lg:shadow-sm">
           <div className="min-w-0">
             <div className="text-[11px] sm:text-[12px] font-semibold tracking-[0.18em] uppercase text-ink-soft">
               {plan === "plus" ? "PLUS PLAN" : "STANDARD PLAN"}
