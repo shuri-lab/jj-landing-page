@@ -583,15 +583,6 @@ function Offer() {
   const { basic, premium } = useCoachPrograms();
   const [mode, setMode] = useState<Record<string, PaymentMode>>({});
 
-  const buildPlan = (
-    program: CoachProgram | null,
-    base: Omit<OfferPlan, "href" | "loading">,
-  ): OfferPlan => ({
-    ...base,
-    href: "/checkout",
-    loading: false,
-  });
-
   const planFromProgram = (
     program: CoachProgram | null,
     fallback: { fullPrice: number; monthlyPrice: number; monthlyMonths: number },
