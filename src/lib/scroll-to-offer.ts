@@ -1,5 +1,6 @@
 export function scrollToOffer() {
-  const el = document.getElementById("offer");
+  const el =
+    document.getElementById("offer-limited") ?? document.getElementById("offer");
   if (!el) return;
 
   const go = () => {
