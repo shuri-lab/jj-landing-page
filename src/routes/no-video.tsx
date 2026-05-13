@@ -648,9 +648,6 @@ function Offer() {
     <Section id="offer" bg="soft" className="scroll-mt-20">
       <div className="text-center">
         <Eyebrow center>Limited spots</Eyebrow>
-        <h2 className="font-serif text-[26px] sm:text-[36px] lg:text-[44px] leading-[1.1] mb-5 max-w-[580px] lg:max-w-[820px] mx-auto">
-          <em className="not-italic text-brand">Yes! I'm ready!</em>
-        </h2>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => {
@@ -677,10 +674,10 @@ function Offer() {
               <div className="text-center">
                 <h3 className="font-serif text-[20px] sm:text-[24px] leading-tight">{p.name}</h3>
                 {p.tagline && (
-                  <p className="mt-1 text-[13px] sm:text-[14px] text-ink-soft font-medium">{p.tagline}</p>
+                  <p className="mt-1 text-[14px] sm:text-[16px] text-ink-soft font-medium">{p.tagline}</p>
                 )}
                 {p.subhead && (
-                  <p className="mt-2 text-[13px] sm:text-[14px] text-ink-soft leading-snug">{p.subhead}</p>
+                  <p className="mt-2 text-[14px] sm:text-[16px] text-ink-soft leading-snug">{p.subhead}</p>
                 )}
               </div>
               <div className="mt-3 space-y-2">
@@ -696,11 +693,11 @@ function Offer() {
                       {isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
                     </span>
                     <div className="flex-1 flex items-baseline justify-between gap-2">
-                      <span className="text-[12px] uppercase tracking-[0.14em] text-ink-soft font-semibold">Pay in full</span>
+                      <span className="text-[13px] uppercase tracking-[0.14em] text-ink-soft font-semibold">Pay in full</span>
                       <span className="font-serif text-[32px] sm:text-[38px] font-medium leading-none">${p.fullPrice}</span>
                     </div>
                   </div>
-                  <p className="mt-1 ml-7 text-[12px] text-brand font-medium">Save ${savings} vs monthly</p>
+                  <p className="mt-1 ml-7 text-[13px] text-brand font-medium">Save ${savings} vs monthly</p>
                 </button>
                 <button
                   type="button"
@@ -713,7 +710,7 @@ function Offer() {
                     <span className={`h-4 w-4 rounded-full border-2 shrink-0 ${!isFull ? "border-brand" : "border-line"} flex items-center justify-center`}>
                       {!isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
                     </span>
-                    <span className="flex-1 text-[13px] text-ink-soft">
+                    <span className="flex-1 text-[14px] text-ink-soft">
                       Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span> for {p.monthlyMonths} months
                     </span>
                   </div>
@@ -723,7 +720,7 @@ function Offer() {
                 {p.items.map((label) => (
                   <li
                     key={label}
-                    className="flex items-center gap-3 py-2 text-[14px] sm:text-[15px] text-ink border-b border-dashed border-line last:border-b-0"
+                    className="flex items-center gap-3 py-2.5 text-[15px] sm:text-[17px] text-ink border-b border-dashed border-line last:border-b-0"
                   >
                     <span className="text-brand font-bold w-4 text-center text-[16px]">✓</span>
                     <span className="flex-1">{label}</span>
