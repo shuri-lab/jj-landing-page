@@ -871,17 +871,29 @@ function Footer() {
 
 function StickyCta() {
   const [show, setShow] = useState(false);
+  const [offerVisible, setOfferVisible] = useState(false);
   useEffect(() => {
     const onScroll = () => setShow(window.scrollY > 600);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  useEffect(() => {
+    const el = document.getElementById("offer");
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setOfferVisible(entry.isIntersecting),
+      { threshold: 0, rootMargin: "0px 0px -20% 0px" },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  const visible = show && !offerVisible;
   return (
     <div
-      aria-hidden={!show}
+      aria-hidden={!visible}
       className={`sticky-mobile-cta sm:hidden border-t border-line bg-background shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.18)] transition-opacity duration-200 ${
-        show ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        visible ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
       <div
