@@ -460,18 +460,24 @@ function Steps() {
 
 function JJReveal() {
   return (
-    <Section bg="warm">
+    <Section>
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
-        <h2 className="font-serif text-[30px] sm:text-[38px] lg:text-[48px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
+        <h2 className="font-serif text-[28px] sm:text-[36px] lg:text-[44px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>
             Sister to sister,
           </em>{" "}
           <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
-      <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-12 lg:items-start lg:max-w-[1000px] lg:mx-auto">
-        <div className="order-2 lg:order-1 space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
+      <div className="flex flex-col items-center lg:flex-row lg:items-start lg:gap-7 lg:max-w-[820px] lg:mx-auto">
+        <img
+          src={jjSelfieSun}
+          alt="JJ Smith portrait"
+          className="w-[96px] h-[96px] lg:w-[110px] lg:h-[110px] rounded-full object-cover shadow-[0_8px_24px_-10px_rgba(184,80,66,0.4)] mb-5 lg:mb-0 lg:mt-1 shrink-0"
+          loading="lazy"
+        />
+        <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75] text-center lg:text-left">
           <p>
             For 15 years I've been writing the books, building the programs, and doing the work alongside you. Together
             we've lost more than 5 million pounds. And I am so proud of every single one of them.
@@ -481,123 +487,104 @@ function JJReveal() {
             figured out how to stop it.
           </p>
         </div>
-        <div className="order-1 lg:order-2 mb-8 lg:mb-0 flex justify-center">
-          <img
-            src={jjSelfieSun}
-            alt="JJ Smith portrait"
-            className="w-full max-w-[320px] lg:max-w-none rounded-2xl object-cover shadow-[0_20px_50px_-25px_rgba(184,80,66,0.4)]"
-            loading="lazy"
-          />
-        </div>
       </div>
 
-      <div className="mt-14 space-y-10 lg:max-w-[820px] lg:mx-auto">
-        {[
-          {
-            n: "1",
-            title: "Where I keep losing you.",
-            body: (
-              <>
-                <p>
-                  You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits — the kids, the work, the
-                  stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
-                </p>
-                <p>
-                  That's where every program loses you. Not because the information was wrong. Not because you weren't
-                  trying. <strong className="text-ink font-semibold">Because nobody was there when it got hard.</strong>
-                </p>
-                <p>
-                  Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
-                  up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
-                  done.
-                </p>
-              </>
-            ),
-          },
-          {
-            n: "2",
-            title: "What it's actually costing you.",
-            body: (
-              <>
-                <p>Every time we lose you in that moment, we lose more than the weight.</p>
-                <p>
-                  We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
-                  doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
-                  the woman in the mirror.
-                </p>
-                <p>
-                  <strong className="text-ink font-semibold">
-                    Sister, this isn't just about a number on the scale.
-                  </strong>{" "}
-                  It's about whether you get to feel like <em>you</em> again — confident, sexy, energized, in control.
-                  It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
-                  or look completely different.
-                </p>
-              </>
-            ),
-          },
-          {
-            n: "3",
-            title: "So I did something I've never done before.",
-            body: (
-              <>
-                <p>
-                  For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
-                  another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
-                  night and check on you. There's only one of me, and millions of you.
-                </p>
-                <p>
-                  So I spent the last two years building a way to actually be there.{" "}
-                  <strong className="text-ink font-semibold">In my voice. In my words. With my coaching.</strong> The
-                  way I'd talk to my own sister if she called me crying at 9pm.
-                </p>
-                <p>
-                  <strong className="text-ink font-semibold">
-                    It's not an app. It's me — finally available to every sister who needs me.
-                  </strong>{" "}
-                  I'm calling you every week. Texting you every day. Catching the slips before they become slides.
-                </p>
-              </>
-            ),
-          },
-          {
-            n: "4",
-            title: "That's why this time is different.",
-            body: (
-              <p>
-                This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
-                way.
-              </p>
-            ),
-          },
-        ].map((s) => (
-          <div key={s.n}>
-            <h3 className="font-serif italic text-[24px] sm:text-[30px] lg:text-[34px] leading-[1.2] text-ink mb-5">
-              <span className="font-serif italic font-medium text-brand mr-2">{s.n}.</span>
-              {s.title}
-            </h3>
-            <div className="space-y-4 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">{s.body}</div>
+      <div className="mt-14 space-y-8 sm:space-y-10 lg:max-w-[820px] lg:mx-auto">
+        <RevealCard n="1" title="Where I keep losing you.">
+          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+            You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits — the kids, the work, the
+            stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
+          </p>
+          <p>
+            That's where every program loses you. Not because the information was wrong. Not because you weren't
+            trying.
+          </p>
+          <RevealCallout>Because nobody was there when it got hard.</RevealCallout>
+          <p>
+            Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
+            up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
+            done.
+          </p>
+        </RevealCard>
+
+        <RevealCard n="2" title="What it's actually costing you.">
+          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+            Every time we lose you in that moment, we lose more than the weight.
+          </p>
+          <p>
+            We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
+            doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
+            the woman in the mirror.
+          </p>
+          <RevealCallout>Sister, this isn't just about a number on the scale.</RevealCallout>
+          <p>
+            It's about whether you get to feel like <em>you</em> again — confident, sexy, energized, in control.
+            It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
+            or look completely different.
+          </p>
+        </RevealCard>
+
+        <RevealCard n="3" title="So I did something I've never done before.">
+          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+            For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
+            another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
+            night and check on you. There's only one of me, and millions of you.
+          </p>
+          <p>
+            So I spent the last two years building a way to actually be there. In my voice. In my words. With my
+            coaching. The way I'd talk to my own sister if she called me crying at 9pm.
+          </p>
+          <RevealCallout>It's not an app. It's me — finally available to every sister who needs me.</RevealCallout>
+          <p>
+            I'm calling you every week. Texting you every day. Catching the slips before they become slides.
+          </p>
+        </RevealCard>
+
+        <RevealCard n="4" title="That's why this time is different.">
+          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+            This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
+            way.
+          </p>
+          <blockquote className="mt-8 mb-8 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
+            "This time, I'm giving you me… and I'm not leaving."
+            <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">— JJ</footer>
+          </blockquote>
+          <div className="mt-2 lg:max-w-[480px] lg:mx-auto">
+            <BigCta
+              sub={
+                <>
+                  Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
+                </>
+              }
+            >
+              Yes JJ, I want you in my corner
+            </BigCta>
           </div>
-        ))}
-      </div>
-
-      <blockquote className="mt-12 pl-5 border-l-[3px] border-brand font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink lg:max-w-[820px] lg:mx-auto">
-        "This time, I'm giving you me… and I'm not leaving."
-        <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">— JJ</footer>
-      </blockquote>
-
-      <div className="mt-10 lg:max-w-[560px] lg:mx-auto">
-        <BigCta
-          sub={
-            <>
-              Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
-            </>
-          }
-        >
-          Yes JJ, I want you in my corner
-        </BigCta>
+        </RevealCard>
       </div>
     </Section>
+  );
+}
+
+function RevealCard({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
+  return (
+    <article className="relative rounded-2xl bg-white border-l-[4px] border-brand shadow-[0_2px_14px_rgba(0,0,0,0.05)] p-6 sm:p-8 lg:p-10">
+      <header className="flex items-baseline gap-3 sm:gap-4 mb-5">
+        <span className="font-serif italic font-medium text-brand text-[40px] sm:text-[48px] leading-none">
+          {n}.
+        </span>
+        <h3 className="font-serif italic text-[20px] sm:text-[24px] leading-[1.2] text-ink">{title}</h3>
+      </header>
+      <div className="space-y-4 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7]">{children}</div>
+    </article>
+  );
+}
+
+function RevealCallout({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="my-2 pl-4 border-l-[3px] border-brand font-serif italic text-[18px] sm:text-[20px] leading-[1.5] text-ink">
+      {children}
+    </p>
   );
 }
 
