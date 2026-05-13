@@ -882,7 +882,7 @@ function StickyCta() {
   return (
     <div
       aria-hidden={!show}
-      className={`sticky-mobile-cta sm:hidden border-t border-line bg-background/95 backdrop-blur transition-opacity duration-200 ${
+      className={`sticky-mobile-cta sm:hidden border-t border-line bg-background shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.18)] transition-opacity duration-200 ${
         show ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
       }`}
     >
