@@ -658,8 +658,6 @@ function Offer() {
       items: [
         "Everything in Essential",
         "Plus mid-week coaching call",
-        "The save call when you're slipping",
-        "Real-time support for life's curveballs",
       ],
       note: "For the woman who's serious about finishing this time. Everything in Essential, plus a mid-week coaching call where the real work happens... the call you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit. Twice the calls with JJ. Essential helps you do the program. Plus helps you finish it.",
       href: "/checkout",
