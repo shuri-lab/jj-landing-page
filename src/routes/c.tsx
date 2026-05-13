@@ -308,19 +308,22 @@ function TransformationsStrip() {
 
 function HugQuote() {
   return (
-    <section className="px-5 py-12 sm:py-16 lg:py-16 bg-bg-soft lg:h-full lg:flex lg:items-center">
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] w-full">
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)] lg:aspect-[4/5]">
+    <section className="px-5 py-12 sm:py-16 lg:py-20 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[760px] w-full">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
-            className="block w-full h-auto lg:absolute lg:inset-0 lg:h-full lg:object-cover"
+            className="block w-full h-auto"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-8">
-            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[28px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
-              This is different from anything I've ever done before.
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+            <p className="font-serif italic text-white text-[22px] sm:text-[32px] lg:text-[34px] leading-[1.3] max-w-[640px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+              "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
+            </p>
+            <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              — JJ
             </p>
           </div>
         </div>
