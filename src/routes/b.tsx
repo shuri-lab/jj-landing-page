@@ -672,7 +672,7 @@ function Offer() {
   return (
     <Section id="offer" bg="soft" className="scroll-mt-20">
       <div className="text-center">
-        <Eyebrow center>Limited spots</Eyebrow>
+        <Eyebrow center><span id="offer-limited" className="scroll-mt-20">Limited spots</span></Eyebrow>
       </div>
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => {
