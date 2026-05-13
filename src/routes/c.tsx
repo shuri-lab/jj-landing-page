@@ -7,7 +7,7 @@ import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-prog
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
-import heroA from "@/assets/hero-a.png";
+import heroA from "@/assets/hero-c.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
