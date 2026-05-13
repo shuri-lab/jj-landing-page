@@ -491,67 +491,68 @@ function JJReveal() {
 
       <div className="mt-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7 lg:max-w-[820px] lg:mx-auto">
         <RevealCard title="Where I keep losing you.">
-          <p>
+          <p className="card-lead">
             You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits. The kids, the work, the
             stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
           </p>
           <p>
-            That's where every program loses you. Not because the information was wrong. Not because you weren't
-            trying. <strong className="text-ink font-medium">Because nobody was there when it got hard.</strong>
+            That's where <strong className="card-bold">every program loses you</strong>. Not because the
+            information was wrong. Not because <strong className="card-bold">you weren't trying</strong>.
           </p>
+          <p className="card-key">Because nobody was there when it got hard.</p>
           <p>
             Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
-            up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
-            done.
+            up for and why this time was supposed to be different.{" "}
+            <strong className="card-bold">Just you, by yourself</strong>, doing what you've always done.
           </p>
         </RevealCard>
 
         <RevealCard title="What it's actually costing you.">
-          <p>
+          <p className="card-lead">
             Every time we lose you in that moment, we lose more than the weight.
           </p>
           <p>
-            We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
-            doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
-            the woman in the mirror.{" "}
-            <strong className="text-ink font-medium">Sister, this isn't just about a number on the scale.</strong>
+            We lose another year you spend <strong className="card-bold">hiding in family photos</strong>. Another
+            summer in the cover-up. Another doctor's visit with the same numbers and the same lecture. Another
+            morning where you don't recognize <strong className="card-bold">the woman in the mirror</strong>.
           </p>
+          <p className="card-key">Sister, this isn't just about a number on the scale.</p>
           <p>
             It's about whether you get to feel like <em>you</em> again. Confident, sexy, energized, in control.
-            It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
-            or look completely different.
+            It's about whether you <strong className="card-bold">get your foxy back</strong>. It's about whether
+            the next 12 weeks look like the last 12, or{" "}
+            <strong className="card-bold">look completely different</strong>.
           </p>
         </RevealCard>
 
         <RevealCard title="So I did something I've never done before.">
-          <p>
-            For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
-            another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
-            night and check on you. There's only one of me, and millions of you.
+          <p className="card-lead">
+            For years, the thing that hurt me the most was knowing I couldn't be there for you.
           </p>
           <p>
-            So I spent the last two years building a way to actually be there.{" "}
-            <strong className="text-ink font-medium">In my voice. In my words. With my coaching.</strong> The way
-            I'd talk to my own sister if she called me crying at 9pm.{" "}
-            <strong className="text-ink font-medium">
-              It's not an app. It's me, finally available to every sister who needs me.
-            </strong>
+            I could write another book. Record another video. Go on another show. But I couldn't{" "}
+            <strong className="card-bold">pick up the phone</strong> on a hard night and check on you. There's
+            only <strong className="card-bold">one of me, and millions of you</strong>.
           </p>
+          <p className="card-key">So I spent the last two years building a way to actually be there.</p>
           <p>
-            I'm calling you every week. Texting you every day. Catching the slips before they become slides.
+            <strong className="card-bold">In my voice. In my words. With my coaching.</strong> The way I'd talk to
+            my own sister if she called me crying at 9pm. It's not an app.{" "}
+            <strong className="card-bold">It's me, finally available to every sister who needs me.</strong> I'm
+            calling you every week. Texting you every day. Catching the slips before they become slides.
           </p>
         </RevealCard>
 
         <RevealCard title="That's why this time is different.">
-          <p>
+          <p className="card-lead">
             This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
             way.
           </p>
-          <blockquote className="mt-8 mb-8 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
+          <blockquote className="mt-10 mb-10 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
             "This time, I'm giving you me… and I'm not leaving."
             <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
           </blockquote>
-          <div className="mt-2 lg:max-w-[480px] lg:mx-auto">
+          <div className="mt-4 lg:max-w-[480px] lg:mx-auto">
             <BigCta
               sub={
                 <>
@@ -570,9 +571,9 @@ function JJReveal() {
 
 function RevealCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8">
+    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8 [&_.card-lead]:text-[18px] sm:[&_.card-lead]:text-[19px] [&_.card-key]:text-[19px] sm:[&_.card-key]:text-[20px] [&_.card-key]:font-semibold [&_.card-key]:text-ink [&_.card-key]:my-6 sm:[&_.card-key]:my-8 [&_.card-key]:leading-[1.4] [&_.card-bold]:font-semibold [&_.card-bold]:text-ink">
       <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
-      <div className="space-y-4 text-[17px] sm:text-[18px] text-ink-soft leading-[1.7]">{children}</div>
+      <div className="space-y-4 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7]">{children}</div>
     </div>
   );
 }
