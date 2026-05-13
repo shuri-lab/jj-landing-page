@@ -331,7 +331,7 @@ function HugQuote() {
               "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
             </p>
             <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-              — JJ
+              JJ
             </p>
           </div>
         </div>
@@ -489,17 +489,16 @@ function JJReveal() {
         </div>
       </div>
 
-      <div className="mt-14 space-y-8 sm:space-y-10 lg:max-w-[820px] lg:mx-auto">
-        <RevealCard n="1" title="Where I keep losing you.">
-          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
-            You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits — the kids, the work, the
+      <div className="mt-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7 lg:max-w-[820px] lg:mx-auto">
+        <RevealCard title="Where I keep losing you.">
+          <p>
+            You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits. The kids, the work, the
             stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
           </p>
           <p>
             That's where every program loses you. Not because the information was wrong. Not because you weren't
-            trying.
+            trying. <strong className="text-ink font-medium">Because nobody was there when it got hard.</strong>
           </p>
-          <RevealCallout>Because nobody was there when it got hard.</RevealCallout>
           <p>
             Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
             up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
@@ -507,47 +506,50 @@ function JJReveal() {
           </p>
         </RevealCard>
 
-        <RevealCard n="2" title="What it's actually costing you.">
-          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+        <RevealCard title="What it's actually costing you.">
+          <p>
             Every time we lose you in that moment, we lose more than the weight.
           </p>
           <p>
             We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
             doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
-            the woman in the mirror.
+            the woman in the mirror.{" "}
+            <strong className="text-ink font-medium">Sister, this isn't just about a number on the scale.</strong>
           </p>
-          <RevealCallout>Sister, this isn't just about a number on the scale.</RevealCallout>
           <p>
-            It's about whether you get to feel like <em>you</em> again — confident, sexy, energized, in control.
+            It's about whether you get to feel like <em>you</em> again. Confident, sexy, energized, in control.
             It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
             or look completely different.
           </p>
         </RevealCard>
 
-        <RevealCard n="3" title="So I did something I've never done before.">
-          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+        <RevealCard title="So I did something I've never done before.">
+          <p>
             For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
             another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
             night and check on you. There's only one of me, and millions of you.
           </p>
           <p>
-            So I spent the last two years building a way to actually be there. In my voice. In my words. With my
-            coaching. The way I'd talk to my own sister if she called me crying at 9pm.
+            So I spent the last two years building a way to actually be there.{" "}
+            <strong className="text-ink font-medium">In my voice. In my words. With my coaching.</strong> The way
+            I'd talk to my own sister if she called me crying at 9pm.{" "}
+            <strong className="text-ink font-medium">
+              It's not an app. It's me, finally available to every sister who needs me.
+            </strong>
           </p>
-          <RevealCallout>It's not an app. It's me — finally available to every sister who needs me.</RevealCallout>
           <p>
             I'm calling you every week. Texting you every day. Catching the slips before they become slides.
           </p>
         </RevealCard>
 
-        <RevealCard n="4" title="That's why this time is different.">
-          <p className="text-[18px] sm:text-[19px] text-ink leading-[1.7]">
+        <RevealCard title="That's why this time is different.">
+          <p>
             This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
             way.
           </p>
           <blockquote className="mt-8 mb-8 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
             "This time, I'm giving you me… and I'm not leaving."
-            <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">— JJ</footer>
+            <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
           </blockquote>
           <div className="mt-2 lg:max-w-[480px] lg:mx-auto">
             <BigCta
@@ -566,38 +568,25 @@ function JJReveal() {
   );
 }
 
-function RevealCard({ n, title, children }: { n: string; title: string; children: React.ReactNode }) {
+function RevealCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <article className="relative rounded-2xl bg-white border-l-[4px] border-brand shadow-[0_2px_14px_rgba(0,0,0,0.05)] p-6 sm:p-8 lg:p-10">
-      <header className="flex items-baseline gap-3 sm:gap-4 mb-5">
-        <span className="font-serif italic font-medium text-brand text-[40px] sm:text-[48px] leading-none">
-          {n}.
-        </span>
-        <h3 className="font-serif italic text-[20px] sm:text-[24px] leading-[1.2] text-ink">{title}</h3>
-      </header>
-      <div className="space-y-4 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7]">{children}</div>
-    </article>
-  );
-}
-
-function RevealCallout({ children }: { children: React.ReactNode }) {
-  return (
-    <p className="my-2 pl-4 border-l-[3px] border-brand font-serif italic text-[18px] sm:text-[20px] leading-[1.5] text-ink">
-      {children}
-    </p>
+    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8">
+      <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
+      <div className="space-y-4 text-[17px] sm:text-[18px] text-ink-soft leading-[1.7]">{children}</div>
+    </div>
   );
 }
 
 function Transformations() {
   const slides = [
     { headline: '"I\'m not hiding in baggy clothes anymore."', src: t1 },
-    { headline: '"I\'m in family photos again — front and center."', src: t4 },
+    { headline: '"I\'m in family photos again, front and center."', src: t4 },
     { headline: '"I\'m dressing up again. I\'m smiling in pictures again."', src: t8 },
     { headline: '"I feel like the woman I forgot I was."', src: t10 },
     { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
     { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
     { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
-    { headline: '"I got my foxy back — for good this time."', src: tTammi },
+    { headline: '"I got my foxy back, for good this time."', src: tTammi },
   ];
   return (
     <Section id="stories">
