@@ -462,57 +462,132 @@ function JJReveal() {
           <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
-      <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
-        <div className="flex justify-center -mt-16 mb-6">
+      <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-12 lg:items-start lg:max-w-[1000px] lg:mx-auto">
+        <div className="order-2 lg:order-1 space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
+          <p>
+            For 15 years I've been writing the books, building the programs, and doing the work alongside you. Together
+            we've lost more than 5 million pounds. And I am so proud of every single one of them.
+          </p>
+          <p>
+            But here's the truth, sister. I've been losing you in the same place over and over again. And I finally
+            figured out how to stop it.
+          </p>
+        </div>
+        <div className="order-1 lg:order-2 mb-8 lg:mb-0 flex justify-center">
           <img
             src={jjSelfieSun}
             alt="JJ Smith portrait"
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-top border-4 border-card shadow-md"
-            width={128}
-            height={128}
+            className="w-full max-w-[320px] lg:max-w-none rounded-2xl object-cover shadow-[0_20px_50px_-25px_rgba(184,80,66,0.4)]"
             loading="lazy"
           />
         </div>
-        <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
-          <p>
-            For 15 years I've been writing the books, building the programs, and doing the work right alongside you.
-            Together we've lost more than 5 million pounds. And I am so proud of every single one of them.
-          </p>
-          <p>
-            But here's the truth, sister.{" "}
-            <strong className="text-ink font-semibold">
-              Every single time, I've watched you sign up with all the hope in the world, and slip back without me.
-            </strong>{" "}
-            Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off
-            and Tuesday night came, I wasn't there.
-          </p>
-          <p>
-            And I knew that. For years, it was the part that hurt me the most. I could write another book. I could
-            record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check
-            on you. There's only one of me, and millions of you.
-          </p>
-          <p>
-            So I spent the last two years building something nobody's built before.{" "}
-            <strong className="text-ink font-semibold">
-              A way for me to actually show up for every single one of you.
-            </strong>{" "}
-            In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at
-            9pm.
-          </p>
-          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
-        </div>
-        <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different. Because this time, I'm not handing you another program and saying good
-          luck. I'm walking with you the whole way.
-        </blockquote>
-        <p className="mt-7 font-serif italic text-[19px] text-ink">
-          Love,
-          <br />
-          JJ
-        </p>
       </div>
-      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
+
+      <div className="mt-14 space-y-10 lg:max-w-[820px] lg:mx-auto">
+        {[
+          {
+            n: "1",
+            title: "Where I keep losing you.",
+            body: (
+              <>
+                <p>
+                  You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits — the kids, the work, the
+                  stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
+                </p>
+                <p>
+                  That's where every program loses you. Not because the information was wrong. Not because you weren't
+                  trying. <strong className="text-ink font-semibold">Because nobody was there when it got hard.</strong>
+                </p>
+                <p>
+                  Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
+                  up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
+                  done.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "2",
+            title: "What it's actually costing you.",
+            body: (
+              <>
+                <p>Every time we lose you in that moment, we lose more than the weight.</p>
+                <p>
+                  We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
+                  doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
+                  the woman in the mirror.
+                </p>
+                <p>
+                  <strong className="text-ink font-semibold">
+                    Sister, this isn't just about a number on the scale.
+                  </strong>{" "}
+                  It's about whether you get to feel like <em>you</em> again — confident, sexy, energized, in control.
+                  It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
+                  or look completely different.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "3",
+            title: "So I did something I've never done before.",
+            body: (
+              <>
+                <p>
+                  For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
+                  another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
+                  night and check on you. There's only one of me, and millions of you.
+                </p>
+                <p>
+                  So I spent the last two years building a way to actually be there.{" "}
+                  <strong className="text-ink font-semibold">In my voice. In my words. With my coaching.</strong> The
+                  way I'd talk to my own sister if she called me crying at 9pm.
+                </p>
+                <p>
+                  <strong className="text-ink font-semibold">
+                    It's not an app. It's me — finally available to every sister who needs me.
+                  </strong>{" "}
+                  I'm calling you every week. Texting you every day. Catching the slips before they become slides.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "4",
+            title: "That's why this time is different.",
+            body: (
+              <p>
+                This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
+                way.
+              </p>
+            ),
+          },
+        ].map((s) => (
+          <div key={s.n}>
+            <h3 className="font-serif italic text-[24px] sm:text-[30px] lg:text-[34px] leading-[1.2] text-ink mb-5">
+              <span className="font-serif italic font-medium text-brand mr-2">{s.n}.</span>
+              {s.title}
+            </h3>
+            <div className="space-y-4 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">{s.body}</div>
+          </div>
+        ))}
+      </div>
+
+      <blockquote className="mt-12 pl-5 border-l-[3px] border-brand font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink lg:max-w-[820px] lg:mx-auto">
+        "This time, I'm giving you me… and I'm not leaving."
+        <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">— JJ</footer>
+      </blockquote>
+
+      <div className="mt-10 lg:max-w-[560px] lg:mx-auto">
+        <BigCta
+          sub={
+            <>
+              Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
+            </>
+          }
+        >
+          Yes JJ, I want you in my corner
+        </BigCta>
       </div>
     </Section>
   );
