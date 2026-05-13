@@ -331,7 +331,7 @@ function HugQuote() {
               "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
             </p>
             <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
-              — JJ
+              JJ
             </p>
           </div>
         </div>
@@ -580,13 +580,13 @@ function RevealCard({ title, children }: { title: string; children: React.ReactN
 function Transformations() {
   const slides = [
     { headline: '"I\'m not hiding in baggy clothes anymore."', src: t1 },
-    { headline: '"I\'m in family photos again — front and center."', src: t4 },
+    { headline: '"I\'m in family photos again, front and center."', src: t4 },
     { headline: '"I\'m dressing up again. I\'m smiling in pictures again."', src: t8 },
     { headline: '"I feel like the woman I forgot I was."', src: t10 },
     { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
     { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
     { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
-    { headline: '"I got my foxy back — for good this time."', src: tTammi },
+    { headline: '"I got my foxy back, for good this time."', src: tTammi },
   ];
   return (
     <Section id="stories">
