@@ -611,6 +611,29 @@ type OfferPlan = {
   hasFull: boolean;
 };
 
+function PlusNote({ note }: { note: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="block mx-auto text-[13px] text-brand font-medium underline-offset-2 hover:underline"
+      >
+        Why Plus? {open ? "▲" : "▼"}
+      </button>
+      <div
+        className="grid transition-all duration-200 ease-out"
+        style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
+      >
+        <div className="overflow-hidden">
+          <p className="mt-2 text-[13px] italic text-ink-soft leading-snug text-center">{note}</p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Offer() {
   const { basic, premium } = useCoachPrograms();
   const [mode, setMode] = useState<Record<string, PaymentMode>>({});
