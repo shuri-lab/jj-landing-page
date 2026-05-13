@@ -34,14 +34,14 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/c")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Week Body Transformation Challenge, A" },
+      { title: "JJ Smith, 12 Weeks to Sexy, A" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
           "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith, 12-Week Body Transformation Challenge" },
+      { property: "og:title", content: "JJ Smith, 12 Weeks to Sexy" },
       {
         property: "og:description",
         content:
@@ -191,7 +191,7 @@ function Hero() {
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
           <div className="lg:order-1">
             <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
-              12-Week Body Transformation
+              12 Weeks to Sexy
             </div>
             <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
               Lose up to{" "}
