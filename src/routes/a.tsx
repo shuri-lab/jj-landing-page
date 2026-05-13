@@ -682,7 +682,6 @@ function Offer() {
   const plans: OfferPlan[] = [
     {
       name: "Essential",
-      tagline: "Weekly accountability with JJ",
       subhead: "Weekly call with JJ, daily structure, and JJ's full program.",
       ...basicPricing,
       featured: false,
@@ -696,7 +695,6 @@ function Offer() {
     },
     {
       name: "Plus",
-      tagline: "Twice-weekly coaching. Built to finish.",
       subhead: "Everything in Essential, plus a mid-week call when life gets in the way. Built to finish.",
       ...premiumPricing,
       featured: true,
