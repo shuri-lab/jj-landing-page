@@ -574,6 +574,8 @@ type PaymentMode = "full" | "monthly";
 
 type OfferPlan = {
   name: string;
+  tagline?: string;
+  subhead?: string;
   fullPrice: number;
   monthlyPrice: number;
   monthlyMonths: number;
@@ -611,26 +613,32 @@ function Offer() {
 
   const plans: OfferPlan[] = [
     {
-      name: "Standard",
+      name: "Essential",
+      tagline: "Weekly accountability with JJ",
+      subhead: "Your weekly call, daily structure, and JJ's full program.",
       ...basicPricing,
       featured: false,
       items: [
-        "1 call / week with JJ",
-        "Personalized meal & movement plan",
-        "Daily text check-ins from JJ",
+        "Weekly accountability call with JJ",
+        "Daily SMS coaching",
+        "Custom eating plan + 12-week roadmap",
       ],
       href: "/checkout",
       loading: !basic,
     },
     {
-      name: "Premium",
+      name: "Plus",
+      tagline: "Twice-weekly coaching. Built to finish.",
+      subhead: "Everything in Essential, plus a mid-week call when life gets in the way.",
       ...premiumPricing,
       featured: true,
       items: [
-        "Everything in Standard",
-        "2 calls / week with JJ",
+        "Everything in Essential",
+        "Plus mid-week coaching call",
+        "The save call when you're slipping",
+        "Real-time support for life's curveballs",
       ],
-      note: "For sisters who know they need the extra accountability, two calls means twice the chances to catch you before you slip.",
+      note: "For the woman who's serious about finishing this time. Everything in Essential, plus a mid-week coaching call where the real work happens... the call you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit. Twice the calls with JJ. Essential helps you do the program. Plus helps you finish it.",
       href: "/checkout",
       loading: !premium,
     },
@@ -663,11 +671,17 @@ function Offer() {
             >
               {p.featured && (
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 bg-brand text-white text-[11px] tracking-[0.18em] font-semibold px-3 py-1 rounded-full uppercase">
-                  Most personal
+                  Recommended
                 </span>
               )}
               <div className="text-center">
                 <h3 className="font-serif text-[20px] sm:text-[24px] leading-tight">{p.name}</h3>
+                {p.tagline && (
+                  <p className="mt-1 text-[13px] sm:text-[14px] text-ink-soft font-medium">{p.tagline}</p>
+                )}
+                {p.subhead && (
+                  <p className="mt-2 text-[13px] sm:text-[14px] text-ink-soft leading-snug">{p.subhead}</p>
+                )}
               </div>
               <div className="mt-3 space-y-2">
                 <button
@@ -722,7 +736,7 @@ function Offer() {
                 </p>
               )}
               <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
-                {p.loading ? "Loading…" : `Reserve my spot — ${ctaPrice}`}
+                {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
           );
