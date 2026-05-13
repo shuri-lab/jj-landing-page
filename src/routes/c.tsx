@@ -595,14 +595,14 @@ function JJReveal() {
 
 function Transformations() {
   const slides = [
-    { headline: '"My waist comes back, my belly fat finally lets go."', src: t1 },
-    { headline: '"I get my curves back, snatched, not skinny."', src: t4 },
-    { headline: '"My clothes fit again, and I look 10 years younger."', src: t8 },
-    { headline: '"My energy is back, and my confidence with it."', src: t10 },
-    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', src: t7 },
-    { headline: '"Down the size I haven\'t worn in a decade."', src: t12 },
-    { headline: '"Smiling in pictures again, dressing up again."', src: t9 },
-    { headline: '"Lighter, stronger, finally me again."', src: tTammi },
+    { headline: '"I\'m not hiding in baggy clothes anymore."', src: t1 },
+    { headline: '"I\'m in family photos again — front and center."', src: t4 },
+    { headline: '"I\'m dressing up again. I\'m smiling in pictures again."', src: t8 },
+    { headline: '"I feel like the woman I forgot I was."', src: t10 },
+    { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
+    { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
+    { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
+    { headline: '"I got my foxy back — for good this time."', src: tTammi },
   ];
   return (
     <Section id="stories">
