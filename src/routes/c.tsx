@@ -463,7 +463,7 @@ function JJReveal() {
     <Section>
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
-        <h2 className="font-serif text-[28px] sm:text-[36px] lg:text-[44px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
+        <h2 className="font-serif text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>
             Sister to sister,
           </em>{" "}
@@ -477,7 +477,7 @@ function JJReveal() {
           className="w-[96px] h-[96px] lg:w-[110px] lg:h-[110px] rounded-full object-cover shadow-[0_8px_24px_-10px_rgba(184,80,66,0.4)] mb-5 lg:mb-0 lg:mt-1 shrink-0"
           loading="lazy"
         />
-        <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75] text-center lg:text-left">
+        <div className="space-y-5 text-[19px] sm:text-[21px] text-ink-soft leading-[1.75] text-center lg:text-left">
           <p>
             For 15 years I've been writing the books, building the programs, and doing the work alongside you. Together
             we've lost more than 5 million pounds. And I am so proud of every single one of them.
@@ -571,9 +571,9 @@ function JJReveal() {
 
 function RevealCard({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8 [&_.card-lead]:text-[18px] sm:[&_.card-lead]:text-[19px] [&_.card-key]:text-[19px] sm:[&_.card-key]:text-[20px] [&_.card-key]:font-semibold [&_.card-key]:text-ink [&_.card-key]:my-6 sm:[&_.card-key]:my-8 [&_.card-key]:leading-[1.4] [&_.card-bold]:font-semibold [&_.card-bold]:text-ink">
-      <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
-      <div className="space-y-4 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7]">{children}</div>
+    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8 [&_.card-lead]:text-[21px] sm:[&_.card-lead]:text-[22px] [&_.card-key]:text-[23px] sm:[&_.card-key]:text-[24px] [&_.card-key]:font-semibold [&_.card-key]:text-ink [&_.card-key]:my-6 sm:[&_.card-key]:my-8 [&_.card-key]:leading-[1.4] [&_.card-bold]:font-semibold [&_.card-bold]:text-ink">
+      <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
+      <div className="space-y-4 text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{children}</div>
     </div>
   );
 }
