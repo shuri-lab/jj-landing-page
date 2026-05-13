@@ -977,7 +977,7 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-normal text-ink-soft">JJ's 12-Week Transformation</div>
+          <div className="font-normal text-ink-soft">JJ's 12 Weeks to Sexy</div>
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
