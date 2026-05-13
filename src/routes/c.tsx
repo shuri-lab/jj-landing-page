@@ -376,11 +376,11 @@ function Promise2() {
 const STEPS = [
   {
     n: "01",
-    title: "We'll start with a call, just you and me",
+    title: "We'll start with a soul-to-soul, just you and me",
     text: (
       <>
-        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love
-        eating and what you can't stand. What's been holding you back.{" "}
+        Before anything else, sister, I want to know <em>you</em>. Your triggers. Your cravings. What you've tried.
+        What worked, what didn't. What you love eating and what you can't stand. What's been holding you back.{" "}
         <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
       </>
     ),
