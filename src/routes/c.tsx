@@ -358,44 +358,6 @@ function _TransformationsStripImpl() {
   );
 }
 
-function PromiseQuote({
-  eyebrow,
-  children,
-  bg = "soft",
-  signature = false,
-}: {
-  eyebrow?: string;
-  children: React.ReactNode;
-  bg?: "soft" | "warm";
-  signature?: boolean;
-}) {
-  return (
-    <section
-      className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}
-    >
-      <span
-        aria-hidden
-        className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none"
-      >
-        "
-      </span>
-      <span
-        aria-hidden
-        className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180"
-      >
-        "
-      </span>
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] relative w-full">
-        {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
-        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[32px] leading-[1.3] max-w-[580px] mx-auto mb-5">
-          {children}
-        </p>
-        {signature && <p className="text-[14px] text-ink-faint tracking-[0.18em]">JJ</p>}
-      </div>
-    </section>
-  );
-}
-
 function Promise2() {
   return (
     <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
