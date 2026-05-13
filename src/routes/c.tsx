@@ -154,12 +154,7 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <div className="lg:grid lg:grid-cols-2 lg:items-stretch">
-          <HugQuote />
-          <PromiseQuote bg="warm" signature>
-            Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
-          </PromiseQuote>
-        </div>
+        <HugQuote />
         <JJReveal />
         <Promise2 />
         <Steps />
@@ -206,17 +201,10 @@ function Hero() {
             </h1>
 
             <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Every week on the phone.
-              </mark>{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Every day by text.
-              </mark>{" "}
-              A plan built around{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                what you actually eat, what you actually love
-              </mark>
-              , what you actually struggle with.
+              I'm calling <span className="uppercase">YOU</span> every week. Texting{" "}
+              <span className="uppercase">YOU</span> every day. And building a plan around the food{" "}
+              <span className="uppercase">YOU</span> actually eat and the life{" "}
+              <span className="uppercase">YOU</span> actually live.
             </p>
 
             <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
@@ -320,19 +308,22 @@ function TransformationsStrip() {
 
 function HugQuote() {
   return (
-    <section className="px-5 py-12 sm:py-16 lg:py-16 bg-bg-soft lg:h-full lg:flex lg:items-center">
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] w-full">
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)] lg:aspect-[4/5]">
+    <section className="px-5 py-12 sm:py-16 lg:py-20 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[760px] w-full">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
-            className="block w-full h-auto lg:absolute lg:inset-0 lg:h-full lg:object-cover"
+            className="block w-full h-auto"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-8">
-            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[28px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
-              This is different from anything I've ever done before.
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+            <p className="font-serif italic text-white text-[22px] sm:text-[32px] lg:text-[34px] leading-[1.3] max-w-[640px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+              "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
+            </p>
+            <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              — JJ
             </p>
           </div>
         </div>
@@ -367,44 +358,6 @@ function _TransformationsStripImpl() {
   );
 }
 
-function PromiseQuote({
-  eyebrow,
-  children,
-  bg = "soft",
-  signature = false,
-}: {
-  eyebrow?: string;
-  children: React.ReactNode;
-  bg?: "soft" | "warm";
-  signature?: boolean;
-}) {
-  return (
-    <section
-      className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}
-    >
-      <span
-        aria-hidden
-        className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none"
-      >
-        "
-      </span>
-      <span
-        aria-hidden
-        className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180"
-      >
-        "
-      </span>
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] relative w-full">
-        {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
-        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[32px] leading-[1.3] max-w-[580px] mx-auto mb-5">
-          {children}
-        </p>
-        {signature && <p className="text-[14px] text-ink-faint tracking-[0.18em]">JJ</p>}
-      </div>
-    </section>
-  );
-}
-
 function Promise2() {
   return (
     <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
@@ -423,11 +376,11 @@ function Promise2() {
 const STEPS = [
   {
     n: "01",
-    title: "We'll start with a call, just you and me",
+    title: "We'll start with a soul-to-soul, just you and me",
     text: (
       <>
-        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love
-        eating and what you can't stand. What's been holding you back.{" "}
+        Before anything else, sister, I want to know <em>you</em>. Your triggers. Your cravings. What you've tried.
+        What worked, what didn't. What you love eating and what you can't stand. What's been holding you back.{" "}
         <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
       </>
     ),
@@ -509,57 +462,132 @@ function JJReveal() {
           <em className="not-italic text-brand">why and how I'm doing this</em>.
         </h2>
       </div>
-      <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
-        <div className="flex justify-center -mt-16 mb-6">
+      <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-12 lg:items-start lg:max-w-[1000px] lg:mx-auto">
+        <div className="order-2 lg:order-1 space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
+          <p>
+            For 15 years I've been writing the books, building the programs, and doing the work alongside you. Together
+            we've lost more than 5 million pounds. And I am so proud of every single one of them.
+          </p>
+          <p>
+            But here's the truth, sister. I've been losing you in the same place over and over again. And I finally
+            figured out how to stop it.
+          </p>
+        </div>
+        <div className="order-1 lg:order-2 mb-8 lg:mb-0 flex justify-center">
           <img
             src={jjSelfieSun}
             alt="JJ Smith portrait"
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-top border-4 border-card shadow-md"
-            width={128}
-            height={128}
+            className="w-full max-w-[320px] lg:max-w-none rounded-2xl object-cover shadow-[0_20px_50px_-25px_rgba(184,80,66,0.4)]"
             loading="lazy"
           />
         </div>
-        <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
-          <p>
-            For 15 years I've been writing the books, building the programs, and doing the work right alongside you.
-            Together we've lost more than 5 million pounds. And I am so proud of every single one of them.
-          </p>
-          <p>
-            But here's the truth, sister.{" "}
-            <strong className="text-ink font-semibold">
-              Every single time, I've watched you sign up with all the hope in the world, and slip back without me.
-            </strong>{" "}
-            Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off
-            and Tuesday night came, I wasn't there.
-          </p>
-          <p>
-            And I knew that. For years, it was the part that hurt me the most. I could write another book. I could
-            record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check
-            on you. There's only one of me, and millions of you.
-          </p>
-          <p>
-            So I spent the last two years building something nobody's built before.{" "}
-            <strong className="text-ink font-semibold">
-              A way for me to actually show up for every single one of you.
-            </strong>{" "}
-            In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at
-            9pm.
-          </p>
-          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
-        </div>
-        <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different. Because this time, I'm not handing you another program and saying good
-          luck. I'm walking with you the whole way.
-        </blockquote>
-        <p className="mt-7 font-serif italic text-[19px] text-ink">
-          Love,
-          <br />
-          JJ
-        </p>
       </div>
-      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
+
+      <div className="mt-14 space-y-10 lg:max-w-[820px] lg:mx-auto">
+        {[
+          {
+            n: "1",
+            title: "Where I keep losing you.",
+            body: (
+              <>
+                <p>
+                  You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits — the kids, the work, the
+                  stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
+                </p>
+                <p>
+                  That's where every program loses you. Not because the information was wrong. Not because you weren't
+                  trying. <strong className="text-ink font-semibold">Because nobody was there when it got hard.</strong>
+                </p>
+                <p>
+                  Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
+                  up for and why this time was supposed to be different. Just you, by yourself, doing what you've always
+                  done.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "2",
+            title: "What it's actually costing you.",
+            body: (
+              <>
+                <p>Every time we lose you in that moment, we lose more than the weight.</p>
+                <p>
+                  We lose another year you spend hiding in family photos. Another summer in the cover-up. Another
+                  doctor's visit with the same numbers and the same lecture. Another morning where you don't recognize
+                  the woman in the mirror.
+                </p>
+                <p>
+                  <strong className="text-ink font-semibold">
+                    Sister, this isn't just about a number on the scale.
+                  </strong>{" "}
+                  It's about whether you get to feel like <em>you</em> again — confident, sexy, energized, in control.
+                  It's about whether you get your foxy back. It's about whether the next 12 weeks look like the last 12,
+                  or look completely different.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "3",
+            title: "So I did something I've never done before.",
+            body: (
+              <>
+                <p>
+                  For years, the thing that hurt me the most was knowing I couldn't be there for you. I could write
+                  another book. Record another video. Go on another show. But I couldn't pick up the phone on a hard
+                  night and check on you. There's only one of me, and millions of you.
+                </p>
+                <p>
+                  So I spent the last two years building a way to actually be there.{" "}
+                  <strong className="text-ink font-semibold">In my voice. In my words. With my coaching.</strong> The
+                  way I'd talk to my own sister if she called me crying at 9pm.
+                </p>
+                <p>
+                  <strong className="text-ink font-semibold">
+                    It's not an app. It's me — finally available to every sister who needs me.
+                  </strong>{" "}
+                  I'm calling you every week. Texting you every day. Catching the slips before they become slides.
+                </p>
+              </>
+            ),
+          },
+          {
+            n: "4",
+            title: "That's why this time is different.",
+            body: (
+              <p>
+                This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
+                way.
+              </p>
+            ),
+          },
+        ].map((s) => (
+          <div key={s.n}>
+            <h3 className="font-serif italic text-[24px] sm:text-[30px] lg:text-[34px] leading-[1.2] text-ink mb-5">
+              <span className="font-serif italic font-medium text-brand mr-2">{s.n}.</span>
+              {s.title}
+            </h3>
+            <div className="space-y-4 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">{s.body}</div>
+          </div>
+        ))}
+      </div>
+
+      <blockquote className="mt-12 pl-5 border-l-[3px] border-brand font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink lg:max-w-[820px] lg:mx-auto">
+        "This time, I'm giving you me… and I'm not leaving."
+        <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">— JJ</footer>
+      </blockquote>
+
+      <div className="mt-10 lg:max-w-[560px] lg:mx-auto">
+        <BigCta
+          sub={
+            <>
+              Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
+            </>
+          }
+        >
+          Yes JJ, I want you in my corner
+        </BigCta>
       </div>
     </Section>
   );
@@ -567,14 +595,14 @@ function JJReveal() {
 
 function Transformations() {
   const slides = [
-    { headline: '"My waist comes back, my belly fat finally lets go."', src: t1 },
-    { headline: '"I get my curves back, snatched, not skinny."', src: t4 },
-    { headline: '"My clothes fit again, and I look 10 years younger."', src: t8 },
-    { headline: '"My energy is back, and my confidence with it."', src: t10 },
-    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', src: t7 },
-    { headline: '"Down the size I haven\'t worn in a decade."', src: t12 },
-    { headline: '"Smiling in pictures again, dressing up again."', src: t9 },
-    { headline: '"Lighter, stronger, finally me again."', src: tTammi },
+    { headline: '"I\'m not hiding in baggy clothes anymore."', src: t1 },
+    { headline: '"I\'m in family photos again — front and center."', src: t4 },
+    { headline: '"I\'m dressing up again. I\'m smiling in pictures again."', src: t8 },
+    { headline: '"I feel like the woman I forgot I was."', src: t10 },
+    { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
+    { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
+    { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
+    { headline: '"I got my foxy back — for good this time."', src: tTammi },
   ];
   return (
     <Section id="stories">
