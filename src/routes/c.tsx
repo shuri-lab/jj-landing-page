@@ -206,17 +206,10 @@ function Hero() {
             </h1>
 
             <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Every week on the phone.
-              </mark>{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Every day by text.
-              </mark>{" "}
-              A plan built around{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                what you actually eat, what you actually love
-              </mark>
-              , what you actually struggle with.
+              I'm calling <span className="uppercase">YOU</span> every week. Texting{" "}
+              <span className="uppercase">YOU</span> every day. And building a plan around the food{" "}
+              <span className="uppercase">YOU</span> actually eat and the life{" "}
+              <span className="uppercase">YOU</span> actually live.
             </p>
 
             <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
