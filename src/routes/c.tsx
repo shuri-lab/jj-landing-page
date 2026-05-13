@@ -154,12 +154,7 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <div className="lg:grid lg:grid-cols-2 lg:items-stretch">
-          <HugQuote />
-          <PromiseQuote bg="warm" signature>
-            Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
-          </PromiseQuote>
-        </div>
+        <HugQuote />
         <JJReveal />
         <Promise2 />
         <Steps />
