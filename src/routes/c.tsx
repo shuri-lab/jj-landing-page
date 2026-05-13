@@ -194,21 +194,29 @@ function Hero() {
               12-Week Body Transformation
             </div>
             <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
-              Sister. This time,{" "}
+              Lose up to{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
-                I'm actually with you.
-              </em>
+                30 pounds
+              </em>{" "}
+              in 12 weeks.
             </h1>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
-              I'm calling <span className="uppercase">YOU</span> every week. Texting{" "}
-              <span className="uppercase">YOU</span> every day. And building a plan around the food{" "}
-              <span className="uppercase">YOU</span> actually eat and the life{" "}
-              <span className="uppercase">YOU</span> actually live.
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-5 max-w-[560px] mx-auto lg:mx-0">
+              But this is different from anything I've ever done before...
             </p>
 
-            <p className="text-[15px] sm:text-[16px] text-ink-soft mb-2 max-w-[560px] mx-auto lg:mx-0">
-              Lose up to <strong className="text-ink">30 lbs in 12 weeks</strong>.
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                I'm calling you every week.
+              </mark>{" "}
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                Texting you every day.
+              </mark>{" "}
+              And building you a plan around{" "}
+              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
+                the food you actually eat
+              </mark>{" "}
+              and the life you actually live.
             </p>
 
             <div className="hidden lg:block">
