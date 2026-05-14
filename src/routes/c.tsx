@@ -552,18 +552,19 @@ function JJReveal() {
             Energized. In control."
             <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
           </blockquote>
-          <div className="mt-4 lg:max-w-[480px] lg:mx-auto">
-            <BigCta
-              sub={
-                <>
-                  Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
-                </>
-              }
-            >
-              Yes JJ, I'm ready for this to be my turn
-            </BigCta>
-          </div>
         </RevealCard>
+      </div>
+
+      <div className="mt-10 lg:mt-12 lg:max-w-[480px] lg:mx-auto">
+        <BigCta
+          sub={
+            <>
+              Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
+            </>
+          }
+        >
+          Yes JJ, I'm ready for this to be my turn
+        </BigCta>
       </div>
     </Section>
   );
