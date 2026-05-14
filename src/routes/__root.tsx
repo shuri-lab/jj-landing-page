@@ -128,6 +128,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
             __html: `document.addEventListener('click',function(e){var btn=e.target.closest('[data-cta="yes-jj"], .cta-yes-jj, .yes-jj-btn');if(!btn)return;var position=btn.dataset.position||'unknown';var tier=btn.dataset.tier||'unknown';if(typeof gtag==='function'){gtag('event','cta_click',{button_position:position,tier:tier});}});`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener('click',function(e){var btn=e.target.closest('[data-buy-button="true"]');if(!btn)return;var tier=btn.dataset.tier||'unknown';var price=btn.dataset.price||'unknown';var paymentOption=btn.dataset.paymentOption||'unknown';var buttonText=(btn.innerText||btn.textContent||'').trim().replace(/\\s+/g,' ');if(typeof gtag==='function'){gtag('event','buy_button_click',{tier:tier,price:price,payment_option:paymentOption,button_text:buttonText});}});`,
+          }}
+        />
       </body>
     </html>
   );
