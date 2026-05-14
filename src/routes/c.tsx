@@ -254,19 +254,11 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative -mt-8 sm:-mt-12 lg:-mt-16 mb-0 aspect-square w-full max-w-[480px] sm:max-w-[560px] lg:max-w-none lg:w-[120%] lg:-mr-[10%] mx-auto">
-      <div
-        aria-hidden
-        className="absolute -inset-[40%] pointer-events-none z-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(255, 182, 193, 0.7) 0%, rgba(255, 200, 210, 0.45) 30%, rgba(255, 220, 228, 0.2) 55%, rgba(255, 255, 255, 0) 80%)",
-        }}
-      />
+    <div className="relative w-full mx-auto lg:w-[125%] lg:-mr-[15%] lg:-mt-8">
       <img
         src={heroA}
-        alt="JJ Smith"
-        className="relative z-10 w-full h-full object-contain object-bottom"
+        alt="JJ Smith with weekly calls, daily texts, and personalized plan"
+        className="block w-full h-auto"
         width={1024}
         height={1024}
       />
