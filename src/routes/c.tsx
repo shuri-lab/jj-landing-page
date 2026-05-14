@@ -182,7 +182,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
         <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:items-center lg:text-left">
           <div className="lg:order-1">
