@@ -193,12 +193,20 @@ function Hero() {
             <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
               12-Weeks to Sexy™
             </div>
-            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.08] tracking-[-0.025em] mb-6">
+            <h1 className="font-serif font-medium text-[26px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
               Lose up to{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
                 30 pounds
-              </em>{" "}
-              in 12 weeks with JJ Smith as your Personal Accountability Coach!
+              </em>
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              in 12 weeks with JJ Smith
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              as your Personal
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              Accountability Coach!
             </h1>
 
             <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 max-w-[560px] mx-auto lg:mx-0">
