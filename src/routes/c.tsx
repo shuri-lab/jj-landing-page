@@ -193,7 +193,7 @@ function Hero() {
             <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
               12-Weeks to Sexy™
             </div>
-            <h1 className="font-serif font-medium text-[26px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
+            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
               Lose up to{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
                 30 pounds
@@ -209,8 +209,8 @@ function Hero() {
               Accountability Coach!
             </h1>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 max-w-[560px] mx-auto lg:mx-0">
-              Meet JJ as your personal AI accountability coach, helping women over 40 finally lose weight without doing it alone.
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
+              Meet JJ as your <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">personal AI accountability coach</mark>, helping <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">women over 40</mark> finally lose weight <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">without doing it alone</mark>.
             </p>
 
             <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
@@ -240,10 +240,10 @@ function Hero() {
           </p>
         </div>
 
-        <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center space-y-3">
+        <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
           <p>Because weight loss isn't about willpower.</p>
           <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
-          <p><strong className="not-italic font-semibold font-sans">Like having JJ Smith in your phone every day.</strong></p>
+          <p>Like having JJ Smith in your phone every day.</p>
         </div>
 
         <TransformationsStrip />
