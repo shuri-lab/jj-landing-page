@@ -83,6 +83,8 @@ function BigCta({
   href,
   to,
   search,
+  position,
+  tier,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
@@ -90,6 +92,8 @@ function BigCta({
   href?: string;
   to?: string;
   search?: Record<string, string>;
+  position?: string;
+  tier?: string;
 }) {
   const content = (
     <>
@@ -112,15 +116,15 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to as string} search={search as never} className={cls} style={style}>
+        <Link to={to as string} search={search as never} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </Link>
       ) : href ? (
-        <a href={href} className={cls} style={style}>
+        <a href={href} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls} style={style}>
+        <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </button>
       )}
@@ -254,7 +258,7 @@ function Hero() {
             </ul>
 
             <div className="hidden lg:block max-w-[560px]">
-              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+              <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
             </div>
           </div>
           <div className="lg:order-2 relative z-0">
@@ -263,7 +267,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+          <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -613,6 +617,7 @@ function JJReveal() {
 
       <div className="mt-10 lg:mt-12 lg:max-w-[480px] lg:mx-auto">
         <BigCta
+          position="mid"
           sub={
             <>
               Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
@@ -679,7 +684,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
+        <BigCta position="mid" sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
       </div>
     </Section>
   );
@@ -871,7 +876,7 @@ function Offer() {
                 ))}
               </ul>
               {p.note && <PlusNote note={p.note} />}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
@@ -980,7 +985,7 @@ function LastCall() {
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
+          <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
         </div>
       </div>
     </section>
@@ -1041,6 +1046,9 @@ function StickyCta() {
         </div>
         <button
           onClick={scrollToOffer}
+          data-cta="yes-jj"
+          data-position="bottom"
+          data-tier="unknown"
           className="bg-brand text-white px-5 py-3 rounded-full text-[14px] font-semibold shadow-md"
         >
           Reserve

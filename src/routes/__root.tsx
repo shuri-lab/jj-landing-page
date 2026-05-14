@@ -123,6 +123,11 @@ function RootShell({ children }: { children: React.ReactNode }) {
             __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-PYRYHREW2F');`,
           }}
         />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `document.addEventListener('click',function(e){var btn=e.target.closest('[data-cta="yes-jj"], .cta-yes-jj, .yes-jj-btn');if(!btn)return;var position=btn.dataset.position||'unknown';var tier=btn.dataset.tier||'unknown';if(typeof gtag==='function'){gtag('event','cta_click',{button_position:position,tier:tier});}});`,
+          }}
+        />
       </body>
     </html>
   );

@@ -86,11 +86,15 @@ function BigCta({
   sub,
   className = "",
   href,
+  position,
+  tier,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
   className?: string;
   href?: string;
+  position?: string;
+  tier?: string;
 }) {
   const content = (
     <>
@@ -107,11 +111,11 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {href ? (
-        <a href={href} className={cls}>
+        <a href={href} className={cls} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls}>
+        <button onClick={scrollToOffer} className={cls} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </button>
       )}
@@ -220,7 +224,7 @@ function Hero() {
         </p>
 
         <div className="hidden lg:block">
-          <BigCta sub="14-day money-back · Limited spots">
+          <BigCta position="top" sub="14-day money-back · Limited spots">
             Yes JJ, I want you in my corner
           </BigCta>
           <p className="mt-4 text-[13px] text-ink-soft">
@@ -235,7 +239,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">
+          <BigCta position="top" sub="14-day money-back · Limited spots">
             Yes JJ, I want you in my corner
           </BigCta>
 
@@ -518,7 +522,7 @@ function JJReveal() {
         </p>
       </div>
       <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">
+        <BigCta position="mid" sub="14-day money-back · Limited spots">
           Reserve my spot
         </BigCta>
       </div>
@@ -566,7 +570,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">
+        <BigCta position="mid" sub="14-day money-back · Limited spots">
           Yes, I want this to be me
         </BigCta>
       </div>
@@ -755,7 +759,7 @@ function Offer() {
                   {p.note}
                 </p>
               )}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
@@ -854,7 +858,7 @@ function LastCall() {
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Limited spots">
+          <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">
             Reserve my spot
           </BigCta>
         </div>
@@ -912,6 +916,9 @@ function StickyCta() {
         </div>
         <button
           onClick={scrollToOffer}
+          data-cta="yes-jj"
+          data-position="bottom"
+          data-tier="unknown"
           className="bg-brand text-white px-5 py-3 rounded-full text-[14px] font-semibold shadow-md"
         >
           Reserve
