@@ -82,6 +82,8 @@ function BigCta({
   href,
   to,
   search,
+  position,
+  tier,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
@@ -89,6 +91,8 @@ function BigCta({
   href?: string;
   to?: string;
   search?: Record<string, string>;
+  position?: string;
+  tier?: string;
 }) {
   const content = (
     <>
@@ -111,15 +115,15 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to as string} search={search as never} className={cls} style={style}>
+        <Link to={to as string} search={search as never} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </Link>
       ) : href ? (
-        <a href={href} className={cls} style={style}>
+        <a href={href} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls} style={style}>
+        <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </button>
       )}

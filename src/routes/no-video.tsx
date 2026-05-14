@@ -85,11 +85,15 @@ function BigCta({
   sub,
   className = "",
   href,
+  position,
+  tier,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
   className?: string;
   href?: string;
+  position?: string;
+  tier?: string;
 }) {
   const content = (
     <>
@@ -106,11 +110,11 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {href ? (
-        <a href={href} className={cls}>
+        <a href={href} className={cls} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls}>
+        <button onClick={scrollToOffer} className={cls} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
           {content}
         </button>
       )}
