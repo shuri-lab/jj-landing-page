@@ -246,7 +246,7 @@ function Hero() {
             </p>
 
             <ul className="font-sans text-[16px] sm:text-[18px] lg:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[600px] mx-auto lg:mx-0 space-y-2 text-left">
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Customized meal plans built around foods you actually love</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Motivation on the days you want to quit</span></li>
