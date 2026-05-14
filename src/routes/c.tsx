@@ -220,15 +220,15 @@ function Hero() {
               <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Motivation on the days you want to quit</span></li>
             </ul>
 
-            <div className="hidden lg:block">
-              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
-              <p className="mt-4 text-[13px] text-ink-soft">
-                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-              </p>
-            </div>
           </div>
           <div className="lg:order-2">
             <HeroImageWithLogoBackdrop />
+            <div className="hidden lg:block mt-6">
+              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+              <p className="mt-4 text-[13px] text-ink-soft text-center">
+                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
+              </p>
+            </div>
           </div>
         </div>
 
