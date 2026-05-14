@@ -34,14 +34,14 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/c")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Weeks to Sexy, A" },
+      { title: "JJ Smith, 12-Weeks to Sexy™, A" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
           "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith, 12-Weeks to Sexy" },
+      { property: "og:title", content: "JJ Smith, 12-Weeks to Sexy™" },
       {
         property: "og:description",
         content:
@@ -191,18 +191,18 @@ function Hero() {
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
           <div className="lg:order-1">
             <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
-              12-Weeks to Sexy
+              12-Weeks to Sexy™
             </div>
-            <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
+            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.08] tracking-[-0.025em] mb-6">
               Lose up to{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
                 30 pounds
               </em>{" "}
-              in 12 weeks — with JJ Smith as your Personal Accountability Coach!
+              in 12 weeks with JJ Smith as your Personal Accountability Coach!
             </h1>
 
             <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 max-w-[560px] mx-auto lg:mx-0">
-              Meet JJ as your personal AI accountability coach — helping women over 40 finally lose weight without doing it alone.
+              Meet JJ as your personal AI accountability coach, helping women over 40 finally lose weight without doing it alone.
             </p>
 
             <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
@@ -232,9 +232,10 @@ function Hero() {
           </p>
         </div>
 
-        <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
-          Because weight loss isn't about willpower. It's about having someone helping you stay consistent long enough to finally see results.{" "}
-          <strong className="not-italic font-semibold font-sans">Like having JJ Smith in your phone every day.</strong>
+        <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center space-y-3">
+          <p>Because weight loss isn't about willpower.</p>
+          <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
+          <p><strong className="not-italic font-semibold font-sans">Like having JJ Smith in your phone every day.</strong></p>
         </div>
 
         <TransformationsStrip />
@@ -970,7 +971,7 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-normal text-ink-soft">JJ's 12-Weeks to Sexy</div>
+          <div className="font-normal text-ink-soft">JJ's 12-Weeks to Sexy™</div>
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
