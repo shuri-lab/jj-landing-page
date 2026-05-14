@@ -61,7 +61,7 @@ function CountdownInline({ className = "" }: { className?: string }) {
   return (
     <span className={className}>
       {days > 0 ? `${days}d ` : ""}
-      {pad(hours)}:{pad(minutes)}:{pad(seconds)}
+      {hours}h {minutes}min {seconds}s
     </span>
   );
 }
