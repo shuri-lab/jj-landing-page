@@ -19,7 +19,7 @@ import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
-import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
+import jjSelfieSun from "@/assets/landing/jj-laughing-client.jpg";
 import jjTightWaist from "@/assets/landing/jj-tight-waist.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
