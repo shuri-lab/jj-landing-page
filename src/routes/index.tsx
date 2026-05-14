@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Heart, Play } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -6,6 +6,8 @@ import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
+import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
+import heroA from "@/assets/hero-c.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -18,7 +20,7 @@ import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
-import jjTightWaist from "@/assets/landing/jj-tight-waist.jpg";
+import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
@@ -32,13 +34,14 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Week Body Transformation Challenge" },
+      { title: "JJ Smith, 12-Weeks to Sexy™, A" },
+      { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
           "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith, 12-Week Body Transformation Challenge" },
+      { property: "og:title", content: "JJ Smith, 12-Weeks to Sexy™" },
       {
         property: "og:description",
         content:
@@ -77,11 +80,15 @@ function BigCta({
   sub,
   className = "",
   href,
+  to,
+  search,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
   className?: string;
   href?: string;
+  to?: string;
+  search?: Record<string, string>;
 }) {
   const content = (
     <>
@@ -95,7 +102,11 @@ function BigCta({
     "block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep text-center";
   return (
     <div className={`w-full ${className}`}>
-      {href ? (
+      {to ? (
+        <Link to={to as string} search={search as never} className={cls}>
+          {content}
+        </Link>
+      ) : href ? (
         <a href={href} className={cls}>
           {content}
         </a>
@@ -143,12 +154,7 @@ function Landing() {
       <Nav />
       <main>
         <Hero />
-        <div className="lg:grid lg:grid-cols-2 lg:items-stretch">
-          <HugQuote />
-          <PromiseQuote bg="warm" signature>
-            Sister, I've spent 15 years giving you the information. This time, I'm giving you me.
-          </PromiseQuote>
-        </div>
+        <HugQuote />
         <JJReveal />
         <Promise2 />
         <Steps />
@@ -178,79 +184,94 @@ function Hero() {
   return (
     <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="mb-7 flex justify-center lg:justify-center">
+        <div className="mb-7 lg:mb-[-24px] flex justify-center lg:justify-center">
           <CountdownPill />
         </div>
 
         <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
           <div className="lg:order-1">
-            <h1 className="font-serif font-medium text-[38px] sm:text-[58px] lg:text-[52px] xl:text-[60px] leading-[1.08] tracking-[-0.025em] mb-6">
-              12-Week Body
-              <br />
-              Transformation
-              <br />
+            <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
+              12-Weeks to Sexy™
+            </div>
+            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
+              Lose up to{" "}
               <em className="not-italic" style={{ color: "#c9635c" }}>
-                Lose up to 30 pounds
+                30 pounds
               </em>
-              <br />
-              in 12 weeks.
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              in 12 weeks with JJ Smith
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              as your Personal
+              <br className="sm:hidden" />
+              <span className="hidden sm:inline"> </span>
+              Accountability Coach!
             </h1>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-8 max-w-[560px] mx-auto lg:mx-0">
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                But this time… I'm with you every step of the way.
-              </mark>{" "}
-              Not in a group. Not from a distance.{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Actually right there with you.
-              </mark>
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
+              Meet JJ as your <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">personal AI accountability coach</mark>, helping <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">women over 40</mark> finally lose weight <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">without doing it alone</mark>.
             </p>
-            <div className="hidden lg:block">
-              <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner!</BigCta>
-              <p className="mt-4 text-[13px] text-ink-soft">
-                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-              </p>
-            </div>
+
+            <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Customized meal plans built around foods you actually love</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Daily text reminders from JJ</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Motivation on the days you want to quit</span></li>
+            </ul>
+
           </div>
           <div className="lg:order-2">
-            <div className="relative aspect-video rounded-2xl overflow-hidden bg-bg-soft mb-8 lg:mb-0 shadow-[0_30px_60px_-30px_rgba(184,80,66,0.4)]">
-              <img
-                src={heroJJ}
-                alt="JJ Smith"
-                className="absolute inset-0 w-full h-full object-cover object-top block"
-                width={1024}
-                height={1024}
-              />
-              <button
-                aria-label="Play intro video"
-                className="absolute inset-0 flex items-center justify-center group"
-                onClick={scrollToOffer}
-              >
-                <span className="h-16 w-16 sm:h-20 sm:w-20 rounded-full bg-white/95 flex items-center justify-center shadow-xl transition-transform group-hover:scale-105">
-                  <Play className="h-7 w-7 text-ink fill-ink ml-1" />
-                </span>
-              </button>
+            <HeroImageWithLogoBackdrop />
+            <div className="hidden lg:block mt-0">
+              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+              <p className="mt-4 text-[13px] text-ink-soft text-center">
+                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
+              </p>
             </div>
           </div>
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner!</BigCta>
+          <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
 
           <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
           </p>
         </div>
 
-        <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
-          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening
-          Limited spots. Once they're gone, they're gone.
+        <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
+          <p>Because weight loss isn't about willpower.</p>
+          <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
+          <p>Like having JJ Smith in your phone every day.</p>
         </div>
 
         <TransformationsStrip />
       </div>
       <PartnersMarquee />
     </section>
+  );
+}
+
+function HeroImageWithLogoBackdrop() {
+  return (
+    <div className="relative -mt-16 sm:-mt-20 lg:-mt-32 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
+      <div
+        aria-hidden
+        className="absolute -inset-[40%] pointer-events-none z-0"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(255, 182, 193, 0.7) 0%, rgba(255, 200, 210, 0.45) 30%, rgba(255, 220, 228, 0.2) 55%, rgba(255, 255, 255, 0) 80%)",
+        }}
+      />
+      <img
+        src={heroA}
+        alt="JJ Smith"
+        className="relative z-10 w-full h-full object-contain object-bottom"
+        width={1024}
+        height={1024}
+      />
+    </div>
   );
 }
 
@@ -297,19 +318,22 @@ function TransformationsStrip() {
 
 function HugQuote() {
   return (
-    <section className="px-5 py-12 sm:py-16 lg:py-16 bg-bg-soft lg:h-full lg:flex lg:items-center">
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] w-full">
-        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)] lg:aspect-[4/5]">
+    <section className="px-5 py-12 sm:py-16 lg:py-20 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[760px] w-full">
+        <div className="relative rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(184,80,66,0.45)]">
           <img
             src={jjHugSignup}
             alt="JJ Smith hugging a sister from the community"
-            className="block w-full h-auto lg:absolute lg:inset-0 lg:h-full lg:object-cover"
+            className="block w-full h-auto"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/35 to-black/10" />
-          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-8">
-            <p className="font-serif italic text-white text-[24px] sm:text-[34px] lg:text-[28px] leading-[1.25] max-w-[520px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
-              This is different from anything I've ever done before.
+          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-12">
+            <p className="font-serif italic text-white text-[22px] sm:text-[32px] lg:text-[34px] leading-[1.3] max-w-[640px] drop-shadow-[0_2px_12px_rgba(0,0,0,0.5)]">
+              "Sister, I've spent 15 years giving you the information. This time, I'm giving you me."
+            </p>
+            <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+              JJ
             </p>
           </div>
         </div>
@@ -344,44 +368,6 @@ function _TransformationsStripImpl() {
   );
 }
 
-function PromiseQuote({
-  eyebrow,
-  children,
-  bg = "soft",
-  signature = false,
-}: {
-  eyebrow?: string;
-  children: React.ReactNode;
-  bg?: "soft" | "warm";
-  signature?: boolean;
-}) {
-  return (
-    <section
-      className={`relative px-5 py-20 lg:py-28 text-center lg:h-full lg:flex lg:items-center ${bg === "warm" ? "bg-bg-warm" : "bg-bg-soft"}`}
-    >
-      <span
-        aria-hidden
-        className="absolute top-6 left-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none"
-      >
-        "
-      </span>
-      <span
-        aria-hidden
-        className="absolute bottom-2 right-6 font-serif text-[120px] leading-none text-brand opacity-20 select-none rotate-180"
-      >
-        "
-      </span>
-      <div className="mx-auto max-w-[640px] lg:max-w-[560px] relative w-full">
-        {eyebrow && <Eyebrow center>{eyebrow}</Eyebrow>}
-        <p className="font-serif italic text-[28px] sm:text-[34px] lg:text-[32px] leading-[1.3] max-w-[580px] mx-auto mb-5">
-          {children}
-        </p>
-        {signature && <p className="text-[14px] text-ink-faint tracking-[0.18em]">JJ</p>}
-      </div>
-    </section>
-  );
-}
-
 function Promise2() {
   return (
     <section className="px-5 py-16 lg:py-24 text-center bg-bg-soft">
@@ -399,50 +385,82 @@ function Promise2() {
 
 const STEPS = [
   {
-    n: "01",
-    title: "We'll start with a call, just you and me",
+    title: "You'll stop starting over every Monday",
     text: (
       <>
-        Before anything else, I want to know <em>you</em>. What you've tried. What worked, what didn't. What you love
-        eating and what you can't stand. What's been holding you back.{" "}
-        <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
+        <p>
+          No more falling <strong className="text-ink font-semibold">"off track" for weeks</strong> after one bad meal
+          or bad weekend.
+        </p>
+        <p>
+          JJ helps you{" "}
+          <strong className="text-ink font-medium">reset quickly, stay focused, and keep moving forward</strong>.
+        </p>
+        <p>
+          Instead of <strong className="text-ink font-semibold">spiraling into guilt and frustration</strong>.
+        </p>
       </>
     ),
   },
   {
-    n: "02",
-    title: "I'll build your meal plan and movement plan, just for you",
+    title: "You'll know exactly what to eat",
     text: (
       <>
-        From everything you tell me, I'll put together a meal plan and a movement plan that's all <em>you</em>. Not a
-        cookie-cutter PDF I send to everybody. Not a generic challenge plan from a book.{" "}
-        <strong className="text-ink font-medium">
-          A plan designed around your body, your life, the foods you actually love.
-        </strong>
+        <p>
+          No more stressing over what to eat or trying to force yourself to live on{" "}
+          <strong className="text-ink font-semibold">boring diet food</strong>.
+        </p>
+        <p>
+          Your meal plans are{" "}
+          <strong className="text-ink font-medium">personalized around foods YOU actually like</strong>.
+        </p>
+        <p>
+          So losing weight finally feels{" "}
+          <strong className="text-ink font-semibold">realistic and sustainable</strong>.
+        </p>
       </>
     ),
   },
   {
-    n: "03",
     title: "Then I'm calling you every week",
     text: (
       <>
-        This is where it all changes. Through the version of me I built for this, I'm going to be calling you. Not to
-        throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see
-        how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way
-        real sisters do.
+        <p>
+          <strong className="text-ink font-semibold">This is where it all changes.</strong>
+        </p>
+        <p>
+          Through the version of me I built for this, I'm going to be{" "}
+          <strong className="text-ink font-semibold">calling you</strong>.
+        </p>
+        <p>Not to throw more information at you.</p>
+        <p>
+          Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's
+          working, what's hard.
+        </p>
+        <p>Then we'll figure out together what to do about it.</p>
+        <p>
+          The way <strong className="text-ink font-semibold">real sisters</strong> do.
+        </p>
       </>
     ),
   },
   {
-    n: "04",
     title: "And I'll be texting you every day",
     text: (
       <>
-        Every. Single. Day. A check-in in the morning. A pick-me-up in the afternoon. A "you good?" on the days that
-        look hard. <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if
-        we catch the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got
-        here again.
+        <p>
+          <strong className="text-ink font-semibold">Every. Single. Day.</strong>
+        </p>
+        <p>A check-in in the morning.</p>
+        <p>A pick-me-up in the afternoon.</p>
+        <p>
+          A "you good?" on the days that <strong className="text-ink font-semibold">look hard</strong>.
+        </p>
+        <p>
+          <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if we catch
+          the small stuff early, we never end up on a Tuesday night{" "}
+          <strong className="text-ink font-semibold">staring at the fridge wondering how we got here again</strong>.
+        </p>
       </>
     ),
   },
@@ -458,15 +476,14 @@ function Steps() {
           <em className="not-italic" style={{ color: "#c9635c" }}>
             12 weeks together
           </em>{" "}
-          will <em className="not-italic text-brand">actually feel like</em>.
+          will <em className="not-italic text-brand">actually feel</em> like.
         </h2>
       </div>
       <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
-          <div key={s.n} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
-            <div className="font-serif italic font-medium text-[52px] text-brand leading-none mb-4">{s.n}</div>
-            <h3 className="text-[20px] sm:text-[22px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
-            <p className="text-[17px] sm:text-[18px] text-ink-soft leading-[1.7]">{s.text}</p>
+          <div key={s.title} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
+            <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
+            <div className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7] space-y-4">{s.text}</div>
           </div>
         ))}
       </div>
@@ -476,82 +493,133 @@ function Steps() {
 
 function JJReveal() {
   return (
-    <Section bg="warm">
+    <Section>
       <div className="text-center">
         <Eyebrow center>From JJ</Eyebrow>
-        <h2 className="font-serif text-[30px] sm:text-[38px] lg:text-[48px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[820px] mx-auto">
+        <h2 className="font-serif text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            Sister to sister,
-          </em>{" "}
-          <em className="not-italic text-brand">why and how I'm doing this</em>.
+            Sister to Sister…
+          </em>
+          <br />
+          <em className="not-italic text-brand">Here's the truth</em>.
         </h2>
       </div>
-      <div className="bg-card rounded-2xl p-7 sm:p-9 lg:p-14 shadow-[0_20px_50px_-25px_rgba(184,80,66,0.25)] lg:max-w-[860px] lg:mx-auto">
-        <div className="flex justify-center -mt-16 mb-6">
-          <img
-            src={jjSelfieSun}
-            alt="JJ Smith portrait"
-            className="w-28 h-28 sm:w-32 sm:h-32 rounded-full object-cover object-top border-4 border-card shadow-md"
-            width={128}
-            height={128}
-            loading="lazy"
-          />
+      <div className="flex flex-col items-center lg:flex-row lg:items-start lg:gap-7 lg:max-w-[820px] lg:mx-auto">
+        <img
+          src={jjSelfieSun}
+          alt="JJ Smith portrait"
+          className="w-[96px] h-[96px] lg:w-[110px] lg:h-[110px] rounded-full object-cover shadow-[0_8px_24px_-10px_rgba(184,80,66,0.4)] mb-5 lg:mb-0 lg:mt-1 shrink-0"
+          loading="lazy"
+        />
+        <div className="space-y-5 text-[19px] sm:text-[21px] text-ink-soft leading-[1.75] text-center lg:text-left">
+          <p>
+            For years, I thought women struggled with weight loss because they needed better information. But after
+            helping millions of women lose weight…
+          </p>
+          <p>
+            I realized something heartbreaking: the problem was never the information. The problem was that nobody was
+            there when things started getting hard.
+          </p>
         </div>
-        <div className="space-y-5 text-[17px] sm:text-[18px] text-ink-soft leading-[1.75]">
-          <p>
-            For 15 years I've been writing the books, building the programs, and doing the work right alongside you.
-            Together we've lost more than 5 million pounds. And I am so proud of every single one of them.
+      </div>
+
+      <div className="mt-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7 lg:max-w-[820px] lg:mx-auto">
+        <RevealCard title="Where I keep losing you.">
+          <p className="card-lead">
+            You start strong on Monday. But by Wednesday? Life hits. Stress. Exhaustion. One bad meal. One skipped
+            workout.
           </p>
           <p>
-            But here's the truth, sister.{" "}
-            <strong className="text-ink font-semibold">
-              Every single time, I've watched you sign up with all the hope in the world, and slip back without me.
-            </strong>{" "}
-            Not because the plan was wrong. Not because you weren't trying. Because the moment the cameras turned off
-            and Tuesday night came, I wasn't there.
+            And suddenly that voice shows up again:{" "}
+            <em>"See? I knew I wouldn't stick to it."</em>
+          </p>
+          <p className="card-key">That's where most programs lose you.</p>
+          <p>
+            Not because you failed.{" "}
+            <strong className="card-bold">Because nobody was there when it got hard.</strong>
+          </p>
+        </RevealCard>
+
+        <RevealCard title="What it's really costing you.">
+          <p className="card-lead">
+            This isn't just about weight anymore.
           </p>
           <p>
-            And I knew that. For years, it was the part that hurt me the most. I could write another book. I could
-            record another video. I could go on another show. But I couldn't pick up the phone on a hard night and check
-            on you. There's only one of me, and millions of you.
+            It's <strong className="card-bold">confidence</strong>. Energy.{" "}
+            <strong className="card-bold">Avoiding photos</strong>. Covering up in summer. Not feeling like yourself
+            anymore.
+          </p>
+          <p className="card-key">And after enough restarts… you stop trusting YOU.</p>
+          <p>
+            That quiet voice that whispers <em>"maybe this just isn't for me"</em> gets a little louder every time.
+          </p>
+        </RevealCard>
+
+        <RevealCard title="So I built something different.">
+          <p className="card-lead">
+            I didn't want to give you another program and disappear.
           </p>
           <p>
-            So I spent the last two years building something nobody's built before.{" "}
-            <strong className="text-ink font-semibold">
-              A way for me to actually show up for every single one of you.
-            </strong>{" "}
+            I wanted to actually <strong className="card-bold">BE THERE</strong>. To check on you. Talk to you. Help
+            you reset before one bad day turns into quitting again.
+          </p>
+          <p className="card-key">Like real sisters do.</p>
+          <p>
             In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at
             9pm.
           </p>
-          <p>It's not a chatbot. It's not a tool. It's me, finally available to every sister who needs me.</p>
-        </div>
-        <blockquote className="mt-7 pl-5 border-l-[3px] border-brand font-serif italic text-[19px] sm:text-[22px] leading-snug text-ink">
-          That's why this time is different. Because this time, I'm not handing you another program and saying good
-          luck. I'm walking with you the whole way.
-        </blockquote>
-        <p className="mt-7 font-serif italic text-[19px] text-ink">
-          Love,
-          <br />
-          JJ
-        </p>
+        </RevealCard>
+
+        <RevealCard title="This time, you're not doing it alone.">
+          <p className="card-lead">
+            I'll be checking on you daily. Calling you weekly. Helping you stay focused when motivation fades.
+          </p>
+          <p>
+            Because if we catch the small stuff early…{" "}
+            <strong className="card-bold">we never end up back in that same painful cycle again.</strong>
+          </p>
+          <blockquote className="mt-10 mb-10 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
+            "Sister… this isn't just about weight loss. It's about feeling like YOU again. Confident. Sexy.
+            Energized. In control."
+            <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
+          </blockquote>
+        </RevealCard>
       </div>
-      <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
+
+      <div className="mt-10 lg:mt-12 lg:max-w-[480px] lg:mx-auto">
+        <BigCta
+          sub={
+            <>
+              Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
+            </>
+          }
+        >
+          Yes JJ, I'm ready for this to be my turn
+        </BigCta>
       </div>
     </Section>
   );
 }
 
+function RevealCard({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-2xl bg-bg-soft p-7 sm:p-8 [&_.card-lead]:text-[21px] sm:[&_.card-lead]:text-[22px] [&_.card-key]:text-[23px] sm:[&_.card-key]:text-[24px] [&_.card-key]:font-semibold [&_.card-key]:text-ink [&_.card-key]:my-6 sm:[&_.card-key]:my-8 [&_.card-key]:leading-[1.4] [&_.card-bold]:font-semibold [&_.card-bold]:text-ink">
+      <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
+      <div className="space-y-4 text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{children}</div>
+    </div>
+  );
+}
+
 function Transformations() {
   const slides = [
-    { headline: '"My waist comes back, my belly fat finally lets go."', src: t1 },
-    { headline: '"I get my curves back, snatched, not skinny."', src: t4 },
-    { headline: '"My clothes fit again, and I look 10 years younger."', src: t8 },
-    { headline: '"My energy is back, and my confidence with it."', src: t10 },
-    { headline: '"My health came back, pre-diabetes reversed, blood pressure normal."', src: t7 },
-    { headline: '"Down the size I haven\'t worn in a decade."', src: t12 },
-    { headline: '"Smiling in pictures again, dressing up again."', src: t9 },
-    { headline: '"Lighter, stronger, finally me again."', src: tTammi },
+    { headline: '"I\'m not hiding in baggy clothes anymore."', src: t1 },
+    { headline: '"I\'m in family photos again, front and center."', src: t4 },
+    { headline: '"I\'m dressing up again. I\'m smiling in pictures again."', src: t8 },
+    { headline: '"I feel like the woman I forgot I was."', src: t10 },
+    { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
+    { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
+    { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
+    { headline: '"I lost the baby weight."', src: tTammi },
   ];
   return (
     <Section id="stories">
@@ -653,16 +721,8 @@ function Offer() {
     return { fullPrice, monthlyPrice, monthlyMonths, hasFull, fullHref, monthlyHref };
   };
 
-  const basicPricing = planFromProgram(basic, {
-    fullPrice: 197,
-    monthlyPrice: 77,
-    monthlyMonths: 3,
-  });
-  const premiumPricing = planFromProgram(premium, {
-    fullPrice: 347,
-    monthlyPrice: 147,
-    monthlyMonths: 3,
-  });
+  const basicPricing = planFromProgram(basic, { fullPrice: 197, monthlyPrice: 77, monthlyMonths: 3 });
+  const premiumPricing = planFromProgram(premium, { fullPrice: 347, monthlyPrice: 147, monthlyMonths: 3 });
 
   const plans: OfferPlan[] = [
     {
@@ -949,7 +1009,7 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-normal text-ink-soft">JJ's 12-Week Transformation</div>
+          <div className="font-normal text-ink-soft">JJ's 12-Weeks to Sexy™</div>
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
