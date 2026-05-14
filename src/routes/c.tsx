@@ -184,16 +184,16 @@ function Hero() {
   return (
     <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
-        <div className="lg:grid lg:grid-cols-[1fr_1fr] lg:gap-8 lg:items-center lg:text-left">
-          <div className="lg:order-1">
+        <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
+          <div className="lg:order-1 lg:min-w-0">
             <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
               <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
             <h1
-              className="font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[56px] sm:text-[88px] lg:text-[96px] xl:text-[112px] whitespace-nowrap"
-              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif", fontStretch: "condensed" }}
+              className="font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[48px] sm:text-[72px] lg:text-[80px] xl:text-[96px]"
+              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
             >
               <span
                 style={{
