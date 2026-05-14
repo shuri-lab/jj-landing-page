@@ -1,13 +1,13 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play } from "lucide-react";
+import { Heart, Play, Star } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
-import heroA from "@/assets/hero-c.png";
+import heroA from "@/assets/landing/hero-c-cards.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -92,26 +92,34 @@ function BigCta({
 }) {
   const content = (
     <>
-      {children}
+      <span className="inline-flex items-center justify-center gap-2">
+        <span>{children}</span>
+        <span aria-hidden className="text-white">→</span>
+      </span>
       {sub && (
-        <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">{sub}</span>
+        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal" style={{ color: "#f0d78c" }}>{sub}</span>
       )}
     </>
   );
   const cls =
-    "block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep text-center";
+    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(42,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
+  const style: React.CSSProperties = {
+    background:
+      "linear-gradient(180deg, #5a1f47 0%, #4a1838 45%, #3a1430 80%, #2a0e22 100%)",
+    borderColor: "#c9a84c",
+  };
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to as string} search={search as never} className={cls}>
+        <Link to={to as string} search={search as never} className={cls} style={style}>
           {content}
         </Link>
       ) : href ? (
-        <a href={href} className={cls}>
+        <a href={href} className={cls} style={style}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls}>
+        <button onClick={scrollToOffer} className={cls} style={style}>
           {content}
         </button>
       )}
@@ -182,62 +190,79 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="mb-7 lg:mb-[-24px] flex justify-center lg:justify-center">
-          <CountdownPill />
-        </div>
-
-        <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
-          <div className="lg:order-1">
-            <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
-              12-Weeks to Sexy™
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
+      <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
+        <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
+          <div className="relative z-20 lg:order-1 lg:min-w-0">
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
+              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
+              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
-            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
-              Lose up to{" "}
-              <em className="not-italic" style={{ color: "#c9635c" }}>
-                30 pounds
-              </em>
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              in 12 weeks with JJ Smith
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              as your Personal
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              Accountability Coach!
+            <h1
+              className="relative z-20 font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[36px] sm:text-[56px] lg:text-[64px] xl:text-[78px] whitespace-nowrap"
+              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
+            >
+              <span
+                style={{
+                  color: "#2a1438",
+                  textShadow:
+                    "0 0 1px #c9a84c, 1px 1px 0 #c9a84c, -1px -1px 0 #2a1438, 0 6px 14px rgba(42,20,56,0.15)",
+                }}
+              >
+                12 Weeks to{" "}
+              </span>
+              <span
+                className="relative"
+                style={{
+                  background:
+                    "linear-gradient(180deg, #f47ca0 0%, #d94f7a 35%, #a52550 70%, #6e1438 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                  filter: "drop-shadow(0 0 1px #c9a84c) drop-shadow(1px 1px 0 #c9a84c)",
+                }}
+              >
+                Sexy
+                <sup
+                  className="text-[12px] sm:text-[18px] lg:text-[20px] align-super -ml-1"
+                  style={{ WebkitTextFillColor: "#8b1e3f" }}
+                >
+                  ™
+                </sup>
+              </span>
             </h1>
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-7">
+              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
+              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
+              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
+            </div>
+            <h2 className="font-sans font-semibold text-[26px] sm:text-[34px] lg:text-[38px] xl:text-[42px] leading-[1.18] tracking-[-0.015em] text-ink mb-6">
+              Lose up to <span style={{ color: "#d94f7a" }}>30 pounds</span> in 12 weeks with JJ Smith as your Personal Accountability Coach!
+            </h2>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
-              Meet JJ as your <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">personal AI accountability coach</mark>, helping <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">women over 40</mark> finally lose weight <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">without doing it alone</mark>.
+            <p className="font-sans text-[18px] sm:text-[22px] lg:text-[22px] leading-[1.4] text-ink mb-6 lg:mb-7 lg:max-w-[600px] lg:mx-0">
+              Meet JJ as your <span className="font-semibold" style={{ color: "#d94f7a" }}>personal AI accountability coach</span>, helping <span className="font-semibold" style={{ color: "#d94f7a" }}>women over 40</span> finally lose weight <span className="font-semibold" style={{ color: "#d94f7a" }}>without doing it alone.</span>
             </p>
 
-            <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Customized meal plans built around foods you actually love</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Daily text reminders from JJ</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Motivation on the days you want to quit</span></li>
+            <ul className="font-sans text-[16px] sm:text-[18px] lg:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[600px] mx-auto lg:mx-0 space-y-2 text-left">
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Motivation on the days you want to quit</span></li>
             </ul>
 
-          </div>
-          <div className="lg:order-2">
-            <HeroImageWithLogoBackdrop />
-            <div className="hidden lg:block mt-0">
+            <div className="hidden lg:block max-w-[560px]">
               <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
-              <p className="mt-4 text-[13px] text-ink-soft text-center">
-                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-              </p>
             </div>
+          </div>
+          <div className="lg:order-2 relative z-0">
+            <HeroImageWithLogoBackdrop />
           </div>
         </div>
 
         <div className="lg:hidden">
           <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
-
-          <p className="mt-4 text-[13px] text-ink-soft">
-            Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-          </p>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -255,19 +280,11 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative -mt-16 sm:-mt-20 lg:-mt-32 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
-      <div
-        aria-hidden
-        className="absolute -inset-[40%] pointer-events-none z-0"
-        style={{
-          background:
-            "radial-gradient(ellipse at center, rgba(255, 182, 193, 0.7) 0%, rgba(255, 200, 210, 0.45) 30%, rgba(255, 220, 228, 0.2) 55%, rgba(255, 255, 255, 0) 80%)",
-        }}
-      />
+    <div className="relative w-full mx-auto max-w-[420px] lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroA}
-        alt="JJ Smith"
-        className="relative z-10 w-full h-full object-contain object-bottom"
+        alt="JJ Smith with weekly calls, daily texts, and personalized plan"
+        className="block w-full h-auto"
         width={1024}
         height={1024}
       />
