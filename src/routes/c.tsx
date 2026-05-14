@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play } from "lucide-react";
+import { Heart, Play, Star } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -184,60 +184,59 @@ function Hero() {
   return (
     <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="mb-7 lg:mb-[-24px] flex justify-center lg:justify-center">
-          <CountdownPill />
-        </div>
-
-        <div className="lg:grid lg:grid-cols-2 lg:gap-14 lg:items-center lg:text-left">
+        <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:items-center lg:text-left">
           <div className="lg:order-1">
-            <div className="text-[13px] sm:text-[15px] uppercase tracking-[0.22em] text-brand font-semibold mb-4 whitespace-nowrap">
-              12-Weeks to Sexy™
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
+              <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
-            <h1 className="font-serif font-medium text-[30px] sm:text-[46px] lg:text-[42px] xl:text-[48px] leading-[1.12] tracking-[-0.025em] mb-6">
-              Lose up to{" "}
-              <em className="not-italic" style={{ color: "#c9635c" }}>
-                30 pounds
-              </em>
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              in 12 weeks with JJ Smith
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              as your Personal
-              <br className="sm:hidden" />
-              <span className="hidden sm:inline"> </span>
-              Accountability Coach!
+            <h1 className="font-serif font-black uppercase leading-[0.9] tracking-[-0.02em] mb-2 text-[44px] sm:text-[64px] lg:text-[68px] xl:text-[80px] whitespace-nowrap">
+              <span style={{ color: "#2a1438" }}>12 Weeks to </span>
+              <span
+                className="relative"
+                style={{
+                  background: "linear-gradient(180deg, #d94f7a 0%, #8b1e3f 100%)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}
+              >
+                Sexy
+                <sup className="text-[14px] sm:text-[18px] align-super -ml-1" style={{ WebkitTextFillColor: "#8b1e3f" }}>™</sup>
+              </span>
             </h1>
+            <div className="flex items-center justify-center lg:justify-start gap-3 mb-7">
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
+              <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
+              <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
+            </div>
+            <h2 className="font-sans font-semibold text-[22px] sm:text-[28px] lg:text-[30px] leading-[1.2] tracking-[-0.01em] text-ink mb-5">
+              Lose up to <span style={{ color: "#d94f7a" }}>30 pounds</span> in 12 weeks with JJ Smith as your Personal Accountability Coach!
+            </h2>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
-              Meet JJ as your <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">personal AI accountability coach</mark>, helping <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">women over 40</mark> finally lose weight <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">without doing it alone</mark>.
+            <p className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
+              Meet JJ as your <span className="font-semibold" style={{ color: "#d94f7a" }}>personal AI accountability coach</span>, helping <span className="font-semibold" style={{ color: "#d94f7a" }}>women over 40</span> finally lose weight <span className="font-semibold" style={{ color: "#d94f7a" }}>without doing it alone.</span>
             </p>
 
             <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Customized meal plans built around foods you actually love</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Daily text reminders from JJ</span></li>
-              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Motivation on the days you want to quit</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Customized meal plans built around foods you actually love</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
+              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Motivation on the days you want to quit</span></li>
             </ul>
 
-          </div>
-          <div className="lg:order-2">
-            <HeroImageWithLogoBackdrop />
-            <div className="hidden lg:block mt-0">
+            <div className="hidden lg:block max-w-[560px]">
               <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
-              <p className="mt-4 text-[13px] text-ink-soft text-center">
-                Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-              </p>
             </div>
+          </div>
+          <div className="lg:order-2 relative">
+            <HeroImageWithLogoBackdrop />
           </div>
         </div>
 
         <div className="lg:hidden">
           <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
-
-          <p className="mt-4 text-[13px] text-ink-soft">
-            Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
-          </p>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
