@@ -182,9 +182,9 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-4 lg:pb-24 text-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-0 lg:pb-24 text-center">
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="mb-7 lg:mb-0 flex justify-center lg:justify-center">
+        <div className="mb-7 lg:mb-[-24px] flex justify-center lg:justify-center">
           <CountdownPill />
         </div>
 
@@ -223,7 +223,7 @@ function Hero() {
           </div>
           <div className="lg:order-2">
             <HeroImageWithLogoBackdrop />
-            <div className="hidden lg:block mt-6">
+            <div className="hidden lg:block mt-0">
               <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
               <p className="mt-4 text-[13px] text-ink-soft text-center">
                 Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
