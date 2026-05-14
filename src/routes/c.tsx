@@ -467,9 +467,9 @@ function JJReveal() {
         <Eyebrow center>From JJ</Eyebrow>
         <h2 className="font-serif text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            Sister to sister,
+            Sister to Sister…
           </em>{" "}
-          <em className="not-italic text-brand">why and how I'm doing this</em>.
+          <em className="not-italic text-brand">Here's the truth</em>.
         </h2>
       </div>
       <div className="flex flex-col items-center lg:flex-row lg:items-start lg:gap-7 lg:max-w-[820px] lg:mx-auto">
@@ -481,12 +481,12 @@ function JJReveal() {
         />
         <div className="space-y-5 text-[19px] sm:text-[21px] text-ink-soft leading-[1.75] text-center lg:text-left">
           <p>
-            For 15 years I've been writing the books, building the programs, and doing the work alongside you. Together
-            we've lost more than 5 million pounds. And I am so proud of every single one of them.
+            For years, I thought women struggled with weight loss because they needed better information. But after
+            helping millions of women lose weight…
           </p>
           <p>
-            But here's the truth, sister. I've been losing you in the same place over and over again. And I finally
-            figured out how to stop it.
+            I realized something heartbreaking: the problem was never the information. The problem was that nobody was
+            there when things started getting hard.
           </p>
         </div>
       </div>
@@ -494,64 +494,61 @@ function JJReveal() {
       <div className="mt-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7 lg:max-w-[820px] lg:mx-auto">
         <RevealCard title="Where I keep losing you.">
           <p className="card-lead">
-            You sign up on Sunday. You're locked in by Monday. By Wednesday, life hits. The kids, the work, the
-            stress. And by Thursday at 9pm, you're standing in front of the fridge, alone.
+            You start strong on Monday. But by Wednesday? Life hits. Stress. Exhaustion. One bad meal. One skipped
+            workout.
           </p>
           <p>
-            That's where <strong className="card-bold">every program loses you</strong>. Not because the
-            information was wrong. Not because <strong className="card-bold">you weren't trying</strong>.
+            And suddenly that voice shows up again:{" "}
+            <em>"See? I knew I wouldn't stick to it."</em>
           </p>
-          <p className="card-key">Because nobody was there when it got hard.</p>
+          <p className="card-key">That's where most programs lose you.</p>
           <p>
-            Nobody to text. Nobody who knew the kind of week you were having. Nobody to remind you what you signed
-            up for and why this time was supposed to be different.{" "}
-            <strong className="card-bold">Just you, by yourself</strong>, doing what you've always done.
+            Not because you failed.{" "}
+            <strong className="card-bold">Because nobody was there when it got hard.</strong>
           </p>
         </RevealCard>
 
-        <RevealCard title="What it's actually costing you.">
+        <RevealCard title="What it's really costing you.">
           <p className="card-lead">
-            Every time we lose you in that moment, we lose more than the weight.
+            This isn't just about weight anymore.
           </p>
           <p>
-            We lose another year you spend <strong className="card-bold">hiding in family photos</strong>. Another
-            summer in the cover-up. Another doctor's visit with the same numbers and the same lecture. Another
-            morning where you don't recognize <strong className="card-bold">the woman in the mirror</strong>.
+            It's <strong className="card-bold">confidence</strong>. Energy.{" "}
+            <strong className="card-bold">Avoiding photos</strong>. Covering up in summer. Not feeling like yourself
+            anymore.
           </p>
-          <p className="card-key">Sister, this isn't just about a number on the scale.</p>
+          <p className="card-key">And after enough restarts… you stop trusting YOU.</p>
           <p>
-            It's about whether you get to feel like <em>you</em> again. Confident, sexy, energized, in control.
-            It's about whether you <strong className="card-bold">get your foxy back</strong>. It's about whether
-            the next 12 weeks look like the last 12, or{" "}
-            <strong className="card-bold">look completely different</strong>.
+            That quiet voice that whispers <em>"maybe this just isn't for me"</em> gets a little louder every time.
           </p>
         </RevealCard>
 
-        <RevealCard title="So I did something I've never done before.">
+        <RevealCard title="So I built something different.">
           <p className="card-lead">
-            For years, the thing that hurt me the most was knowing I couldn't be there for you.
+            I didn't want to give you another program and disappear.
           </p>
           <p>
-            I could write another book. Record another video. Go on another show. But I couldn't{" "}
-            <strong className="card-bold">pick up the phone</strong> on a hard night and check on you. There's
-            only <strong className="card-bold">one of me, and millions of you</strong>.
+            I wanted to actually <strong className="card-bold">BE THERE</strong>. To check on you. Talk to you. Help
+            you reset before one bad day turns into quitting again.
           </p>
-          <p className="card-key">So I spent the last two years building a way to actually be there.</p>
+          <p className="card-key">Like real sisters do.</p>
           <p>
-            <strong className="card-bold">In my voice. In my words. With my coaching.</strong> The way I'd talk to
-            my own sister if she called me crying at 9pm. It's not an app.{" "}
-            <strong className="card-bold">It's me, finally available to every sister who needs me.</strong> I'm
-            calling you every week. Texting you every day. Catching the slips before they become slides.
+            In my voice. In my words. With my coaching. The way I'd talk to my own sister if she called me crying at
+            9pm.
           </p>
         </RevealCard>
 
-        <RevealCard title="That's why this time is different.">
+        <RevealCard title="This time, you're not doing it alone.">
           <p className="card-lead">
-            This time, I'm not handing you another program and saying good luck. I'm walking with you the whole
-            way.
+            I'll be checking on you daily. Calling you weekly. Helping you stay focused when motivation fades.
+          </p>
+          <p>
+            Because if we catch the small stuff early…{" "}
+            <strong className="card-bold">we never end up back in that same painful cycle again.</strong>
           </p>
           <blockquote className="mt-10 mb-10 font-serif italic text-[22px] sm:text-[26px] leading-snug text-ink text-center">
-            "This time, I'm giving you me… and I'm not leaving."
+            "Sister… this isn't just about weight loss. It's about feeling like YOU again. Confident. Sexy.
+            Energized. In control."
             <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
           </blockquote>
           <div className="mt-4 lg:max-w-[480px] lg:mx-auto">
@@ -562,7 +559,7 @@ function JJReveal() {
                 </>
               }
             >
-              Yes JJ, I want you in my corner
+              Yes JJ, I'm ready for this to be my turn
             </BigCta>
           </div>
         </RevealCard>
