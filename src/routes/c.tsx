@@ -231,25 +231,7 @@ function Hero() {
             </div>
           </div>
           <div className="lg:order-2 relative">
-            <div className="relative grid grid-cols-[auto_1fr] gap-4 items-center">
-              <div className="hidden lg:flex flex-col gap-3 z-20">
-                <HeroFeatureCard icon={<Phone className="w-5 h-5" />} text={<>Weekly<br/>calls from JJ</>} />
-                <HeroFeatureCard icon={<MessageCircle className="w-5 h-5" />} text={<>Daily<br/>texts</>} />
-                <HeroFeatureCard icon={<ClipboardEdit className="w-5 h-5" />} text={<>A plan<br/>made for<br/><span className="font-bold" style={{ color: "#f7a8c0" }}>YOUR</span> real life</>} />
-              </div>
-              <div className="relative">
-                <HeroImageWithLogoBackdrop />
-                <div className="hidden lg:block absolute bottom-4 right-2 text-right">
-                  <div className="font-serif italic text-[28px] leading-none" style={{ color: "#2a1438", fontFamily: "'Fraunces', serif" }}>JJ Smith</div>
-                  <div className="mt-2 text-[10px] tracking-[0.2em] uppercase font-semibold" style={{ color: "#8b1e3f" }}>Your AI Coach.<br/>Your Best Results.</div>
-                </div>
-              </div>
-            </div>
-            <div className="lg:hidden mt-4 grid grid-cols-3 gap-2">
-              <HeroFeatureCard icon={<Phone className="w-4 h-4" />} text="Weekly calls from JJ" compact />
-              <HeroFeatureCard icon={<MessageCircle className="w-4 h-4" />} text="Daily texts" compact />
-              <HeroFeatureCard icon={<ClipboardEdit className="w-4 h-4" />} text={<>A plan for <span className="font-bold" style={{ color: "#f7a8c0" }}>YOUR</span> life</>} compact />
-            </div>
+            <HeroImageWithLogoBackdrop />
           </div>
         </div>
 
@@ -267,19 +249,6 @@ function Hero() {
       </div>
       <PartnersMarquee />
     </section>
-  );
-}
-
-function HeroFeatureCard({ icon, text, compact = false }: { icon: React.ReactNode; text: React.ReactNode; compact?: boolean }) {
-  return (
-    <div
-      className={`rounded-2xl flex items-center gap-3 ${compact ? "px-3 py-3 flex-col text-center" : "px-4 py-4 w-[170px]"} text-white shadow-[0_8px_24px_-12px_rgba(42,20,56,0.5)]`}
-      style={{ background: "linear-gradient(135deg, #3d1f4f 0%, #2a1438 100%)" }}
-    >
-      <div className="shrink-0" style={{ color: "#f7a8c0" }}>{icon}</div>
-      {!compact && <div className="h-10 w-px bg-white/20" />}
-      <div className={`text-[13px] leading-tight font-semibold ${compact ? "" : ""}`}>{text}</div>
-    </div>
   );
 }
 
