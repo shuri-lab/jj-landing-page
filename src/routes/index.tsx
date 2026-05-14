@@ -281,11 +281,11 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative w-full mx-auto max-w-[420px] lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[420px] -mt-4 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroMobile}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="block w-full h-auto mx-auto max-w-[280px] sm:max-w-[340px] lg:hidden"
+        className="block w-full h-auto mx-auto max-w-[220px] sm:max-w-[280px] lg:hidden"
         width={1024}
         height={1024}
       />
