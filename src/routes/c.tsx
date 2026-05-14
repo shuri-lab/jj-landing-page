@@ -19,8 +19,8 @@ import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import tGirosalee from "@/assets/landing/transformation-girosalee.jpg";
 import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
-import jjSelfieSun from "@/assets/landing/jj-laughing-client.jpg";
-import jjTightWaist from "@/assets/landing/jj-tight-waist.jpg";
+import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
+import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
@@ -468,7 +468,8 @@ function JJReveal() {
         <h2 className="font-serif text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.15] mb-10 max-w-[580px] lg:max-w-[760px] mx-auto">
           <em className="not-italic" style={{ color: "#c9635c" }}>
             Sister to Sister…
-          </em>{" "}
+          </em>
+          <br />
           <em className="not-italic text-brand">Here's the truth</em>.
         </h2>
       </div>
