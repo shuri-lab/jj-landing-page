@@ -220,7 +220,7 @@ function Hero() {
           <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">But this time… I'm with you every step of the way.</mark> Not in a group. Not from a distance. <mark style={{backgroundColor:"#f6dedb"}} className="text-ink px-1 rounded-sm">Actually right there with you.</mark>
         </p>
         <div className="hidden lg:block">
-          <BigCta sub="14-day money-back · Limited spots">
+          <BigCta position="top" sub="14-day money-back · Limited spots">
             Yes JJ, I want you in my corner!
           </BigCta>
           <p className="mt-4 text-[13px] text-ink-soft">
@@ -235,7 +235,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">
+          <BigCta position="top" sub="14-day money-back · Limited spots">
             Yes JJ, I want you in my corner!
           </BigCta>
 
@@ -518,7 +518,7 @@ function JJReveal() {
         </p>
       </div>
       <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">
+        <BigCta position="mid" sub="14-day money-back · Limited spots">
           Reserve my spot
         </BigCta>
       </div>
@@ -566,7 +566,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">
+        <BigCta position="mid" sub="14-day money-back · Limited spots">
           Yes, I want this to be me
         </BigCta>
       </div>
@@ -755,7 +755,7 @@ function Offer() {
                   {p.note}
                 </p>
               )}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
@@ -854,7 +854,7 @@ function LastCall() {
           You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Limited spots">
+          <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">
             Reserve my spot
           </BigCta>
         </div>
