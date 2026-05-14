@@ -587,7 +587,7 @@ function Transformations() {
     { headline: '"My doctor\'s visits sound completely different now."', src: t7 },
     { headline: '"I\'m back to the size I never thought I\'d see again."', src: t12 },
     { headline: '"I\'m not the one hiding behind the camera anymore."', src: t9 },
-    { headline: '"I got my foxy back, for good this time."', src: tTammi },
+    { headline: '"I lost the baby weight."', src: tTammi },
   ];
   return (
     <Section id="stories">
