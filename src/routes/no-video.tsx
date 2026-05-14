@@ -912,6 +912,9 @@ function StickyCta() {
         </div>
         <button
           onClick={scrollToOffer}
+          data-cta="yes-jj"
+          data-position="bottom"
+          data-tier="unknown"
           className="bg-brand text-white px-5 py-3 rounded-full text-[14px] font-semibold shadow-md"
         >
           Reserve
