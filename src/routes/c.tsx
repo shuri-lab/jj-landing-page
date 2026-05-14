@@ -192,7 +192,7 @@ function Hero() {
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
             <h1
-              className="font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[48px] sm:text-[72px] lg:text-[80px] xl:text-[96px]"
+              className="font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[36px] sm:text-[56px] lg:text-[64px] xl:text-[78px] whitespace-nowrap"
               style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
             >
               <span
@@ -217,7 +217,7 @@ function Hero() {
               >
                 Sexy
                 <sup
-                  className="text-[16px] sm:text-[22px] lg:text-[24px] align-super -ml-1"
+                  className="text-[12px] sm:text-[18px] lg:text-[20px] align-super -ml-1"
                   style={{ WebkitTextFillColor: "#8b1e3f" }}
                 >
                   ™
@@ -272,7 +272,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative w-full mx-auto lg:w-[140%] lg:-mr-[30%] lg:-mt-12 lg:-mb-12">
+    <div className="relative w-full mx-auto max-w-[420px] lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroA}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
