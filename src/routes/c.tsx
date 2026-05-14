@@ -182,7 +182,7 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-4 lg:pb-24 text-center">
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
         <div className="mb-7 lg:mb-3 flex justify-center lg:justify-center">
           <CountdownPill />
