@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Phone, MessageCircle, ClipboardEdit, Star } from "lucide-react";
+import { Heart, Play, Star } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -191,7 +191,7 @@ function Hero() {
               <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
-            <h1 className="font-serif font-black uppercase leading-[0.9] tracking-[-0.02em] mb-2 text-[56px] sm:text-[88px] lg:text-[96px] xl:text-[112px]">
+            <h1 className="font-serif font-black uppercase leading-[0.9] tracking-[-0.02em] mb-2 text-[44px] sm:text-[64px] lg:text-[68px] xl:text-[80px] whitespace-nowrap">
               <span style={{ color: "#2a1438" }}>12 Weeks to </span>
               <span
                 className="relative"
