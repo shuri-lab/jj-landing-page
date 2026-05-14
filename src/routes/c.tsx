@@ -105,7 +105,7 @@ function BigCta({
     "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(42,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
   const style: React.CSSProperties = {
     background:
-      "linear-gradient(180deg, #4a2560 0%, #3a1a4d 45%, #2a1438 80%, #1a0a24 100%)",
+      "linear-gradient(180deg, #5a1f47 0%, #4a1838 45%, #3a1430 80%, #2a0e22 100%)",
     borderColor: "#c9a84c",
   };
   return (
