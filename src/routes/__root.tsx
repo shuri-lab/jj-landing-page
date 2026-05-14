@@ -117,6 +117,12 @@ function RootShell({ children }: { children: React.ReactNode }) {
             __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wr5f4x0tbo");`,
           }}
         />
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYRYHREW2F" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-PYRYHREW2F');`,
+          }}
+        />
       </body>
     </html>
   );
