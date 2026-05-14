@@ -182,9 +182,9 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center">
+    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-4 lg:pb-24 text-center">
       <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="mb-7 flex justify-center lg:justify-center">
+        <div className="mb-7 lg:mb-3 flex justify-center lg:justify-center">
           <CountdownPill />
         </div>
 
@@ -255,7 +255,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative -mt-16 sm:-mt-20 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
+    <div className="relative -mt-16 sm:-mt-20 lg:-mt-32 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
       <div
         aria-hidden
         className="absolute -inset-[40%] pointer-events-none z-0"
