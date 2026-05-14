@@ -198,29 +198,22 @@ function Hero() {
               <em className="not-italic" style={{ color: "#c9635c" }}>
                 30 pounds
               </em>{" "}
-              in 12 weeks.
+              in 12 weeks — with JJ Smith as your Personal Accountability Coach!
             </h1>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-5 max-w-[560px] mx-auto lg:mx-0">
-              But this is different from anything I've ever done before...
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 max-w-[560px] mx-auto lg:mx-0">
+              Meet JJ as your personal AI accountability coach — helping women over 40 finally lose weight without doing it alone.
             </p>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0">
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                I'm calling you every week.
-              </mark>{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                Texting you every day.
-              </mark>{" "}
-              And building you a plan around{" "}
-              <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">
-                the food you actually eat
-              </mark>{" "}
-              and the life you actually live.
-            </p>
+            <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Customized meal plans built around foods you actually love</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Daily text reminders from JJ</span></li>
+              <li className="flex gap-2"><span className="text-brand font-bold">✔</span><span>Motivation on the days you want to quit</span></li>
+            </ul>
 
             <div className="hidden lg:block">
-              <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
+              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
               <p className="mt-4 text-[13px] text-ink-soft">
                 Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
               </p>
@@ -232,7 +225,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
+          <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
 
           <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
@@ -240,8 +233,8 @@ function Hero() {
         </div>
 
         <div className="mt-8 lg:mt-12 p-5 sm:p-6 bg-bg-warm border-l-[3px] border-brand rounded-md text-[15px] lg:text-[17px] text-brand-deep font-serif italic leading-relaxed text-left lg:max-w-[900px] lg:mx-auto lg:text-center">
-          <strong className="not-italic font-semibold font-sans">This is personal for me</strong>, so I'm only opening
-          Limited spots. Once they're gone, they're gone.
+          Because weight loss isn't about willpower. It's about having someone helping you stay consistent long enough to finally see results.{" "}
+          <strong className="not-italic font-semibold font-sans">Like having JJ Smith in your phone every day.</strong>
         </div>
 
         <TransformationsStrip />
