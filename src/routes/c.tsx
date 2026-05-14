@@ -183,27 +183,45 @@ function Nav() {
 function Hero() {
   return (
     <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1180px]">
-        <div className="lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:gap-10 lg:items-center lg:text-left">
-          <div className="lg:order-1">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
+        <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
+          <div className="lg:order-1 lg:min-w-0">
             <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
               <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
-            <h1 className="font-serif font-black uppercase leading-[0.9] tracking-[-0.02em] mb-2 text-[44px] sm:text-[64px] lg:text-[68px] xl:text-[80px] whitespace-nowrap">
-              <span style={{ color: "#2a1438" }}>12 Weeks to </span>
+            <h1
+              className="font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[48px] sm:text-[72px] lg:text-[80px] xl:text-[96px]"
+              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
+            >
+              <span
+                style={{
+                  color: "#2a1438",
+                  textShadow:
+                    "0 0 1px #c9a84c, 1px 1px 0 #c9a84c, -1px -1px 0 #2a1438, 0 6px 14px rgba(42,20,56,0.15)",
+                }}
+              >
+                12 Weeks to{" "}
+              </span>
               <span
                 className="relative"
                 style={{
-                  background: "linear-gradient(180deg, #d94f7a 0%, #8b1e3f 100%)",
+                  background:
+                    "linear-gradient(180deg, #f47ca0 0%, #d94f7a 35%, #a52550 70%, #6e1438 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  filter: "drop-shadow(0 0 1px #c9a84c) drop-shadow(1px 1px 0 #c9a84c)",
                 }}
               >
                 Sexy
-                <sup className="text-[14px] sm:text-[18px] align-super -ml-1" style={{ WebkitTextFillColor: "#8b1e3f" }}>™</sup>
+                <sup
+                  className="text-[16px] sm:text-[22px] lg:text-[24px] align-super -ml-1"
+                  style={{ WebkitTextFillColor: "#8b1e3f" }}
+                >
+                  ™
+                </sup>
               </span>
             </h1>
             <div className="flex items-center justify-center lg:justify-start gap-3 mb-7">
@@ -211,15 +229,15 @@ function Hero() {
               <Star className="w-3 h-3 text-[#c9a84c]" fill="#c9a84c" />
               <span className="h-px flex-1 max-w-[80px] bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
             </div>
-            <h2 className="font-sans font-semibold text-[22px] sm:text-[28px] lg:text-[30px] leading-[1.2] tracking-[-0.01em] text-ink mb-5">
+            <h2 className="font-sans font-semibold text-[26px] sm:text-[34px] lg:text-[38px] xl:text-[42px] leading-[1.18] tracking-[-0.015em] text-ink mb-6">
               Lose up to <span style={{ color: "#d94f7a" }}>30 pounds</span> in 12 weeks with JJ Smith as your Personal Accountability Coach!
             </h2>
 
-            <p className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 lg:max-w-[560px] lg:mx-0">
+            <p className="font-sans text-[18px] sm:text-[22px] lg:text-[22px] leading-[1.4] text-ink mb-6 lg:mb-7 lg:max-w-[600px] lg:mx-0">
               Meet JJ as your <span className="font-semibold" style={{ color: "#d94f7a" }}>personal AI accountability coach</span>, helping <span className="font-semibold" style={{ color: "#d94f7a" }}>women over 40</span> finally lose weight <span className="font-semibold" style={{ color: "#d94f7a" }}>without doing it alone.</span>
             </p>
 
-            <ul className="font-sans text-[16px] sm:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] mx-auto lg:mx-0 space-y-2 text-left">
+            <ul className="font-sans text-[16px] sm:text-[18px] lg:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[600px] mx-auto lg:mx-0 space-y-2 text-left">
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Customized meal plans built around foods you actually love</span></li>
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
               <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
@@ -254,7 +272,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative w-full mx-auto lg:w-[125%] lg:-mr-[15%] lg:-mt-8">
+    <div className="relative w-full mx-auto lg:w-[140%] lg:-mr-[30%] lg:-mt-12 lg:-mb-12">
       <img
         src={heroA}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
