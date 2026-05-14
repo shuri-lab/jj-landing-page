@@ -388,12 +388,17 @@ const STEPS = [
     title: "You'll stop starting over every Monday",
     text: (
       <>
-        <p>No more falling "off track" for weeks after one bad meal or bad weekend.</p>
+        <p>
+          No more falling <strong className="text-ink font-semibold">"off track" for weeks</strong> after one bad meal
+          or bad weekend.
+        </p>
         <p>
           JJ helps you{" "}
           <strong className="text-ink font-medium">reset quickly, stay focused, and keep moving forward</strong>.
         </p>
-        <p>Instead of spiraling into guilt and frustration.</p>
+        <p>
+          Instead of <strong className="text-ink font-semibold">spiraling into guilt and frustration</strong>.
+        </p>
       </>
     ),
   },
@@ -401,12 +406,18 @@ const STEPS = [
     title: "You'll know exactly what to eat",
     text: (
       <>
-        <p>No more stressing over what to eat or trying to force yourself to live on boring diet food.</p>
+        <p>
+          No more stressing over what to eat or trying to force yourself to live on{" "}
+          <strong className="text-ink font-semibold">boring diet food</strong>.
+        </p>
         <p>
           Your meal plans are{" "}
           <strong className="text-ink font-medium">personalized around foods YOU actually like</strong>.
         </p>
-        <p>So losing weight finally feels realistic and sustainable.</p>
+        <p>
+          So losing weight finally feels{" "}
+          <strong className="text-ink font-semibold">realistic and sustainable</strong>.
+        </p>
       </>
     ),
   },
@@ -414,15 +425,22 @@ const STEPS = [
     title: "Then I'm calling you every week",
     text: (
       <>
-        <p>This is where it all changes.</p>
-        <p>Through the version of me I built for this, I'm going to be calling you.</p>
+        <p>
+          <strong className="text-ink font-semibold">This is where it all changes.</strong>
+        </p>
+        <p>
+          Through the version of me I built for this, I'm going to be{" "}
+          <strong className="text-ink font-semibold">calling you</strong>.
+        </p>
         <p>Not to throw more information at you.</p>
         <p>
           Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's
           working, what's hard.
         </p>
         <p>Then we'll figure out together what to do about it.</p>
-        <p>The way real sisters do.</p>
+        <p>
+          The way <strong className="text-ink font-semibold">real sisters</strong> do.
+        </p>
       </>
     ),
   },
@@ -430,14 +448,18 @@ const STEPS = [
     title: "And I'll be texting you every day",
     text: (
       <>
-        <p>Every. Single. Day.</p>
+        <p>
+          <strong className="text-ink font-semibold">Every. Single. Day.</strong>
+        </p>
         <p>A check-in in the morning.</p>
         <p>A pick-me-up in the afternoon.</p>
-        <p>A "you good?" on the days that look hard.</p>
+        <p>
+          A "you good?" on the days that <strong className="text-ink font-semibold">look hard</strong>.
+        </p>
         <p>
           <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if we catch
-          the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got here
-          again.
+          the small stuff early, we never end up on a Tuesday night{" "}
+          <strong className="text-ink font-semibold">staring at the fridge wondering how we got here again</strong>.
         </p>
       </>
     ),
