@@ -386,25 +386,23 @@ function Promise2() {
 const STEPS = [
   {
     n: "01",
-    title: "We'll start with a soul-to-soul, just you and me",
+    title: "You'll stop starting over every Monday",
     text: (
       <>
-        Before anything else, sister, I want to know <em>you</em>. Your triggers. Your cravings. What you've tried.
-        What worked, what didn't. What you love eating and what you can't stand. What's been holding you back.{" "}
-        <strong className="text-ink font-medium">This whole thing is about you</strong>, so we have to start there.
+        No more falling "off track" for weeks after one bad meal or bad weekend. JJ helps you{" "}
+        <strong className="text-ink font-medium">reset quickly, stay focused, and keep moving forward</strong> —
+        instead of spiraling into guilt and frustration.
       </>
     ),
   },
   {
     n: "02",
-    title: "I'll build your meal plan and movement plan, just for you",
+    title: "You'll know exactly what to eat",
     text: (
       <>
-        From everything you tell me, I'll put together a meal plan and a movement plan that's all <em>you</em>. Not a
-        cookie-cutter PDF I send to everybody. Not a generic challenge plan from a book.{" "}
-        <strong className="text-ink font-medium">
-          A plan designed around your body, your life, the foods you actually love.
-        </strong>
+        No more stressing over what to eat or trying to force yourself to live on boring diet food. Your meal plans
+        are <strong className="text-ink font-medium">personalized around foods YOU actually like</strong> — so losing
+        weight finally feels realistic and sustainable.
       </>
     ),
   },
@@ -444,13 +442,12 @@ function Steps() {
           <em className="not-italic" style={{ color: "#c9635c" }}>
             12 weeks together
           </em>{" "}
-          will <em className="not-italic text-brand">actually feel like</em>.
+          will <em className="not-italic text-brand">actually feel</em> like.
         </h2>
       </div>
       <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
           <div key={s.n} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
-            <div className="font-serif italic font-medium text-[60px] sm:text-[64px] text-brand leading-none mb-4">{s.n}</div>
             <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
             <p className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{s.text}</p>
           </div>
