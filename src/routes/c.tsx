@@ -102,10 +102,10 @@ function BigCta({
     </>
   );
   const cls =
-    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(110,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
+    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(42,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
   const style: React.CSSProperties = {
     background:
-      "linear-gradient(180deg, #f47ca0 0%, #d94f7a 45%, #a52550 80%, #8b1e3f 100%)",
+      "linear-gradient(180deg, #8b5cb8 0%, #6b3a9e 45%, "+"#4a1f7a 80%, #2a1438 100%)",
     borderColor: "#c9a84c",
   };
   return (
