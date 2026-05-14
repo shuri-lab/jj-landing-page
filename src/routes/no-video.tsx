@@ -57,7 +57,7 @@ export const Route = createFileRoute("/no-video")({
   component: Landing,
 });
 
-const COHORT_DEADLINE = new Date(Date.now() + 14 * 24 * 60 * 60 * 1000);
+const COHORT_DEADLINE = new Date(Date.now() + 23 * 60 * 60 * 1000);
 
 
 function CountdownInline({ className = "" }: { className?: string }) {
