@@ -385,48 +385,60 @@ function Promise2() {
 
 const STEPS = [
   {
-    n: "01",
     title: "You'll stop starting over every Monday",
     text: (
       <>
-        No more falling "off track" for weeks after one bad meal or bad weekend. JJ helps you{" "}
-        <strong className="text-ink font-medium">reset quickly, stay focused, and keep moving forward</strong> —
-        instead of spiraling into guilt and frustration.
+        <p>No more falling "off track" for weeks after one bad meal or bad weekend.</p>
+        <p>
+          JJ helps you{" "}
+          <strong className="text-ink font-medium">reset quickly, stay focused, and keep moving forward</strong>.
+        </p>
+        <p>Instead of spiraling into guilt and frustration.</p>
       </>
     ),
   },
   {
-    n: "02",
     title: "You'll know exactly what to eat",
     text: (
       <>
-        No more stressing over what to eat or trying to force yourself to live on boring diet food. Your meal plans
-        are <strong className="text-ink font-medium">personalized around foods YOU actually like</strong> — so losing
-        weight finally feels realistic and sustainable.
+        <p>No more stressing over what to eat or trying to force yourself to live on boring diet food.</p>
+        <p>
+          Your meal plans are{" "}
+          <strong className="text-ink font-medium">personalized around foods YOU actually like</strong>.
+        </p>
+        <p>So losing weight finally feels realistic and sustainable.</p>
       </>
     ),
   },
   {
-    n: "03",
     title: "Then I'm calling you every week",
     text: (
       <>
-        This is where it all changes. Through the version of me I built for this, I'm going to be calling you. Not to
-        throw more information at you. Just to <strong className="text-ink font-medium">check in on you</strong>, see
-        how you're feeling, what's working, what's hard. Then we'll figure out together what to do about it. The way
-        real sisters do.
+        <p>This is where it all changes.</p>
+        <p>Through the version of me I built for this, I'm going to be calling you.</p>
+        <p>Not to throw more information at you.</p>
+        <p>
+          Just to <strong className="text-ink font-medium">check in on you</strong>, see how you're feeling, what's
+          working, what's hard.
+        </p>
+        <p>Then we'll figure out together what to do about it.</p>
+        <p>The way real sisters do.</p>
       </>
     ),
   },
   {
-    n: "04",
     title: "And I'll be texting you every day",
     text: (
       <>
-        Every. Single. Day. A check-in in the morning. A pick-me-up in the afternoon. A "you good?" on the days that
-        look hard. <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if
-        we catch the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got
-        here again.
+        <p>Every. Single. Day.</p>
+        <p>A check-in in the morning.</p>
+        <p>A pick-me-up in the afternoon.</p>
+        <p>A "you good?" on the days that look hard.</p>
+        <p>
+          <strong className="text-ink font-medium">I'm not letting anything slip past me</strong>, because if we catch
+          the small stuff early, we never end up on a Tuesday night staring at the fridge wondering how we got here
+          again.
+        </p>
       </>
     ),
   },
@@ -447,9 +459,9 @@ function Steps() {
       </div>
       <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
-          <div key={s.n} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
+          <div key={s.title} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
             <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
-            <p className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{s.text}</p>
+            <div className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7] space-y-4">{s.text}</div>
           </div>
         ))}
       </div>
