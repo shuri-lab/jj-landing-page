@@ -228,7 +228,7 @@ function Hero() {
             </p>
 
             <div className="hidden lg:block">
-              <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
+              <BigCta position="top" sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
               <p className="mt-4 text-[13px] text-ink-soft">
                 Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
               </p>
@@ -240,7 +240,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
+          <BigCta position="top" sub="14-day money-back · Limited spots">Yes JJ, I want you in my corner</BigCta>
 
           <p className="mt-4 text-[13px] text-ink-soft">
             Doors close in <CountdownInline className="font-bold text-brand tabular-nums" />
@@ -563,7 +563,7 @@ function JJReveal() {
         </p>
       </div>
       <div className="mt-12 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
+        <BigCta position="mid" sub="14-day money-back · Limited spots">Reserve my spot</BigCta>
       </div>
     </Section>
   );
@@ -613,7 +613,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
+        <BigCta position="mid" sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
       </div>
     </Section>
   );
@@ -805,7 +805,7 @@ function Offer() {
                 ))}
               </ul>
               {p.note && <PlusNote note={p.note} />}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
@@ -914,7 +914,7 @@ function LastCall() {
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
+          <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
         </div>
       </div>
     </section>

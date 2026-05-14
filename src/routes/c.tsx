@@ -257,7 +257,7 @@ function Hero() {
             </ul>
 
             <div className="hidden lg:block max-w-[560px]">
-              <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+              <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
             </div>
           </div>
           <div className="lg:order-2 relative z-0">
@@ -266,7 +266,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+          <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -675,7 +675,7 @@ function Transformations() {
         ))}
       </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
-        <BigCta sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
+        <BigCta position="mid" sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
       </div>
     </Section>
   );
@@ -867,7 +867,7 @@ function Offer() {
                 ))}
               </ul>
               {p.note && <PlusNote note={p.note} />}
-              <BigCta sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
@@ -976,7 +976,7 @@ function LastCall() {
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
-          <BigCta sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
+          <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
         </div>
       </div>
     </section>
