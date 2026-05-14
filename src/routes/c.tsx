@@ -92,26 +92,34 @@ function BigCta({
 }) {
   const content = (
     <>
-      {children}
+      <span className="inline-flex items-center justify-center gap-2">
+        <span>{children}</span>
+        <span aria-hidden className="text-white">→</span>
+      </span>
       {sub && (
-        <span className="block text-[12px] sm:text-[13px] font-normal opacity-90 mt-1.5 tracking-normal">{sub}</span>
+        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal" style={{ color: "#f0d78c" }}>{sub}</span>
       )}
     </>
   );
   const cls =
-    "block w-full rounded-full bg-brand text-white px-6 py-6 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(184,80,66,0.6)] transition-transform hover:-translate-y-0.5 hover:bg-brand-deep text-center";
+    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(110,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
+  const style: React.CSSProperties = {
+    background:
+      "linear-gradient(180deg, #f47ca0 0%, #d94f7a 45%, #a52550 80%, #8b1e3f 100%)",
+    borderColor: "#c9a84c",
+  };
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to as string} search={search as never} className={cls}>
+        <Link to={to as string} search={search as never} className={cls} style={style}>
           {content}
         </Link>
       ) : href ? (
-        <a href={href} className={cls}>
+        <a href={href} className={cls} style={style}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls}>
+        <button onClick={scrollToOffer} className={cls} style={style}>
           {content}
         </button>
       )}
