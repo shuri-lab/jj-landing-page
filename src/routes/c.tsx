@@ -7,7 +7,7 @@ import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-prog
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
-import heroA from "@/assets/hero-c.png";
+import heroA from "@/assets/landing/hero-c-cards.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -254,7 +254,7 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative -mt-16 sm:-mt-20 lg:-mt-32 mb-0 aspect-square lg:aspect-[4/5] max-w-[360px] sm:max-w-[440px] lg:max-w-none mx-auto">
+    <div className="relative -mt-8 sm:-mt-12 lg:-mt-16 mb-0 aspect-square w-full max-w-[480px] sm:max-w-[560px] lg:max-w-none lg:w-[120%] lg:-mr-[10%] mx-auto">
       <div
         aria-hidden
         className="absolute -inset-[40%] pointer-events-none z-0"
