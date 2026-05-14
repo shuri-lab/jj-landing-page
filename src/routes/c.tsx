@@ -84,6 +84,9 @@ function BigCta({
   search,
   position,
   tier,
+  buyButton,
+  price,
+  paymentOption,
 }: {
   children: React.ReactNode;
   sub?: React.ReactNode;
@@ -93,6 +96,9 @@ function BigCta({
   search?: Record<string, string>;
   position?: string;
   tier?: string;
+  buyButton?: boolean;
+  price?: string | number;
+  paymentOption?: string;
 }) {
   const content = (
     <>
@@ -115,15 +121,15 @@ function BigCta({
   return (
     <div className={`w-full ${className}`}>
       {to ? (
-        <Link to={to as string} search={search as never} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
+        <Link to={to as string} search={search as never} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"} {...(buyButton ? { "data-buy-button": "true", "data-price": String(price ?? ""), "data-payment-option": paymentOption ?? "" } : {})}>
           {content}
         </Link>
       ) : href ? (
-        <a href={href} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
+        <a href={href} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"} {...(buyButton ? { "data-buy-button": "true", "data-price": String(price ?? ""), "data-payment-option": paymentOption ?? "" } : {})}>
           {content}
         </a>
       ) : (
-        <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"}>
+        <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position={position ?? "unknown"} data-tier={tier ?? "unknown"} {...(buyButton ? { "data-buy-button": "true", "data-price": String(price ?? ""), "data-payment-option": paymentOption ?? "" } : {})}>
           {content}
         </button>
       )}
