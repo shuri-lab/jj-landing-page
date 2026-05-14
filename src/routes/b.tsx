@@ -765,7 +765,7 @@ function Offer() {
                   {p.note}
                 </p>
               )}
-              <BigCta position="mid" tier={p.name.toLowerCase()} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
+              <BigCta position="mid" tier={p.name.toLowerCase()} buyButton price={isFull ? p.fullPrice : p.monthlyPrice} paymentOption={isFull ? "pay_in_full" : "monthly"} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
             </div>
