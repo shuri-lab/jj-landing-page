@@ -73,6 +73,14 @@ export function formatPrice(amount: number, currency: string) {
 
 export type SignupBillingInterval = "MONTHLY" | "FULL_PROGRAM";
 
-export function signupUrl(programId: string, billingInterval: SignupBillingInterval) {
-  return `https://yoplatform.ai/signup?coachProgramConfigId=${programId}&billingInterval=${billingInterval}`;
+export function signupUrl(
+  programId: string,
+  billingInterval: SignupBillingInterval,
+  opts?: { durationWeeks?: number },
+) {
+  const params = new URLSearchParams();
+  params.set("coachProgramConfigId", programId);
+  params.set("billingInterval", billingInterval);
+  if (opts?.durationWeeks) params.set("durationWeeks", String(opts.durationWeeks));
+  return `https://yoplatform.ai/signup?${params.toString()}`;
 }
