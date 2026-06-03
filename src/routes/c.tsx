@@ -192,9 +192,9 @@ function Landing() {
 
 function Nav() {
   return (
-    <div className="border-b border-line bg-background">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center">
-        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-8 sm:h-10 w-auto" width={1196} height={595} />
+    <div style={{ backgroundColor: "#fdebeb" }}>
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 pt-7 pb-6 sm:pt-8 sm:pb-7 flex items-center justify-center">
+        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -202,30 +202,30 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
+    <section className="px-5 pt-2 pb-16 sm:pt-3 sm:pb-20 lg:pt-4 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
           <div className="relative z-20 lg:order-1 lg:min-w-0">
             <h1
-              className="font-normal leading-[1.1] tracking-[-0.01em] mb-6 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
-              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
+              className="leading-[1.1] tracking-[-0.01em] mb-4 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
+              style={{ fontFamily: "'Playfair Display', 'Fraunces', Georgia, serif", fontWeight: 700 }}
             >
-              <span style={{ color: "#1f1a3d" }}>Stop Starting Over</span>
+              <span style={{ color: "#15102a" }}>Stop Starting Over</span>
               <br />
-              <span style={{ color: "#d62a7a" }}>Every Monday.</span>
+              <span style={{ color: "#c41e6a" }}>Every Monday.</span>
             </h1>
 
-            <p className="font-sans text-[16px] sm:text-[18px] leading-[1.55] text-ink mb-6 lg:max-w-[560px] text-left">
-              Imagine having JJ Smith in your pocket every day, helping you stay accountable, stay motivated, and stay consistent until the weight finally comes off.
+            <p className="font-sans font-normal text-[16px] sm:text-[18px] leading-[1.55] mb-5 lg:max-w-[560px] text-left" style={{ color: "#2a2030" }}>
+              Imagine having JJ Smith in your pocket every day, helping you stay consistent until the weight finally comes off.
             </p>
 
-            <ul className="font-sans text-[16px] leading-snug text-ink mb-7 max-w-[560px] space-y-3 text-left">
-              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
-              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>Daily text reminders from JJ</span></li>
+            <ul className="font-sans font-normal text-[16px] leading-snug mb-7 max-w-[560px] space-y-2.5 text-left" style={{ color: "#2a2030" }}>
+              <li className="flex gap-3 items-center"><CheckDot /><span>Delicious Meals Sent Daily</span></li>
+              <li className="flex gap-3 items-center"><CheckDot /><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-3 items-center"><CheckDot /><span>Daily text reminders from JJ</span></li>
             </ul>
 
-            <div className="hidden lg:block max-w-[360px]">
+            <div className="hidden lg:block max-w-[300px]">
               <HeroCta />
             </div>
           </div>
@@ -234,8 +234,10 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:hidden">
-          <HeroCta />
+        <div className="lg:hidden flex justify-center">
+          <div className="w-[68%] max-w-[300px]">
+            <HeroCta />
+          </div>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -255,18 +257,28 @@ function HeroImageWithLogoBackdrop() {
   return _HeroImageImpl();
 }
 
+function CheckDot() {
+  return (
+    <span className="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#b81860" }}>
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M2.5 6.2 L5 8.6 L9.5 3.6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
 function HeroCta() {
   const cls =
-    "block w-full text-white px-6 py-4 text-[16px] sm:text-[18px] font-bold uppercase tracking-wide rounded-xl shadow-[0_14px_30px_-10px_rgba(214,42,122,0.55)] transition-transform hover:-translate-y-0.5 text-center";
+    "block w-full text-white px-6 py-4 text-[16px] sm:text-[18px] font-bold uppercase tracking-wide rounded-xl shadow-[0_14px_30px_-10px_rgba(184,24,96,0.55)] transition-transform hover:-translate-y-0.5 text-center";
   const style: React.CSSProperties = {
-    background: "linear-gradient(180deg, #e83a8a 0%, #d62a7a 50%, #a01e5a 100%)",
+    background: "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)",
   };
   return (
     <div className="w-full">
       <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position="hero-top" data-tier="unknown">
         Start Today
       </button>
-      <p className="mt-3 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#1f1a3d" }}>
+      <p className="mt-2 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#15102a" }}>
         No restrictive diets. No guilt.<br />No starting over every Monday.
       </p>
     </div>
@@ -275,11 +287,11 @@ function HeroCta() {
 
 function _HeroImageImpl() {
   return (
-    <div className="relative w-full mx-auto max-w-[420px] mt-2 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-2 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroMobile}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="block w-full h-auto mx-auto max-w-[280px] sm:max-w-[320px] lg:hidden"
+        className="block w-[82%] h-auto mx-auto max-w-[440px] lg:hidden"
         width={1024}
         height={1024}
       />
