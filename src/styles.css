@@ -72,7 +72,7 @@
   --color-brand-plum: var(--brand-plum);
   /* font-serif utility -> Fraunces (display serif used across the page).
    * font-sans / font-display -> Montserrat (clean body sans). */
-  --font-serif: 'Fraunces', 'Playfair Display', Georgia, serif;
+  --font-serif: 'DM Serif Display', 'Fraunces', Georgia, serif;
   --font-sans: 'Montserrat', 'Inter', sans-serif;
   --font-display: 'Montserrat', 'Inter', sans-serif;
 }
