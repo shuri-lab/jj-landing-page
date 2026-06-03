@@ -193,8 +193,8 @@ function Landing() {
 function Nav() {
   return (
     <div style={{ backgroundColor: "#fdebeb" }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 pt-5 pb-5 sm:pt-6 sm:pb-6 flex items-center justify-center">
-        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-9 sm:h-10 lg:h-12 w-auto" width={1196} height={595} />
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-3 sm:py-3 flex items-center justify-center">
+        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -208,18 +208,18 @@ function Hero() {
           <div className="relative z-20 lg:order-1 lg:min-w-0">
             <h1
               className="leading-[1.1] tracking-[-0.01em] mb-4 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
-              style={{ fontFamily: "'DM Serif Display', 'Fraunces', Georgia, serif", fontWeight: 400 }}
+              style={{ fontFamily: "'Fraunces', 'DM Serif Display', Georgia, serif", fontWeight: 700, fontVariationSettings: "'opsz' 144" }}
             >
               <span style={{ color: "#15102a" }}>Stop Starting Over</span>
               <br />
               <span style={{ color: "#c41e6a" }}>Every Monday.</span>
             </h1>
 
-            <p className="font-sans font-normal text-[16px] sm:text-[18px] leading-[1.55] mb-5 lg:max-w-[560px] text-left" style={{ color: "#2a2030" }}>
+            <p className="text-[16px] sm:text-[18px] leading-[1.55] mb-5 lg:max-w-[560px] text-left" style={{ color: "#2a2030", fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", fontWeight: 500 }}>
               Imagine having JJ Smith in your pocket every day, helping you stay consistent until the weight finally comes off.
             </p>
 
-            <ul className="font-sans font-normal text-[16px] leading-snug mb-7 max-w-[560px] space-y-2.5 text-left" style={{ color: "#2a2030" }}>
+            <ul className="text-[16px] leading-snug mb-7 max-w-[560px] space-y-2.5 text-left" style={{ color: "#2a2030", fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", fontWeight: 500 }}>
               <li className="flex gap-3 items-center"><CheckDot /><span>Delicious Meals Sent Daily</span></li>
               <li className="flex gap-3 items-center"><CheckDot /><span>One-on-one coaching calls with JJ</span></li>
               <li className="flex gap-3 items-center"><CheckDot /><span>Daily text reminders from JJ</span></li>
@@ -234,8 +234,8 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:hidden flex justify-center -mt-2">
-          <div className="w-[68%] max-w-[300px]">
+        <div className="lg:hidden flex justify-center">
+          <div className="w-[82%] max-w-[360px]">
             <HeroCta />
           </div>
         </div>
@@ -287,7 +287,7 @@ function HeroCta() {
 
 function _HeroImageImpl() {
   return (
-    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-3 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroMobile}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
