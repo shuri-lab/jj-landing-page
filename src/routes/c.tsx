@@ -321,23 +321,32 @@ function PartnersMarquee() {
       <div className="px-5 mb-8">
         <div className="mx-auto max-w-[1100px] grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
-            { icon: Star, eyebrow: "4X", title: "New York Times Bestselling Author" },
-            { icon: Users, title: "Millions of Books Sold" },
-            { icon: Heart, title: "Hundreds of Thousands of Success Stories" },
-            { icon: Globe, title: "Trusted by Women Worldwide" },
-          ].map(({ icon: Icon, eyebrow, title }, i) => (
+            { icon: Star, eyebrow: "4X", title: "New York Times Bestselling Author", fill: true },
+            { icon: Users, title: "Millions of Books Sold", fill: false },
+            { icon: Heart, title: "Hundreds of Thousands of Success Stories", fill: true },
+            { icon: Globe, title: "Trusted by Women Worldwide", fill: false },
+          ].map(({ icon: Icon, eyebrow, title, fill }, i) => (
             <div
               key={i}
-              className="rounded-2xl px-4 py-5 sm:px-5 sm:py-6 text-center flex flex-col items-center justify-start gap-2"
+              className="rounded-2xl px-4 py-5 sm:px-5 sm:py-6 text-center flex flex-col items-center"
               style={{ backgroundColor: "#fdebeb", border: "1px solid #f3d3d3" }}
             >
-              <Icon className="h-7 w-7 sm:h-8 sm:w-8" style={{ color: "#c9a84c" }} strokeWidth={2.2} fill="#c9a84c" />
-              {eyebrow && (
-                <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
-                  {eyebrow}
-                </div>
-              )}
-              <p className="text-[13px] sm:text-[14px] leading-snug font-semibold" style={{ color: "#15102a" }}>
+              <div className="h-10 sm:h-11 flex items-center justify-center">
+                <Icon
+                  className="h-7 w-7 sm:h-8 sm:w-8"
+                  style={{ color: "#c9a84c" }}
+                  strokeWidth={fill ? 1.5 : 2}
+                  fill={fill ? "#c9a84c" : "none"}
+                />
+              </div>
+              <div className="h-7 sm:h-8 flex items-center justify-center mt-1">
+                {eyebrow ? (
+                  <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
+                    {eyebrow}
+                  </div>
+                ) : null}
+              </div>
+              <p className="mt-2 text-[13px] sm:text-[14px] leading-snug font-semibold flex-1 flex items-center justify-center" style={{ color: "#15102a" }}>
                 {title}
               </p>
             </div>
