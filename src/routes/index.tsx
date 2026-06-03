@@ -214,7 +214,7 @@ function Hero() {
               <em className="not-italic" style={{ color: "#c41e6a" }}>Every Monday.</em>
             </h1>
 
-            <p className="text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
+            <p className="text-[18px] sm:text-[22px] font-medium leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
               Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>, helping you <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">stay consistent</mark> until the weight finally comes off.
             </p>
 
