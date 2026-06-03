@@ -448,7 +448,7 @@ function Promise2() {
 
 const TESTIMONIALS = [
   {
-    quote: "It keeps me accountable...",
+    quote: "It keeps me accountable because I feel big sister is always watching.",
     name: "Keisha",
   },
   {
