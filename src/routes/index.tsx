@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Star } from "lucide-react";
+import { Heart, Play, Users, Globe } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -23,6 +23,9 @@ import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
 import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
+import yobodyLogo from "@/assets/yobody-jj-smith-logo.png.asset.json";
+import heroMobileC from "@/assets/hero-mobile-c.png.asset.json";
+import heroDesktopC from "@/assets/hero-desktop-c.png.asset.json";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -35,18 +38,18 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Weeks to Sexy™, A" },
+      { title: "JJ Smith — Personal Coaching Program" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
-          "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
+          "Lose up to 30 pounds. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith, 12-Weeks to Sexy™" },
+      { property: "og:title", content: "JJ Smith — Personal Coaching Program" },
       {
         property: "og:description",
         content:
-          "Sister, this time I'm with you every step of the way. A personalized 12-week transformation with JJ Smith.",
+          "Sister, this time I'm with you every step of the way. A personalized transformation with JJ Smith.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -108,16 +111,15 @@ function BigCta({
         <span aria-hidden className="text-white">→</span>
       </span>
       {sub && (
-        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal" style={{ color: "#f0d78c" }}>{sub}</span>
+        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal normal-case" style={{ color: "#ffe1ef" }}>{sub}</span>
       )}
     </>
   );
   const cls =
-    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(42,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
+    "block w-full rounded-xl text-white px-6 py-5 text-[18px] sm:text-[20px] font-bold uppercase tracking-wide shadow-[0_14px_30px_-10px_rgba(184,24,96,0.55)] transition-transform hover:-translate-y-0.5 text-center";
   const style: React.CSSProperties = {
     background:
-      "linear-gradient(180deg, #5a1f47 0%, #4a1838 45%, #3a1430 80%, #2a0e22 100%)",
-    borderColor: "#c9a84c",
+      "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)",
   };
   return (
     <div className={`w-full ${className}`}>
@@ -176,6 +178,7 @@ function Landing() {
         <HugQuote />
         <JJReveal />
         <Promise2 />
+        <Testimonials />
         <Steps />
         <Transformations />
         <Offer />
@@ -191,9 +194,9 @@ function Landing() {
 
 function Nav() {
   return (
-    <div className="border-b border-line bg-background">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center">
-        <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" width={240} height={64} />
+    <div style={{ backgroundColor: "#fdebeb" }}>
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-3 sm:py-3 flex items-center justify-center">
+        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -201,70 +204,27 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-3 pb-16 sm:pt-5 sm:pb-20 lg:pt-10 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
+    <section className="px-5 pt-2 pb-16 sm:pt-3 sm:pb-20 lg:pt-4 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
           <div className="relative z-20 lg:order-1 lg:min-w-0">
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
-              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
-            </div>
-            <h1
-              className="relative z-20 font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[36px] sm:text-[56px] lg:text-[64px] xl:text-[78px] whitespace-nowrap"
-              style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
-            >
-              <span
-                style={{
-                  color: "#2a1438",
-                  textShadow:
-                    "0 0 1px #c9a84c, 1px 1px 0 #c9a84c, -1px -1px 0 #2a1438, 0 6px 14px rgba(42,20,56,0.15)",
-                }}
-              >
-                12 Weeks to{" "}
-              </span>
-              <span
-                className="relative"
-                style={{
-                  background:
-                    "linear-gradient(180deg, #f47ca0 0%, #d94f7a 35%, #a52550 70%, #6e1438 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  filter: "drop-shadow(0 0 1px #c9a84c) drop-shadow(1px 1px 0 #c9a84c)",
-                }}
-              >
-                Sexy
-                <sup
-                  className="text-[12px] sm:text-[18px] lg:text-[20px] align-super -ml-1"
-                  style={{ WebkitTextFillColor: "#8b1e3f" }}
-                >
-                  ™
-                </sup>
-              </span>
+            <h1 className="font-serif font-medium text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] leading-[1.08] tracking-[-0.025em] mb-6 text-left">
+              <span style={{ color: "#15102a" }}>Stop Starting Over</span>{" "}
+              <em className="not-italic" style={{ color: "#c41e6a" }}>Every Monday.</em>
             </h1>
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-7">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
-              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
-            </div>
-            <h2 className="font-sans font-semibold text-[26px] sm:text-[34px] lg:text-[38px] xl:text-[42px] leading-[1.18] tracking-[-0.015em] text-ink mb-6">
-              Lose up to <span style={{ color: "#d94f7a" }}>30 pounds</span> in 12 weeks with JJ Smith as your Personal Accountability Coach!
-            </h2>
 
-            <p className="font-sans text-[18px] sm:text-[22px] lg:text-[22px] leading-[1.4] text-ink mb-6 lg:mb-7 lg:max-w-[600px] lg:mx-0">
-              Meet JJ as your <span className="font-semibold" style={{ color: "#d94f7a" }}>personal AI accountability coach</span>, helping <span className="font-semibold" style={{ color: "#d94f7a" }}>women over 40</span> finally lose weight <span className="font-semibold" style={{ color: "#d94f7a" }}>without doing it alone.</span>
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
+              Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>, helping you <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">stay consistent</mark> until the weight finally comes off.
             </p>
 
-            <ul className="font-sans text-[16px] sm:text-[18px] lg:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[600px] mx-auto lg:mx-0 space-y-2 text-left">
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Motivation on the days you want to quit</span></li>
+            <ul className="text-[15px] sm:text-[16px] text-ink-soft mb-7 max-w-[560px] space-y-2.5 text-left">
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Delicious Meals Sent Daily</strong></li>
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">One-on-one coaching calls with JJ</strong></li>
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Daily text reminders from JJ</strong></li>
             </ul>
 
-            <div className="hidden lg:block max-w-[560px]">
-              <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+            <div className="hidden lg:block max-w-[300px]">
+              <HeroCta />
             </div>
           </div>
           <div className="lg:order-2 relative z-0">
@@ -272,8 +232,10 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:hidden">
-          <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+        <div className="lg:hidden flex justify-center">
+          <div className="w-[82%] max-w-[360px]">
+            <HeroCta />
+          </div>
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -290,21 +252,53 @@ function Hero() {
 }
 
 function HeroImageWithLogoBackdrop() {
+  return _HeroImageImpl();
+}
+
+function CheckDot() {
   return (
-    <div className="relative w-full mx-auto max-w-[420px] mt-2 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <span className="inline-flex h-[18px] w-[18px] shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#b81860" }}>
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden>
+        <path d="M2.5 6.2 L5 8.6 L9.5 3.6" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    </span>
+  );
+}
+
+function HeroCta() {
+  const cls =
+    "block w-full text-white px-6 py-4 text-[16px] sm:text-[18px] font-bold uppercase tracking-wide rounded-xl shadow-[0_14px_30px_-10px_rgba(184,24,96,0.55)] transition-transform hover:-translate-y-0.5 text-center";
+  const style: React.CSSProperties = {
+    background: "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)",
+  };
+  return (
+    <div className="w-full">
+      <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position="hero-top" data-tier="unknown">
+        Start Today
+      </button>
+      <p className="mt-2 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#15102a" }}>
+        No restrictive diets. No guilt.<br />No starting over every Monday.
+      </p>
+    </div>
+  );
+}
+
+function _HeroImageImpl() {
+  return (
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
-        src={heroMobile}
+        src={heroMobileC.url}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="block w-full h-auto mx-auto max-w-[280px] sm:max-w-[320px] lg:hidden"
-        width={1024}
-        height={1024}
+        className="block w-full h-auto mx-auto max-w-[440px] lg:hidden"
+        width={1920}
+        height={1471}
       />
       <img
-        src={heroA}
+        src={heroDesktopC.url}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
         className="hidden lg:block w-full h-auto"
-        width={1024}
-        height={1024}
+        width={1920}
+        height={1920}
       />
     </div>
   );
@@ -324,8 +318,42 @@ function PartnersMarquee() {
   const track = [...logos, ...logos];
   return (
     <div className="bg-white border-y border-line py-8 sm:py-10 mt-12 -mx-5">
-      <p className="text-center text-[12px] sm:text-[13px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
-        5+ million pounds lost · #1 NY Times bestselling author · As seen on
+      <div className="px-5 mb-8">
+        <div className="mx-auto max-w-[1100px] grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {[
+            { eyebrow: "4X", title: "New York Times Bestselling Author" },
+            { icon: Users, title: "Millions of Books Sold", fill: false },
+            { icon: Heart, title: "Hundreds of Thousands of Success Stories", fill: true },
+            { icon: Globe, title: "Trusted by Women Worldwide", fill: false },
+          ].map(({ icon: Icon, eyebrow, title, fill }, i) => (
+            <div
+              key={i}
+              className="rounded-2xl px-4 py-5 sm:px-5 sm:py-6 text-center flex flex-col items-center"
+              style={{ backgroundColor: "#fdebeb", border: "1px solid #f3d3d3" }}
+            >
+              <div className="h-10 sm:h-11 flex items-center justify-center">
+                {Icon ? (
+                  <Icon
+                    className="h-7 w-7 sm:h-8 sm:w-8"
+                    style={{ color: "#c9a84c" }}
+                    strokeWidth={fill ? 1.5 : 2}
+                    fill={fill ? "#c9a84c" : "none"}
+                  />
+                ) : eyebrow ? (
+                  <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
+                    {eyebrow}
+                  </div>
+                ) : null}
+              </div>
+              <p className="mt-3 text-[13px] sm:text-[14px] leading-snug font-semibold flex-1 flex items-center justify-center" style={{ color: "#15102a" }}>
+                {title}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="text-center text-[11px] sm:text-[12px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
+        As seen on
       </p>
       <div className="relative overflow-hidden">
         <div className="flex w-max gap-14 sm:gap-20 animate-marquee items-center">
@@ -415,6 +443,113 @@ function Promise2() {
         </div>
       </div>
     </section>
+  );
+}
+
+const TESTIMONIALS = [
+  {
+    quote: "It keeps me accountable because I feel big sister is always watching.",
+    name: "Keisha",
+  },
+  {
+    quote:
+      "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.",
+    name: "Monique",
+  },
+  {
+    quote:
+      "This feels different because I don't have to figure out what to eat or look up recipes. It's all put together for me.",
+    name: "Tasha",
+  },
+  {
+    quote: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.",
+    name: "Latoya",
+  },
+];
+
+function Testimonials() {
+  const [active, setActive] = useState(0);
+  const scrollerRef = (node: HTMLDivElement | null) => {
+    if (!node) return;
+    (Testimonials as any)._scroller = node;
+  };
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== active) setActive(idx);
+  };
+
+  const goTo = (i: number) => {
+    const el = (Testimonials as any)._scroller as HTMLDivElement | undefined;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  };
+
+  return (
+    <section className="px-5 py-16 lg:py-24 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px]">
+        <h2 className="font-serif font-medium text-center text-[32px] sm:text-[40px] lg:text-[52px] leading-[1.1] tracking-[-0.02em] text-ink mb-10 lg:mb-14">
+          What Women Are Saying
+        </h2>
+
+        {/* Desktop: 4-up grid */}
+        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
+          {TESTIMONIALS.map((t) => (
+            <TestimonialCard key={t.name} quote={t.quote} name={t.name} />
+          ))}
+        </div>
+
+        {/* Mobile/tablet: snap carousel */}
+        <div className="lg:hidden -mx-5">
+          <div
+            ref={scrollerRef}
+            onScroll={onScroll}
+            className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth gap-4 px-5 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {TESTIMONIALS.map((t) => (
+              <div
+                key={t.name}
+                className="snap-center shrink-0 basis-[85%] sm:basis-[60%]"
+              >
+                <TestimonialCard quote={t.quote} name={t.name} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex justify-center gap-2">
+            {TESTIMONIALS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                aria-label={`Go to testimonial ${i + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  i === active ? "w-6 bg-[#d62a7a]" : "w-2 bg-[#d62a7a]/30"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialCard({ quote, name }: { quote: string; name: string }) {
+  return (
+    <figure className="h-full rounded-2xl bg-white/80 backdrop-blur-sm border border-[#f3d3e0] p-6 sm:p-7 shadow-[0_18px_40px_-24px_rgba(184,24,96,0.35)] flex flex-col">
+      <span
+        aria-hidden
+        className="font-serif text-[56px] leading-none text-[#d62a7a] -mt-2 mb-2 select-none"
+      >
+        “
+      </span>
+      <blockquote className="text-ink text-[16px] sm:text-[17px] leading-[1.55] flex-1">
+        {quote}
+      </blockquote>
+      <figcaption className="mt-5 text-[#d62a7a] font-semibold text-[15px]">
+        – {name}
+      </figcaption>
+    </figure>
   );
 }
 
@@ -509,7 +644,7 @@ function Steps() {
         <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-12 max-w-[580px] lg:max-w-[820px] mx-auto">
           This is what our{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            12 weeks together
+            journey together
           </em>{" "}
           will <em className="not-italic text-brand">actually feel</em> like.
         </h2>
@@ -662,9 +797,9 @@ function Transformations() {
       <div className="text-center">
         <Eyebrow center>Real sisters, real transformations</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-6 max-w-[580px] mx-auto">
-          Here's what happens after{" "}
+          Here's what happens{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            12 weeks
+            with me by your side
           </em>
           .
         </h2>
@@ -769,7 +904,7 @@ function Offer() {
       items: [
         "Weekly accountability call with JJ",
         "Daily SMS coaching",
-        "Custom eating plan + 12-week roadmap",
+        "Custom eating plan + full transformation roadmap",
       ],
       href: "/checkout",
       loading: !basic,
@@ -980,14 +1115,14 @@ function LastCall() {
         </div>
         <Eyebrow center>Last call</Eyebrow>
         <h2 className="font-serif text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mb-7">
-          Your{" "}
+          The{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            next 12 weeks
+            months ahead
           </em>{" "}
           are <em className="not-italic text-brand">happening either way</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] lg:text-[20px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] lg:max-w-[720px] mx-auto">
-          You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday
+          You can spend them like the last ones. Or you can spend them with me right there with you, every Tuesday
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
@@ -1045,7 +1180,6 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-normal text-ink-soft">JJ's 12-Weeks to Sexy™</div>
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
@@ -1055,7 +1189,8 @@ function StickyCta() {
           data-cta="yes-jj"
           data-position="bottom"
           data-tier="unknown"
-          className="bg-brand text-white px-5 py-3 rounded-full text-[14px] font-semibold shadow-md"
+          className="text-white px-5 py-3 rounded-xl text-[14px] font-bold uppercase tracking-wide shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]"
+          style={{ background: "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)" }}
         >
           Reserve
         </button>
