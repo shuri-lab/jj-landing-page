@@ -25,6 +25,7 @@ import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import yobodyLogo from "@/assets/yobody-jj-smith-logo.png.asset.json";
 import heroMobileC from "@/assets/hero-mobile-c.png.asset.json";
+import heroDesktopC from "@/assets/hero-desktop-c.png.asset.json";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -293,11 +294,11 @@ function _HeroImageImpl() {
         height={1471}
       />
       <img
-        src={heroA}
+        src={heroDesktopC.url}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
         className="hidden lg:block w-full h-auto"
-        width={1024}
-        height={1024}
+        width={1920}
+        height={1920}
       />
     </div>
   );
