@@ -1035,8 +1035,7 @@ function Offer() {
                       {!isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
                     </span>
                     <span className="flex-1 text-[15px] sm:text-[16px] text-ink-soft">
-                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span> for {p.monthlyMonths}{" "}
-                      months
+                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span>
                     </span>
                   </div>
                 </button>
