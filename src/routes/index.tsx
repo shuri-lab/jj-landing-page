@@ -675,6 +675,7 @@ function JJReveal() {
           <em className="not-italic text-brand">Here's the truth</em>.
         </h2>
       </div>
+      <></>
       <div className="flex flex-col items-center lg:flex-row lg:items-start lg:gap-7 lg:max-w-[820px] lg:mx-auto">
         <img
           src={jjSelfieSun}
