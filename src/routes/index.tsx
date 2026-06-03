@@ -214,7 +214,7 @@ function Hero() {
               <em className="not-italic" style={{ color: "#c41e6a" }}>Every Monday.</em>
             </h1>
 
-            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
+            <p className="text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
               Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>, helping you <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">stay consistent</mark> until the weight finally comes off.
             </p>
 
@@ -239,7 +239,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
+        <div className="mt-8 lg:mt-12 text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
           <p>Because weight loss isn't about willpower.</p>
           <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
           <p>Like having JJ Smith in your phone every day.</p>
