@@ -70,10 +70,9 @@
   --color-brand-deep: var(--brand-deep);
   --color-brand-pink: var(--brand-pink);
   --color-brand-plum: var(--brand-plum);
-  /* JJ Smith's sales pages use a clean light-weight sans for headings.
-   * We point both font-serif and font-sans tokens at Montserrat so existing
-   * `font-serif` utility classes pick up the new look without rewrites. */
-  --font-serif: 'Montserrat', 'Inter', sans-serif;
+  /* font-serif utility -> Fraunces (display serif used across the page).
+   * font-sans / font-display -> Montserrat (clean body sans). */
+  --font-serif: 'Fraunces', 'Playfair Display', Georgia, serif;
   --font-sans: 'Montserrat', 'Inter', sans-serif;
   --font-display: 'Montserrat', 'Inter', sans-serif;
 }
