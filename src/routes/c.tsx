@@ -23,6 +23,7 @@ import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
 import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
+import yobodyLogo from "@/assets/yobody-jj-smith-logo.png.asset.json";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -193,7 +194,7 @@ function Nav() {
   return (
     <div className="border-b border-line bg-background">
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-4 flex items-center justify-center">
-        <img src={jjSmithLogo} alt="JJ Smith" className="h-5 sm:h-6 w-auto" width={240} height={64} />
+        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-8 sm:h-10 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -205,66 +206,27 @@ function Hero() {
       <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
           <div className="relative z-20 lg:order-1 lg:min-w-0">
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-3">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
-              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
-            </div>
             <h1
-              className="relative z-20 font-black uppercase leading-[0.85] tracking-[0.01em] mb-2 text-[36px] sm:text-[56px] lg:text-[64px] xl:text-[78px] whitespace-nowrap"
+              className="font-normal leading-[1.1] tracking-[-0.01em] mb-6 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
               style={{ fontFamily: "'Fraunces', 'Playfair Display', serif" }}
             >
-              <span
-                style={{
-                  color: "#2a1438",
-                  textShadow:
-                    "0 0 1px #c9a84c, 1px 1px 0 #c9a84c, -1px -1px 0 #2a1438, 0 6px 14px rgba(42,20,56,0.15)",
-                }}
-              >
-                12 Weeks to{" "}
-              </span>
-              <span
-                className="relative"
-                style={{
-                  background:
-                    "linear-gradient(180deg, #f47ca0 0%, #d94f7a 35%, #a52550 70%, #6e1438 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  filter: "drop-shadow(0 0 1px #c9a84c) drop-shadow(1px 1px 0 #c9a84c)",
-                }}
-              >
-                Sexy
-                <sup
-                  className="text-[12px] sm:text-[18px] lg:text-[20px] align-super -ml-1"
-                  style={{ WebkitTextFillColor: "#8b1e3f" }}
-                >
-                  ™
-                </sup>
-              </span>
+              <span style={{ color: "#1f1a3d" }}>Stop Starting Over</span>
+              <br />
+              <span style={{ color: "#d62a7a" }}>Every Monday.</span>
             </h1>
-            <div className="flex items-center justify-center lg:justify-start gap-3 mb-7">
-              <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#c9a84c] to-[#c9a84c]" />
-              <Star className="w-3 h-3 text-[#c9a84c] shrink-0" fill="#c9a84c" />
-              <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#c9a84c] to-[#c9a84c]" />
-            </div>
-            <h2 className="font-sans font-semibold text-[26px] sm:text-[34px] lg:text-[38px] xl:text-[42px] leading-[1.18] tracking-[-0.015em] text-ink mb-6">
-              Lose up to <span style={{ color: "#d94f7a" }}>30 pounds</span> in 12 weeks with JJ Smith as your Personal Accountability Coach!
-            </h2>
 
-            <p className="font-sans text-[18px] sm:text-[22px] lg:text-[22px] leading-[1.4] text-ink mb-6 lg:mb-7 lg:max-w-[600px] lg:mx-0">
-              Meet JJ as your <span className="font-semibold" style={{ color: "#d94f7a" }}>personal AI accountability coach</span>, helping <span className="font-semibold" style={{ color: "#d94f7a" }}>women over 40</span> finally lose weight <span className="font-semibold" style={{ color: "#d94f7a" }}>without doing it alone.</span>
+            <p className="font-sans text-[16px] sm:text-[18px] leading-[1.55] text-ink mb-6 lg:max-w-[560px] text-left">
+              Imagine having JJ Smith in your pocket every day, helping you stay accountable, stay motivated, and stay consistent until the weight finally comes off.
             </p>
 
-            <ul className="font-sans text-[16px] sm:text-[18px] lg:text-[18px] leading-snug text-ink mb-6 lg:mb-7 max-w-[600px] mx-auto lg:mx-0 space-y-2 text-left">
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Daily text reminders from JJ</span></li>
-              <li className="flex gap-2 items-start"><span className="mt-1 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full" style={{ backgroundColor: "#2a1438", color: "#fff", fontSize: "10px" }}>✓</span><span>Motivation on the days you want to quit</span></li>
+            <ul className="font-sans text-[16px] leading-snug text-ink mb-7 max-w-[560px] space-y-3 text-left">
+              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>Delicious Meals Sent Daily</span></li>
+              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>One-on-one coaching calls with JJ</span></li>
+              <li className="flex gap-3 items-center"><span className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-white" style={{ backgroundColor: "#d62a7a", fontSize: "11px" }}>✓</span><span>Daily text reminders from JJ</span></li>
             </ul>
 
-            <div className="hidden lg:block max-w-[560px]">
-              <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+            <div className="hidden lg:block max-w-[360px]">
+              <HeroCta />
             </div>
           </div>
           <div className="lg:order-2 relative z-0">
@@ -273,7 +235,7 @@ function Hero() {
         </div>
 
         <div className="lg:hidden">
-          <BigCta position="top" sub="14-day money-back · Limited spots">Start my Transformation</BigCta>
+          <HeroCta />
         </div>
 
         <div className="mt-8 lg:mt-12 font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
@@ -290,6 +252,28 @@ function Hero() {
 }
 
 function HeroImageWithLogoBackdrop() {
+  return _HeroImageImpl();
+}
+
+function HeroCta() {
+  const cls =
+    "block w-full text-white px-6 py-4 text-[16px] sm:text-[18px] font-bold uppercase tracking-wide rounded-xl shadow-[0_14px_30px_-10px_rgba(214,42,122,0.55)] transition-transform hover:-translate-y-0.5 text-center";
+  const style: React.CSSProperties = {
+    background: "linear-gradient(180deg, #e83a8a 0%, #d62a7a 50%, #a01e5a 100%)",
+  };
+  return (
+    <div className="w-full">
+      <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position="hero-top" data-tier="unknown">
+        Start Today
+      </button>
+      <p className="mt-3 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#1f1a3d" }}>
+        No restrictive diets. No guilt.<br />No starting over every Monday.
+      </p>
+    </div>
+  );
+}
+
+function _HeroImageImpl() {
   return (
     <div className="relative w-full mx-auto max-w-[420px] mt-2 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
