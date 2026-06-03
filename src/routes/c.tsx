@@ -207,23 +207,19 @@ function Hero() {
       <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
           <div className="relative z-20 lg:order-1 lg:min-w-0">
-            <h1
-              className="leading-[1.1] tracking-[-0.01em] mb-4 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
-              style={{ fontFamily: "'Fraunces', 'DM Serif Display', Georgia, serif", fontWeight: 700, fontVariationSettings: "'opsz' 144" }}
-            >
-              <span style={{ color: "#15102a" }}>Stop Starting Over</span>
-              <br />
-              <span style={{ color: "#c41e6a" }}>Every Monday.</span>
+            <h1 className="font-serif font-medium text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] leading-[1.08] tracking-[-0.025em] mb-6 text-left">
+              <span style={{ color: "#15102a" }}>Stop Starting Over</span>{" "}
+              <em className="not-italic" style={{ color: "#c41e6a" }}>Every Monday.</em>
             </h1>
 
-            <p className="text-[16px] sm:text-[18px] leading-[1.55] mb-5 lg:max-w-[560px] text-left" style={{ color: "#2a2030", fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", fontWeight: 500 }}>
-              Imagine having JJ Smith in your pocket every day, helping you stay consistent until the weight finally comes off.
+            <p className="font-serif italic text-[20px] sm:text-[26px] leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
+              Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>, helping you <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">stay consistent</mark> until the weight finally comes off.
             </p>
 
-            <ul className="text-[16px] leading-snug mb-7 max-w-[560px] space-y-2.5 text-left" style={{ color: "#2a2030", fontFamily: "'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif", fontWeight: 500 }}>
-              <li className="flex gap-3 items-center"><CheckDot /><span>Delicious Meals Sent Daily</span></li>
-              <li className="flex gap-3 items-center"><CheckDot /><span>One-on-one coaching calls with JJ</span></li>
-              <li className="flex gap-3 items-center"><CheckDot /><span>Daily text reminders from JJ</span></li>
+            <ul className="text-[15px] sm:text-[16px] text-ink-soft mb-7 max-w-[560px] space-y-2.5 text-left">
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Delicious Meals Sent Daily</strong></li>
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">One-on-one coaching calls with JJ</strong></li>
+              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Daily text reminders from JJ</strong></li>
             </ul>
 
             <div className="hidden lg:block max-w-[300px]">
