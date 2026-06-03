@@ -252,6 +252,28 @@ function Hero() {
 }
 
 function HeroImageWithLogoBackdrop() {
+  return _HeroImageImpl();
+}
+
+function HeroCta() {
+  const cls =
+    "block w-full text-white px-6 py-4 text-[16px] sm:text-[18px] font-bold uppercase tracking-wide rounded-xl shadow-[0_14px_30px_-10px_rgba(214,42,122,0.55)] transition-transform hover:-translate-y-0.5 text-center";
+  const style: React.CSSProperties = {
+    background: "linear-gradient(180deg, #e83a8a 0%, #d62a7a 50%, #a01e5a 100%)",
+  };
+  return (
+    <div className="w-full">
+      <button onClick={scrollToOffer} className={cls} style={style} data-cta="yes-jj" data-position="hero-top" data-tier="unknown">
+        Start Today
+      </button>
+      <p className="mt-3 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#1f1a3d" }}>
+        No restrictive diets. No guilt.<br />No starting over every Monday.
+      </p>
+    </div>
+  );
+}
+
+function _HeroImageImpl() {
   return (
     <div className="relative w-full mx-auto max-w-[420px] mt-2 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
