@@ -234,7 +234,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:hidden flex justify-center">
+        <div className="lg:hidden flex justify-center -mt-2">
           <div className="w-[68%] max-w-[300px]">
             <HeroCta />
           </div>
@@ -287,7 +287,7 @@ function HeroCta() {
 
 function _HeroImageImpl() {
   return (
-    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-2 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroMobile}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
