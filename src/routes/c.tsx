@@ -178,6 +178,7 @@ function Landing() {
         <HugQuote />
         <JJReveal />
         <Promise2 />
+        <Testimonials />
         <Steps />
         <Transformations />
         <Offer />
