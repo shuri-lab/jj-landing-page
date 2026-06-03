@@ -111,16 +111,15 @@ function BigCta({
         <span aria-hidden className="text-white">→</span>
       </span>
       {sub && (
-        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal" style={{ color: "#f0d78c" }}>{sub}</span>
+        <span className="block text-[12px] sm:text-[13px] font-normal mt-1.5 tracking-normal normal-case" style={{ color: "#ffe1ef" }}>{sub}</span>
       )}
     </>
   );
   const cls =
-    "block w-full rounded-full text-white px-6 py-5 text-[18px] sm:text-[20px] font-semibold tracking-wide shadow-[0_18px_36px_-12px_rgba(42,20,56,0.55)] transition-transform hover:-translate-y-0.5 text-center border-2";
+    "block w-full rounded-xl text-white px-6 py-5 text-[18px] sm:text-[20px] font-bold uppercase tracking-wide shadow-[0_14px_30px_-10px_rgba(184,24,96,0.55)] transition-transform hover:-translate-y-0.5 text-center";
   const style: React.CSSProperties = {
     background:
-      "linear-gradient(180deg, #5a1f47 0%, #4a1838 45%, #3a1430 80%, #2a0e22 100%)",
-    borderColor: "#c9a84c",
+      "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)",
   };
   return (
     <div className={`w-full ${className}`}>
