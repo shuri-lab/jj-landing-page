@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Star, Users, Globe } from "lucide-react";
+import { Heart, Play, Users, Globe } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -321,7 +321,7 @@ function PartnersMarquee() {
       <div className="px-5 mb-8">
         <div className="mx-auto max-w-[1100px] grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {[
-            { icon: Star, eyebrow: "4X", title: "New York Times Bestselling Author", fill: true },
+            { eyebrow: "4X", title: "New York Times Bestselling Author" },
             { icon: Users, title: "Millions of Books Sold", fill: false },
             { icon: Heart, title: "Hundreds of Thousands of Success Stories", fill: true },
             { icon: Globe, title: "Trusted by Women Worldwide", fill: false },
@@ -332,21 +332,20 @@ function PartnersMarquee() {
               style={{ backgroundColor: "#fdebeb", border: "1px solid #f3d3d3" }}
             >
               <div className="h-10 sm:h-11 flex items-center justify-center">
-                <Icon
-                  className="h-7 w-7 sm:h-8 sm:w-8"
-                  style={{ color: "#c9a84c" }}
-                  strokeWidth={fill ? 1.5 : 2}
-                  fill={fill ? "#c9a84c" : "none"}
-                />
-              </div>
-              <div className="h-7 sm:h-8 flex items-center justify-center mt-1">
-                {eyebrow ? (
+                {Icon ? (
+                  <Icon
+                    className="h-7 w-7 sm:h-8 sm:w-8"
+                    style={{ color: "#c9a84c" }}
+                    strokeWidth={fill ? 1.5 : 2}
+                    fill={fill ? "#c9a84c" : "none"}
+                  />
+                ) : eyebrow ? (
                   <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
                     {eyebrow}
                   </div>
                 ) : null}
               </div>
-              <p className="mt-2 text-[13px] sm:text-[14px] leading-snug font-semibold flex-1 flex items-center justify-center" style={{ color: "#15102a" }}>
+              <p className="mt-3 text-[13px] sm:text-[14px] leading-snug font-semibold flex-1 flex items-center justify-center" style={{ color: "#15102a" }}>
                 {title}
               </p>
             </div>
