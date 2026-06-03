@@ -667,7 +667,7 @@ function WhatYouGet() {
     { Icon: Phone, title: "One-on-one calls with JJ", text: "Weekly one-on-one calls with JJ to keep you accountable." },
     { Icon: UtensilsCrossed, title: "Delicious Meals & Recipes", text: "Meal plans built around foods you actually love." },
     { Icon: MessageCircle, title: "Daily Text Support", text: "Accountability and reminders delivered straight to you." },
-    { Icon: UserCheck, title: "Daily Accountability", text: "Check-ins, motivation and support from JJ when you need it most." },
+    { Icon: UserCheck, title: "Daily Accountability", text: "Check-ins, motivation and support from JJ." },
     { Icon: Users, title: "Challenges & Community", text: "Join a community of women who support and inspire you." },
     { Icon: BarChart3, title: "Progress Dashboard", text: "Track your wins, see progress, and stay motivated." },
   ];
