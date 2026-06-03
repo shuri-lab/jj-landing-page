@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Heart, Play, Star } from "lucide-react";
+import { Heart, Play, Star, Users, Globe } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -318,8 +318,34 @@ function PartnersMarquee() {
   const track = [...logos, ...logos];
   return (
     <div className="bg-white border-y border-line py-8 sm:py-10 mt-12 -mx-5">
-      <p className="text-center text-[12px] sm:text-[13px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
-        5+ million pounds lost · #1 NY Times bestselling author · As seen on
+      <div className="px-5 mb-8">
+        <div className="mx-auto max-w-[1100px] grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          {[
+            { icon: Star, eyebrow: "4X", title: "New York Times Bestselling Author" },
+            { icon: Users, title: "Millions of Books Sold" },
+            { icon: Heart, title: "Hundreds of Thousands of Success Stories" },
+            { icon: Globe, title: "Trusted by Women Worldwide" },
+          ].map(({ icon: Icon, eyebrow, title }, i) => (
+            <div
+              key={i}
+              className="rounded-2xl px-4 py-5 sm:px-5 sm:py-6 text-center flex flex-col items-center justify-start gap-2"
+              style={{ backgroundColor: "#fdebeb", border: "1px solid #f3d3d3" }}
+            >
+              <Icon className="h-7 w-7 sm:h-8 sm:w-8" style={{ color: "#c9a84c" }} strokeWidth={2.2} fill="#c9a84c" />
+              {eyebrow && (
+                <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
+                  {eyebrow}
+                </div>
+              )}
+              <p className="text-[13px] sm:text-[14px] leading-snug font-semibold" style={{ color: "#15102a" }}>
+                {title}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <p className="text-center text-[11px] sm:text-[12px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
+        As seen on
       </p>
       <div className="relative overflow-hidden">
         <div className="flex w-max gap-14 sm:gap-20 animate-marquee items-center">
