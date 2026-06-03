@@ -8,7 +8,6 @@ import { scrollToOffer } from "@/lib/scroll-to-offer";
 import heroJJ from "@/assets/landing/hero-jj.png";
 import heroJJNoVideo from "@/assets/landing/hero-jj-no-video.png";
 import heroA from "@/assets/landing/hero-c-cards.png";
-import heroMobile from "@/assets/landing/hero-mobile.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -291,18 +290,11 @@ function Hero() {
 
 function HeroImageWithLogoBackdrop() {
   return (
-    <div className="relative w-full mx-auto max-w-[420px] mt-2 lg:mt-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
-      <img
-        src={heroMobile}
-        alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="block w-full h-auto mx-auto max-w-[280px] sm:max-w-[320px] lg:hidden"
-        width={1024}
-        height={1024}
-      />
+    <div className="relative w-full mx-auto max-w-[420px] lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroA}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="hidden lg:block w-full h-auto"
+        className="block w-full h-auto"
         width={1024}
         height={1024}
       />
@@ -623,7 +615,6 @@ function JJReveal() {
 
       <div className="mt-10 lg:mt-12 lg:max-w-[480px] lg:mx-auto">
         <BigCta
-          position="mid"
           sub={
             <>
               Limited spots · Doors close in <CountdownInline className="font-bold tabular-nums" />
