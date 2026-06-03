@@ -193,8 +193,8 @@ function Landing() {
 function Nav() {
   return (
     <div style={{ backgroundColor: "#fdebeb" }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 pt-7 pb-6 sm:pt-8 sm:pb-7 flex items-center justify-center">
-        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 pt-5 pb-5 sm:pt-6 sm:pb-6 flex items-center justify-center">
+        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-9 sm:h-10 lg:h-12 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -208,7 +208,7 @@ function Hero() {
           <div className="relative z-20 lg:order-1 lg:min-w-0">
             <h1
               className="leading-[1.1] tracking-[-0.01em] mb-4 text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] text-left"
-              style={{ fontFamily: "'Playfair Display', 'Fraunces', Georgia, serif", fontWeight: 700 }}
+              style={{ fontFamily: "'DM Serif Display', 'Fraunces', Georgia, serif", fontWeight: 400 }}
             >
               <span style={{ color: "#15102a" }}>Stop Starting Over</span>
               <br />
@@ -234,7 +234,7 @@ function Hero() {
           </div>
         </div>
 
-        <div className="lg:hidden flex justify-center">
+        <div className="lg:hidden flex justify-center -mt-2">
           <div className="w-[68%] max-w-[300px]">
             <HeroCta />
           </div>
@@ -287,7 +287,7 @@ function HeroCta() {
 
 function _HeroImageImpl() {
   return (
-    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-2 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
         src={heroMobile}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
