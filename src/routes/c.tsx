@@ -448,22 +448,22 @@ function Promise2() {
 
 const TESTIMONIALS = [
   {
-    quote: "It will make me accountable because I feel big sister is always watching.",
-    name: "JoAnn",
+    quote: "It keeps me accountable...",
+    name: "Keisha",
   },
   {
     quote:
       "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.",
-    name: "Angel",
+    name: "Monique",
   },
   {
     quote:
       "This feels different because I don't have to figure out what to eat or look up recipes. It's all put together for me.",
-    name: "Angela",
+    name: "Tasha",
   },
   {
-    quote: "Just hearing JJ's voice would get me out of bed even if I was fatigued.",
-    name: "Sai",
+    quote: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.",
+    name: "Latoya",
   },
 ];
 
