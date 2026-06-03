@@ -24,6 +24,7 @@ import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
 import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import yobodyLogo from "@/assets/yobody-jj-smith-logo.png.asset.json";
+import heroMobileC from "@/assets/hero-mobile-c.png.asset.json";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -287,13 +288,13 @@ function HeroCta() {
 
 function _HeroImageImpl() {
   return (
-    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-3 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
+    <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
-        src={heroMobile}
+        src={heroMobileC.url}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
-        className="block w-[82%] h-auto mx-auto max-w-[440px] lg:hidden"
-        width={1024}
-        height={1024}
+        className="block w-full h-auto mx-auto max-w-[440px] lg:hidden"
+        width={1920}
+        height={1471}
       />
       <img
         src={heroA}
