@@ -662,6 +662,41 @@ function Steps() {
   );
 }
 
+function WhatYouGet() {
+  const items = [
+    { Icon: UserCheck, title: "Daily Accountability", text: "Check-ins, motivation and support from JJ when you need it most." },
+    { Icon: UtensilsCrossed, title: "Delicious Meals & Recipes", text: "Meal plans built around foods you actually enjoy." },
+    { Icon: MessageCircle, title: "Daily Text Support", text: "Accountability and reminders delivered straight to you." },
+    { Icon: Phone, title: "Weekly Coaching Calls", text: "Live calls with JJ to keep you focused and accountable." },
+    { Icon: Users, title: "Challenges & Community", text: "Join a community of women who support and inspire you." },
+    { Icon: BarChart3, title: "Progress Dashboard", text: "Track your wins, see progress, and stay motivated." },
+  ];
+  return (
+    <Section bg="soft">
+      <div className="text-center mb-12 lg:mb-16">
+        <Eyebrow center>Inside Yobody</Eyebrow>
+        <h2 className="font-serif text-[34px] sm:text-[44px] lg:text-[54px] leading-[1.1] tracking-[-0.01em] max-w-[760px] mx-auto">
+          <span style={{ color: "#15102a" }}>What You Get</span>{" "}
+          <em className="not-italic text-brand">Inside Yobody</em>
+        </h2>
+      </div>
+      <div className="grid grid-cols-2 lg:grid-cols-6 gap-x-5 gap-y-10 lg:gap-x-6">
+        {items.map(({ Icon, title, text }) => (
+          <div key={title} className="text-center flex flex-col items-center px-1">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-4 bg-brand/10">
+              <Icon className="!w-7 !h-7 sm:!w-8 sm:!h-8 text-brand" strokeWidth={2} />
+            </div>
+            <h3 className="font-sans font-bold uppercase tracking-[0.06em] text-[13px] sm:text-[14px] text-ink mb-2 leading-tight">
+              {title}
+            </h3>
+            <p className="text-[14px] sm:text-[15px] text-ink-soft leading-[1.55]">{text}</p>
+          </div>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
 function JJReveal() {
   return (
     <Section>
