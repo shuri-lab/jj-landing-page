@@ -38,18 +38,18 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/c")({
   head: () => ({
     meta: [
-      { title: "JJ Smith, 12-Weeks to Sexy™, A" },
+      { title: "JJ Smith — Personal Coaching Program" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
-          "Lose up to 30 pounds in 12 weeks. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
+          "Lose up to 30 pounds. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
       },
-      { property: "og:title", content: "JJ Smith, 12-Weeks to Sexy™" },
+      { property: "og:title", content: "JJ Smith — Personal Coaching Program" },
       {
         property: "og:description",
         content:
-          "Sister, this time I'm with you every step of the way. A personalized 12-week transformation with JJ Smith.",
+          "Sister, this time I'm with you every step of the way. A personalized transformation with JJ Smith.",
       },
       { property: "og:type", content: "website" },
     ],
@@ -644,7 +644,7 @@ function Steps() {
         <h2 className="font-serif text-[32px] sm:text-[42px] lg:text-[52px] leading-[1.1] mb-12 max-w-[580px] lg:max-w-[820px] mx-auto">
           This is what our{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            12 weeks together
+            journey together
           </em>{" "}
           will <em className="not-italic text-brand">actually feel</em> like.
         </h2>
@@ -797,9 +797,9 @@ function Transformations() {
       <div className="text-center">
         <Eyebrow center>Real sisters, real transformations</Eyebrow>
         <h2 className="font-serif text-[32px] sm:text-[42px] leading-[1.1] mb-6 max-w-[580px] mx-auto">
-          Here's what happens after{" "}
+          Here's what happens{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            12 weeks
+            with me by your side
           </em>
           .
         </h2>
@@ -904,7 +904,7 @@ function Offer() {
       items: [
         "Weekly accountability call with JJ",
         "Daily SMS coaching",
-        "Custom eating plan + 12-week roadmap",
+        "Custom eating plan + full transformation roadmap",
       ],
       href: "/checkout",
       loading: !basic,
@@ -1115,14 +1115,14 @@ function LastCall() {
         </div>
         <Eyebrow center>Last call</Eyebrow>
         <h2 className="font-serif text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mb-7">
-          Your{" "}
+          The{" "}
           <em className="not-italic" style={{ color: "#c9635c" }}>
-            next 12 weeks
+            months ahead
           </em>{" "}
           are <em className="not-italic text-brand">happening either way</em>.
         </h2>
         <p className="text-[18px] sm:text-[19px] lg:text-[20px] text-ink-soft leading-[1.7] mb-9 max-w-[580px] lg:max-w-[720px] mx-auto">
-          You can spend them like the last 12. Or you can spend them with me right there with you, every Tuesday
+          You can spend them like the last ones. Or you can spend them with me right there with you, every Tuesday
           morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
@@ -1180,7 +1180,6 @@ function StickyCta() {
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <div className="flex-1 text-[13px] leading-tight">
-          <div className="font-normal text-ink-soft">JJ's 12-Weeks to Sexy™</div>
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
           </div>
