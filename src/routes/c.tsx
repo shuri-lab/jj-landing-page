@@ -1082,7 +1082,8 @@ function StickyCta() {
           data-cta="yes-jj"
           data-position="bottom"
           data-tier="unknown"
-          className="bg-brand text-white px-5 py-3 rounded-full text-[14px] font-semibold shadow-md"
+          className="text-white px-5 py-3 rounded-xl text-[14px] font-bold uppercase tracking-wide shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]"
+          style={{ background: "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)" }}
         >
           Reserve
         </button>
