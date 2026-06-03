@@ -178,6 +178,7 @@ function Landing() {
         <HugQuote />
         <JJReveal />
         <Promise2 />
+        <Testimonials />
         <Steps />
         <Transformations />
         <Offer />
@@ -442,6 +443,113 @@ function Promise2() {
         </div>
       </div>
     </section>
+  );
+}
+
+const TESTIMONIALS = [
+  {
+    quote: "It will make me accountable because I feel big sister is always watching.",
+    name: "JoAnn",
+  },
+  {
+    quote:
+      "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.",
+    name: "Angel",
+  },
+  {
+    quote:
+      "This feels different because I don't have to figure out what to eat or look up recipes. It's all put together for me.",
+    name: "Angela",
+  },
+  {
+    quote: "Just hearing JJ's voice would get me out of bed even if I was fatigued.",
+    name: "Sai",
+  },
+];
+
+function Testimonials() {
+  const [active, setActive] = useState(0);
+  const scrollerRef = (node: HTMLDivElement | null) => {
+    if (!node) return;
+    (Testimonials as any)._scroller = node;
+  };
+
+  const onScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const el = e.currentTarget;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    if (idx !== active) setActive(idx);
+  };
+
+  const goTo = (i: number) => {
+    const el = (Testimonials as any)._scroller as HTMLDivElement | undefined;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  };
+
+  return (
+    <section className="px-5 py-16 lg:py-24 bg-bg-soft">
+      <div className="mx-auto max-w-[640px] lg:max-w-[1200px]">
+        <h2 className="font-serif font-medium text-center text-[32px] sm:text-[40px] lg:text-[52px] leading-[1.1] tracking-[-0.02em] text-ink mb-10 lg:mb-14">
+          What Women Are Saying
+        </h2>
+
+        {/* Desktop: 4-up grid */}
+        <div className="hidden lg:grid lg:grid-cols-4 lg:gap-6">
+          {TESTIMONIALS.map((t) => (
+            <TestimonialCard key={t.name} quote={t.quote} name={t.name} />
+          ))}
+        </div>
+
+        {/* Mobile/tablet: snap carousel */}
+        <div className="lg:hidden -mx-5">
+          <div
+            ref={scrollerRef}
+            onScroll={onScroll}
+            className="flex snap-x snap-mandatory overflow-x-auto scroll-smooth gap-4 px-5 pb-2 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {TESTIMONIALS.map((t) => (
+              <div
+                key={t.name}
+                className="snap-center shrink-0 basis-[85%] sm:basis-[60%]"
+              >
+                <TestimonialCard quote={t.quote} name={t.name} />
+              </div>
+            ))}
+          </div>
+          <div className="mt-6 flex justify-center gap-2">
+            {TESTIMONIALS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => goTo(i)}
+                aria-label={`Go to testimonial ${i + 1}`}
+                className={`h-2 rounded-full transition-all ${
+                  i === active ? "w-6 bg-[#d62a7a]" : "w-2 bg-[#d62a7a]/30"
+                }`}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function TestimonialCard({ quote, name }: { quote: string; name: string }) {
+  return (
+    <figure className="h-full rounded-2xl bg-white/80 backdrop-blur-sm border border-[#f3d3e0] p-6 sm:p-7 shadow-[0_18px_40px_-24px_rgba(184,24,96,0.35)] flex flex-col">
+      <span
+        aria-hidden
+        className="font-serif text-[56px] leading-none text-[#d62a7a] -mt-2 mb-2 select-none"
+      >
+        “
+      </span>
+      <blockquote className="text-ink text-[16px] sm:text-[17px] leading-[1.55] flex-1">
+        {quote}
+      </blockquote>
+      <figcaption className="mt-5 text-[#d62a7a] font-semibold text-[15px]">
+        – {name}
+      </figcaption>
+    </figure>
   );
 }
 
