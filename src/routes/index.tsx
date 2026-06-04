@@ -938,7 +938,7 @@ function Offer() {
       ...basicPricing,
       featured: false,
       items: [
-        "Weekly accountability call with JJ",
+        "1 Weekly accountability call with JJ",
         "Daily SMS coaching",
         "Custom eating plan + full transformation roadmap",
       ],
@@ -951,6 +951,7 @@ function Offer() {
       ...premiumPricing,
       featured: true,
       items: [
+        "2 Weekly accountability calls with JJ",
         "Everything in Essential",
         "Plus mid-week coaching call",
       ],
