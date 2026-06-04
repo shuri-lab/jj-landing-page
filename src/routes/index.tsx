@@ -893,7 +893,7 @@ function PlusNote({ note }: { note: string }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="block mx-auto text-[14px] text-brand font-medium underline-offset-2 hover:underline"
+        className="mx-auto flex items-center gap-1.5 text-[14px] font-semibold text-white bg-brand rounded-full px-4 py-2 hover:opacity-90 transition-opacity"
       >
         Why Plus? {open ? "▲" : "▼"}
       </button>
@@ -902,7 +902,7 @@ function PlusNote({ note }: { note: string }) {
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">
-          <p className="mt-2 text-[14px] sm:text-[15px] italic text-ink-soft leading-snug text-center">{note}</p>
+          <p className="mt-3 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7] text-center whitespace-pre-line">{note}</p>
         </div>
       </div>
     </div>
@@ -947,15 +947,14 @@ function Offer() {
     },
     {
       name: "Plus",
-      subhead: "Everything in Essential, plus a mid-week call when life gets in the way. Built to finish.",
+      subhead: "Everything in Essential, plus twice the accountability. Built to finish.",
       ...premiumPricing,
       featured: true,
       items: [
         "2 Weekly accountability calls with JJ",
         "Everything in Essential",
-        "Plus mid-week coaching call",
       ],
-      note: "For the woman who's serious about finishing this time. Everything in Essential, plus a mid-week coaching call where the real work happens... the call you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit. Twice the calls with JJ. Essential helps you do the program. Plus helps you finish it.",
+      note: "For the woman who's serious about finishing this time. Everything in Essential, plus twice the accountability.\n\nThese are the calls you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit.\n\nEssential helps you do the program. Plus helps you finish it.",
       href: "/checkout",
       loading: !premium,
     },
