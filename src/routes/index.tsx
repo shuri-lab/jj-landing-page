@@ -947,15 +947,14 @@ function Offer() {
     },
     {
       name: "Plus",
-      subhead: "Everything in Essential, plus a mid-week call when life gets in the way. Built to finish.",
+      subhead: "Everything in Essential, plus twice the accountability. Built to finish.",
       ...premiumPricing,
       featured: true,
       items: [
         "2 Weekly accountability calls with JJ",
         "Everything in Essential",
-        "Plus mid-week coaching call",
       ],
-      note: "For the woman who's serious about finishing this time. Everything in Essential, plus a mid-week coaching call where the real work happens... the call you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit. Twice the calls with JJ. Essential helps you do the program. Plus helps you finish it.",
+      note: "For the woman who's serious about finishing this time. Everything in Essential, plus twice the accountability.\n\nThese are the calls you take when you're slipping. When Monday started rough and Tuesday isn't looking better. When life is getting in the way and you want the version of this program that catches you before you quit.\n\nEssential helps you do the program. Plus helps you finish it.",
       href: "/checkout",
       loading: !premium,
     },
