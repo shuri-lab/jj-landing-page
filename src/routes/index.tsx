@@ -893,7 +893,7 @@ function PlusNote({ note }: { note: string }) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="block mx-auto text-[14px] text-brand font-medium underline-offset-2 hover:underline"
+        className="mx-auto flex items-center gap-1.5 text-[14px] font-semibold text-white bg-brand rounded-full px-4 py-2 hover:opacity-90 transition-opacity"
       >
         Why Plus? {open ? "▲" : "▼"}
       </button>
@@ -902,7 +902,7 @@ function PlusNote({ note }: { note: string }) {
         style={{ gridTemplateRows: open ? "1fr" : "0fr" }}
       >
         <div className="overflow-hidden">
-          <p className="mt-2 text-[14px] sm:text-[15px] italic text-ink-soft leading-snug text-center">{note}</p>
+          <p className="mt-3 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7] text-center whitespace-pre-line">{note}</p>
         </div>
       </div>
     </div>
