@@ -967,12 +967,10 @@ function Offer() {
       </div>
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => {
-          const selected = mode[p.name] ?? "full";
-          const isFull = p.hasFull && selected === "full";
-          const monthlyTotal = p.monthlyPrice * p.monthlyMonths;
-          const savings = monthlyTotal - p.fullPrice;
-          const ctaPrice = isFull ? `$${p.fullPrice}` : `$${p.monthlyPrice}/month`;
-          const ctaHref = isFull ? p.fullHref : p.monthlyHref;
+          // UI simplified: always use monthly. Full-pay logic is preserved for future use.
+          const isFull = false;
+          const ctaPrice = `$${p.monthlyPrice}/month`;
+          const ctaHref = p.monthlyHref;
           return (
             <div
               key={p.name}
@@ -996,49 +994,18 @@ function Offer() {
                   <p className="mt-2 text-[15px] sm:text-[17px] text-ink-soft leading-snug">{p.subhead}</p>
                 )}
               </div>
-              <div className="mt-3 space-y-2">
-                <button
-                  type="button"
-                  onClick={() => setMode((m) => ({ ...m, [p.name]: "full" }))}
-                  className={`w-full rounded-xl border px-3 py-2.5 text-left transition-colors ${
-                    isFull ? "border-brand bg-brand/5" : "border-line bg-transparent"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`h-4 w-4 rounded-full border-2 shrink-0 ${isFull ? "border-brand" : "border-line"} flex items-center justify-center`}
-                    >
-                      {isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
+              <div className="mt-3">
+                <div className="w-full rounded-xl border border-brand bg-brand/5 px-3 py-3">
+                  <div className="flex items-baseline justify-between gap-2">
+                    <span className="text-[14px] uppercase tracking-[0.14em] text-ink-soft font-semibold">
+                      Monthly
                     </span>
-                    <div className="flex-1 flex items-baseline justify-between gap-2">
-                      <span className="text-[14px] uppercase tracking-[0.14em] text-ink-soft font-semibold">
-                        Pay in full
-                      </span>
-                      <span className="font-serif text-[36px] sm:text-[42px] font-medium leading-none">
-                        ${p.fullPrice}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="mt-1 ml-7 text-[14px] text-brand font-medium">Save ${savings} vs monthly</p>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode((m) => ({ ...m, [p.name]: "monthly" }))}
-                  className={`w-full rounded-xl border px-3 py-2 text-left transition-colors ${
-                    !isFull ? "border-brand bg-brand/5" : "border-line bg-transparent"
-                  }`}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className={`h-4 w-4 rounded-full border-2 shrink-0 ${!isFull ? "border-brand" : "border-line"} flex items-center justify-center`}
-                    >
-                      {!isFull && <span className="h-2 w-2 rounded-full bg-brand" />}
-                    </span>
-                    <span className="flex-1 text-[15px] sm:text-[16px] text-ink-soft">
-                      Or <span className="font-semibold text-ink">${p.monthlyPrice}/month</span>
+                    <span className="font-serif text-[36px] sm:text-[42px] font-medium leading-none">
+                      ${p.monthlyPrice}
+                      <span className="text-[16px] sm:text-[18px] font-normal text-ink-soft">/month</span>
                     </span>
                   </div>
-                </button>
+                </div>
               </div>
               <ul className="mt-4 border-t border-dashed border-line">
                 {p.items.map((label) => (
