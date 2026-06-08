@@ -1003,9 +1003,6 @@ function Offer() {
                     /mo
                   </span>
                 </div>
-                <p className="mt-1 text-[13px] text-ink-faint font-medium tracking-wide">
-                  {p.monthlyMonths} monthly payments
-                </p>
               </div>
               <ul className="mt-4 border-t border-dashed border-line">
                 {p.items.map((label) => (
