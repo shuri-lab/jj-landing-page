@@ -680,16 +680,16 @@ function WhatYouGet() {
           <em className="not-italic text-brand">Inside Yobody</em>
         </h2>
       </div>
-      <div className="grid grid-cols-2 lg:grid-cols-6 gap-x-5 gap-y-10 lg:gap-x-6">
+      <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-10 lg:gap-x-12 lg:gap-y-16 lg:max-w-[1100px] lg:mx-auto">
         {items.map(({ Icon, title, text }) => (
-          <div key={title} className="text-center flex flex-col items-center px-1">
-            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full flex items-center justify-center mb-4 bg-brand/10">
-              <Icon className="!w-7 !h-7 sm:!w-8 sm:!h-8 text-brand" strokeWidth={2} />
+          <div key={title} className="text-center flex flex-col items-center px-1 lg:px-4">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mb-4 lg:mb-6 bg-brand/10">
+              <Icon className="!w-7 !h-7 sm:!w-8 sm:!h-8 lg:!w-10 lg:!h-10 text-brand" strokeWidth={2} />
             </div>
-            <h3 className="font-sans font-bold uppercase tracking-[0.06em] text-[14px] sm:text-[15px] text-ink mb-2 leading-tight">
+            <h3 className="font-sans font-bold uppercase tracking-[0.06em] text-[14px] sm:text-[15px] lg:text-[18px] text-ink mb-2 lg:mb-3 leading-tight">
               {title}
             </h3>
-            <p className="text-[15px] sm:text-[16px] text-ink-soft leading-[1.55]">{text}</p>
+            <p className="text-[15px] sm:text-[16px] lg:text-[18px] text-ink-soft leading-[1.55] lg:leading-[1.6]">{text}</p>
           </div>
         ))}
       </div>
