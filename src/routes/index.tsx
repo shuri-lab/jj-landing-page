@@ -994,18 +994,18 @@ function Offer() {
                   <p className="mt-2 text-[15px] sm:text-[17px] text-ink-soft leading-snug">{p.subhead}</p>
                 )}
               </div>
-              <div className="mt-3">
-                <div className="w-full rounded-xl border border-brand bg-brand/5 px-3 py-3">
-                  <div className="flex items-baseline justify-between gap-2">
-                    <span className="text-[14px] uppercase tracking-[0.14em] text-ink-soft font-semibold">
-                      Monthly
-                    </span>
-                    <span className="font-serif text-[36px] sm:text-[42px] font-medium leading-none">
-                      ${p.monthlyPrice}
-                      <span className="text-[16px] sm:text-[18px] font-normal text-ink-soft">/month</span>
-                    </span>
-                  </div>
+              <div className="mt-4 text-center">
+                <div className="inline-flex items-baseline gap-1">
+                  <span className="font-serif text-[48px] sm:text-[56px] font-medium leading-none text-ink">
+                    ${p.monthlyPrice}
+                  </span>
+                  <span className="text-[16px] sm:text-[18px] font-semibold text-ink-soft leading-none">
+                    /mo
+                  </span>
                 </div>
+                <p className="mt-1 text-[13px] text-ink-faint font-medium tracking-wide">
+                  {p.monthlyMonths} monthly payments
+                </p>
               </div>
               <ul className="mt-4 border-t border-dashed border-line">
                 {p.items.map((label) => (
