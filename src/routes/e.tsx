@@ -1,7 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
-import Vapi from "@vapi-ai/web";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -218,21 +217,27 @@ function EmbeddedVoiceAgentInner() {
   const [isStarting, setIsStarting] = useState(false);
   const [status, setStatus] = useState<"disconnected" | "connecting" | "connected">("disconnected");
   const [isSpeaking, setIsSpeaking] = useState(false);
-  const vapiRef = useRef<Vapi | null>(null);
+  const vapiRef = useRef<any>(null);
 
   useEffect(() => {
-    const vapi = new Vapi("a681c115-7a07-4895-b48f-14c6993f1a27");
-    vapiRef.current = vapi;
-    vapi.on("call-start", () => setStatus("connected"));
-    vapi.on("call-end", () => {
-      setStatus("disconnected");
-      setIsSpeaking(false);
-    });
-    vapi.on("speech-start", () => setIsSpeaking(true));
-    vapi.on("speech-end", () => setIsSpeaking(false));
-    vapi.on("error", (e) => console.error("Vapi error:", e));
+    let cancelled = false;
+    let instance: any = null;
+    import("@vapi-ai/web").then(({ default: Vapi }) => {
+      if (cancelled) return;
+      instance = new Vapi("a681c115-7a07-4895-b48f-14c6993f1a27");
+      vapiRef.current = instance;
+      instance.on("call-start", () => setStatus("connected"));
+      instance.on("call-end", () => {
+        setStatus("disconnected");
+        setIsSpeaking(false);
+      });
+      instance.on("speech-start", () => setIsSpeaking(true));
+      instance.on("speech-end", () => setIsSpeaking(false));
+      instance.on("error", (e: unknown) => console.error("Vapi error:", e));
+    }).catch((err) => console.error("Failed to load Vapi SDK:", err));
     return () => {
-      vapi.stop();
+      cancelled = true;
+      try { instance?.stop(); } catch {}
     };
   }, []);
 
