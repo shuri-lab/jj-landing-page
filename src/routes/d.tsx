@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3 } from "lucide-react";
+import { useCallback, useEffect, useState } from "react";
+import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
+import { useConversation } from "@elevenlabs/react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -54,11 +55,6 @@ export const Route = createFileRoute("/d")({
       { property: "og:type", content: "website" },
     ],
     scripts: [
-      {
-        src: "https://unpkg.com/@elevenlabs/convai-widget-embed",
-        async: true,
-        type: "text/javascript",
-      },
     ],
   }),
   component: Landing,
@@ -211,6 +207,83 @@ function Nav() {
 }
 
 function Hero() {
+  return _HeroImpl();
+}
+
+function EmbeddedVoiceAgent() {
+  const [isStarting, setIsStarting] = useState(false);
+  const conversation = useConversation({
+    onError: (e) => console.error("ElevenLabs error:", e),
+  });
+
+  const isConnected = conversation.status === "connected";
+  const isConnecting = conversation.status === "connecting" || isStarting;
+
+  const start = useCallback(async () => {
+    setIsStarting(true);
+    try {
+      await navigator.mediaDevices.getUserMedia({ audio: true });
+      await conversation.startSession({
+        agentId: "agent_7401krvzecbzfr2bqdgzr49x0vj9",
+        connectionType: "webrtc",
+      });
+    } catch (err) {
+      console.error("Failed to start conversation:", err);
+    } finally {
+      setIsStarting(false);
+    }
+  }, [conversation]);
+
+  const stop = useCallback(async () => {
+    await conversation.endSession();
+  }, [conversation]);
+
+  const speaking = isConnected && conversation.isSpeaking;
+
+  return (
+    <div className="w-full max-w-[420px] rounded-3xl bg-white shadow-xl border border-black/5 p-6 sm:p-8 flex flex-col items-center">
+      <div className="relative flex items-center justify-center mb-5">
+        <span
+          className={`absolute inline-flex h-32 w-32 rounded-full ${
+            isConnected ? "animate-ping" : ""
+          }`}
+          style={{ backgroundColor: speaking ? "#c41e6a33" : "#c41e6a22" }}
+          aria-hidden
+        />
+        <button
+          type="button"
+          onClick={isConnected ? stop : start}
+          disabled={isConnecting}
+          className="relative inline-flex h-24 w-24 items-center justify-center rounded-full text-white transition-transform active:scale-95 disabled:opacity-70"
+          style={{ backgroundColor: "#c41e6a" }}
+          aria-label={isConnected ? "End conversation" : "Start conversation"}
+        >
+          {isConnecting ? (
+            <Loader2 className="h-9 w-9 animate-spin" />
+          ) : isConnected ? (
+            <MicOff className="h-9 w-9" />
+          ) : (
+            <Mic className="h-9 w-9" />
+          )}
+        </button>
+      </div>
+      <p className="text-[15px] font-semibold text-ink mb-1">
+        {isConnecting
+          ? "Connecting…"
+          : isConnected
+          ? speaking
+            ? "JJ is speaking…"
+            : "Listening…"
+          : "Tap to talk to JJ"}
+      </p>
+      <p className="text-[13px] text-ink-soft text-center">
+        {isConnected ? "Tap the mic again to end the call." : "Allow mic access when prompted."}
+      </p>
+    </div>
+  );
+}
+
+function _HeroImpl() {
   return (
     <section className="px-5 pt-4 pb-16 sm:pt-6 sm:pb-20 lg:pt-8 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[720px] lg:max-w-[900px] flex flex-col items-center">
@@ -225,8 +298,7 @@ function Hero() {
         </p>
 
         <div className="w-full flex justify-center mb-6">
-          {/* @ts-expect-error - custom element from ElevenLabs widget */}
-          <elevenlabs-convai agent-id="agent_7401krvzecbzfr2bqdgzr49x0vj9" mode="embedded"></elevenlabs-convai>
+          <EmbeddedVoiceAgent />
         </div>
 
         <p className="text-[14px] sm:text-[15px] text-ink-soft max-w-[520px] text-center">
