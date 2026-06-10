@@ -29,7 +29,7 @@ import heroMobileC from "@/assets/hero-mobile-c.png.asset.json";
 import heroDesktopC from "@/assets/hero-desktop-c.png.asset.json";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
-import partnerDrOz from "@/assets/landing/partners/eroz.png";
+import partnerDrOz from "@/assets/landing/partners/droz.png";
 import partnerNbc from "@/assets/landing/partners/nbc.png";
 import partnerTheView from "@/assets/landing/partners/theview.png";
 import partnerSteveHarvey from "@/assets/landing/partners/steveharvey.png";
@@ -78,7 +78,7 @@ function CountdownPill() {
       <span className="inline-block h-2 w-2 rounded-full bg-white animate-pulse" />
       <span>Sign-ups close in:</span>
       <CountdownInline className="tabular-nums" />
-    </eiv>
+    </div>
   );
 }
 
@@ -139,7 +139,7 @@ function BigCta({
           {content}
         </button>
       )}
-    </eiv>
+    </div>
   );
 }
 
@@ -149,7 +149,7 @@ function Eyebrow({ children, center = false }: { children: React.ReactNode; cent
       className={`text-[12px] uppercase tracking-[0.22em] text-brand font-semibold mb-5 ${center ? "text-center" : ""}`}
     >
       {children}
-    </eiv>
+    </div>
   );
 }
 
@@ -167,7 +167,7 @@ function Section({
   const bgClass = bg === "soft" ? "bg-bg-soft" : bg === "warm" ? "bg-bg-warm" : "";
   return (
     <section id={id} className={`px-5 py-20 sm:py-24 lg:py-28 ${bgClass} ${className}`}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">{children}</eiv>
+      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">{children}</div>
     </section>
   );
 }
@@ -192,7 +192,7 @@ function Landing() {
       </main>
       <Footer />
       <StickyCta />
-    </eiv>
+    </div>
   );
 }
 
@@ -201,8 +201,8 @@ function Nav() {
     <div style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-3 sm:py-3 flex items-center justify-center">
         <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
-      </eiv>
-    </eiv>
+      </div>
+    </div>
   );
 }
 
@@ -274,7 +274,7 @@ function EmbeddedVoiceAgentInner() {
             <Mic className="h-9 w-9" />
           )}
         </button>
-      </eiv>
+      </div>
       <p className="text-[15px] font-semibold text-ink mb-1">
         {isConnecting
           ? "Connecting…"
@@ -287,7 +287,7 @@ function EmbeddedVoiceAgentInner() {
       <p className="text-[13px] text-ink-soft text-center">
         {isConnected ? "Tap the mic again to end the call." : "Allow mic access when prompted."}
       </p>
-    </eiv>
+    </div>
   );
 }
 
@@ -307,7 +307,7 @@ function _HeroImpl() {
 
         <div className="w-full flex justify-center mb-6">
           <EmbeddedVoiceAgent />
-        </eiv>
+        </div>
 
         <p className="text-[14px] sm:text-[15px] text-ink-soft max-w-[520px] text-center">
           Tap the mic to start a real conversation with JJ's AI coach.
@@ -317,8 +317,8 @@ function _HeroImpl() {
           <p>Because weight loss isn't about willpower.</p>
           <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
           <p>Like having JJ Smith in your phone every day.</p>
-        </eiv>
-      </eiv>
+        </div>
+      </div>
 
       <TransformationsStrip />
       <PartnersMarquee />
@@ -354,7 +354,7 @@ function HeroCta() {
       <p className="mt-2 text-center text-[13px] sm:text-[14px] leading-[1.4]" style={{ color: "#15102a" }}>
         No restrictive diets. No guilt.<br />No starting over every Monday.
       </p>
-    </eiv>
+    </div>
   );
 }
 
@@ -375,7 +375,7 @@ function _HeroImageImpl() {
         width={1920}
         height={1920}
       />
-    </eiv>
+    </div>
   );
 }
 
@@ -417,16 +417,16 @@ function PartnersMarquee() {
                 ) : eyebrow ? (
                   <div className="text-[22px] sm:text-[26px] font-bold leading-none" style={{ color: "#c9a84c" }}>
                     {eyebrow}
-                  </eiv>
+                  </div>
                 ) : null}
-              </eiv>
+              </div>
               <p className="mt-3 text-[13px] sm:text-[14px] leading-snug font-semibold flex-1 flex items-center justify-center" style={{ color: "#15102a" }}>
                 {title}
               </p>
-            </eiv>
+            </div>
           ))}
-        </eiv>
-      </eiv>
+        </div>
+      </div>
       <p className="text-center text-[11px] sm:text-[12px] uppercase tracking-[0.22em] text-ink-faint font-semibold mb-6 px-5">
         As seen on
       </p>
@@ -442,11 +442,11 @@ function PartnersMarquee() {
               decoding="async"
             />
           ))}
-        </eiv>
+        </div>
         <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-white to-transparent" />
         <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-white to-transparent" />
-      </eiv>
-    </eiv>
+      </div>
+    </div>
   );
 }
 
@@ -473,9 +473,9 @@ function HugQuote() {
             <p className="mt-4 text-white/90 text-[13px] sm:text-[14px] tracking-[0.18em] uppercase font-semibold drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
               JJ
             </p>
-          </eiv>
-        </eiv>
-      </eiv>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -499,10 +499,10 @@ function _TransformationsStripImpl() {
             />
           </figure>
         ))}
-      </eiv>
+      </div>
       <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-brand-deep to-transparent" />
       <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-brand-deep to-transparent" />
-    </eiv>
+    </div>
   );
 }
 
@@ -515,8 +515,8 @@ function Promise2() {
         </p>
         <div className="mt-10 rounded-2xl overflow-hidden shadow-[0_30px_60px_-30px_rgba(70,30,110,0.45)] lg:max-w-[480px] lg:mx-auto">
           <img src={jjTightWaist} alt="JJ Smith" className="block w-full h-auto" loading="lazy" />
-        </eiv>
-      </eiv>
+        </div>
+      </div>
     </section>
   );
 }
@@ -573,7 +573,7 @@ function Testimonials() {
           {TESTIMONIALS.map((t) => (
             <TestimonialCard key={t.name} quote={t.quote} name={t.name} />
           ))}
-        </eiv>
+        </div>
 
         {/* Mobile/tablet: snap carousel */}
         <div className="lg:hidden -mx-5">
@@ -588,9 +588,9 @@ function Testimonials() {
                 className="snap-center shrink-0 basis-[85%] sm:basis-[60%]"
               >
                 <TestimonialCard quote={t.quote} name={t.name} />
-              </eiv>
+              </div>
             ))}
-          </eiv>
+          </div>
           <div className="mt-6 flex justify-center gap-2">
             {TESTIMONIALS.map((_, i) => (
               <button
@@ -602,9 +602,9 @@ function Testimonials() {
                 }`}
               />
             ))}
-          </eiv>
-        </eiv>
-      </eiv>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
@@ -723,15 +723,15 @@ function Steps() {
           </em>{" "}
           will <em className="not-italic text-brand">actually feel</em> like.
         </h2>
-      </eiv>
+      </div>
       <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7">
         {STEPS.map((s) => (
           <div key={s.title} className="rounded-2xl bg-bg-soft p-7 sm:p-8">
             <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{s.title}</h3>
-            <div className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7] space-y-4">{s.text}</eiv>
-          </eiv>
+            <div className="text-[19px] sm:text-[20px] text-ink-soft leading-[1.7] space-y-4">{s.text}</div>
+          </div>
         ))}
-      </eiv>
+      </div>
     </Section>
   );
 }
@@ -753,20 +753,20 @@ function WhatYouGet() {
           <em className="not-italic" style={{ color: "#c9635c" }}>What You Get</em>{" "}
           <em className="not-italic text-brand">Inside Yobody</em>
         </h2>
-      </eiv>
+      </div>
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-x-5 gap-y-10 lg:gap-x-12 lg:gap-y-16 lg:max-w-[1100px] lg:mx-auto">
         {items.map(({ Icon, title, text }) => (
           <div key={title} className="text-center flex flex-col items-center px-1 lg:px-4">
             <div className="w-14 h-14 sm:w-16 sm:h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mb-4 lg:mb-6 bg-brand/10">
               <Icon className="!w-7 !h-7 sm:!w-8 sm:!h-8 lg:!w-10 lg:!h-10 text-brand" strokeWidth={2} />
-            </eiv>
+            </div>
             <h3 className="font-sans font-bold uppercase tracking-[0.06em] text-[14px] sm:text-[15px] lg:text-[18px] text-ink mb-2 lg:mb-3 leading-tight">
               {title}
             </h3>
             <p className="text-[15px] sm:text-[16px] lg:text-[18px] text-ink-soft leading-[1.55] lg:leading-[1.6]">{text}</p>
-          </eiv>
+          </div>
         ))}
-      </eiv>
+      </div>
     </Section>
   );
 }
@@ -783,7 +783,7 @@ function JJReveal() {
           <br />
           <em className="not-italic text-brand">Here's the truth</em>.
         </h2>
-      </eiv>
+      </div>
       <div className="flex flex-col items-center lg:flex-row lg:items-start lg:gap-7 lg:max-w-[820px] lg:mx-auto">
         <img
           src={jjSelfieSun}
@@ -800,8 +800,8 @@ function JJReveal() {
             I realized something heartbreaking: the problem was never the information. The problem was that nobody was
             there when things started getting hard.
           </p>
-        </eiv>
-      </eiv>
+        </div>
+      </div>
 
       <div className="mt-14 space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-7 lg:max-w-[820px] lg:mx-auto">
         <RevealCard title="Where I keep losing you.">
@@ -864,7 +864,7 @@ function JJReveal() {
             <footer className="mt-3 not-italic font-sans text-[14px] text-ink-faint tracking-[0.18em]">JJ</footer>
           </blockquote>
         </RevealCard>
-      </eiv>
+      </div>
 
       <div className="mt-10 lg:mt-12 lg:max-w-[480px] lg:mx-auto">
         <BigCta
@@ -877,7 +877,7 @@ function JJReveal() {
         >
           Yes JJ, I'm ready for this to be my turn
         </BigCta>
-      </eiv>
+      </div>
     </Section>
   );
 }
@@ -886,8 +886,8 @@ function RevealCard({ title, children }: { title: string; children: React.ReactN
   return (
     <div className="rounded-2xl bg-bg-soft p-7 sm:p-8 [&_.card-lead]:text-[21px] sm:[&_.card-lead]:text-[22px] [&_.card-key]:text-[23px] sm:[&_.card-key]:text-[24px] [&_.card-key]:font-semibold [&_.card-key]:text-ink [&_.card-key]:my-6 sm:[&_.card-key]:my-8 [&_.card-key]:leading-[1.4] [&_.card-bold]:font-semibold [&_.card-bold]:text-ink">
       <h3 className="text-[24px] sm:text-[26px] font-semibold font-sans mb-3 tracking-tight">{title}</h3>
-      <div className="space-y-4 text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{children}</eiv>
-    </eiv>
+      <div className="space-y-4 text-[19px] sm:text-[20px] text-ink-soft leading-[1.7]">{children}</div>
+    </div>
   );
 }
 
@@ -916,7 +916,7 @@ function Transformations() {
         <p className="text-[18px] sm:text-[19px] text-ink-soft leading-[1.7] mb-12 max-w-[580px] mx-auto">
           With a plan built for your body and me walking with you the whole way
         </p>
-      </eiv>
+      </div>
       <div className="flex flex-col gap-12 max-w-[600px] mx-auto lg:max-w-none lg:grid lg:grid-cols-2 lg:gap-x-10 lg:gap-y-14">
         {slides.map((s, i) => (
           <figure key={i}>
@@ -930,13 +930,13 @@ function Transformations() {
                 className="block w-full h-auto"
                 loading="lazy"
               />
-            </eiv>
+            </div>
           </figure>
         ))}
-      </eiv>
+      </div>
       <div className="mt-14 lg:max-w-[560px] lg:mx-auto">
         <BigCta position="mid" sub="14-day money-back · Limited spots">Yes, I want this to be me</BigCta>
-      </eiv>
+      </div>
     </Section>
   );
 }
@@ -977,9 +977,9 @@ function PlusNote({ note }: { note: string }) {
       >
         <div className="overflow-hidden">
           <p className="mt-3 text-[16px] sm:text-[17px] text-ink-soft leading-[1.7] text-center whitespace-pre-line">{note}</p>
-        </eiv>
-      </eiv>
-    </eiv>
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -1038,7 +1038,7 @@ function Offer() {
     <Section id="offer" bg="soft" className="scroll-mt-20">
       <div className="text-center">
         <Eyebrow center><span id="offer-limited" className="scroll-mt-20">Limited spots</span></Eyebrow>
-      </eiv>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-6 lg:max-w-[900px] lg:mx-auto lg:gap-8">
         {plans.map((p) => {
           // UI simplified: always use monthly. Full-pay logic is preserved for future use.
@@ -1067,7 +1067,7 @@ function Offer() {
                 {p.subhead && (
                   <p className="mt-2 text-[15px] sm:text-[17px] text-ink-soft leading-snug">{p.subhead}</p>
                 )}
-              </eiv>
+              </div>
               <div className="mt-4 text-center">
                 <div className="inline-flex items-baseline gap-1">
                   <span className="font-serif text-[48px] sm:text-[56px] font-medium leading-none text-ink">
@@ -1076,8 +1076,8 @@ function Offer() {
                   <span className="text-[16px] sm:text-[18px] font-semibold text-ink-soft leading-none">
                     /mo
                   </span>
-                </eiv>
-              </eiv>
+                </div>
+              </div>
               <ul className="mt-4 border-t border-dashed border-line">
                 {p.items.map((label) => (
                   <li
@@ -1093,10 +1093,10 @@ function Offer() {
               <BigCta position="mid" tier={p.name.toLowerCase()} buyButton price={isFull ? p.fullPrice : p.monthlyPrice} paymentOption={isFull ? "pay_in_full" : "monthly"} sub="14-day money-back guarantee" className="mt-4" href={p.loading ? undefined : ctaHref}>
                 {p.loading ? "Loading…" : `Reserve my spot ${ctaPrice}`}
               </BigCta>
-            </eiv>
+            </div>
           );
         })}
-      </eiv>
+      </div>
       <p className="text-center text-[13px] text-ink-faint mt-4">
         Limited spots · Doors close in <CountdownInline className="font-semibold text-ink-soft tabular-nums" />
       </p>
@@ -1111,7 +1111,7 @@ function Guarantee() {
       <div className="bg-bg-soft rounded-2xl p-7 sm:p-9 lg:p-12 flex gap-5 items-start max-w-[580px] lg:max-w-[760px] mx-auto">
         <div className="text-brand shrink-0">
           <Heart className="h-10 w-10 fill-brand" />
-        </eiv>
+        </div>
         <p className="font-serif italic text-[18px] sm:text-[20px] lg:text-[22px] leading-[1.65] text-ink">
           "Sister, I need you to be confident this is right for you. So if you're not 100% thrilled within 14 days, I
           want to send your money back. If you're not happy, I'm not happy. No reason needed. That's my promise."
@@ -1119,7 +1119,7 @@ function Guarantee() {
           <br />
           <span className="not-italic font-sans text-[14px] text-ink-faint tracking-[0.16em]">JJ</span>
         </p>
-      </eiv>
+      </div>
     </Section>
   );
 }
@@ -1162,7 +1162,7 @@ function Faq() {
           </em>{" "}
           what's <em className="not-italic text-brand">on your mind</em>.
         </h2>
-      </eiv>
+      </div>
       <Accordion type="single" collapsible defaultValue="q-0" className="w-full lg:max-w-[860px] lg:mx-auto">
         {items.map((it, i) => (
           <AccordionItem key={i} value={`q-${i}`} className="border-line">
@@ -1185,7 +1185,7 @@ function LastCall() {
       <div className="mx-auto max-w-[640px] lg:max-w-[900px]">
         <div className="mb-7 flex justify-center">
           <CountdownPill />
-        </eiv>
+        </div>
         <Eyebrow center>Last call</Eyebrow>
         <h2 className="font-serif text-[36px] sm:text-[48px] lg:text-[60px] leading-[1.05] mb-7">
           The{" "}
@@ -1200,8 +1200,8 @@ function LastCall() {
         </p>
         <div className="lg:max-w-[560px] lg:mx-auto">
           <BigCta position="bottom" sub="14-day money-back guarantee · Limited spots">Reserve my spot</BigCta>
-        </eiv>
-      </eiv>
+        </div>
+      </div>
     </section>
   );
 }
@@ -1255,8 +1255,8 @@ function StickyCta() {
         <div className="flex-1 text-[13px] leading-tight">
           <div className="text-brand font-bold text-[15px]">
             Closes in <CountdownInline className="tabular-nums font-bold" />
-          </eiv>
-        </eiv>
+          </div>
+        </div>
         <button
           onClick={scrollToOffer}
           data-cta="yes-jj"
@@ -1267,7 +1267,7 @@ function StickyCta() {
         >
           Reserve
         </button>
-      </eiv>
-    </eiv>
+      </div>
+    </div>
   );
 }
