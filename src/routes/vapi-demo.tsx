@@ -1,6 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useRef, useState } from "react";
-import Vapi from "@vapi-ai/web";
+import React, { useEffect, useRef, useState } from "react";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
@@ -210,177 +209,288 @@ function Hero() {
   return _HeroImpl();
 }
 
+type VoiceStatus =
+  | "idle"
+  | "initializing"
+  | "ready"
+  | "requesting-permission"
+  | "connecting"
+  | "connected"
+  | "error";
+
+type VapiClient = {
+  on: (event: string, listener: (...args: unknown[]) => void) => void;
+  removeAllListeners?: () => void;
+  start: (assistantId: string) => Promise<unknown> | unknown;
+  stop: () => Promise<unknown> | unknown;
+};
+
+class VoiceWidgetErrorBoundary extends React.Component<
+  { children: React.ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: React.ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: unknown) {
+    console.error("Voice widget crashed:", error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="w-full max-w-[420px] rounded-3xl bg-white shadow-xl border border-black/5 p-6 sm:p-8 text-center">
+          <p className="text-[17px] font-semibold text-ink mb-2">Voice agent could not load.</p>
+          <p className="text-[13px] text-ink-soft">Please refresh the page or try again later.</p>
+        </div>
+      );
+    }
+
+    return this.props.children;
+  }
+}
+
 function EmbeddedVoiceAgent() {
-  return <EmbeddedVoiceAgentInner />;
+  return (
+    <VoiceWidgetErrorBoundary>
+      <EmbeddedVoiceAgentInner />
+    </VoiceWidgetErrorBoundary>
+  );
 }
 
 function EmbeddedVoiceAgentInner() {
-  const [status, setStatus] = useState<"idle" | "requesting-permission" | "connecting" | "connected">("idle");
-  const [isSpeaking, setIsSpeaking] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const vapiRef = useRef<any>(null);
+  const vapiRef = useRef<VapiClient | null>(null);
+  const timeoutRef = useRef<number | null>(null);
+  const mountedRef = useRef(true);
+  const statusRef = useRef<VoiceStatus>("idle");
   const micStreamRef = useRef<MediaStream | null>(null);
-  const statusRef = useRef(status);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const PUBLIC_VAPI_KEY = "a681c115-7a07-4895-b48f-14c6993f1a27";
-  const ASSISTANT_ID = "3081e488-adea-4169-baeb-18073700744e";
+  const [status, setStatusState] = useState<VoiceStatus>("idle");
+  const [error, setError] = useState("");
+  const [isSpeaking, setIsSpeaking] = useState(false);
 
-  useEffect(() => {
-    statusRef.current = status;
-  }, [status]);
+  const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+  const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
 
-  const releaseMic = useCallback(() => {
-    micStreamRef.current?.getTracks().forEach((track) => track.stop());
-    micStreamRef.current = null;
-  }, []);
+  function setStatus(nextStatus: VoiceStatus) {
+    statusRef.current = nextStatus;
+    if (mountedRef.current) setStatusState(nextStatus);
+  }
 
-  const clearConnectionTimeout = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current);
+  function clearConnectionTimeout() {
+    if (timeoutRef.current !== null && typeof window !== "undefined") {
+      window.clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
     }
-  }, []);
+  }
 
-  const resetCallState = useCallback(() => {
-    clearConnectionTimeout();
-    setStatus("idle");
-    setIsSpeaking(false);
-    releaseMic();
-  }, [clearConnectionTimeout, releaseMic]);
-
-  const describeStartError = useCallback((err: unknown) => {
-    const name = err && typeof err === "object" && "name" in err ? String((err as { name?: unknown }).name) : "";
-    if (name === "NotAllowedError" || name === "SecurityError") {
-      return "Microphone access is blocked. Please allow microphone access in your browser, then tap again.";
-    }
-    if (name === "NotFoundError" || name === "DevicesNotFoundError") {
-      return "No microphone was found on this device.";
-    }
-    if (name === "NotReadableError" || name === "TrackStartError") {
-      return "Your microphone is being used by another app. Close it, then tap again.";
-    }
-    return "Could not connect. Please check microphone permissions and try again.";
-  }, []);
-
-  const wireVapiEvents = useCallback((instance: any) => {
-    instance.on("call-start", () => {
-      console.log("[vapi] call-start");
-      clearConnectionTimeout();
-      setStatus("connected");
-      setErrorMessage("");
-    });
-    instance.on("call-end", () => {
-      console.log("[vapi] call-end");
-      resetCallState();
-    });
-    instance.on("speech-start", () => {
-      setIsSpeaking(true);
-    });
-    instance.on("speech-end", () => {
-      setIsSpeaking(false);
-    });
-    instance.on("error", (e: unknown) => {
-      console.error("[vapi] Vapi error:", e);
-      setErrorMessage("Could not connect. Please check microphone permissions and try again.");
-      resetCallState();
-    });
-  }, [clearConnectionTimeout, resetCallState]);
+  function releaseMic() {
+    micStreamRef.current?.getTracks().forEach((track) => track.stop());
+    micStreamRef.current = null;
+  }
 
   useEffect(() => {
-    if (!vapiRef.current) {
-      const instance = new Vapi(PUBLIC_VAPI_KEY);
-      vapiRef.current = instance;
-      wireVapiEvents(instance);
-      console.log("[vapi] Vapi initialized");
+    mountedRef.current = true;
+
+    async function initializeVapi() {
+      try {
+        console.log("Vapi widget mounted");
+
+        if (typeof window === "undefined") {
+          console.log("Not in browser; skipping Vapi initialization");
+          return;
+        }
+
+        console.log("Browser environment confirmed");
+        console.log("Vapi public key present:", Boolean(publicKey));
+        console.log("Vapi assistant ID present:", Boolean(assistantId));
+
+        if (!publicKey || !assistantId) {
+          setError("Voice agent is not configured.");
+          setStatus("error");
+          return;
+        }
+
+        setStatus("initializing");
+
+        const VapiModule = await import("@vapi-ai/web");
+        const Vapi = VapiModule.default;
+
+        if (!mountedRef.current) return;
+
+        const vapi = new Vapi(publicKey) as VapiClient;
+        vapiRef.current = vapi;
+
+        vapi.on("call-start", () => {
+          console.log("Vapi call-start");
+          clearConnectionTimeout();
+          setError("");
+          setStatus("connected");
+        });
+
+        vapi.on("call-end", () => {
+          console.log("Vapi call-end");
+          clearConnectionTimeout();
+          setIsSpeaking(false);
+          releaseMic();
+          setStatus("ready");
+        });
+
+        vapi.on("speech-start", () => {
+          setIsSpeaking(true);
+        });
+
+        vapi.on("speech-end", () => {
+          setIsSpeaking(false);
+        });
+
+        vapi.on("error", (err: unknown) => {
+          console.error("Vapi error", err);
+          clearConnectionTimeout();
+          setIsSpeaking(false);
+          releaseMic();
+          setError("Could not connect to the voice agent. Please try again.");
+          setStatus("ready");
+        });
+
+        console.log("Vapi initialized");
+        setStatus("ready");
+      } catch (err) {
+        console.error("Vapi initialization failed", err);
+        setError("Voice agent could not initialize.");
+        setStatus("error");
+      }
     }
+
+    initializeVapi();
+
     return () => {
+      mountedRef.current = false;
       clearConnectionTimeout();
+      releaseMic();
+
       try {
         vapiRef.current?.removeAllListeners?.();
-        vapiRef.current?.stop();
-      } catch {}
-      vapiRef.current = null;
-      releaseMic();
+        vapiRef.current?.stop?.();
+      } catch (err) {
+        console.error("Error stopping Vapi during cleanup:", err);
+      } finally {
+        vapiRef.current = null;
+      }
     };
-  }, [clearConnectionTimeout, releaseMic, wireVapiEvents]);
+  }, [publicKey, assistantId]);
 
-  const isConnected = status === "connected";
-  const isConnecting = status === "requesting-permission" || status === "connecting";
+  async function startCall() {
+    console.log("Start button clicked");
 
-  const start = useCallback(async () => {
-    if (statusRef.current === "connecting" || statusRef.current === "connected" || statusRef.current === "requesting-permission") {
-      console.log("[vapi] start ignored; current status:", statusRef.current);
-      return;
-    }
-    const instance = vapiRef.current;
-    if (!instance) {
-      setErrorMessage("Voice agent is not ready yet. Please refresh and try again.");
+    if (statusRef.current === "connecting" || statusRef.current === "connected") {
       return;
     }
 
     try {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        throw new Error("This browser does not support microphone access.");
+      setError("");
+
+      if (!vapiRef.current) {
+        setError("Voice agent is still loading. Please try again.");
+        setStatus("ready");
+        return;
+      }
+
+      if (!assistantId) {
+        setError("Voice agent is not configured.");
+        setStatus("error");
+        return;
+      }
+
+      if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) {
+        setError("Microphone is not available. Please use HTTPS and a supported browser.");
+        setStatus("ready");
+        return;
       }
 
       setStatus("requesting-permission");
-      setErrorMessage("");
-      releaseMic();
-      let stream: MediaStream;
+
       try {
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      } catch (permissionError) {
-        console.error("[vapi] Microphone permission denied:", permissionError);
-        throw permissionError;
+        releaseMic();
+        micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log("Microphone permission granted");
+      } catch (micErr) {
+        console.error("Microphone permission denied", micErr);
+        setError("Microphone permission is required to start the voice agent.");
+        setStatus("ready");
+        return;
       }
-      micStreamRef.current = stream;
-      console.log("[vapi] Microphone permission granted");
 
       setStatus("connecting");
-      console.log("[vapi] Starting Vapi call");
-      clearConnectionTimeout();
-      timeoutRef.current = setTimeout(() => {
-        if (statusRef.current === "connected") return;
-        console.warn("[vapi] Timeout reached");
-        try { vapiRef.current?.stop(); } catch {}
-        setErrorMessage("Could not connect. Please check microphone permissions and try again.");
-        resetCallState();
+
+      timeoutRef.current = window.setTimeout(() => {
+        console.error("Vapi connection timeout");
+
+        try {
+          vapiRef.current?.stop?.();
+        } catch (err) {
+          console.error("Error stopping Vapi after timeout:", err);
+        }
+
+        clearConnectionTimeout();
+        releaseMic();
+        setIsSpeaking(false);
+        setError("Connection timed out. Please try again.");
+        setStatus("ready");
       }, 15000);
 
-      await instance.start(ASSISTANT_ID);
+      console.log("Calling vapi.start");
+      await vapiRef.current.start(assistantId);
     } catch (err) {
-      console.error("[vapi] Microphone permission denied or start failed:", err);
-      setErrorMessage(describeStartError(err));
-      resetCallState();
+      console.error("startCall failed:", err);
+      clearConnectionTimeout();
+      releaseMic();
+      setIsSpeaking(false);
+      setError("Could not start the voice agent. Please try again.");
+      setStatus("ready");
     }
-  }, [clearConnectionTimeout, describeStartError, releaseMic, resetCallState]);
+  }
 
-  const stop = useCallback(async () => {
-    try { await vapiRef.current?.stop(); } finally { resetCallState(); }
-  }, [resetCallState]);
+  function endCall() {
+    try {
+      clearConnectionTimeout();
+      releaseMic();
+      vapiRef.current?.stop?.();
+      setIsSpeaking(false);
+      setStatus("ready");
+    } catch (err) {
+      console.error("endCall failed:", err);
+      setStatus("ready");
+    }
+  }
 
+  const isConnected = status === "connected";
+  const isBusy = status === "initializing" || status === "requesting-permission" || status === "connecting";
   const speaking = isConnected && isSpeaking;
 
   return (
     <div className="w-full max-w-[420px] rounded-3xl bg-white shadow-xl border border-black/5 p-6 sm:p-8 flex flex-col items-center">
       <div className="relative flex items-center justify-center mb-5">
         <span
-          className={`absolute inline-flex h-32 w-32 rounded-full ${
-            isConnected ? "animate-ping" : ""
-          }`}
+          className={`absolute inline-flex h-32 w-32 rounded-full ${isConnected ? "animate-ping" : ""}`}
           style={{ backgroundColor: speaking ? "#c41e6a33" : "#c41e6a22" }}
           aria-hidden
         />
         <button
           type="button"
-          onClick={isConnected ? stop : start}
-          disabled={isConnecting}
+          onClick={isConnected ? endCall : startCall}
+          disabled={isBusy}
           className="relative inline-flex h-24 w-24 items-center justify-center rounded-full text-white transition-transform active:scale-95 disabled:opacity-70"
           style={{ backgroundColor: "#c41e6a" }}
           aria-label={isConnected ? "End conversation" : "Start conversation"}
         >
-          {isConnecting ? (
+          {isBusy ? (
             <Loader2 className="h-9 w-9 animate-spin" />
           ) : isConnected ? (
             <MicOff className="h-9 w-9" />
@@ -390,10 +500,12 @@ function EmbeddedVoiceAgentInner() {
         </button>
       </div>
       <p className="text-[15px] font-semibold text-ink mb-1">
-        {status === "requesting-permission"
-          ? "Requesting microphone access…"
+        {status === "initializing"
+          ? "Loading voice agent…"
+          : status === "requesting-permission"
+          ? "Requesting microphone..."
           : status === "connecting"
-          ? "Connecting to agent…"
+          ? "Connecting to agent..."
           : isConnected
           ? speaking
             ? "JJ is speaking…"
@@ -401,7 +513,7 @@ function EmbeddedVoiceAgentInner() {
           : "Tap to talk to JJ"}
       </p>
       <p className="text-[13px] text-ink-soft text-center">
-        {errorMessage || (isConnected ? "Tap the mic again to end the call." : "Allow mic access when prompted.")}
+        {error || (isConnected ? "Tap the mic again to end the call." : "Allow mic access when prompted.")}
       </p>
     </div>
   );
