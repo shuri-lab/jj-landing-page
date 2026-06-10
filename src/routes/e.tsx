@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
 import Vapi from "@vapi-ai/web";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
