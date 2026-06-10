@@ -18,7 +18,6 @@ export default defineConfig({
     resolve: {
       alias: {
         "@vapi-ai/web": fromRoot("./node_modules/@vapi-ai/web/vapi.ts"),
-        events: fromRoot("./src/lib/browser-event-emitter.ts"),
       },
     },
     optimizeDeps: {
