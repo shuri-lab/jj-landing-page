@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as NoVideoRouteImport } from './routes/no-video'
+import { Route as DRouteImport } from './routes/d'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CRouteImport } from './routes/c'
 import { Route as BRouteImport } from './routes/b'
@@ -19,6 +20,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const NoVideoRoute = NoVideoRouteImport.update({
   id: '/no-video',
   path: '/no-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DRoute = DRouteImport.update({
+  id: '/d',
+  path: '/d',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -53,6 +59,7 @@ export interface FileRoutesByFullPath {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/d': typeof DRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRoutesByTo {
@@ -61,6 +68,7 @@ export interface FileRoutesByTo {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/d': typeof DRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRoutesById {
@@ -70,14 +78,15 @@ export interface FileRoutesById {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/d': typeof DRoute
   '/no-video': typeof NoVideoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/a' | '/b' | '/c' | '/checkout' | '/no-video'
+  fullPaths: '/' | '/a' | '/b' | '/c' | '/checkout' | '/d' | '/no-video'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a' | '/b' | '/c' | '/checkout' | '/no-video'
-  id: '__root__' | '/' | '/a' | '/b' | '/c' | '/checkout' | '/no-video'
+  to: '/' | '/a' | '/b' | '/c' | '/checkout' | '/d' | '/no-video'
+  id: '__root__' | '/' | '/a' | '/b' | '/c' | '/checkout' | '/d' | '/no-video'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -86,6 +95,7 @@ export interface RootRouteChildren {
   BRoute: typeof BRoute
   CRoute: typeof CRoute
   CheckoutRoute: typeof CheckoutRoute
+  DRoute: typeof DRoute
   NoVideoRoute: typeof NoVideoRoute
 }
 
@@ -96,6 +106,13 @@ declare module '@tanstack/react-router' {
       path: '/no-video'
       fullPath: '/no-video'
       preLoaderRoute: typeof NoVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/d': {
+      id: '/d'
+      path: '/d'
+      fullPath: '/d'
+      preLoaderRoute: typeof DRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -142,6 +159,7 @@ const rootRouteChildren: RootRouteChildren = {
   BRoute: BRoute,
   CRoute: CRoute,
   CheckoutRoute: CheckoutRoute,
+  DRoute: DRoute,
   NoVideoRoute: NoVideoRoute,
 }
 export const routeTree = rootRouteImport
