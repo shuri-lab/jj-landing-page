@@ -9,28 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
 import { Route as NoVideoRouteImport } from './routes/no-video'
-import { Route as ERouteImport } from './routes/e'
-import { Route as DRouteImport } from './routes/d'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CRouteImport } from './routes/c'
 import { Route as BRouteImport } from './routes/b'
 import { Route as ARouteImport } from './routes/a'
+import { Route as R11labsDemoRouteImport } from './routes/11labs-demo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const VapiDemoRoute = VapiDemoRouteImport.update({
+  id: '/vapi-demo',
+  path: '/vapi-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const NoVideoRoute = NoVideoRouteImport.update({
   id: '/no-video',
   path: '/no-video',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ERoute = ERouteImport.update({
-  id: '/e',
-  path: '/e',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DRoute = DRouteImport.update({
-  id: '/d',
-  path: '/d',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -53,6 +48,11 @@ const ARoute = ARouteImport.update({
   path: '/a',
   getParentRoute: () => rootRouteImport,
 } as any)
+const R11labsDemoRoute = R11labsDemoRouteImport.update({
+  id: '/11labs-demo',
+  path: '/11labs-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -61,84 +61,93 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
-  '/d': typeof DRoute
-  '/e': typeof ERoute
   '/no-video': typeof NoVideoRoute
+  '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
-  '/d': typeof DRoute
-  '/e': typeof ERoute
   '/no-video': typeof NoVideoRoute
+  '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
-  '/d': typeof DRoute
-  '/e': typeof ERoute
   '/no-video': typeof NoVideoRoute
+  '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/a' | '/b' | '/c' | '/checkout' | '/d' | '/e' | '/no-video'
-  fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/a' | '/b' | '/c' | '/checkout' | '/d' | '/e' | '/no-video'
-  id:
-    | '__root__'
+  fullPaths:
     | '/'
+    | '/11labs-demo'
     | '/a'
     | '/b'
     | '/c'
     | '/checkout'
-    | '/d'
-    | '/e'
     | '/no-video'
+    | '/vapi-demo'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/'
+    | '/11labs-demo'
+    | '/a'
+    | '/b'
+    | '/c'
+    | '/checkout'
+    | '/no-video'
+    | '/vapi-demo'
+  id:
+    | '__root__'
+    | '/'
+    | '/11labs-demo'
+    | '/a'
+    | '/b'
+    | '/c'
+    | '/checkout'
+    | '/no-video'
+    | '/vapi-demo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  R11labsDemoRoute: typeof R11labsDemoRoute
   ARoute: typeof ARoute
   BRoute: typeof BRoute
   CRoute: typeof CRoute
   CheckoutRoute: typeof CheckoutRoute
-  DRoute: typeof DRoute
-  ERoute: typeof ERoute
   NoVideoRoute: typeof NoVideoRoute
+  VapiDemoRoute: typeof VapiDemoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/vapi-demo': {
+      id: '/vapi-demo'
+      path: '/vapi-demo'
+      fullPath: '/vapi-demo'
+      preLoaderRoute: typeof VapiDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/no-video': {
       id: '/no-video'
       path: '/no-video'
       fullPath: '/no-video'
       preLoaderRoute: typeof NoVideoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/e': {
-      id: '/e'
-      path: '/e'
-      fullPath: '/e'
-      preLoaderRoute: typeof ERouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/d': {
-      id: '/d'
-      path: '/d'
-      fullPath: '/d'
-      preLoaderRoute: typeof DRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -169,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ARouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/11labs-demo': {
+      id: '/11labs-demo'
+      path: '/11labs-demo'
+      fullPath: '/11labs-demo'
+      preLoaderRoute: typeof R11labsDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -181,14 +197,24 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  R11labsDemoRoute: R11labsDemoRoute,
   ARoute: ARoute,
   BRoute: BRoute,
   CRoute: CRoute,
   CheckoutRoute: CheckoutRoute,
-  DRoute: DRoute,
-  ERoute: ERoute,
   NoVideoRoute: NoVideoRoute,
+  VapiDemoRoute: VapiDemoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

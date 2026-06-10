@@ -36,7 +36,7 @@ import partnerSteveHarvey from "@/assets/landing/partners/steveharvey.png";
 import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
 import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 
-export const Route = createFileRoute("/d")({
+export const Route = createFileRoute("/11labs-demo")({
   head: () => ({
     meta: [
       { title: "JJ Smith — Talk to JJ (Voice Demo)" },
