@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
-import { useConversation, ConversationProvider } from "@elevenlabs/react";
+import Vapi from "@vapi-ai/web";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -211,42 +211,53 @@ function Hero() {
 }
 
 function EmbeddedVoiceAgent() {
-  return (
-    <ConversationProvider>
-      <EmbeddedVoiceAgentInner />
-    </ConversationProvider>
-  );
+  return <EmbeddedVoiceAgentInner />;
 }
 
 function EmbeddedVoiceAgentInner() {
   const [isStarting, setIsStarting] = useState(false);
-  const conversation = useConversation({
-    onError: (e) => console.error("ElevenLabs error:", e),
-  });
+  const [status, setStatus] = useState<"disconnected" | "connecting" | "connected">("disconnected");
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const vapiRef = useRef<Vapi | null>(null);
 
-  const isConnected = conversation.status === "connected";
-  const isConnecting = conversation.status === "connecting" || isStarting;
+  useEffect(() => {
+    const vapi = new Vapi("a681c115-7a07-4895-b48f-14c6993f1a27");
+    vapiRef.current = vapi;
+    vapi.on("call-start", () => setStatus("connected"));
+    vapi.on("call-end", () => {
+      setStatus("disconnected");
+      setIsSpeaking(false);
+    });
+    vapi.on("speech-start", () => setIsSpeaking(true));
+    vapi.on("speech-end", () => setIsSpeaking(false));
+    vapi.on("error", (e) => console.error("Vapi error:", e));
+    return () => {
+      vapi.stop();
+    };
+  }, []);
+
+  const isConnected = status === "connected";
+  const isConnecting = status === "connecting" || isStarting;
 
   const start = useCallback(async () => {
     setIsStarting(true);
+    setStatus("connecting");
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      await conversation.startSession({
-        agentId: "agent_7401krvzecbzfr2bqdgzr49x0vj9",
-        connectionType: "webrtc",
-      });
+      await vapiRef.current?.start("3081e488-adea-4169-baeb-18073700744e");
     } catch (err) {
       console.error("Failed to start conversation:", err);
+      setStatus("disconnected");
     } finally {
       setIsStarting(false);
     }
-  }, [conversation]);
+  }, []);
 
   const stop = useCallback(async () => {
-    await conversation.endSession();
-  }, [conversation]);
+    vapiRef.current?.stop();
+  }, []);
 
-  const speaking = isConnected && conversation.isSpeaking;
+  const speaking = isConnected && isSpeaking;
 
   return (
     <div className="w-full max-w-[420px] rounded-3xl bg-white shadow-xl border border-black/5 p-6 sm:p-8 flex flex-col items-center">
