@@ -318,9 +318,9 @@ function _HeroImpl() {
           <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
           <p>Like having JJ Smith in your phone every day.</p>
         </div>
-
-        <TransformationsStrip />
       </div>
+
+      <TransformationsStrip />
       <PartnersMarquee />
     </section>
   );
