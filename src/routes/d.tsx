@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
-import { useConversation } from "@elevenlabs/react";
+import { useConversation, ConversationProvider } from "@elevenlabs/react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
 import { useCoachPrograms, signupUrl, type CoachProgram } from "@/lib/coach-programs";
@@ -211,6 +211,14 @@ function Hero() {
 }
 
 function EmbeddedVoiceAgent() {
+  return (
+    <ConversationProvider>
+      <EmbeddedVoiceAgentInner />
+    </ConversationProvider>
+  );
+}
+
+function EmbeddedVoiceAgentInner() {
   const [isStarting, setIsStarting] = useState(false);
   const conversation = useConversation({
     onError: (e) => console.error("ElevenLabs error:", e),
