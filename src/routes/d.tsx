@@ -38,20 +38,27 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/d")({
   head: () => ({
     meta: [
-      { title: "JJ Smith — Personal Coaching Program" },
+      { title: "JJ Smith — Talk to JJ (Voice Demo)" },
       { name: "robots", content: "noindex" },
       {
         name: "description",
         content:
-          "Lose up to 30 pounds. JJ Smith's most personal program ever, built around your body, with JJ in your corner every single day.",
+          "Talk to the JJ voice agent demo and experience having JJ Smith in your pocket every day.",
       },
-      { property: "og:title", content: "JJ Smith — Personal Coaching Program" },
+      { property: "og:title", content: "JJ Smith — Talk to JJ (Voice Demo)" },
       {
         property: "og:description",
         content:
-          "Sister, this time I'm with you every step of the way. A personalized transformation with JJ Smith.",
+          "Try the JJ voice agent — your personal coach, on demand.",
       },
       { property: "og:type", content: "website" },
+    ],
+    scripts: [
+      {
+        src: "https://unpkg.com/@elevenlabs/convai-widget-embed",
+        async: true,
+        type: "text/javascript",
+      },
     ],
   }),
   component: Landing,
@@ -205,41 +212,28 @@ function Nav() {
 
 function Hero() {
   return (
-    <section className="px-5 pt-2 pb-16 sm:pt-3 sm:pb-20 lg:pt-4 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1320px]">
-        <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:gap-6 lg:items-center lg:text-left">
-          <div className="relative z-20 lg:order-1 lg:min-w-0">
-            <h1 className="font-serif font-medium text-[40px] sm:text-[52px] lg:text-[60px] xl:text-[68px] leading-[1.08] tracking-[-0.025em] mb-6 text-left">
-              <span style={{ color: "#15102a" }}>Stop Starting Over</span>{" "}
-              <em className="not-italic" style={{ color: "#c41e6a" }}>Every Monday.</em>
-            </h1>
+    <section className="px-5 pt-4 pb-16 sm:pt-6 sm:pb-20 lg:pt-8 lg:pb-24 text-center" style={{ backgroundColor: "#fdebeb" }}>
+      <div className="mx-auto max-w-[720px] lg:max-w-[900px] flex flex-col items-center">
+        <h1 className="font-serif font-medium text-[40px] sm:text-[52px] lg:text-[64px] leading-[1.08] tracking-[-0.025em] mb-5 text-center">
+          <span style={{ color: "#15102a" }}>Talk to</span>{" "}
+          <em className="not-italic" style={{ color: "#c41e6a" }}>JJ Smith</em>{" "}
+          <span style={{ color: "#15102a" }}>right now.</span>
+        </h1>
 
-            <p className="text-[18px] sm:text-[22px] font-medium leading-snug text-ink mb-6 lg:mb-7 max-w-[560px] text-left">
-              Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>, helping you <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">stay consistent</mark> until the weight finally comes off.
-            </p>
+        <p className="text-[18px] sm:text-[22px] font-medium leading-snug text-ink mb-8 lg:mb-10 max-w-[640px] text-center">
+          Imagine having <mark style={{ backgroundColor: "#f6dedb" }} className="text-ink px-1 rounded-sm">JJ Smith in your pocket every day</mark>. Try the voice demo below and ask her anything about losing weight, staying consistent, or starting your transformation.
+        </p>
 
-            <ul className="text-[15px] sm:text-[16px] text-ink-soft mb-7 max-w-[560px] space-y-2.5 text-left">
-              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Delicious Meals Sent Daily</strong></li>
-              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">One-on-one coaching calls with JJ</strong></li>
-              <li className="flex gap-3 items-center"><CheckDot /><strong className="text-ink font-semibold">Daily text reminders from JJ</strong></li>
-            </ul>
-
-            <div className="hidden lg:block max-w-[300px]">
-              <HeroCta />
-            </div>
-          </div>
-          <div className="lg:order-2 relative z-0">
-            <HeroImageWithLogoBackdrop />
-          </div>
+        <div className="w-full flex justify-center mb-6">
+          {/* @ts-expect-error - custom element from ElevenLabs widget */}
+          <elevenlabs-convai agent-id="agent_7401krvzecbzfr2bqdgzr49x0vj9"></elevenlabs-convai>
         </div>
 
-        <div className="lg:hidden flex justify-center">
-          <div className="w-[82%] max-w-[360px]">
-            <HeroCta />
-          </div>
-        </div>
+        <p className="text-[14px] sm:text-[15px] text-ink-soft max-w-[520px] text-center">
+          Tap the mic to start a real conversation with JJ's AI coach.
+        </p>
 
-        <div className="mt-8 lg:mt-12 text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto lg:text-center space-y-4">
+        <div className="mt-10 lg:mt-12 text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto text-center space-y-4">
           <p>Because weight loss isn't about willpower.</p>
           <p>It's about having someone helping you stay consistent long enough to finally see results.</p>
           <p>Like having JJ Smith in your phone every day.</p>
