@@ -54,11 +54,6 @@ export const Route = createFileRoute("/d")({
       { property: "og:type", content: "website" },
     ],
     scripts: [
-      {
-        src: "https://unpkg.com/@elevenlabs/convai-widget-embed",
-        async: true,
-        type: "text/javascript",
-      },
     ],
   }),
   component: Landing,
@@ -225,8 +220,7 @@ function Hero() {
         </p>
 
         <div className="w-full flex justify-center mb-6">
-          {/* @ts-expect-error - custom element from ElevenLabs widget */}
-          <elevenlabs-convai agent-id="agent_7401krvzecbzfr2bqdgzr49x0vj9" mode="embedded"></elevenlabs-convai>
+          <EmbeddedVoiceAgent />
         </div>
 
         <p className="text-[14px] sm:text-[15px] text-ink-soft max-w-[520px] text-center">
