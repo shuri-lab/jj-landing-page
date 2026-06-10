@@ -319,15 +319,31 @@ function EmbeddedVoiceAgentInner() {
 
         setStatus("initializing");
 
+        const eventsModule = await import("events");
+
+        console.log("events module keys:", Object.keys(eventsModule));
+        console.log("events default type:", typeof eventsModule.default);
+        console.log("events EventEmitter type:", typeof eventsModule.EventEmitter);
+
+        const EventEmitterCandidate =
+          eventsModule.EventEmitter ||
+          eventsModule.default;
+
+        console.log("EventEmitter candidate type:", typeof EventEmitterCandidate);
+
+        if (typeof EventEmitterCandidate !== "function") {
+          throw new Error(
+            "Events polyfill is still wrong. EventEmitter is not a function. Actual type: " +
+              typeof EventEmitterCandidate
+          );
+        }
+
         console.log("Loading @vapi-ai/web module");
         const VapiModule = await import("@vapi-ai/web");
-        console.log("Vapi module loaded:", Boolean(VapiModule));
         console.log("Vapi module keys:", Object.keys(VapiModule));
-        console.log("Vapi default export present:", Boolean(VapiModule.default));
         console.log("Vapi default export type:", typeof VapiModule.default);
 
         const Vapi = VapiModule.default;
-        if (!Vapi) throw new Error("@vapi-ai/web default export is missing");
         if (typeof Vapi !== "function") {
           throw new Error("@vapi-ai/web default export is not a constructor/function");
         }
