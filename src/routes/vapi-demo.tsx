@@ -226,14 +226,22 @@ function EmbeddedVoiceAgentInner() {
       if (cancelled) return;
       instance = new Vapi("a681c115-7a07-4895-b48f-14c6993f1a27");
       vapiRef.current = instance;
-      instance.on("call-start", () => setStatus("connected"));
+      instance.on("call-start", () => {
+        console.log("[vapi] call-start");
+        setStatus("connected");
+      });
       instance.on("call-end", () => {
+        console.log("[vapi] call-end");
         setStatus("disconnected");
         setIsSpeaking(false);
       });
       instance.on("speech-start", () => setIsSpeaking(true));
       instance.on("speech-end", () => setIsSpeaking(false));
-      instance.on("error", (e: unknown) => console.error("Vapi error:", e));
+      instance.on("error", (e: unknown) => {
+        console.error("[vapi] error event:", e);
+        setStatus("disconnected");
+        setIsSpeaking(false);
+      });
     }).catch((err) => console.error("Failed to load Vapi SDK:", err));
     return () => {
       cancelled = true;
@@ -245,13 +253,22 @@ function EmbeddedVoiceAgentInner() {
   const isConnecting = status === "connecting" || isStarting;
 
   const start = useCallback(async () => {
+    if (!vapiRef.current) {
+      console.warn("[vapi] SDK not ready yet");
+      return;
+    }
     setIsStarting(true);
     setStatus("connecting");
     try {
       await navigator.mediaDevices.getUserMedia({ audio: true });
-      await vapiRef.current?.start("3081e488-adea-4169-baeb-18073700744e");
+      const result = await vapiRef.current.start("3081e488-adea-4169-baeb-18073700744e");
+      console.log("[vapi] start() resolved:", result);
+      if (!result) {
+        // Vapi returns null when assistant/workflow lookup fails
+        setStatus("disconnected");
+      }
     } catch (err) {
-      console.error("Failed to start conversation:", err);
+      console.error("[vapi] Failed to start conversation:", err);
       setStatus("disconnected");
     } finally {
       setIsStarting(false);
