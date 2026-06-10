@@ -275,8 +275,8 @@ function EmbeddedVoiceAgentInner() {
   const [error, setError] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
 
-  const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY || "a681c115-7a07-4895-b48f-14c6993f1a27";
-  const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID || "3081e488-adea-4169-baeb-18073700744e";
+  const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
+  const assistantId = import.meta.env.VITE_VAPI_ASSISTANT_ID;
 
   function setStatus(nextStatus: VoiceStatus) {
     statusRef.current = nextStatus;
