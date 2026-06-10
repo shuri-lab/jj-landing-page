@@ -5,6 +5,7 @@
 //     error logger plugins, and sandbox detection (port/host/strictPort).
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
+import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 const fromRoot = (path: string) => new URL(path, import.meta.url).pathname;
 
@@ -15,16 +16,29 @@ export default defineConfig({
     server: { entry: "server" },
   },
   vite: {
+    plugins: [
+      nodePolyfills({
+        include: ["events"],
+        globals: {
+          Buffer: true,
+          global: true,
+          process: true,
+        },
+        protocolImports: true,
+      }),
+    ],
     resolve: {
       alias: {
         "@vapi-ai/web": fromRoot("./node_modules/@vapi-ai/web/vapi.ts"),
-        events: fromRoot("./src/lib/event-emitter-shim.ts"),
-        "events/events.js": fromRoot("./src/lib/event-emitter-shim.ts"),
       },
     },
     optimizeDeps: {
-      exclude: ["@vapi-ai/web"],
-      include: ["events"],
+      include: ["@vapi-ai/web", "events"],
+      esbuildOptions: {
+        define: {
+          global: "globalThis",
+        },
+      },
     },
   },
 });
