@@ -319,12 +319,24 @@ function EmbeddedVoiceAgentInner() {
 
         setStatus("initializing");
 
+        console.log("Loading @vapi-ai/web module");
         const VapiModule = await import("@vapi-ai/web");
+        console.log("Vapi module loaded:", Boolean(VapiModule));
+        console.log("Vapi module keys:", Object.keys(VapiModule));
+        console.log("Vapi default export present:", Boolean(VapiModule.default));
+        console.log("Vapi default export type:", typeof VapiModule.default);
+
         const Vapi = VapiModule.default;
+        if (!Vapi) throw new Error("@vapi-ai/web default export is missing");
+        if (typeof Vapi !== "function") {
+          throw new Error("@vapi-ai/web default export is not a constructor/function");
+        }
 
         if (!mountedRef.current) return;
 
+        console.log("Creating Vapi instance");
         const vapi = new Vapi(publicKey) as VapiClient;
+        console.log("Vapi instance created:", Boolean(vapi));
         vapiRef.current = vapi;
 
         vapi.on("call-start", () => {
@@ -362,8 +374,26 @@ function EmbeddedVoiceAgentInner() {
         console.log("Vapi initialized");
         setStatus("ready");
       } catch (err) {
-        console.error("Vapi initialization failed", err);
-        setError("Voice agent could not initialize.");
+        console.error("Vapi initialization failed - full error:", err);
+        console.error(
+          "Vapi initialization failed - name:",
+          err instanceof Error ? err.name : "Unknown",
+        );
+        console.error(
+          "Vapi initialization failed - message:",
+          err instanceof Error ? err.message : String(err),
+        );
+        console.error(
+          "Vapi initialization failed - stack:",
+          err instanceof Error ? err.stack : "No stack",
+        );
+        const message =
+          err instanceof Error
+            ? err.message
+            : typeof err === "string"
+            ? err
+            : JSON.stringify(err);
+        setError(`Voice agent could not initialize: ${message}`);
         setStatus("error");
       }
     }
