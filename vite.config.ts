@@ -18,10 +18,13 @@ export default defineConfig({
     resolve: {
       alias: {
         "@vapi-ai/web": fromRoot("./node_modules/@vapi-ai/web/vapi.ts"),
+        events: fromRoot("./src/lib/event-emitter-shim.ts"),
+        "events/events.js": fromRoot("./src/lib/event-emitter-shim.ts"),
       },
     },
     optimizeDeps: {
       exclude: ["@vapi-ai/web"],
+      include: ["events"],
     },
   },
 });
