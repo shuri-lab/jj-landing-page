@@ -354,6 +354,9 @@ function EmbeddedVoiceAgentInner() {
       if (!result) {
         setErrorMessage("The Vapi agent ID could not be started. Please verify the assistant/workflow is published for this public key.");
         resetCallState();
+      } else {
+        setStatus("connected");
+        setErrorMessage("");
       }
     } catch (err) {
       console.error("[vapi] Failed to start conversation:", err);
