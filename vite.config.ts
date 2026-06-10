@@ -12,4 +12,14 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  vite: {
+    resolve: {
+      alias: {
+        events: "/src/lib/browser-event-emitter.ts",
+      },
+    },
+    optimizeDeps: {
+      exclude: ["@vapi-ai/web"],
+    },
+  },
 });
