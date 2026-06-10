@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
+import Vapi from "@vapi-ai/web";
 import { Heart, Play, Users, Globe, UserCheck, UtensilsCrossed, MessageCircle, Phone, BarChart3, Mic, MicOff, Loader2 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCountdown, pad } from "@/hooks/use-countdown";
@@ -214,25 +215,39 @@ function EmbeddedVoiceAgent() {
 }
 
 function EmbeddedVoiceAgentInner() {
-  const [isStarting, setIsStarting] = useState(false);
-  const [isSdkReady, setIsSdkReady] = useState(false);
-  const [status, setStatus] = useState<"disconnected" | "connecting" | "connected">("disconnected");
+  const [status, setStatus] = useState<"idle" | "requesting-permission" | "connecting" | "connected">("idle");
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const vapiSdkRef = useRef<any>(null);
   const vapiRef = useRef<any>(null);
   const micStreamRef = useRef<MediaStream | null>(null);
+  const statusRef = useRef(status);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const PUBLIC_VAPI_KEY = "a681c115-7a07-4895-b48f-14c6993f1a27";
+  const ASSISTANT_ID = "3081e488-adea-4169-baeb-18073700744e";
+
+  useEffect(() => {
+    statusRef.current = status;
+  }, [status]);
 
   const releaseMic = useCallback(() => {
     micStreamRef.current?.getTracks().forEach((track) => track.stop());
     micStreamRef.current = null;
   }, []);
 
+  const clearConnectionTimeout = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
+  }, []);
+
   const resetCallState = useCallback(() => {
-    setStatus("disconnected");
+    clearConnectionTimeout();
+    setStatus("idle");
     setIsSpeaking(false);
     releaseMic();
-  }, [releaseMic]);
+  }, [clearConnectionTimeout, releaseMic]);
 
   const describeStartError = useCallback((err: unknown) => {
     const name = err && typeof err === "object" && "name" in err ? String((err as { name?: unknown }).name) : "";
@@ -245,127 +260,94 @@ function EmbeddedVoiceAgentInner() {
     if (name === "NotReadableError" || name === "TrackStartError") {
       return "Your microphone is being used by another app. Close it, then tap again.";
     }
-    return "The voice agent could not start. Please refresh and try again.";
+    return "Could not connect. Please check microphone permissions and try again.";
   }, []);
 
   const wireVapiEvents = useCallback((instance: any) => {
     instance.on("call-start", () => {
-      if (vapiRef.current !== instance) return;
       console.log("[vapi] call-start");
+      clearConnectionTimeout();
       setStatus("connected");
       setErrorMessage("");
     });
     instance.on("call-end", () => {
-      if (vapiRef.current !== instance) return;
       console.log("[vapi] call-end");
       resetCallState();
     });
     instance.on("speech-start", () => {
-      if (vapiRef.current === instance) setIsSpeaking(true);
+      setIsSpeaking(true);
     });
     instance.on("speech-end", () => {
-      if (vapiRef.current === instance) setIsSpeaking(false);
+      setIsSpeaking(false);
     });
-    instance.on("call-start-progress", (event: unknown) => console.log("[vapi] start progress:", event));
-    instance.on("call-start-failed", (event: unknown) => console.error("[vapi] start failed:", event));
     instance.on("error", (e: unknown) => {
-      if (vapiRef.current !== instance) return;
-      console.error("[vapi] error event:", e);
-      const eventType = e && typeof e === "object" && "type" in e ? String((e as { type?: unknown }).type) : "";
-      const isFatalStartError = [
-        "validation-error",
-        "daily-call-object-creation-error",
-        "daily-call-join-error",
-        "start-method-error",
-      ].includes(eventType);
-      if (!isFatalStartError) return;
-      setErrorMessage("The voice agent could not connect. Please try again.");
+      console.error("[vapi] Vapi error:", e);
+      setErrorMessage("Could not connect. Please check microphone permissions and try again.");
       resetCallState();
     });
-  }, [resetCallState]);
+  }, [clearConnectionTimeout, resetCallState]);
 
   useEffect(() => {
-    let cancelled = false;
-    import("@vapi-ai/web").then(({ default: Vapi }) => {
-      if (cancelled) return;
-      vapiSdkRef.current = Vapi;
-      setIsSdkReady(true);
-    }).catch((err) => console.error("Failed to load Vapi SDK:", err));
+    if (!vapiRef.current) {
+      const instance = new Vapi(PUBLIC_VAPI_KEY);
+      vapiRef.current = instance;
+      wireVapiEvents(instance);
+      console.log("[vapi] Vapi initialized");
+    }
     return () => {
-      cancelled = true;
-      try { vapiRef.current?.stop(); } catch {}
+      clearConnectionTimeout();
+      try {
+        vapiRef.current?.removeAllListeners?.();
+        vapiRef.current?.stop();
+      } catch {}
       releaseMic();
     };
-  }, [releaseMic]);
+  }, [clearConnectionTimeout, releaseMic, wireVapiEvents]);
 
   const isConnected = status === "connected";
-  const isConnecting = status === "connecting" || isStarting;
+  const isConnecting = status === "requesting-permission" || status === "connecting";
 
   const start = useCallback(async () => {
-    const Vapi = vapiSdkRef.current;
-    if (!Vapi) {
-      console.warn("[vapi] SDK is still loading");
-      setErrorMessage("The voice agent is still loading. Please tap again in a moment.");
+    if (statusRef.current === "connecting" || statusRef.current === "connected" || statusRef.current === "requesting-permission") {
+      console.log("[vapi] start ignored; current status:", statusRef.current);
       return;
     }
-    setIsStarting(true);
-    setStatus("connecting");
-    setErrorMessage("");
+    const instance = vapiRef.current;
+    if (!instance) {
+      setErrorMessage("Voice agent is not ready yet. Please refresh and try again.");
+      return;
+    }
+
     try {
       if (!navigator.mediaDevices?.getUserMedia) {
         throw new Error("This browser does not support microphone access.");
       }
 
-      const getMicTrack = async () => {
-        releaseMic();
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        micStreamRef.current = stream;
-        return stream.getAudioTracks()[0];
-      };
+      setStatus("requesting-permission");
+      setErrorMessage("");
+      releaseMic();
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      micStreamRef.current = stream;
+      console.log("[vapi] Microphone permission granted");
 
-      let audioTrack = await getMicTrack();
-
-      try { await vapiRef.current?.stop(); } catch {}
-      const instance = new Vapi(
-        "a681c115-7a07-4895-b48f-14c6993f1a27",
-        undefined,
-        { alwaysIncludeMicInPermissionPrompt: true },
-        { audioSource: audioTrack ?? true },
-      );
-      wireVapiEvents(instance);
-      vapiRef.current = instance;
-
-      let result = await instance.start("3081e488-adea-4169-baeb-18073700744e");
-      if (!result) {
-        console.warn("[vapi] assistant start returned no call; retrying as workflow");
-        try { await instance.stop(); } catch {}
-        audioTrack = await getMicTrack();
-        const workflowInstance = new Vapi(
-          "a681c115-7a07-4895-b48f-14c6993f1a27",
-          undefined,
-          { alwaysIncludeMicInPermissionPrompt: true },
-          { audioSource: audioTrack ?? true },
-        );
-        wireVapiEvents(workflowInstance);
-        vapiRef.current = workflowInstance;
-        result = await workflowInstance.start(undefined, undefined, undefined, "3081e488-adea-4169-baeb-18073700744e");
-      }
-      console.log("[vapi] start() resolved:", result);
-      if (!result) {
-        setErrorMessage("The Vapi agent ID could not be started. Please verify the assistant/workflow is published for this public key.");
+      setStatus("connecting");
+      console.log("[vapi] Starting Vapi call");
+      clearConnectionTimeout();
+      timeoutRef.current = setTimeout(() => {
+        if (statusRef.current === "connected") return;
+        console.warn("[vapi] Timeout reached");
+        try { vapiRef.current?.stop(); } catch {}
+        setErrorMessage("Could not connect. Please check microphone permissions and try again.");
         resetCallState();
-      } else {
-        setStatus("connected");
-        setErrorMessage("");
-      }
+      }, 15000);
+
+      await instance.start(ASSISTANT_ID);
     } catch (err) {
-      console.error("[vapi] Failed to start conversation:", err);
+      console.error("[vapi] Microphone permission denied or start failed:", err);
       setErrorMessage(describeStartError(err));
       resetCallState();
-    } finally {
-      setIsStarting(false);
     }
-  }, [describeStartError, resetCallState, wireVapiEvents]);
+  }, [clearConnectionTimeout, describeStartError, releaseMic, resetCallState]);
 
   const stop = useCallback(async () => {
     try { await vapiRef.current?.stop(); } finally { resetCallState(); }
@@ -386,7 +368,7 @@ function EmbeddedVoiceAgentInner() {
         <button
           type="button"
           onClick={isConnected ? stop : start}
-          disabled={isConnecting || !isSdkReady}
+          disabled={isConnecting}
           className="relative inline-flex h-24 w-24 items-center justify-center rounded-full text-white transition-transform active:scale-95 disabled:opacity-70"
           style={{ backgroundColor: "#c41e6a" }}
           aria-label={isConnected ? "End conversation" : "Start conversation"}
@@ -401,10 +383,10 @@ function EmbeddedVoiceAgentInner() {
         </button>
       </div>
       <p className="text-[15px] font-semibold text-ink mb-1">
-        {!isSdkReady
-          ? "Loading voice agent…"
-          : isConnecting
-          ? "Connecting…"
+        {status === "requesting-permission"
+          ? "Requesting microphone access…"
+          : status === "connecting"
+          ? "Connecting to agent…"
           : isConnected
           ? speaking
             ? "JJ is speaking…"
