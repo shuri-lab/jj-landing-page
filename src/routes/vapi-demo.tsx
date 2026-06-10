@@ -300,6 +300,7 @@ function EmbeddedVoiceAgentInner() {
         vapiRef.current?.removeAllListeners?.();
         vapiRef.current?.stop();
       } catch {}
+      vapiRef.current = null;
       releaseMic();
     };
   }, [clearConnectionTimeout, releaseMic, wireVapiEvents]);
@@ -326,7 +327,13 @@ function EmbeddedVoiceAgentInner() {
       setStatus("requesting-permission");
       setErrorMessage("");
       releaseMic();
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      let stream: MediaStream;
+      try {
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      } catch (permissionError) {
+        console.error("[vapi] Microphone permission denied:", permissionError);
+        throw permissionError;
+      }
       micStreamRef.current = stream;
       console.log("[vapi] Microphone permission granted");
 
