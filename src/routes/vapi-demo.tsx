@@ -250,19 +250,26 @@ function EmbeddedVoiceAgentInner() {
 
   const wireVapiEvents = useCallback((instance: any) => {
     instance.on("call-start", () => {
+      if (vapiRef.current !== instance) return;
       console.log("[vapi] call-start");
       setStatus("connected");
       setErrorMessage("");
     });
     instance.on("call-end", () => {
+      if (vapiRef.current !== instance) return;
       console.log("[vapi] call-end");
       resetCallState();
     });
-    instance.on("speech-start", () => setIsSpeaking(true));
-    instance.on("speech-end", () => setIsSpeaking(false));
+    instance.on("speech-start", () => {
+      if (vapiRef.current === instance) setIsSpeaking(true);
+    });
+    instance.on("speech-end", () => {
+      if (vapiRef.current === instance) setIsSpeaking(false);
+    });
     instance.on("call-start-progress", (event: unknown) => console.log("[vapi] start progress:", event));
     instance.on("call-start-failed", (event: unknown) => console.error("[vapi] start failed:", event));
     instance.on("error", (e: unknown) => {
+      if (vapiRef.current !== instance) return;
       console.error("[vapi] error event:", e);
       const eventType = e && typeof e === "object" && "type" in e ? String((e as { type?: unknown }).type) : "";
       const isFatalStartError = [
