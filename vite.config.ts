@@ -6,10 +6,23 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 
+const fromRoot = (path: string) => new URL(path, import.meta.url).pathname;
+
 // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
 // @cloudflare/vite-plugin builds from this — wrangler.jsonc main alone is insufficient.
 export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
+  },
+  vite: {
+    resolve: {
+      alias: {
+        "@vapi-ai/web": fromRoot("./node_modules/@vapi-ai/web/vapi.ts"),
+        events: fromRoot("./src/lib/browser-event-emitter.ts"),
+      },
+    },
+    optimizeDeps: {
+      exclude: ["@vapi-ai/web"],
+    },
   },
 });
