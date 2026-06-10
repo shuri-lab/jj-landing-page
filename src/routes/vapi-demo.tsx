@@ -264,6 +264,14 @@ function EmbeddedVoiceAgentInner() {
     instance.on("call-start-failed", (event: unknown) => console.error("[vapi] start failed:", event));
     instance.on("error", (e: unknown) => {
       console.error("[vapi] error event:", e);
+      const eventType = e && typeof e === "object" && "type" in e ? String((e as { type?: unknown }).type) : "";
+      const isFatalStartError = [
+        "validation-error",
+        "daily-call-object-creation-error",
+        "daily-call-join-error",
+        "start-method-error",
+      ].includes(eventType);
+      if (!isFatalStartError) return;
       setErrorMessage("The voice agent could not connect. Please try again.");
       resetCallState();
     });
@@ -301,9 +309,14 @@ function EmbeddedVoiceAgentInner() {
         throw new Error("This browser does not support microphone access.");
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      micStreamRef.current = stream;
-      const audioTrack = stream.getAudioTracks()[0];
+      const getMicTrack = async () => {
+        releaseMic();
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        micStreamRef.current = stream;
+        return stream.getAudioTracks()[0];
+      };
+
+      let audioTrack = await getMicTrack();
 
       try { await vapiRef.current?.stop(); } catch {}
       const instance = new Vapi(
@@ -319,6 +332,7 @@ function EmbeddedVoiceAgentInner() {
       if (!result) {
         console.warn("[vapi] assistant start returned no call; retrying as workflow");
         try { await instance.stop(); } catch {}
+        audioTrack = await getMicTrack();
         const workflowInstance = new Vapi(
           "a681c115-7a07-4895-b48f-14c6993f1a27",
           undefined,
