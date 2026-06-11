@@ -583,9 +583,6 @@ function _HeroImpl() {
           <EmbeddedVoiceAgent />
         </div>
 
-        <p className="text-[14px] sm:text-[15px] text-ink-soft max-w-[520px] text-center">
-          Tap the mic to start a real conversation with JJ's AI coach.
-        </p>
 
         <div className="mt-10 lg:mt-12 text-[20px] sm:text-[26px] leading-snug text-ink lg:max-w-[900px] lg:mx-auto text-center space-y-4">
           <p>Because weight loss isn't about willpower.</p>
