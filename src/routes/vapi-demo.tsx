@@ -551,7 +551,7 @@ function EmbeddedVoiceAgentInner() {
           : status === "requesting-permission"
           ? "Requesting microphone..."
           : status === "connecting"
-          ? "Connecting to agent..."
+          ? "Connecting with JJ..."
           : isConnected
           ? speaking
             ? "JJ is speaking…"
