@@ -23,9 +23,9 @@ import jjHugSignup from "@/assets/landing/jj-hug-signup.webp";
 import jjSelfieSun from "@/assets/landing/jj-selfie-sun.jpg";
 import jjTightWaist from "@/assets/landing/jj-laughing-client.jpg";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
-import yobodyLogo from "@/assets/yobody-jj-smith-logo.png.asset.json";
-import heroMobileC from "@/assets/hero-mobile-c.png.asset.json";
-import heroDesktopC from "@/assets/hero-desktop-c.png.asset.json";
+import yobodyLogo from "@/assets/yobody-jj-smith-logo.png";
+import heroMobileC from "@/assets/hero-mobile-c.png";
+import heroDesktopC from "@/assets/hero-desktop-c.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -199,7 +199,7 @@ function Nav() {
   return (
     <div style={{ backgroundColor: "#fdebeb" }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px] px-5 py-3 sm:py-3 flex items-center justify-center">
-        <img src={yobodyLogo.url} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
+        <img src={yobodyLogo} alt="Yobody by JJ Smith" className="h-14 sm:h-16 lg:h-20 w-auto" width={1196} height={595} />
       </div>
     </div>
   );
@@ -633,14 +633,14 @@ function _HeroImageImpl() {
   return (
     <div className="relative w-full mx-auto max-w-[520px] mt-4 mb-0 lg:mt-0 lg:mb-0 lg:max-w-none lg:w-[110%] lg:-mr-[10%] lg:-mt-6 lg:-mb-6">
       <img
-        src={heroMobileC.url}
+        src={heroMobileC}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
         className="block w-full h-auto mx-auto max-w-[440px] lg:hidden"
         width={1920}
         height={1471}
       />
       <img
-        src={heroDesktopC.url}
+        src={heroDesktopC}
         alt="JJ Smith with weekly calls, daily texts, and personalized plan"
         className="hidden lg:block w-full h-auto"
         width={1920}

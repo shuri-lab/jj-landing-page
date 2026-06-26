@@ -196,6 +196,12 @@
   .animate-marquee, .animate-marquee-slow { animation: none; }
 }
 
+/* Quiz takeover: gentle fade-up used when each screen mounts. */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 /*
  * iOS-safe sticky bottom CTA.
  * Using position: fixed with transform-based show/hide caused the bar to

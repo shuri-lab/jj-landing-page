@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as NoVideoRouteImport } from './routes/no-video'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CRouteImport } from './routes/c'
@@ -21,6 +22,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const VapiDemoRoute = VapiDemoRouteImport.update({
   id: '/vapi-demo',
   path: '/vapi-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoVideoRoute = NoVideoRouteImport.update({
@@ -67,6 +73,7 @@ export interface FileRoutesByFullPath {
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
   '/no-video': typeof NoVideoRoute
+  '/quiz': typeof QuizRoute
   '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRoutesByTo {
@@ -77,6 +84,7 @@ export interface FileRoutesByTo {
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
   '/no-video': typeof NoVideoRoute
+  '/quiz': typeof QuizRoute
   '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRoutesById {
@@ -88,6 +96,7 @@ export interface FileRoutesById {
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
   '/no-video': typeof NoVideoRoute
+  '/quiz': typeof QuizRoute
   '/vapi-demo': typeof VapiDemoRoute
 }
 export interface FileRouteTypes {
@@ -100,6 +109,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/checkout'
     | '/no-video'
+    | '/quiz'
     | '/vapi-demo'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -110,6 +120,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/checkout'
     | '/no-video'
+    | '/quiz'
     | '/vapi-demo'
   id:
     | '__root__'
@@ -120,6 +131,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/checkout'
     | '/no-video'
+    | '/quiz'
     | '/vapi-demo'
   fileRoutesById: FileRoutesById
 }
@@ -131,6 +143,7 @@ export interface RootRouteChildren {
   CRoute: typeof CRoute
   CheckoutRoute: typeof CheckoutRoute
   NoVideoRoute: typeof NoVideoRoute
+  QuizRoute: typeof QuizRoute
   VapiDemoRoute: typeof VapiDemoRoute
 }
 
@@ -141,6 +154,13 @@ declare module '@tanstack/react-router' {
       path: '/vapi-demo'
       fullPath: '/vapi-demo'
       preLoaderRoute: typeof VapiDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/no-video': {
@@ -203,8 +223,19 @@ const rootRouteChildren: RootRouteChildren = {
   CRoute: CRoute,
   CheckoutRoute: CheckoutRoute,
   NoVideoRoute: NoVideoRoute,
+  QuizRoute: QuizRoute,
   VapiDemoRoute: VapiDemoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
