@@ -202,6 +202,51 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Quiz: chat bubble arrival (JJ "texting"). */
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.q-bubble { animation: bubbleIn 0.32s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Quiz: typing indicator dots. */
+@keyframes typingDot {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.45; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.q-typing-dot { animation: typingDot 1.1s infinite ease-in-out; }
+
+/* Quiz: reveal lines fading and rising in sequence (JJ speaking). */
+.q-fadeline { animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Quiz: cards / blocks rising into view. */
+@keyframes riseIn {
+  from { opacity: 0; transform: translateY(18px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.q-rise { animation: riseIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Quiz: pop for badges / numbers (gratification). */
+@keyframes popIn {
+  0% { opacity: 0; transform: scale(0.7); }
+  70% { transform: scale(1.06); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.q-pop { animation: popIn 0.5s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Quiz: projection line draws in. */
+@keyframes drawLine { to { stroke-dashoffset: 0; } }
+.q-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: drawLine 1.5s ease-out 0.25s forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .q-bubble, .q-rise, .q-pop, .q-fadeline { animation: none; }
+  .q-draw { stroke-dashoffset: 0; animation: none; }
+}
+
 /*
  * iOS-safe sticky bottom CTA.
  * Using position: fixed with transform-based show/hide caused the bar to
