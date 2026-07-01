@@ -84,6 +84,9 @@ const STEP_DELAY = 0.45; // seconds between reveal lines
 // the Montserrat used on the questions, and far easier to read in a white card
 // than medium sans on the pink mesh.
 const READ_FONT = "Georgia, 'Iowan Old Style', 'Times New Roman', serif";
+// Clean, rounded geometric sans for question titles + option labels (more open
+// and legible than Montserrat for the interactive quiz screens).
+const QUIZ_FONT = "'Poppins', 'Montserrat', sans-serif";
 const READ_CARD = "rounded-[1.5rem] bg-white p-5 shadow-[0_18px_40px_-28px_rgba(140,17,74,0.55)]";
 
 const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
@@ -341,8 +344,8 @@ function StickyAction({ children }: { children: React.ReactNode }) {
 function Question({ children, sub }: { children: React.ReactNode; sub?: string }) {
   return (
     <>
-      <h2 className="font-sans font-bold text-[26px] sm:text-[31px] leading-[1.16] tracking-[-0.02em] text-[#15102a]">{children}</h2>
-      {sub && <p className="mt-2 text-[16px] text-[#6b5b6e]">{sub}</p>}
+      <h2 className="font-bold text-[26px] sm:text-[31px] leading-[1.18] tracking-[-0.01em] text-[#15102a]" style={{ fontFamily: QUIZ_FONT }}>{children}</h2>
+      {sub && <p className="mt-2 text-[16px] text-[#6b5b6e]" style={{ fontFamily: QUIZ_FONT }}>{sub}</p>}
     </>
   );
 }
@@ -424,7 +427,7 @@ function OptionButton({ label, onClick, selected, Icon }: { label: string; onCli
       >
         {selected ? <Check className="h-5 w-5" strokeWidth={3} /> : Icon ? <Icon className="h-5 w-5" strokeWidth={1.9} /> : <Check className="h-[18px] w-[18px]" strokeWidth={3} />}
       </span>
-      <span className="flex-1">{label}</span>
+      <span className="flex-1" style={{ fontFamily: QUIZ_FONT }}>{label}</span>
     </button>
   );
 }
@@ -647,89 +650,129 @@ function AgeCurveGraphic({ age }: { age: string }) {
   );
 }
 
-// ── Proof showcase (premium: photo transformations + text testimonials) ───────
-type ProofItem =
-  | { type: "photo"; src: string; quote: string }
-  | { type: "quote"; text: string; name: string };
+// ── Proof coverflow (center card large, neighbors peek; caption fades below) ───
+type ProofSlide = { src: string; quote: string; name?: string };
 
-const PROOF_ITEMS: ProofItem[] = [
-  { type: "photo", src: t10, quote: "I feel like the woman I forgot I was." },
-  { type: "quote", text: "It keeps me accountable because I feel big sister is always watching.", name: "Keisha" },
-  { type: "photo", src: t8, quote: "I'm dressing up again. I'm smiling in pictures again." },
-  { type: "quote", text: "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.", name: "Monique" },
-  { type: "photo", src: t12, quote: "I'm back to the size I never thought I'd see again." },
-  { type: "quote", text: "This feels different because I don't have to figure out what to eat or look up recipes. It's all put together for me.", name: "Tasha" },
-  { type: "photo", src: t4, quote: "I'm in family photos again, front and center." },
-  { type: "photo", src: t7, quote: "My doctor's visits sound completely different now." },
-  { type: "quote", text: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.", name: "Latoya" },
-  { type: "photo", src: t9, quote: "I'm not the one hiding behind the camera anymore." },
-  { type: "photo", src: t1, quote: "I'm not hiding in baggy clothes anymore." },
-  { type: "photo", src: tTammi, quote: "I lost the baby weight." },
+const PROOF_SLIDES: ProofSlide[] = [
+  { src: t10, quote: "I feel like the woman I forgot I was." },
+  { src: t8, quote: "It keeps me accountable because I feel big sister is always watching.", name: "Keisha" },
+  { src: t12, quote: "I'm back to the size I never thought I'd see again." },
+  { src: t4, quote: "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.", name: "Monique" },
+  { src: t9, quote: "I'm not the one hiding behind the camera anymore." },
+  { src: t7, quote: "I don't have to figure out what to eat or look up recipes. It's all put together for me.", name: "Tasha" },
+  { src: t1, quote: "I'm not hiding in baggy clothes anymore." },
+  { src: tTammi, quote: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.", name: "Latoya" },
 ];
 
 function ProofCarousel() {
-  const [i, setI] = useState(0);
+  const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [stageH, setStageH] = useState(420);
   const startX = useRef<number | null>(null);
-  const n = PROOF_ITEMS.length;
-  const go = (d: number) => setI((p) => (p + d + n) % n);
+  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const n = PROOF_SLIDES.length;
+  const go = (d: number) => setActive((p) => (p + d + n) % n);
   useEffect(() => {
     if (paused) return;
-    const id = window.setInterval(() => setI((p) => (p + 1) % n), 4500);
+    const id = window.setInterval(() => setActive((p) => (p + 1) % n), 4200);
     return () => clearInterval(id);
   }, [paused, n]);
 
+  // The stage hugs the active image: measure it and animate the height so there
+  // are never any bars around the photo.
+  const measure = () => {
+    const el = cardRefs.current[active];
+    if (el) setStageH(el.offsetHeight);
+  };
+  useEffect(() => {
+    measure();
+    const on = () => measure();
+    window.addEventListener("resize", on);
+    return () => window.removeEventListener("resize", on);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [active]);
+
+  // Shortest signed distance from the active slide, so neighbors wrap around.
+  const rel = (idx: number) => {
+    let o = idx - active;
+    if (o > n / 2) o -= n;
+    if (o < -n / 2) o += n;
+    return o;
+  };
+
+  const cur = PROOF_SLIDES[active];
   const arrowCls =
-    "absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#8c114a] shadow-[0_10px_26px_-8px_rgba(140,17,74,0.7)] backdrop-blur transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-105 active:scale-95";
+    "absolute top-1/2 z-30 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#8c114a] shadow-[0_10px_26px_-8px_rgba(140,17,74,0.7)] backdrop-blur transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-105 active:scale-95";
 
   return (
     <div>
-      <div className="relative">
-        <div
-          className="overflow-hidden rounded-[1.9rem] bg-white p-1.5 shadow-[0_30px_60px_-32px_rgba(140,17,74,0.6)] ring-1 ring-[#f2d0e0]"
-          onMouseEnter={() => setPaused(true)}
-          onMouseLeave={() => setPaused(false)}
-          onTouchStart={(e) => { startX.current = e.touches[0].clientX; setPaused(true); }}
-          onTouchEnd={(e) => {
-            if (startX.current === null) return;
-            const dx = e.changedTouches[0].clientX - startX.current;
-            if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-            startX.current = null;
-            setPaused(false);
-          }}
-        >
-          <div className="flex transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: `translateX(-${i * 100}%)` }}>
-            {PROOF_ITEMS.map((it, idx) => (
-              <div key={idx} className="w-full shrink-0">
-                {it.type === "photo" ? (
-                  <div className="relative h-[400px] overflow-hidden rounded-[1.55rem]">
-                    <img src={it.src} alt="Sister transformation before and after" className="h-full w-full object-cover" loading="lazy" />
-                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent p-5 pt-14">
-                      <p className="font-serif italic text-[21px] sm:text-[23px] leading-snug text-white">"{it.quote}"</p>
-                    </div>
-                  </div>
-                ) : (
-                  <div className="flex h-[400px] flex-col justify-center rounded-[1.55rem] bg-gradient-to-br from-[#fbe3ea] to-[#f4e7f1] p-8">
-                    <span aria-hidden className="select-none font-serif text-[64px] leading-none text-[#d62a7a]">“</span>
-                    <blockquote className="-mt-3 text-[21px] sm:text-[23px] leading-[1.5] text-[#241d2e]" style={{ fontFamily: READ_FONT }}>{it.text}</blockquote>
-                    <figcaption className="mt-5 text-[16px] font-semibold text-[#c41e6a]">– {it.name}</figcaption>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
+      <div
+        className="relative select-none overflow-hidden transition-[height] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]"
+        style={{ height: stageH }}
+        onMouseEnter={() => setPaused(true)}
+        onMouseLeave={() => setPaused(false)}
+        onTouchStart={(e) => { startX.current = e.touches[0].clientX; setPaused(true); }}
+        onTouchEnd={(e) => {
+          if (startX.current === null) return;
+          const dx = e.changedTouches[0].clientX - startX.current;
+          if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+          startX.current = null;
+          setPaused(false);
+        }}
+      >
+        {PROOF_SLIDES.map((s, idx) => {
+          const o = rel(idx);
+          const abs = Math.abs(o);
+          const visible = abs <= 1;
+          return (
+            <div
+              key={idx}
+              ref={(el) => { cardRefs.current[idx] = el; }}
+              aria-hidden={o !== 0}
+              onClick={() => visible && o !== 0 && setActive(idx)}
+              className={`absolute left-1/2 top-1/2 w-[70%] max-w-[300px] overflow-hidden rounded-[1.4rem] shadow-[0_34px_66px_-26px_rgba(140,17,74,0.65)] ring-1 ring-black/5 transition-all duration-[700ms] ease-[cubic-bezier(0.32,0.72,0,1)] ${visible && o !== 0 ? "cursor-pointer" : ""}`}
+              style={{
+                transform: `translate(-50%, -50%) translateX(${o * 62}%) scale(${o === 0 ? 1 : 0.82})`,
+                opacity: visible ? (o === 0 ? 1 : 0.5) : 0,
+                zIndex: 20 - abs,
+                pointerEvents: visible ? "auto" : "none",
+              }}
+            >
+              {/* The card sizes to the image's real aspect ratio: no crop, no bars. */}
+              <img
+                src={s.src}
+                alt="Sister transformation before and after"
+                className="block w-full"
+                loading="lazy"
+                onLoad={() => { if (o === 0) measure(); }}
+              />
+              {o !== 0 && <div className="absolute inset-0 bg-[#4b415b]/30" />}
+            </div>
+          );
+        })}
 
-        <button onClick={() => go(-1)} aria-label="Previous" className={`${arrowCls} left-3`}><ChevronLeft className="h-5 w-5" strokeWidth={2.4} /></button>
-        <button onClick={() => go(1)} aria-label="Next" className={`${arrowCls} right-3`}><ChevronRight className="h-5 w-5" strokeWidth={2.4} /></button>
+        <button onClick={() => go(-1)} aria-label="Previous" className={`${arrowCls} left-0`}><ChevronLeft className="h-5 w-5" strokeWidth={2.4} /></button>
+        <button onClick={() => go(1)} aria-label="Next" className={`${arrowCls} right-0`}><ChevronRight className="h-5 w-5" strokeWidth={2.4} /></button>
       </div>
 
-      {/* Slim progress + counter (scales cleanly to many slides). */}
-      <div className="mt-4 flex items-center gap-3">
-        <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#f0cdd9]">
-          <div className="h-full rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${((i + 1) / n) * 100}%`, background: PINK }} />
-        </div>
-        <span className="text-[13px] font-bold tabular-nums tracking-wide text-[#8c114a]">{i + 1} / {n}</span>
+      {/* Caption fades in on every change. */}
+      <div className="mt-6 min-h-[96px] text-center">
+        <blockquote key={active} className="q-fadeline mx-auto max-w-[440px] font-serif italic text-[21px] sm:text-[23px] leading-[1.35] text-[#15102a]">"{cur.quote}"</blockquote>
+        {cur.name && (
+          <p key={`n-${active}`} className="q-fadeline mt-2 text-[15px] font-semibold text-[#c41e6a]" style={{ animationDelay: "0.08s" }}>– {cur.name}</p>
+        )}
+      </div>
+
+      {/* Segment indicators. */}
+      <div className="mt-4 flex items-center justify-center gap-1.5">
+        {PROOF_SLIDES.map((_, idx) => (
+          <button
+            key={idx}
+            onClick={() => setActive(idx)}
+            aria-label={`Slide ${idx + 1}`}
+            className={`h-1.5 rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] ${idx === active ? "w-7 bg-[#8c114a]" : "w-3.5 bg-[#d9b8c6]"}`}
+          />
+        ))}
       </div>
     </div>
   );
