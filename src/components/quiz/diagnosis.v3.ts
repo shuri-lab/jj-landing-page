@@ -331,7 +331,7 @@ function turnAddenda(s: State, res: Resolution): string[] {
 // and the right emphasis (the pattern and the turn are the pivots). The text
 // itself is unchanged; only the structure around it is.
 export type SectionKind = "mirror" | "pattern" | "aha" | "reframe" | "weave" | "consequence" | "turn";
-export type DiagnosisSection = { kind: SectionKind; text: string };
+export type DiagnosisSection = { kind: SectionKind; text: string; bullets?: string[] };
 
 export type ComposedDiagnosis = {
   title: string;
@@ -363,9 +363,9 @@ export function composeDiagnosis(s: State, res: Resolution): ComposedDiagnosis {
   const weave = buildWeave(res.primary, res.contributing);
   if (weave) sections.push({ kind: "weave", text: weave });
 
-  // 6. Her Consequence.
+  // 6. Her Consequence (rendered as bullets so it reads as distinct points, not a wall).
   const connectors = consequenceConnectors(res.primary, res.contributing, s);
-  if (connectors.length) sections.push({ kind: "consequence", text: connectors.join(" ") });
+  if (connectors.length) sections.push({ kind: "consequence", text: "", bullets: connectors });
 
   // 7. The Turn (+ addenda).
   const addenda = turnAddenda(s, res);

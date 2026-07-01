@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, HelpCircle, ClipboardList, Phone } from "lucide-react";
+import { ChevronLeft, ChevronRight, HelpCircle, ClipboardList, Phone, Check } from "lucide-react";
 import QuizTakeoverV3 from "@/components/quiz/QuizTakeoverV3";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import heroMobileC from "@/assets/landing/quiz-hero-image-mobile.png";
@@ -110,7 +110,7 @@ function PrimaryCta({ subline, className = "" }: { subline?: string; className?:
         style={{ background: PINK }}
       >
         <span className="inline-flex items-center justify-center gap-2">
-          Take the quiz <span aria-hidden>→</span>
+          Take the 1-minute quiz <span aria-hidden>→</span>
         </span>
       </button>
       {subline && <p className="mt-3 text-center text-[15px] sm:text-[16px] font-semibold" style={{ color: "#8c114a" }}>{subline}</p>}
@@ -151,7 +151,7 @@ function Header() {
           data-cta="take-quiz"
           className="hidden rounded-full border-2 border-[#d62a7a] px-5 py-2.5 text-[14px] font-bold uppercase tracking-wide text-[#b81860] transition-colors hover:bg-[#d62a7a] hover:text-white sm:inline-flex"
         >
-          Take the quiz →
+          Take the 1-minute quiz →
         </button>
       </div>
     </header>
@@ -166,16 +166,23 @@ function Hero() {
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10">
           <div className="lg:order-1">
             <h1 className="text-left font-serif font-medium text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[44px] lg:text-[52px]">
-              <span style={{ color: "#15102a" }}>Why losing the belly after 40 feels impossible</span>{" "}
+              <span style={{ color: "#15102a" }}>Why losing weight after 40 feels impossible</span>{" "}
               <em className="not-italic" style={{ color: "#c41e6a" }}>(and the one shift that changes everything).</em>
             </h1>
-            <p className="mt-6 max-w-[560px] text-left text-[18px] font-medium leading-[1.5] text-ink sm:text-[21px]">
-              Take this 1-minute quiz to reveal what's really going on, and what finally turns it around.
-            </p>
+            <ul className="mt-6 max-w-[560px] space-y-3">
+              {["This quiz reveals what finally turns it around.", "Get a free personal diagnosis in 60 seconds"].map((point) => (
+                <li key={point} className="flex items-start gap-2.5 text-left text-[18px] font-medium leading-[1.4] text-ink sm:text-[21px]">
+                  <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}>
+                    <Check className="h-4 w-4" strokeWidth={3} />
+                  </span>
+                  {point}
+                </li>
+              ))}
+            </ul>
 
             {/* Desktop CTA + trust live in the left column */}
             <div className="mt-8 hidden max-w-[420px] lg:block">
-              <PrimaryCta subline="Get your personal diagnosis in 60 seconds" />
+              <PrimaryCta />
             </div>
             <p className="mt-5 hidden text-[13px] font-semibold tracking-wide lg:block" style={{ color: "#8c114a" }}>
               NYT bestselling author · 5 million pounds lost · 800,000 women helped
@@ -189,8 +196,8 @@ function Hero() {
 
           {/* Mobile: image sits flush on top of the CTA */}
           <div className="mx-auto mt-8 w-full max-w-[440px] lg:hidden">
-            <img src={heroMobileC} alt="JJ Smith, your personal coach for 12 weeks" className="block h-auto w-full" width={2000} height={2000} />
-            <PrimaryCta subline="Get your personal diagnosis in 60 seconds" className="relative z-10" />
+            <img src={heroMobileC} alt="JJ Smith, your personal coach for 12 weeks" className="mx-auto block h-auto w-full max-w-[200px]" width={2000} height={2000} />
+            <PrimaryCta className="relative z-10" />
             <p className="mt-5 text-center text-[13px] font-semibold tracking-wide" style={{ color: "#8c114a" }}>
               NYT bestselling author · 5 million pounds lost · 800,000 women helped
             </p>
@@ -433,7 +440,7 @@ function StickyCta() {
         className="block w-full rounded-xl px-5 py-4 text-center text-[16px] font-bold uppercase tracking-wide text-white shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]"
         style={{ background: PINK }}
       >
-        Take the quiz →
+        Take the 1-minute quiz →
       </button>
     </div>
   );

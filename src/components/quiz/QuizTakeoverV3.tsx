@@ -9,11 +9,10 @@ import {
   MessageCircle,
   UtensilsCrossed,
   UserCheck,
-  BookOpen,
   Users,
+  ChevronDown,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
   MoveHorizontal,
   Leaf,
   Smartphone,
@@ -37,16 +36,16 @@ import {
   Search,
   Sparkles,
   RefreshCcw,
-  Quote,
-  Lightbulb,
-  Link2,
-  Sunrise,
-  HandHeart,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
 import jjAvatar from "@/assets/landing/jj-selfie-sun.jpg";
+import t1 from "@/assets/landing/transformation-1.jpg";
+import t4 from "@/assets/landing/transformation-4.jpg";
+import t7 from "@/assets/landing/transformation-7.jpg";
+import t8 from "@/assets/landing/transformation-8.jpg";
 import t9 from "@/assets/landing/transformation-9.jpg";
+import t10 from "@/assets/landing/transformation-10.jpg";
 import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import {
@@ -68,6 +67,7 @@ import {
 } from "./quiz01.v3";
 import {
   composeDiagnosis,
+  type DiagnosisSection,
   gatePattern,
   GATE_REVEALS,
   SOLUTION_LINES,
@@ -111,11 +111,6 @@ const AGE_DISPLAY: Record<string, string> = {
   "60plus": "60 and beyond",
 };
 
-const TRANSF_PLAN = [
-  { src: t12, quote: "I'm back to the size I never thought I'd see again." },
-  { src: t9, quote: "I'm not the one hiding behind the camera anymore." },
-  { src: tTammi, quote: "I lost the baby weight." },
-];
 
 const fillName = (t: string, s: State) => t.replace(/\{name\}/g, s.name?.trim() || "you");
 
@@ -310,7 +305,7 @@ function Screen({
       return <DiscoveryScreen lines={discDay(d1, state.flags.FLAG_ED_watch)} flip="day" onContinue={() => onAdvance("DISC_DAY")} />;
     }
     case "DISC_MIDLIFE":
-      return <DiscoveryScreen lines={DISC_MIDLIFE} flip="midlife" visual={<BodyShiftGraphic age={state.answers["F1q"] as string} />} onContinue={() => onAdvance("DISC_MIDLIFE")} />;
+      return <DiscoveryScreen lines={DISC_MIDLIFE} flip="midlife" onContinue={() => onAdvance("DISC_MIDLIFE")} />;
     case "NAME":
       return <NameScreen onSubmit={onName} />;
     case "ANALYZING":
@@ -504,7 +499,7 @@ function DiscoveryScreen({ lines, visual, flip, onContinue }: { lines: string[];
 
 // ── Food-vs-exercise slider (screen 3, styled as a question) ─────────────────
 const FOOD_COLOR = "#d62a7a";
-const EXERCISE_COLOR = "#d9a531";
+const EXERCISE_COLOR = "#6d5a86"; // muted brand plum, cooler counterpart to the pink
 
 function SplitBar({ guess, onChange }: { guess: number; onChange?: (v: number) => void }) {
   const interactive = !!onChange;
@@ -517,7 +512,7 @@ function SplitBar({ guess, onChange }: { guess: number; onChange?: (v: number) =
       {interactive && (
         <>
           <input
-            type="range" min={0} max={100} value={guess}
+            type="range" min={0} max={100} step={5} value={guess}
             onChange={(e) => onChange?.(Number(e.target.value))}
             aria-label="Food versus exercise"
             className="absolute inset-0 h-7 w-full cursor-pointer opacity-0"
@@ -606,30 +601,6 @@ function SliderScreen({ onContinue }: { onContinue: (guess: number) => void }) {
 }
 
 // ── Discovery visuals ────────────────────────────────────────────────────────
-function BodyShiftGraphic({ age }: { age?: string }) {
-  const decade = { "30s": "30s", "40s": "40s", "50s": "50s", "60plus": "60+" }[age ?? "40s"] ?? "40s";
-  return (
-    <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-      <p className="mb-3 text-center text-[13px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">Where the weight moves</p>
-      <div className="flex items-end justify-center gap-8">
-        {[{ d: "30s", belly: 10 }, { d: decade, belly: 30, active: true }].map((b, i) => (
-          <div key={i} className="flex flex-col items-center">
-            <svg viewBox="0 0 60 110" className="h-28 w-16" aria-hidden>
-              <circle cx="30" cy="14" r="9" fill={b.active ? "#b81860" : "#e7b9cb"} />
-              <path d="M18 26 Q30 22 42 26 L40 70 Q30 76 20 70 Z" fill={b.active ? "#d62a7a" : "#eccdd8"} />
-              <ellipse cx="30" cy="52" rx={b.belly / 2 + 8} ry={b.belly / 3 + 6} fill={b.active ? "#8c114a" : "#dca9bd"} opacity={b.active ? 0.55 : 0.4} />
-              <rect x="22" y="74" width="6" height="30" rx="3" fill={b.active ? "#d62a7a" : "#eccdd8"} />
-              <rect x="32" y="74" width="6" height="30" rx="3" fill={b.active ? "#d62a7a" : "#eccdd8"} />
-            </svg>
-            <span className={`mt-1 text-[13px] font-bold ${b.active ? "text-[#8c114a]" : "text-[#9a7f8a]"}`}>{b.d}</span>
-          </div>
-        ))}
-      </div>
-      <p className="mt-2 text-center text-[14px] font-semibold text-[#15102a]">Same habits. The fat just moves to the middle.</p>
-    </div>
-  );
-}
-
 function TwoPathGraphic() {
   return (
     <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
@@ -655,7 +626,6 @@ function AgeCurveGraphic({ age }: { age: string }) {
   const path = `M ${decades.map((_, i) => `${xAt(i)},${ys[i]}`).join(" L ")}`;
   return (
     <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-      <p className="mb-2 text-[14px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">How metabolism shifts</p>
       <svg viewBox={`0 0 ${W} 150`} className="w-full" role="img" aria-label="Metabolism declining by decade">
         <defs>
           <linearGradient id="ageFill" x1="0" y1="0" x2="0" y2="1">
@@ -677,49 +647,89 @@ function AgeCurveGraphic({ age }: { age: string }) {
   );
 }
 
-// ── Transformation carousel ──────────────────────────────────────────────────
-function TransformationCarousel({ items }: { items: { src: string; quote: string }[] }) {
+// ── Proof showcase (premium: photo transformations + text testimonials) ───────
+type ProofItem =
+  | { type: "photo"; src: string; quote: string }
+  | { type: "quote"; text: string; name: string };
+
+const PROOF_ITEMS: ProofItem[] = [
+  { type: "photo", src: t10, quote: "I feel like the woman I forgot I was." },
+  { type: "quote", text: "It keeps me accountable because I feel big sister is always watching.", name: "Keisha" },
+  { type: "photo", src: t8, quote: "I'm dressing up again. I'm smiling in pictures again." },
+  { type: "quote", text: "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.", name: "Monique" },
+  { type: "photo", src: t12, quote: "I'm back to the size I never thought I'd see again." },
+  { type: "quote", text: "This feels different because I don't have to figure out what to eat or look up recipes. It's all put together for me.", name: "Tasha" },
+  { type: "photo", src: t4, quote: "I'm in family photos again, front and center." },
+  { type: "photo", src: t7, quote: "My doctor's visits sound completely different now." },
+  { type: "quote", text: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.", name: "Latoya" },
+  { type: "photo", src: t9, quote: "I'm not the one hiding behind the camera anymore." },
+  { type: "photo", src: t1, quote: "I'm not hiding in baggy clothes anymore." },
+  { type: "photo", src: tTammi, quote: "I lost the baby weight." },
+];
+
+function ProofCarousel() {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const startX = useRef<number | null>(null);
-  const go = (d: number) => setI((p) => (p + d + items.length) % items.length);
+  const n = PROOF_ITEMS.length;
+  const go = (d: number) => setI((p) => (p + d + n) % n);
   useEffect(() => {
-    if (paused || items.length < 2) return;
-    const id = window.setInterval(() => setI((p) => (p + 1) % items.length), 4000);
+    if (paused) return;
+    const id = window.setInterval(() => setI((p) => (p + 1) % n), 4500);
     return () => clearInterval(id);
-  }, [paused, items.length]);
+  }, [paused, n]);
+
+  const arrowCls =
+    "absolute top-1/2 z-10 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#8c114a] shadow-[0_10px_26px_-8px_rgba(140,17,74,0.7)] backdrop-blur transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:scale-105 active:scale-95";
+
   return (
-    <div
-      className="overflow-hidden rounded-[1.9rem] bg-white shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onTouchStart={(e) => { startX.current = e.touches[0].clientX; setPaused(true); }}
-      onTouchEnd={(e) => {
-        if (startX.current === null) return;
-        const dx = e.changedTouches[0].clientX - startX.current;
-        if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
-        startX.current = null;
-        setPaused(false);
-      }}
-    >
+    <div>
       <div className="relative">
-        <img src={items[i].src} alt="Sister transformation" className="block max-h-[420px] w-full bg-[#fbe3ea] object-contain" loading="lazy" />
-        {items.length > 1 && (
-          <>
-            <button onClick={() => go(-1)} aria-label="Previous" className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"><ChevronLeft className="h-5 w-5" /></button>
-            <button onClick={() => go(1)} aria-label="Next" className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"><ChevronRight className="h-5 w-5" /></button>
-          </>
-        )}
-      </div>
-      <div className="p-5">
-        <p className="font-serif italic text-[19px] leading-snug text-[#15102a]">"{items[i].quote}"</p>
-        {items.length > 1 && (
-          <div className="mt-4 flex justify-center gap-2">
-            {items.map((_, k) => (
-              <button key={k} onClick={() => setI(k)} aria-label={`Slide ${k + 1}`} className={`h-2 rounded-full transition-all ${k === i ? "w-6 bg-[#d62a7a]" : "w-2 bg-[#d62a7a]/30"}`} />
+        <div
+          className="overflow-hidden rounded-[1.9rem] bg-white p-1.5 shadow-[0_30px_60px_-32px_rgba(140,17,74,0.6)] ring-1 ring-[#f2d0e0]"
+          onMouseEnter={() => setPaused(true)}
+          onMouseLeave={() => setPaused(false)}
+          onTouchStart={(e) => { startX.current = e.touches[0].clientX; setPaused(true); }}
+          onTouchEnd={(e) => {
+            if (startX.current === null) return;
+            const dx = e.changedTouches[0].clientX - startX.current;
+            if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
+            startX.current = null;
+            setPaused(false);
+          }}
+        >
+          <div className="flex transition-transform duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ transform: `translateX(-${i * 100}%)` }}>
+            {PROOF_ITEMS.map((it, idx) => (
+              <div key={idx} className="w-full shrink-0">
+                {it.type === "photo" ? (
+                  <div className="relative h-[400px] overflow-hidden rounded-[1.55rem]">
+                    <img src={it.src} alt="Sister transformation before and after" className="h-full w-full object-cover" loading="lazy" />
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent p-5 pt-14">
+                      <p className="font-serif italic text-[21px] sm:text-[23px] leading-snug text-white">"{it.quote}"</p>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex h-[400px] flex-col justify-center rounded-[1.55rem] bg-gradient-to-br from-[#fbe3ea] to-[#f4e7f1] p-8">
+                    <span aria-hidden className="select-none font-serif text-[64px] leading-none text-[#d62a7a]">“</span>
+                    <blockquote className="-mt-3 text-[21px] sm:text-[23px] leading-[1.5] text-[#241d2e]" style={{ fontFamily: READ_FONT }}>{it.text}</blockquote>
+                    <figcaption className="mt-5 text-[16px] font-semibold text-[#c41e6a]">– {it.name}</figcaption>
+                  </div>
+                )}
+              </div>
             ))}
           </div>
-        )}
+        </div>
+
+        <button onClick={() => go(-1)} aria-label="Previous" className={`${arrowCls} left-3`}><ChevronLeft className="h-5 w-5" strokeWidth={2.4} /></button>
+        <button onClick={() => go(1)} aria-label="Next" className={`${arrowCls} right-3`}><ChevronRight className="h-5 w-5" strokeWidth={2.4} /></button>
+      </div>
+
+      {/* Slim progress + counter (scales cleanly to many slides). */}
+      <div className="mt-4 flex items-center gap-3">
+        <div className="h-1 flex-1 overflow-hidden rounded-full bg-[#f0cdd9]">
+          <div className="h-full rounded-full transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${((i + 1) / n) * 100}%`, background: PINK }} />
+        </div>
+        <span className="text-[13px] font-bold tabular-nums tracking-wide text-[#8c114a]">{i + 1} / {n}</span>
       </div>
     </div>
   );
@@ -834,44 +844,67 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
 }
 
 // ── Full diagnosis (composed) ────────────────────────────────────────────────
-const DIAG_SECTION: Record<string, { label: string; Icon: React.ComponentType<{ className?: string; strokeWidth?: number }> }> = {
-  mirror: { label: "What you told me", Icon: Quote },
-  pattern: { label: "Your pattern", Icon: Target },
-  aha: { label: "What's really going on", Icon: Lightbulb },
-  reframe: { label: "So this was never on you", Icon: HandHeart },
-  weave: { label: "The second thread", Icon: Link2 },
-  consequence: { label: "Why it's played out this way", Icon: Search },
-  turn: { label: "What changes it", Icon: Sunrise },
+const DIAG_LABEL: Record<string, string> = {
+  mirror: "What you told me",
+  pattern: "Your pattern",
+  aha: "What's really going on",
+  reframe: "So this was never on you",
+  weave: "The second thread",
+  consequence: "Why it's played out this way",
+  turn: "What changes it",
 };
 
-function DiagnosisSectionCard({ kind, text, delay }: { kind: string; text: string; delay: number }) {
-  const meta = DIAG_SECTION[kind] ?? DIAG_SECTION.aha;
-  const pivot = kind === "pattern" || kind === "turn"; // the two beats that should stand out
-  const mirror = kind === "mirror";
+// Split composed prose into sentences so each card reads as short, scannable
+// lines instead of one block. Content is unchanged; only the line breaks differ.
+function splitSentences(text: string): string[] {
+  const parts = text.match(/[^.!?]+[.!?]+["']?(?=\s|$)/g);
+  return parts ? parts.map((s) => s.trim()).filter(Boolean) : [text];
+}
+
+function DiagnosisSectionCard({ section, delay }: { section: DiagnosisSection; delay: number }) {
+  const { kind, text, bullets } = section;
+  const label = DIAG_LABEL[kind] ?? "";
+  const pivot = kind === "pattern" || kind === "turn"; // the naming + the fix: the anchors
+  const sentences = splitSentences(text);
   return (
     <div
-      className={`q-fadeline rounded-[1.5rem] p-5 ${
-        pivot
-          ? "border-l-4 border-[#d62a7a] bg-[#fff2f7] shadow-[0_18px_40px_-28px_rgba(140,17,74,0.6)]"
-          : "bg-white shadow-[0_18px_40px_-28px_rgba(140,17,74,0.55)]"
+      className={`q-fadeline rounded-[1.6rem] p-6 sm:p-7 shadow-[0_20px_44px_-30px_rgba(140,17,74,0.55)] ring-1 ${
+        pivot ? "bg-[#fff5f9] ring-[#f3b9d2]" : "bg-white ring-[#f6e0ea]"
       }`}
       style={{ animationDelay: `${delay}s` }}
     >
-      <div className="mb-3 flex items-center gap-2.5">
-        <span
-          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${pivot ? "text-white" : "text-[#c41e6a]"}`}
-          style={pivot ? { background: PINK } : { backgroundColor: "#fbe1ec" }}
-        >
-          <meta.Icon className="h-[18px] w-[18px]" strokeWidth={2.2} />
-        </span>
-        <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-[#a8447a]">{meta.label}</span>
+      {/* Statement title (bold sans), like the "/" reveal cards. */}
+      <div className="mb-4 flex items-center gap-2.5">
+        <span className="h-5 w-1.5 shrink-0 rounded-full" style={{ background: pivot ? PINK : "#f0b9d2" }} aria-hidden />
+        <h3 className={`font-sans text-[19px] sm:text-[21px] font-bold leading-tight tracking-tight ${pivot ? "text-[#b81860]" : "text-[#15102a]"}`}>{label}</h3>
       </div>
-      <p
-        className={`text-[22px] sm:text-[24px] leading-[1.6] text-[#241d2e] ${mirror ? "italic" : ""}`}
-        style={{ fontFamily: READ_FONT }}
-      >
-        {text}
-      </p>
+
+      {bullets ? (
+        <ul className="space-y-3">
+          {bullets.map((b, i) => (
+            <li key={i} className="flex gap-3">
+              <span className="mt-[14px] h-2 w-2 shrink-0 rounded-full" style={{ background: PINK }} aria-hidden />
+              <span className="text-[19px] sm:text-[21px] leading-[1.55] text-[#2f2740]" style={{ fontFamily: READ_FONT }}>{b}</span>
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <div className="space-y-2.5">
+          {sentences.map((s, i) => (
+            <p
+              key={i}
+              className={
+                i === 0
+                  ? "text-[21px] sm:text-[23px] font-semibold leading-[1.5] text-[#15102a]"
+                  : "text-[19px] sm:text-[21px] leading-[1.55] text-[#3a3147]"
+              }
+              style={{ fontFamily: READ_FONT }}
+            >
+              {s}
+            </p>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -887,7 +920,7 @@ function DiagnosisScreen({ state, atBottom, onNudge, onContinue }: { state: Stat
         <h2 className="q-rise mt-5 font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">{diag.title}</h2>
         <div className="mt-5 space-y-3.5">
           {diag.sections.map((sec, i) => (
-            <DiagnosisSectionCard key={i} kind={sec.kind} text={sec.text} delay={Math.min(i, 4) * 0.12} />
+            <DiagnosisSectionCard key={i} section={sec} delay={Math.min(i, 4) * 0.12} />
           ))}
         </div>
       </Content>
@@ -920,7 +953,6 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
     { Icon: MessageCircle, label: "I'm in your phone every morning", sub: lines.dailyCheckin ?? "You start each day knowing someone has you. That is what makes you keep going." },
     { Icon: UtensilsCrossed, label: "Meals built around the food you love", sub: lines.meals ?? "No guessing, no sad diet plates. Real food you actually enjoy, planned for you each week." },
     { Icon: UserCheck, label: `A plan built for your body at ${ageWord}`, sub: (lines.plan ?? planDefault) + (flagLines.plan ? ` ${flagLines.plan}` : "") },
-    { Icon: BookOpen, label: "My eating out and family meals playbook", sub: lines.playbook ?? "Going out, or feeding everyone else? You will always know what to order and grab, so real life never throws you off." },
     { Icon: Users, label: "The circle of sisters beside you", sub: lines.sisters ?? "You are surrounded by women on the exact same journey, so you never feel like the only one." },
   ];
 
@@ -930,10 +962,10 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
         <h2 className="q-rise font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">
           {fillName("{name}, here is exactly how we fix this together.", state)}
         </h2>
-        <p className="q-rise mt-4 text-[18px] leading-[1.5] text-[#15102a]">
+        <p className="q-rise mt-4 text-[20px] sm:text-[21px] leading-[1.6] text-[#241d2e]" style={{ fontFamily: READ_FONT }}>
           Everything your breakdown just showed you, your pattern and what actually works for it, is what these next 12 weeks are built around. Not a generic program. Your pattern, handled, with me beside you the whole way.
         </p>
-        {flagLines.header && <p className="mt-3 text-[17px] font-semibold leading-snug text-[#c41e6a]">{flagLines.header}</p>}
+        {flagLines.header && <p className="mt-3 text-[18px] font-semibold leading-snug text-[#b81860]" style={{ fontFamily: READ_FONT }}>{flagLines.header}</p>}
 
         <div className="q-rise mt-5 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
           <div className="px-5 py-4 text-white" style={{ background: PINK }}>
@@ -954,24 +986,29 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
           <p className="font-semibold text-[#b81860]">You are not doing this alone, not for one single day.</p>
         </div>
 
-        <ul className="mt-7 space-y-3">
-          {inclusions.map(({ Icon, label, sub }) => (
-            <li key={label} className="flex items-start gap-3.5 rounded-[1.35rem] bg-white p-4 shadow-[0_14px_30px_-24px_rgba(140,17,74,0.8),inset_0_1px_0_rgba(255,255,255,0.9)]">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
-                <Icon className="h-5 w-5" strokeWidth={2} />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[17px] sm:text-[18px] font-bold leading-snug text-[#15102a]">{label}</p>
-                <p className="mt-0.5 text-[15px] sm:text-[16px] leading-snug text-[#6b5b6e]">{sub}</p>
+        <div className="mt-7 space-y-3">
+          {inclusions.map(({ Icon, label, sub }, idx) => (
+            <React.Fragment key={label}>
+              <div className="flex items-start gap-3.5 rounded-[1.5rem] bg-white p-5 shadow-[0_16px_34px_-26px_rgba(140,17,74,0.8)] ring-1 ring-[#f6e0ea]">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
+                  <Icon className="h-5 w-5" strokeWidth={2} />
+                </span>
+                <div className="min-w-0">
+                  <p className="text-[18px] sm:text-[19px] font-bold leading-snug text-[#15102a]">{label}</p>
+                  <p className="mt-1.5 text-[18px] sm:text-[19px] leading-[1.55] text-[#2f2740]" style={{ fontFamily: READ_FONT }}>{sub}</p>
+                </div>
               </div>
-            </li>
+              {/* The metabolism curve lives right under the "plan for your body" item. */}
+              {idx === 3 && <AgeCurveGraphic age={ageVal} />}
+            </React.Fragment>
           ))}
-        </ul>
+        </div>
 
-        <div className="mt-5"><AgeCurveGraphic age={ageVal} /></div>
-
-        <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Here's what happens with me by your side.</p>
-        <div className="mt-3"><TransformationCarousel items={TRANSF_PLAN} /></div>
+        <div className="mt-10">
+          <p className="text-[13px] font-bold uppercase tracking-[0.18em] text-[#c41e6a]">Real women, with me by their side</p>
+          <h3 className="mt-2 font-serif text-[26px] sm:text-[30px] leading-[1.12] text-[#15102a]">Here's what happens with me by your side.</h3>
+          <div className="mt-6"><ProofCarousel /></div>
+        </div>
       </Content>
 
       <StickyAction>
@@ -1005,73 +1042,71 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
           </p>
         </div>
 
-        {/* Two columns on desktop; on mobile the wrappers are plain blocks, so the
-            original stacked order and spacing are preserved exactly. */}
-        <div className="lg:mt-9 lg:grid lg:grid-cols-2 lg:items-start lg:gap-7">
-          {/* Column A: the offer / buy box. */}
-          <div>
-            <div className="mt-6 lg:mt-0 rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-              <p className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything you're getting</p>
-              <ul className="mt-3 divide-y divide-dashed divide-[#f0c9d8]">
-                {VALUE_STACK.map((it) => (
-                  <li key={it.label} className="flex items-center justify-between gap-3 py-2.5">
-                    <span className="flex items-center gap-2 text-[16px] leading-snug text-[#15102a]"><Check className="h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
-                    <span className="shrink-0 text-[16px] font-semibold text-[#6b5b6e]">${it.value.toLocaleString()}</span>
-                  </li>
-                ))}
-              </ul>
-              <div className="mt-3 flex items-center justify-between border-t-2 border-[#15102a] pt-3">
-                <span className="text-[17px] font-bold text-[#15102a]">Total value</span>
-                <span className="text-[20px] font-bold text-[#b79aa6] line-through">${VALUE_TOTAL.toLocaleString()}</span>
-              </div>
-              <p className="mt-1 text-right text-[15px] font-semibold text-[#c41e6a]">Your price today: ${full}</p>
-              <p className="mt-3 text-[16px] leading-snug text-[#15102a]">More than $2,600 of coaching, meals, and real support. Yours today for ${full}.</p>
+        {/* Value stack + pricing side by side on desktop. Mobile keeps the stacked order. */}
+        <div className="mt-6 lg:mt-9 space-y-6 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-7 lg:space-y-0">
+          <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+            <p className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything you're getting</p>
+            <ul className="mt-3 divide-y divide-dashed divide-[#f0c9d8]">
+              {VALUE_STACK.map((it) => (
+                <li key={it.label} className="flex items-center justify-between gap-3 py-2.5">
+                  <span className="flex items-center gap-2 text-[16px] leading-snug text-[#15102a]"><Check className="h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
+                  <span className="shrink-0 text-[16px] font-semibold text-[#6b5b6e]">${it.value.toLocaleString()}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-3 flex items-center justify-between border-t-2 border-[#15102a] pt-3">
+              <span className="text-[17px] font-bold text-[#15102a]">Total value</span>
+              <span className="text-[20px] font-bold text-[#b79aa6] line-through">${VALUE_TOTAL.toLocaleString()}</span>
             </div>
-
-            <div className="mt-6 space-y-1">
-              <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
-                <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
-                <p className="text-[18px] font-bold text-[#15102a]">Pay in full. ${full} today.</p>
-                <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
-                <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
-                  {pricing.loading ? "Loading…" : `Start With JJ, $${full}`}
-                </button>
-              </div>
-
-              <div className="flex items-center gap-3 py-1">
-                <span className="h-px flex-1 bg-[#e7c6d3]" />
-                <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#9a7f8a]">or</span>
-                <span className="h-px flex-1 bg-[#e7c6d3]" />
-              </div>
-
-              <div className="rounded-[1.9rem] border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
-                <p className="text-[18px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
-                <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
-                <button onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl border-2 border-[#d62a7a] px-6 py-4 text-center text-[17px] font-bold text-[#b81860] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
-                  {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
-                </button>
-              </div>
-            </div>
+            <p className="mt-1 text-right text-[15px] font-semibold text-[#c41e6a]">Your price today: ${full}</p>
+            <p className="mt-3 text-[16px] leading-snug text-[#15102a]">More than $2,600 of coaching, meals, and real support. Yours today for ${full}.</p>
           </div>
 
-          {/* Column B: start now, scarcity, guarantee, the reframe. */}
-          <div>
-            <div className="mt-6 lg:mt-0 space-y-3 text-[17px] leading-[1.5] text-[#15102a]">
+          <div className="space-y-1 lg:sticky lg:top-3">
+            <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
+              <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
+              <p className="text-[18px] font-bold text-[#15102a]">Pay in full. ${full} today.</p>
+              <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
+              <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
+                {pricing.loading ? "Loading…" : `Start With JJ, $${full}`}
+              </button>
+            </div>
+
+            <div className="flex items-center gap-3 py-1">
+              <span className="h-px flex-1 bg-[#e7c6d3]" />
+              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#9a7f8a]">or</span>
+              <span className="h-px flex-1 bg-[#e7c6d3]" />
+            </div>
+
+            <div className="rounded-[1.9rem] border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
+              <p className="text-[18px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
+              <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
+              <button onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl border-2 border-[#d62a7a] px-6 py-4 text-center text-[17px] font-bold text-[#b81860] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
+                {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Reassurance: two balanced columns on desktop, stacked on mobile. */}
+        <div className="mt-6 space-y-5 lg:mt-11 lg:mx-auto lg:max-w-[860px] lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
+          <div className="space-y-5">
+            <div className="space-y-3 text-[17px] leading-[1.5] text-[#15102a]">
               <p className="font-semibold">{OFFER_COPY.startNow}</p>
             </div>
-            <p className="mt-4 rounded-2xl bg-[#fff0f5] p-4 text-[16px] font-semibold leading-snug text-[#8c114a]">
+            <p className="rounded-2xl bg-[#fff0f5] p-4 text-[16px] font-semibold leading-snug text-[#8c114a]">
               {OFFER_COPY.scarcity}
             </p>
-
-            <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#f0c9d8] bg-white/70 p-4">
+          </div>
+          <div className="space-y-5">
+            <div className="flex items-start gap-3 rounded-2xl border border-[#f0c9d8] bg-white/70 p-4">
               <ShieldCheck className="h-7 w-7 shrink-0 text-[#c41e6a]" />
               <p className="font-serif italic text-[16px] leading-[1.6] text-[#15102a]">
                 "{OFFER_COPY.guarantee}"
                 <span className="mt-2 block font-sans not-italic text-[13px] font-semibold tracking-[0.16em] text-[#9a7f8a]">JJ</span>
               </p>
             </div>
-
-            <div className="mt-7 rounded-[1.9rem] bg-[#15102a] p-6 text-center text-white">
+            <div className="rounded-[1.9rem] bg-[#15102a] p-6 text-center text-white">
               <p className="font-serif text-[24px] sm:text-[28px] leading-[1.15]">The months ahead are happening either way.</p>
               <p className="mt-3 text-[16px] leading-[1.6] text-white/85">
                 You can spend them like the last ones. Or you can spend them with me right there with you, and come out the other side feeling like yourself again.
@@ -1081,7 +1116,7 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
         </div>
 
         {/* FAQ + trust line, full width but readable. */}
-        <div className="lg:mx-auto lg:mt-4 lg:max-w-[760px]">
+        <div className="lg:mx-auto lg:mt-6 lg:max-w-[760px]">
           <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Questions women ask me</p>
           <Accordion type="single" collapsible className="mt-2 w-full">
             {FAQ_ITEMS.map((it, i) => (
