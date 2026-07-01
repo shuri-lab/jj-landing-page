@@ -1,10 +1,10 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronLeft, ChevronRight, HelpCircle, ClipboardList, Phone } from "lucide-react";
 import QuizTakeover from "@/components/quiz/QuizTakeover";
-import logo12wts from "@/assets/landing/12-weeks-to-sexy-logo.png";
-import heroMobileC from "@/assets/hero-mobile-c.png";
-import heroDesktopC from "@/assets/hero-desktop-c.png";
+import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
+import heroMobileC from "@/assets/landing/quiz-hero-image-mobile.png";
+import heroDesktopC from "@/assets/landing/quiz-hero-image-desktop.png";
 import jjPortrait from "@/assets/landing/jj-selfie-sun.jpg";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
@@ -111,22 +111,31 @@ function PrimaryCta({ subline, className = "" }: { subline?: string; className?:
         style={{ background: PINK }}
       >
         <span className="inline-flex items-center justify-center gap-2">
-          Get My Personalized Plan <span aria-hidden>→</span>
+          Take the quiz <span aria-hidden>→</span>
         </span>
       </button>
-      {subline && <p className="mt-2.5 text-center text-[14px] sm:text-[15px]" style={{ color: "#15102a" }}>{subline}</p>}
+      {subline && <p className="mt-3 text-center text-[15px] sm:text-[16px] font-semibold" style={{ color: "#8c114a" }}>{subline}</p>}
     </div>
   );
 }
 
-function Wordmark({ className = "h-12 sm:h-14" }: { className?: string }) {
+// Soft highlight behind key phrases (matches the reference hero treatment).
+function Hi({ children }: { children: ReactNode }) {
+  return (
+    <mark className="rounded-sm px-1 text-ink" style={{ backgroundColor: "#f6dedb" }}>
+      {children}
+    </mark>
+  );
+}
+
+function Wordmark({ className = "h-9 sm:h-10" }: { className?: string }) {
   return (
     <img
-      src={logo12wts}
-      alt="12 Weeks to Sexy with JJ Smith"
+      src={jjSmithLogo}
+      alt="JJ Smith"
       className={`${className} w-auto`}
-      width={2172}
-      height={724}
+      width={132}
+      height={25}
     />
   );
 }
@@ -136,14 +145,14 @@ function Header() {
   const openQuiz = useOpenQuiz();
   return (
     <header style={{ backgroundColor: BLUSH }}>
-      <div className="mx-auto flex max-w-[1200px] items-center justify-between px-5 py-4">
-        <Wordmark />
+      <div className="mx-auto flex max-w-[1200px] items-center justify-center px-5 py-4 sm:justify-between">
+        <Wordmark className="h-6 sm:h-7" />
         <button
           onClick={openQuiz}
           data-cta="take-quiz"
           className="hidden rounded-full border-2 border-[#d62a7a] px-5 py-2.5 text-[14px] font-bold uppercase tracking-wide text-[#b81860] transition-colors hover:bg-[#d62a7a] hover:text-white sm:inline-flex"
         >
-          Get My Personalized Plan →
+          Take the quiz →
         </button>
       </div>
     </header>
@@ -157,28 +166,35 @@ function Hero() {
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px]">
         <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10">
           <div className="lg:order-1">
-            <h1 className="text-left font-serif font-medium text-[38px] leading-[1.08] tracking-[-0.025em] sm:text-[48px] lg:text-[58px]">
-              <span style={{ color: "#15102a" }}>Lose up to 30 pounds in 12 weeks,</span>{" "}
-              <em className="not-italic" style={{ color: "#c41e6a" }}>with JJ Smith as your personal coach.</em>
+            <h1 className="text-left font-serif font-medium text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[44px] lg:text-[52px]">
+              <span style={{ color: "#15102a" }}>Why losing the belly after 40 feels impossible</span>{" "}
+              <em className="not-italic" style={{ color: "#c41e6a" }}>(and the one shift that changes everything).</em>
             </h1>
             <p className="mt-6 max-w-[560px] text-left text-[18px] font-medium leading-[1.5] text-ink sm:text-[21px]">
-              For 12 weeks, it's just you and JJ. She builds your plan around your real life and stays with you every single day, until the weight is off.
+              Take this 1-minute quiz to reveal what's really going on, and what finally turns it around.
             </p>
 
-            <div className="mt-8 max-w-[420px]">
-              <PrimaryCta subline="Take the quick quiz. It's free." />
+            {/* Desktop CTA + trust live in the left column */}
+            <div className="mt-8 hidden max-w-[420px] lg:block">
+              <PrimaryCta subline="Get your personal belly-fat diagnosis in 60 seconds" />
             </div>
-
-            <p className="mt-5 text-[13px] font-semibold tracking-wide" style={{ color: "#8c114a" }}>
+            <p className="mt-5 hidden text-[13px] font-semibold tracking-wide lg:block" style={{ color: "#8c114a" }}>
               NYT bestselling author · 5 million pounds lost · 800,000 women helped
             </p>
           </div>
 
-          <div className="lg:order-2">
-            <div className="relative mx-auto mt-8 w-full max-w-[520px] lg:mt-0 lg:max-w-none">
-              <img src={heroMobileC} alt="JJ Smith, your personal coach for 12 weeks" className="mx-auto block h-auto w-full max-w-[440px] lg:hidden" width={1920} height={1471} />
-              <img src={heroDesktopC} alt="JJ Smith, your personal coach for 12 weeks" className="hidden h-auto w-full lg:block" width={1920} height={1920} />
-            </div>
+          {/* Desktop image (right column) */}
+          <div className="hidden lg:order-2 lg:block">
+            <img src={heroDesktopC} alt="JJ Smith, your personal coach for 12 weeks" className="h-auto w-full" width={2000} height={2000} />
+          </div>
+
+          {/* Mobile: image sits flush on top of the CTA */}
+          <div className="mx-auto mt-8 w-full max-w-[440px] lg:hidden">
+            <img src={heroMobileC} alt="JJ Smith, your personal coach for 12 weeks" className="block h-auto w-full" width={2000} height={2000} />
+            <PrimaryCta subline="Get your personal belly-fat diagnosis in 60 seconds" className="relative z-10" />
+            <p className="mt-5 text-center text-[13px] font-semibold tracking-wide" style={{ color: "#8c114a" }}>
+              NYT bestselling author · 5 million pounds lost · 800,000 women helped
+            </p>
           </div>
         </div>
 
@@ -214,10 +230,10 @@ function WhatThisIs() {
     <section className="px-5 py-16 lg:py-24">
       <div className="mx-auto max-w-[760px] text-center">
         <h2 className="font-serif text-[30px] leading-[1.15] tracking-[-0.01em] text-ink sm:text-[40px] lg:text-[46px]">
-          Your own personal coach, for the next 12 weeks.
+          First, find out what's really going on.
         </h2>
         <p className="mx-auto mt-6 max-w-[640px] text-[18px] leading-[1.6] text-ink-soft sm:text-[20px]">
-          JJ Smith has helped 800,000 women lose more than 5 million pounds. Now she becomes your coach, one on one. A real call with her every week. A check in every single day. Meals built around the food you already love. And she does not leave until the weight is off.
+          Most plans hand you the same rules and never ask why it stopped working for you. This quiz reads your real answers and shows you the actual reason the weight isn't moving, and the one shift that turns it around. It takes about a minute, it's free, and what you learn is yours to keep.
         </p>
       </div>
     </section>
@@ -306,9 +322,9 @@ function TransformationCarousel({ items }: { items: { src: string; quote: string
 // ── 5. How it works ──────────────────────────────────────────────────────────
 function HowItWorks() {
   const steps = [
-    { Icon: HelpCircle, title: "Take the quick quiz", text: "Answer a few simple questions about you and your goals. Two minutes, that's it." },
-    { Icon: ClipboardList, title: "Get your personalized plan", text: "JJ builds a plan around your body, your food, and your real life." },
-    { Icon: Phone, title: "Start your 12 weeks with JJ", text: "Weekly calls, daily check ins, and meals planned for you, all the way until the weight is off." },
+    { Icon: HelpCircle, title: "Take the 1-minute quiz", text: "Answer a few honest questions about you and what you've already tried." },
+    { Icon: ClipboardList, title: "Get your real diagnosis", text: "See the actual reason the weight won't move, read from your answers, not a generic guess." },
+    { Icon: Phone, title: "Discover what turns it around", text: "Learn the one shift that finally works for your situation, and exactly what to do next." },
   ];
   return (
     <section className="px-5 py-16 lg:py-24">
@@ -367,12 +383,9 @@ function FinalCta() {
   return (
     <section className="px-5 py-20 text-center lg:py-28">
       <div className="mx-auto max-w-[640px]">
-        <h2 className="font-serif text-[34px] leading-[1.1] text-ink sm:text-[44px] lg:text-[52px]">Ready to meet your coach?</h2>
+        <h2 className="font-serif text-[34px] leading-[1.1] text-ink sm:text-[44px] lg:text-[52px]">Ready to find out what's really going on?</h2>
         <p className="mx-auto mt-6 max-w-[540px] text-[18px] leading-[1.6] text-ink-soft sm:text-[20px]">
-          Take the quick quiz and get the plan JJ builds just for you. It's free, and it takes about two minutes.
-        </p>
-        <p className="mx-auto mt-5 max-w-[520px] text-[15px] font-semibold" style={{ color: "#8c114a" }}>
-          JJ takes women in small groups, so spots for each start date are limited.
+          Take the 1-minute quiz and get your personal belly-fat diagnosis, free. What you learn is yours to keep.
         </p>
         <div className="mx-auto mt-9 max-w-[420px]">
           <PrimaryCta />
@@ -387,7 +400,7 @@ function Footer() {
   return (
     <footer className="border-t border-line px-5 py-10">
       <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
-        <Wordmark className="h-10" />
+        <Wordmark className="h-5" />
         <p className="text-[13px] text-ink-faint">
           © {new Date().getFullYear()} JJ Smith. All rights reserved. ·{" "}
           <a href="#" className="underline">Privacy</a> · <a href="#" className="underline">Terms</a>
@@ -421,7 +434,7 @@ function StickyCta() {
         className="block w-full rounded-xl px-5 py-4 text-center text-[16px] font-bold uppercase tracking-wide text-white shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]"
         style={{ background: PINK }}
       >
-        Get My Personalized Plan →
+        Take the quiz →
       </button>
     </div>
   );

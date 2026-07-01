@@ -4,38 +4,28 @@ import {
   Check,
   Lock,
   ShieldCheck,
+  ArrowRight,
   Phone,
   MessageCircle,
   UtensilsCrossed,
   UserCheck,
   BookOpen,
   Users,
-  HeartHandshake,
-  FileText,
-  LogOut,
-  Heart,
-  Briefcase,
-  Footprints,
-  Shuffle,
-  GlassWater,
-  Leaf,
-  Smartphone,
-  ClipboardList,
-  Droplet,
   ChevronLeft,
   ChevronRight,
+  Leaf,
+  Smartphone,
+  Dumbbell,
+  Clock,
+  GlassWater,
+  ClipboardList,
+  Droplet,
+  Shuffle,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
 import jjAvatar from "@/assets/landing/jj-selfie-sun.jpg";
-import jjHug from "@/assets/landing/jj-hug-signup.webp";
-import jjLaughing from "@/assets/landing/jj-laughing-client.jpg";
-import t1 from "@/assets/landing/transformation-1.jpg";
-import t4 from "@/assets/landing/transformation-4.jpg";
-import t7 from "@/assets/landing/transformation-7.jpg";
-import t8 from "@/assets/landing/transformation-8.jpg";
 import t9 from "@/assets/landing/transformation-9.jpg";
-import t10 from "@/assets/landing/transformation-10.jpg";
 import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
 import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
@@ -46,19 +36,27 @@ import partnerNbc from "@/assets/landing/partners/nbc.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
-
-/**
- * QUIZ FUNNEL #1 — "12 Weeks to Sexy" (Clarity / offer-forward, v7)
- *
- * Full-screen takeover. Offer-led, no voice agent. Reveals fade in line by line
- * (slow, soft) under a small JJ "your coach" header, each with a supporting
- * visual. Scrollable screens use a sticky floating Continue button. No dashes
- * in copy. Transformations carry quote text only (no names, no pound numbers)
- * and never repeat across screens.
- */
+import {
+  type State,
+  type QuestionDef,
+  initialState,
+  QUESTIONS,
+  scoreAnswer,
+  nextKey,
+  resolve,
+  track,
+  DISC_MIDLIFE,
+  SLIDER_INTRO,
+  SLIDER_PROMPT,
+  SLIDER_REVEAL,
+  discHistory,
+  discDay,
+  DISC_UNIVERSAL,
+  TRUST_LINES,
+} from "./quiz01";
 
 const PINK = "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)";
-const BG = "#fdebeb";
+const STEP_DELAY = 0.45; // seconds between reveal lines
 
 const PRESS = [
   { src: partnerNyTimes, alt: "The New York Times" },
@@ -71,195 +69,78 @@ const PRESS = [
   { src: partnerWomansWorld, alt: "Woman's World" },
 ];
 
-// Transformations (quotes only, no names/numbers). Different sets per screen.
-const TRANSF_GOAL = [
-  { src: t1, quote: "I'm not hiding in baggy clothes anymore." },
-  { src: t4, quote: "I'm in family photos again, front and center." },
-];
-const TRANSF_PROOF = [
-  { src: t8, quote: "I'm dressing up again. I'm smiling in pictures again." },
-  { src: t10, quote: "I feel like the woman I forgot I was." },
-  { src: t7, quote: "My doctor's visits sound completely different now." },
-];
+const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidth?: number }>> = {
+  leaf: Leaf, smartphone: Smartphone, dumbbell: Dumbbell, clock: Clock,
+  glass: GlassWater, clipboard: ClipboardList, droplet: Droplet, shuffle: Shuffle,
+};
+
+// Goal -> 12-week projection metadata (mapped to this quiz's goal answers).
+const GOAL_META: Record<string, { target: number; chapterOne: boolean }> = {
+  under_15: { target: 12, chapterOne: false },
+  "15_30": { target: 22, chapterOne: false },
+  "30_50": { target: 30, chapterOne: true },
+  more_50: { target: 30, chapterOne: true },
+  not_sure: { target: 20, chapterOne: false },
+};
+const goalMeta = (s: State) => GOAL_META[s.goal ?? "15_30"] ?? GOAL_META["15_30"];
+
+const AGE_DISPLAY: Record<string, string> = {
+  "30s": "your 30s",
+  "40s": "your 40s",
+  "50s": "your 50s",
+  "60plus": "60 and beyond",
+};
+
 const TRANSF_PLAN = [
   { src: t12, quote: "I'm back to the size I never thought I'd see again." },
   { src: t9, quote: "I'm not the one hiding behind the camera anymore." },
   { src: tTammi, quote: "I lost the baby weight." },
 ];
 
-// ── Answer model ─────────────────────────────────────────────────────────────
-type Answers = {
-  goal?: string;
-  tried?: string[];
-  attempts?: string;
-  age?: string;
-  name?: string;
-  food?: string;
-  day?: string;
-  timeframe?: string;
-  readiness?: string;
-  email?: string;
-};
+const VALUE_STACK = [
+  { label: "Weekly 1 on 1 coaching with JJ", value: 1200 },
+  { label: "Daily check ins from JJ", value: 400 },
+  { label: "Your done for you meal plan", value: 300 },
+  { label: "A plan for your body and your life", value: 200 },
+  { label: "The eating out and family meals playbook", value: 150 },
+  { label: "Your jumpstart", value: 97 },
+  { label: "The recipe vault", value: 97 },
+  { label: "The circle of sisters", value: 200 },
+];
+const VALUE_TOTAL = 2650;
 
-const fill = (text: string, a: Answers) => text.replace(/\{name\}/g, a.name?.trim() || "sis");
-
-const GOAL_META: Record<string, { label: string; target: number; chapterOne: boolean }> = {
-  "10_20": { label: "10 to 20 lbs", target: 18, chapterOne: false },
-  "20_35": { label: "20 to 35 lbs", target: 28, chapterOne: false },
-  "35_50": { label: "35 to 50 lbs", target: 30, chapterOne: true },
-  "50_plus": { label: "50+ lbs", target: 25, chapterOne: true },
-};
-
-const FOOD_LABEL: Record<string, string> = {
-  comfort: "comfort food",
-  cook: "the recipes you love to cook",
-  quick: "quick, easy meals",
-  eat_out: "real life, eating out and grabbing food",
-};
-
-const AGE_DISPLAY: Record<string, string> = {
-  under_30: "under 30",
-  "30s": "your 30s",
-  "40s": "your 40s",
-  "50s": "your 50s",
-  "60_plus": "60 and beyond",
-};
-
-// ── Reveal copy (each string = one short fading line) ────────────────────────
-const GOAL_REVEAL_LINES = [
-  "Got it, sis. That is absolutely doable in 12 weeks.",
-  "Women who started exactly where you are now did this with me.",
-  "Here is what the next 12 weeks could look like.",
+const FAQ_ITEMS = [
+  { q: "I'm in my 50s and nothing's worked. Will this?", a: "Sister, this is who I built it for. Most of the women I work with are 40+ navigating perimenopause, menopause, and hormone shifts. Your plan is built around all of that, and I'm right there with you the whole way." },
+  { q: "I work full-time and have kids. Do I have time?", a: "Yes. Personalizing your plan means it fits your life, not the other way around. And I'm meeting you right where you are, every day. Most sisters spend 20 to 30 minutes a day on this." },
+  { q: "Do I have to drink green smoothies?", a: "Only if you want to. This isn't the cleanse. Your plan is built around foods you actually love." },
+  { q: "What makes this different from your other programs?", a: "My books and challenges gave you the information. This one gives you me, every step of the way. The information was never the problem. Being alone on the hard days was." },
+  { q: "What if I miss this cohort?", a: "I keep enrollment small so every sister gets the real attention she deserves. Once these limited spots are gone, you'll have to wait until I open the next round." },
 ];
 
-const TRIED_BASE = [
-  "Here's the thing every one of those had in common.",
-  "The day you slipped, nobody noticed. They hand you information and walk away.",
-  "That's not a willpower problem, sis. It's a being left alone problem. And it's fixable.",
-];
-const TRIED_SHOTS = "And if you've used the shots, no judgment here, ever. A shot can quiet your appetite. It can't build the habit or show up on your hard days. That's the part I add.";
-const TRIED_NONE = ["Whether you've tried a hundred things or none, same truth.", "What's been missing isn't another plan. It's a person. Let's fix that."];
+const fillName = (t: string, s: State) => t.replace(/\{name\}/g, s.name?.trim() || "sis");
 
-function triedLines(tried: string[] = []): string[] {
-  const picked = tried.filter((t) => t !== "shots");
-  const lines = picked.length > 0 ? [...TRIED_BASE] : [...TRIED_NONE];
-  if (tried.includes("shots")) lines.push(TRIED_SHOTS);
-  return lines;
+function fmtDate(weeksAhead: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + weeksAhead * 7);
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
 }
 
-const ATTEMPTS_REFRAME = [
-  "Can I be real with you, sis? It was never about willpower.",
-  "You have more strength than you give yourself credit for. You show up for everyone else, every single time.",
-  "What you never had was someone showing up for you.",
-  "That is the only thing that has been missing. And that is exactly what changes now.",
-];
+type Pricing = { monthly: number; full: number; remaining: number; loading: boolean };
 
-const AGE_LINES: Record<string, string[]> = {
-  under_30: [
-    "Here is the smart part about starting now.",
-    "Your metabolism is still on your side, so the habits you build today carry you through your 30s and 40s, when it gets harder.",
-    "We lock them in now, so you never fight the uphill battle most women do later.",
-  ],
-  "30s": [
-    "Here is what is quietly shifting.",
-    "In your 30s, life fills up and the metabolism that carried you through your 20s starts to slow.",
-    "Most women do not notice until the old tricks stop working.",
-    "We get ahead of it now, so you stay in control instead of playing catch up later.",
-  ],
-  "40s": [
-    "Here is what most plans completely ignore.",
-    "In your 40s, your hormones shift and your metabolism changes, so the things that always worked just stop.",
-    "That is real, not in your head.",
-    "So we put the old rules down and build around the body you have now. That is exactly why this works when nothing else did.",
-  ],
-  "50s": [
-    "Here is something most plans ignore.",
-    "After 50, your body holds onto weight differently, and you naturally lose the muscle that keeps your metabolism burning.",
-    "That is why eating less barely moves the needle anymore.",
-    "So we do not fight your body, we work with it. Your plan is built for exactly where you are now.",
-  ],
-  "60_plus": [
-    "Here is the real key at this stage.",
-    "It is not about doing more or eating less. It is about protecting your strength and keeping your metabolism awake.",
-    "Do that, and the weight follows.",
-    "Your plan is built around that, so it feels doable, never punishing.",
-  ],
-};
-
-const PROOF_LINES = [
-  "For years I've helped women lose weight through my books and my challenges. 800,000 of them.",
-  "But I'll be straight about what was always missing. Somebody with you, every day.",
-  "A book can't notice when you slip. That's the part this finally fixes.",
-];
-
-const FOOD_LINES: Record<string, string[]> = {
-  comfort: ["Good.", "We build around the food you love, not against it. That's the only kind of plan that lasts."],
-  cook: ["Perfect.", "Real recipes you'll actually want to make. Cooking becomes the fun part, not the chore."],
-  quick: ["Then quick and easy is what I'll build you.", "Real food, minimal time. A plan you don't have time for isn't a plan."],
-  eat_out: ["No problem. That's real life, and I plan for it.", "You'll know exactly what to order and grab, so eating out never wrecks your week."],
-};
-
-const DAY_LINES: Record<string, string[]> = {
-  desk: ["Desk most of the day, got it.", "We'll fit in movement that actually works for that."],
-  feet: ["On your feet a lot, good.", "We'll use that and fuel it right."],
-  running: ["Always taking care of everyone else.", "This plan fits around that. It won't add to your plate."],
-  varies: ["No two days alike.", "Then your plan flexes with you, not against you."],
-};
-
-const TIME_LEADIN: Record<string, string> = {
-  asap: "I love that energy, sis. So we do not wait.",
-  few_months: "Good. We've got room to do this right.",
-  date: "Then let's get you ready for it.",
-  no_deadline: "No deadline, just done waiting. This isn't a sprint to a date. It's getting it off for good.",
-};
-const TIME_SHARED = [
-  "The very first thing I build you is your jumpstart, shaped around your real life, so you feel it working in your first days.",
-  "Nothing keeps you going like watching the scale move early.",
-];
-
-const READY_LINES: Record<string, string[]> = {
-  ready: ["That's what I like to hear.", "Let's go get her."],
-  think_so: ["Fair. You've been let down before.", "You don't have to be sure, {name}. You just have to start. I'll handle sure."],
-  tell_more: ["Fair. You should know exactly what you're saying yes to.", "Let me show you your plan first, then you decide. No pressure, no tricks."],
-};
-
-// ── Screen sequence ──────────────────────────────────────────────────────────
-const SEQUENCE = [
-  "goal", "r-goal",
-  "tried", "r-tried",
-  "attempts", "r-attempts",
-  "age", "r-age",
-  "proof",
-  "name", "r-name",
-  "food", "r-food",
-  "day", "r-day",
-  "time", "r-time",
-  "ready", "r-ready",
-  "build",
-  "email",
-  "plan",
-  "offer",
-] as const;
-
-const PLAN_INDEX = SEQUENCE.indexOf("plan");
-type Pricing = { monthly: number; full: number; months: number; remaining: number; loading: boolean };
-
-// ── Main component ───────────────────────────────────────────────────────────
+// ── Main ─────────────────────────────────────────────────────────────────────
 export default function QuizTakeover({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { basic } = useCoachPrograms();
-  const [index, setIndex] = useState(0);
-  const [answers, setAnswers] = useState<Answers>({});
+  const [state, setState] = useState<State>(initialState);
+  const [stepKey, setStepKey] = useState<string>("S1");
   const scrollRef = useRef<HTMLDivElement | null>(null);
 
-  const key = SEQUENCE[index];
-  const next = () => setIndex((i) => Math.min(i + 1, SEQUENCE.length - 1));
-  const set = (patch: Partial<Answers>) => setAnswers((a) => ({ ...a, ...patch }));
-
   useEffect(() => {
-    if (!open) {
+    if (open) {
+      track("quiz_start");
+    } else {
       const t = setTimeout(() => {
-        setIndex(0);
-        setAnswers({});
+        setState(initialState());
+        setStepKey("S1");
       }, 250);
       return () => clearTimeout(t);
     }
@@ -267,7 +148,7 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: 0 });
-  }, [index]);
+  }, [stepKey]);
 
   useEffect(() => {
     if (typeof document === "undefined" || !open) return;
@@ -282,24 +163,38 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
     const monthly = basic?.monthlyPriceAmount ?? basic?.priceAmount ?? 77;
     const full = basic?.fullProgramPriceAmount ?? 197;
     const months = basic?.durationWeeks ? Math.max(1, Math.round(basic.durationWeeks / 4)) : 3;
-    return { monthly, full, months, remaining: Math.max(1, months - 1), loading: !basic };
+    return { monthly, full, remaining: Math.max(1, months - 1), loading: !basic };
   }, [basic]);
 
+  const answer = (q: QuestionDef, value: string | string[]) => {
+    const ns = scoreAnswer(state, q.qid, value);
+    track("question_answered", { q: q.qid, value });
+    setState(ns);
+    setStepKey(nextKey(q.key, ns));
+  };
+  const advance = (from: string) => setStepKey(nextKey(from, state));
+  const setName = (name: string) => {
+    setState((s) => ({ ...s, name }));
+    setStepKey(nextKey("NAME", state));
+  };
+  const setEmail = (email: string) => {
+    setState((s) => ({ ...s, email }));
+    track("email_captured", { email });
+    setStepKey(nextKey("EMAIL", state));
+  };
+
   const goToCheckout = (billing: "MONTHLY" | "FULL_PROGRAM" = "MONTHLY") => {
+    const r = resolve(state);
+    track("checkout_start", { primary: r.primary });
     const params = new URLSearchParams();
-    params.set("firstName", answers.name?.trim() ?? "");
-    params.set("email", answers.email?.trim() ?? "");
-    params.set("goal", answers.goal ?? "");
-    params.set("tried", (answers.tried ?? []).join(","));
-    params.set("attempts", answers.attempts ?? "");
-    params.set("age", answers.age ?? "");
-    params.set("food", answers.food ?? "");
-    params.set("day", answers.day ?? "");
-    params.set("timeframe", answers.timeframe ?? "");
-    params.set("readiness", answers.readiness ?? "");
+    params.set("firstName", state.name?.trim() ?? "");
+    params.set("email", state.email?.trim() ?? "");
+    params.set("goal", state.goal ?? "");
+    params.set("why", state.why ?? "");
+    params.set("primary", r.primary);
     params.set("paymentOption", billing === "FULL_PROGRAM" ? "pay_in_full" : "monthly");
-    params.set("utm_source", "quiz-12wts");
-    params.set("version", "clarity-v7");
+    params.set("utm_source", "quiz-belly-after-40");
+    params.set("version", "quiz01");
     const url = basic
       ? `${signupUrl(basic.id, billing, { durationWeeks: basic.durationWeeks })}&${params.toString()}`
       : `/checkout?${params.toString()}`;
@@ -308,23 +203,24 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
 
   if (!open) return null;
 
-  const progress = Math.min(100, Math.round(((index + 1) / (PLAN_INDEX + 1)) * 100));
-  const showProgress = index < PLAN_INDEX;
+  const progressKeys = ["S1", "S2", "S3", "S5", "S7", "S8", "S10", "S12", "S13", "S14", "S15", "S16"];
+  const answeredCount = progressKeys.filter((k) => {
+    const q = QUESTIONS[k];
+    return q && state.answers[q.qid] !== undefined;
+  }).length;
+  const progress = Math.min(100, Math.round((answeredCount / progressKeys.length) * 100));
+  const showProgress = !["BUILD", "EMAIL", "PLAN", "OFFER"].includes(stepKey);
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col" style={{ backgroundColor: BG }} role="dialog" aria-modal="true">
+    <div className="q-mesh fixed inset-0 z-[100] flex flex-col" role="dialog" aria-modal="true">
       <div className="shrink-0">
-        <div className="h-1.5 w-full bg-[#f3d3d3]">
+        <div className="mx-4 mt-3 h-2 overflow-hidden rounded-full bg-[#f0cdd9]/70 shadow-[inset_0_1px_2px_rgba(140,17,74,0.25)]">
           {showProgress && (
-            <div className="h-full transition-[width] duration-500 ease-out" style={{ width: `${progress}%`, background: PINK }} />
+            <div className="h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${progress}%`, background: PINK }} />
           )}
         </div>
         <div className="flex justify-end px-4 pt-3">
-          <button
-            onClick={onClose}
-            aria-label="Close"
-            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-[#8c114a] transition-colors hover:bg-white"
-          >
+          <button onClick={onClose} aria-label="Close" className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white/70 text-[#8c114a] transition-colors hover:bg-white">
             <X className="h-5 w-5" />
           </button>
         </div>
@@ -333,24 +229,14 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
       <div ref={scrollRef} className="relative flex-1 overflow-y-auto">
         <div className="mx-auto flex min-h-full max-w-[540px] flex-col px-6 pt-2">
           <Screen
-            key={key}
-            screenKey={key}
-            answers={answers}
+            key={stepKey}
+            stepKey={stepKey}
+            state={state}
             pricing={pricing}
-            onSingle={(field, value) => {
-              set({ [field]: value } as Partial<Answers>);
-              next();
-            }}
-            onMulti={(value) => set({ tried: value })}
-            onName={(name) => {
-              set({ name });
-              next();
-            }}
-            onEmail={(email) => {
-              set({ email });
-              next();
-            }}
-            onContinue={next}
+            onAnswer={answer}
+            onAdvance={advance}
+            onName={setName}
+            onEmail={setEmail}
             onCheckout={goToCheckout}
           />
         </div>
@@ -361,232 +247,93 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
 
 // ── Screen router ────────────────────────────────────────────────────────────
 function Screen({
-  screenKey,
-  answers,
-  pricing,
-  onSingle,
-  onMulti,
-  onName,
-  onEmail,
-  onContinue,
-  onCheckout,
+  stepKey, state, pricing, onAnswer, onAdvance, onName, onEmail, onCheckout,
 }: {
-  screenKey: string;
-  answers: Answers;
+  stepKey: string;
+  state: State;
   pricing: Pricing;
-  onSingle: (field: keyof Answers, value: string) => void;
-  onMulti: (value: string[]) => void;
+  onAnswer: (q: QuestionDef, value: string | string[]) => void;
+  onAdvance: (from: string) => void;
   onName: (name: string) => void;
   onEmail: (email: string) => void;
-  onContinue: () => void;
   onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void;
 }) {
-  switch (screenKey) {
-    case "goal":
-      return (
-        <SingleScreen
-          eyebrow="First. Let's start here."
-          question="How much are you looking to lose?"
-          options={[
-            { value: "10_20", label: "10 to 20 lbs" },
-            { value: "20_35", label: "20 to 35 lbs" },
-            { value: "35_50", label: "35 to 50 lbs" },
-            { value: "50_plus", label: "50+ lbs" },
-          ]}
-          onPick={(v) => onSingle("goal", v)}
-        />
-      );
-    case "r-goal":
-      return <GoalRevealScreen answers={answers} onContinue={onContinue} />;
+  const q = QUESTIONS[stepKey];
+  if (q) {
+    return q.type === "single" ? (
+      <SingleScreen q={q} onPick={(v) => onAnswer(q, v)} />
+    ) : (
+      <MultiScreen q={q} onSubmit={(v) => onAnswer(q, v)} />
+    );
+  }
 
-    case "tried":
-      return (
-        <MultiScreen
-          question="What have you already tried?"
-          hint="Tap all that apply."
-          options={[
-            { value: "cleanses", label: "Cleanses / detoxes", Icon: GlassWater },
-            { value: "keto", label: "Keto / low carb", Icon: Leaf },
-            { value: "apps", label: "Calorie counting apps", Icon: Smartphone },
-            { value: "programs", label: "Weight loss programs", Icon: ClipboardList },
-            { value: "shots", label: "The shots (Ozempic, etc.)", Icon: Droplet },
-          ]}
-          selected={answers.tried ?? []}
-          onChange={onMulti}
-          onContinue={onContinue}
-        />
-      );
-    case "r-tried":
-      return <Reveal lines={triedLines(answers.tried)} onContinue={onContinue} visual={<MissingGraphic />} />;
-
-    case "attempts":
-      return (
-        <SingleScreen
-          question="Be honest with me. How many times have you started over?"
-          options={[
-            { value: "so_many", label: "So many times" },
-            { value: "a_few", label: "A few" },
-            { value: "first_time", label: "This is my first real attempt" },
-          ]}
-          onPick={(v) => onSingle("attempts", v)}
-        />
-      );
-    case "r-attempts":
-      return <Reveal lines={ATTEMPTS_REFRAME} onContinue={onContinue} visual={<PhotoCard src={jjHug} caption="What you never had was someone showing up for you." />} />;
-
-    case "age":
-      return (
-        <SingleScreen
-          question="What's your age?"
-          options={[
-            { value: "under_30", label: "Under 30" },
-            { value: "30s", label: "30s" },
-            { value: "40s", label: "40s" },
-            { value: "50s", label: "50s" },
-            { value: "60_plus", label: "60+" },
-          ]}
-          onPick={(v) => onSingle("age", v)}
-        />
-      );
-    case "r-age":
-      return <Reveal lines={AGE_LINES[answers.age ?? "40s"]} onContinue={onContinue} visual={<AgeCurveGraphic age={answers.age ?? "40s"} />} />;
-
-    case "proof":
-      return <ProofScreen onContinue={onContinue} />;
-
-    case "name":
-      return <NameScreen onSubmit={onName} />;
-    case "r-name":
-      return <Reveal lines={[fill("Okay, {name}. Let's keep going.", answers)]} auto onContinue={onContinue} visual={<PhotoCard src={jjLaughing} compact />} />;
-
-    case "food":
-      return (
-        <SingleScreen
-          question={fill("What food do you actually love, {name}?", answers)}
-          options={[
-            { value: "comfort", label: "Comfort food, honestly" },
-            { value: "cook", label: "I love to cook" },
-            { value: "quick", label: "Quick and easy is all I've got time for" },
-            { value: "eat_out", label: "I eat out or grab food a lot" },
-          ]}
-          onPick={(v) => onSingle("food", v)}
-        />
-      );
-    case "r-food":
-      return <Reveal lines={FOOD_LINES[answers.food ?? "comfort"]} onContinue={onContinue} visual={<IconCard Icon={UtensilsCrossed} text={`Built around ${FOOD_LABEL[answers.food ?? "comfort"]}.`} />} />;
-
-    case "day":
-      return (
-        <SingleScreen
-          question="What does a normal day look like for you?"
-          options={[
-            { value: "desk", label: "Desk most of the day" },
-            { value: "feet", label: "On my feet a lot" },
-            { value: "running", label: "Always running after everyone else" },
-            { value: "varies", label: "Honestly, no two days the same" },
-          ]}
-          onPick={(v) => onSingle("day", v)}
-        />
-      );
-    case "r-day": {
-      const dayIcon = { desk: Briefcase, feet: Footprints, running: Heart, varies: Shuffle }[answers.day ?? "running"]!;
-      return <Reveal lines={DAY_LINES[answers.day ?? "running"]} auto onContinue={onContinue} visual={<IconCard Icon={dayIcon} text="Your plan fits your real life." />} />;
+  switch (stepKey) {
+    case "S4":
+      return <DiscoveryScreen lines={DISC_MIDLIFE} flip="F3" visual={<BodyShiftGraphic age={state.answers["F1q"] as string} />} onContinue={() => onAdvance("S4")} />;
+    case "S6":
+      return <SliderScreen onContinue={() => onAdvance("S6")} />;
+    case "S9": {
+      const c2 = state.answers["C2"] as string;
+      return <DiscoveryScreen lines={discHistory(c2)} flip="history" visual={c2 === "regained" ? <TwoPathGraphic /> : <FlipBadge />} onContinue={() => onAdvance("S9")} />;
     }
-
-    case "time":
-      return (
-        <SingleScreen
-          question="When do you want to feel like yourself again?"
-          options={[
-            { value: "asap", label: "As soon as possible" },
-            { value: "few_months", label: "In the next few months" },
-            { value: "date", label: "I've got a date in mind" },
-            { value: "no_deadline", label: "No deadline, just done waiting" },
-          ]}
-          onPick={(v) => onSingle("timeframe", v)}
-        />
-      );
-    case "r-time":
-      return (
-        <Reveal lines={[TIME_LEADIN[answers.timeframe ?? "date"], ...TIME_SHARED]} onContinue={onContinue} continueLabel="See my jumpstart" visual={<JumpstartCurve />} />
-      );
-
-    case "ready":
-      return (
-        <SingleScreen
-          question="Last one. If I'm with you every single day for 12 weeks, are you ready?"
-          options={[
-            { value: "ready", label: "I'm ready" },
-            { value: "think_so", label: "I think so" },
-            { value: "tell_more", label: "Tell me more first" },
-          ]}
-          onPick={(v) => onSingle("readiness", v)}
-        />
-      );
-    case "r-ready":
-      return <Reveal lines={READY_LINES[answers.readiness ?? "think_so"].map((l) => fill(l, answers))} onContinue={onContinue} visual={<PhotoCard src={jjAvatar} caption="You just have to start. I'll handle sure." />} />;
-
-    case "build":
-      return <BuildScreen answers={answers} onDone={onContinue} />;
-
-    case "email":
-      return <EmailScreen answers={answers} onSubmit={onEmail} />;
-
-    case "plan":
-      return <PlanScreen answers={answers} onContinue={onContinue} />;
-
-    case "offer":
-      return <OfferScreen answers={answers} pricing={pricing} onCheckout={onCheckout} />;
-
+    case "S11": {
+      const d1 = state.answers["D1"] as string;
+      return <DiscoveryScreen lines={discDay(d1, state.flags.FLAG_ED_watch)} flip="day" visual={<FlipBadge />} onContinue={() => onAdvance("S11")} />;
+    }
+    case "UNIV":
+      return <DiscoveryScreen lines={DISC_UNIVERSAL} flip="F8" visual={<FlipBadge />} onContinue={() => onAdvance("UNIV")} />;
+    case "S17":
+      return <TrustScreen onContinue={() => onAdvance("S17")} />;
+    case "NAME":
+      return <NameScreen onSubmit={onName} />;
+    case "BUILD":
+      return <BuildScreen state={state} onDone={() => onAdvance("BUILD")} />;
+    case "EMAIL":
+      return <EmailScreen state={state} onSubmit={onEmail} />;
+    case "PLAN":
+      return <PlanScreen state={state} onContinue={() => onAdvance("PLAN")} />;
+    case "OFFER":
+      return <OfferScreen state={state} pricing={pricing} onCheckout={onCheckout} />;
     default:
       return null;
   }
 }
 
-// ── Layout primitives ────────────────────────────────────────────────────────
+// ── Primitives ───────────────────────────────────────────────────────────────
 function Content({ children, align = "center" }: { children: React.ReactNode; align?: "center" | "top" }) {
   return <div className={`flex flex-1 flex-col ${align === "center" ? "justify-center" : "justify-start pt-3"} pb-6`}>{children}</div>;
 }
 
 function StickyAction({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className="sticky bottom-0 z-20 -mx-6 mt-2 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent px-6 pt-6"
-      style={{ paddingBottom: "calc(1.1rem + env(safe-area-inset-bottom, 0px))" }}
-    >
+    <div className="sticky bottom-0 z-20 -mx-6 mt-2 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent px-6 pt-6" style={{ paddingBottom: "calc(1.1rem + env(safe-area-inset-bottom, 0px))" }}>
       {children}
     </div>
   );
 }
 
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="mb-3 text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">{children}</p>;
+function Question({ children, sub }: { children: React.ReactNode; sub?: string }) {
+  return (
+    <>
+      <h2 className="font-sans font-bold text-[26px] sm:text-[31px] leading-[1.16] tracking-[-0.02em] text-[#15102a]">{children}</h2>
+      {sub && <p className="mt-2 text-[16px] text-[#6b5b6e]">{sub}</p>}
+    </>
+  );
 }
 
-function Question({ children }: { children: React.ReactNode }) {
-  return <h2 className="font-sans font-bold text-[26px] sm:text-[31px] leading-[1.18] tracking-[-0.01em] text-[#15102a]">{children}</h2>;
-}
-
-function PrimaryButton({
-  children,
-  disabled,
-  onClick,
-  type = "button",
-}: {
-  children: React.ReactNode;
-  disabled?: boolean;
-  onClick?: () => void;
-  type?: "button" | "submit";
-}) {
+function PrimaryButton({ children, disabled, onClick, type = "button" }: { children: React.ReactNode; disabled?: boolean; onClick?: () => void; type?: "button" | "submit" }) {
   return (
     <button
       type={type}
       onClick={onClick}
       disabled={disabled}
-      className="block w-full rounded-2xl px-6 py-5 text-center text-[18px] sm:text-[19px] font-bold tracking-wide text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all duration-150 hover:-translate-y-0.5 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+      className="group relative block w-full overflow-hidden rounded-[1.35rem] px-7 py-5 text-center text-[18px] sm:text-[19px] font-bold tracking-wide text-white shadow-[0_20px_40px_-14px_rgba(184,24,96,0.65),inset_0_1px_0_rgba(255,255,255,0.35)] transition-all duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
       style={{ background: PINK }}
     >
-      {children}
+      <span className="block pr-9">{children}</span>
+      <span className="absolute right-2.5 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/18 transition-transform duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] group-hover:translate-x-0.5 group-active:scale-95">
+        <ArrowRight className="h-[18px] w-[18px]" strokeWidth={2.4} />
+      </span>
     </button>
   );
 }
@@ -603,17 +350,11 @@ function CoachHeader() {
   );
 }
 
-const STEP_DELAY = 0.45; // seconds between reveal lines (slow, soft)
-
 function FadeLines({ lines, startAt = 0 }: { lines: string[]; startAt?: number }) {
   return (
     <div className="space-y-3">
       {lines.map((line, i) => (
-        <p
-          key={i}
-          className="q-fadeline text-[20px] sm:text-[22px] leading-[1.4] font-medium text-[#15102a]"
-          style={{ animationDelay: `${(startAt + i) * STEP_DELAY}s` }}
-        >
+        <p key={i} className="q-fadeline text-[20px] sm:text-[22px] leading-[1.4] font-medium text-[#15102a]" style={{ animationDelay: `${(startAt + i) * STEP_DELAY}s` }}>
           {line}
         </p>
       ))}
@@ -621,32 +362,45 @@ function FadeLines({ lines, startAt = 0 }: { lines: string[]; startAt?: number }
   );
 }
 
-// ── Single-select (one tap advances) ─────────────────────────────────────────
-function SingleScreen({
-  eyebrow,
-  question,
-  options,
-  onPick,
-}: {
-  eyebrow?: string;
-  question: string;
-  options: { value: string; label: string }[];
-  onPick: (value: string) => void;
-}) {
+function OptionButton({ label, onClick, selected, Icon }: { label: string; onClick: () => void; selected?: boolean; Icon?: React.ComponentType<{ className?: string; strokeWidth?: number }> }) {
+  return (
+    <button
+      onClick={onClick}
+      className={`group flex w-full items-center gap-3.5 rounded-[1.35rem] border bg-white px-4 py-3.5 text-left text-[18px] sm:text-[19px] font-semibold leading-snug text-[#15102a] transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-0.5 active:scale-[0.985] ${
+        selected
+          ? "border-[#d62a7a]/70 shadow-[0_22px_44px_-22px_rgba(184,24,96,0.65),inset_0_1px_0_rgba(255,255,255,0.9)]"
+          : "border-[#f2d6e0] shadow-[0_16px_34px_-26px_rgba(140,17,74,0.55),inset_0_1px_0_rgba(255,255,255,0.9)] hover:border-[#e79bbb]"
+      }`}
+      style={{ minHeight: 62 }}
+    >
+      <span
+        className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl transition-all duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] ${
+          selected ? "scale-105 text-white shadow-[0_8px_18px_-8px_rgba(184,24,96,0.7)]" : Icon ? "text-[#c41e6a]" : "text-transparent ring-1 ring-inset ring-[#eec2d4]"
+        }`}
+        style={selected ? { background: PINK } : { backgroundColor: "#fbe6ee" }}
+        aria-hidden
+      >
+        {selected ? <Check className="h-5 w-5" strokeWidth={3} /> : Icon ? <Icon className="h-5 w-5" strokeWidth={1.9} /> : <Check className="h-[18px] w-[18px]" strokeWidth={3} />}
+      </span>
+      <span className="flex-1">{label}</span>
+    </button>
+  );
+}
+
+function SingleScreen({ q, onPick }: { q: QuestionDef; onPick: (v: string) => void }) {
   const [picked, setPicked] = useState<string | null>(null);
   const choose = (v: string) => {
     if (picked) return;
     setPicked(v);
-    setTimeout(() => onPick(v), 220);
+    setTimeout(() => onPick(v), 200);
   };
   return (
-    <Content align={options.length > 4 ? "top" : "center"}>
+    <Content align={q.options.length > 4 ? "top" : "center"}>
       <div className="q-rise">
-        {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-        <Question>{question}</Question>
-        <div className="mt-7 space-y-3.5">
-          {options.map((opt) => (
-            <OptionButton key={opt.value} label={opt.label} selected={picked === opt.value} onClick={() => choose(opt.value)} />
+        <Question sub={q.sub}>{q.prompt}</Question>
+        <div className="mt-7 space-y-3">
+          {q.options.map((o) => (
+            <OptionButton key={o.value} label={o.label} selected={picked === o.value} Icon={o.icon ? ICONS[o.icon] : undefined} onClick={() => choose(o.value)} />
           ))}
         </div>
       </div>
@@ -654,155 +408,109 @@ function SingleScreen({
   );
 }
 
-function OptionButton({
-  label,
-  onClick,
-  selected,
-  Icon,
-}: {
-  label: string;
-  onClick: () => void;
-  selected?: boolean;
-  Icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className={`flex w-full items-center gap-3 rounded-2xl border-2 bg-white px-5 py-4 text-left text-[18px] sm:text-[19px] font-semibold leading-snug text-[#15102a] shadow-[0_12px_26px_-20px_rgba(140,17,74,0.7)] transition-all duration-150 hover:-translate-y-0.5 hover:border-[#d62a7a] hover:shadow-[0_18px_34px_-18px_rgba(184,24,96,0.55)] active:scale-[0.98] ${
-        selected ? "border-[#d62a7a] ring-2 ring-[#d62a7a]/30" : "border-[#f0c9d8]"
-      }`}
-      style={{ minHeight: 62 }}
-    >
-      <span
-        className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all ${
-          selected ? "scale-105 text-white" : Icon ? "text-[#c41e6a]" : "border-2 border-[#e7b9cb] text-transparent"
-        }`}
-        style={selected ? { background: PINK } : Icon ? { backgroundColor: "#fdebeb" } : undefined}
-        aria-hidden
-      >
-        {selected ? <Check className="h-5 w-5" strokeWidth={3} /> : Icon ? <Icon className="h-5 w-5" strokeWidth={2} /> : <Check className="h-5 w-5" strokeWidth={3} />}
-      </span>
-      <span className="flex-1">{label}</span>
-    </button>
-  );
-}
-
-// ── Multi-select (Continue) ──────────────────────────────────────────────────
-function MultiScreen({
-  question,
-  hint,
-  options,
-  selected,
-  onChange,
-  onContinue,
-}: {
-  question: string;
-  hint?: string;
-  options: { value: string; label: string; Icon?: React.ComponentType<{ className?: string; strokeWidth?: number }> }[];
-  selected: string[];
-  onChange: (next: string[]) => void;
-  onContinue: () => void;
-}) {
-  const toggle = (value: string) =>
-    onChange(selected.includes(value) ? selected.filter((v) => v !== value) : [...selected, value]);
+function MultiScreen({ q, onSubmit }: { q: QuestionDef; onSubmit: (v: string[]) => void }) {
+  const [sel, setSel] = useState<string[]>([]);
+  const toggle = (v: string) => setSel((s) => (s.includes(v) ? s.filter((x) => x !== v) : [...s, v]));
   return (
     <>
       <Content align="top">
         <div className="q-rise">
-          <Question>{question}</Question>
-          {hint && <p className="mt-2 text-[16px] text-[#6b5b6e]">{hint}</p>}
-          <div className="mt-6 space-y-3.5">
-            {options.map((opt) => (
-              <OptionButton key={opt.value} label={opt.label} Icon={opt.Icon} selected={selected.includes(opt.value)} onClick={() => toggle(opt.value)} />
+          <Question sub={q.sub}>{q.prompt}</Question>
+          <div className="mt-6 space-y-3">
+            {q.options.map((o) => (
+              <OptionButton key={o.value} label={o.label} selected={sel.includes(o.value)} Icon={o.icon ? ICONS[o.icon] : undefined} onClick={() => toggle(o.value)} />
             ))}
           </div>
         </div>
       </Content>
       <StickyAction>
-        <PrimaryButton onClick={onContinue}>Continue</PrimaryButton>
+        <PrimaryButton onClick={() => onSubmit(sel)} disabled={sel.length === 0}>Continue</PrimaryButton>
       </StickyAction>
     </>
   );
 }
 
-// ── Reveal (fade in line by line, with a supporting visual) ──────────────────
-function Reveal({
-  lines,
-  onContinue,
-  continueLabel = "Continue",
-  auto = false,
-  visual,
-}: {
-  lines: string[];
-  onContinue: () => void;
-  continueLabel?: string;
-  auto?: boolean;
-  visual?: React.ReactNode;
-}) {
+// ── Discovery reveal ─────────────────────────────────────────────────────────
+function DiscoveryScreen({ lines, visual, flip, onContinue }: { lines: string[]; visual: React.ReactNode; flip: string; onContinue: () => void }) {
   const [done, setDone] = useState(false);
   useEffect(() => {
-    const totalMs = lines.length * STEP_DELAY * 1000 + 500;
-    const t = window.setTimeout(() => setDone(true), totalMs);
-    let t2: number | undefined;
-    if (auto) t2 = window.setTimeout(onContinue, totalMs + 1300);
-    return () => {
-      clearTimeout(t);
-      if (t2) clearTimeout(t2);
-    };
+    track("belief_flip_shown", { flip });
+    const t = window.setTimeout(() => setDone(true), lines.length * STEP_DELAY * 1000 + 500);
+    return () => clearTimeout(t);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
   return (
     <>
       <Content align="center">
         <CoachHeader />
-        <div className="mt-6">
-          <FadeLines lines={lines} />
-        </div>
-        {visual && (
-          <div className="q-fadeline mt-7" style={{ animationDelay: `${lines.length * STEP_DELAY}s` }}>
-            {visual}
-          </div>
-        )}
+        <div className="mt-6"><FadeLines lines={lines} /></div>
+        <div className="q-fadeline mt-7" style={{ animationDelay: `${lines.length * STEP_DELAY}s` }}>{visual}</div>
       </Content>
-      {done && !auto && (
+      {done && (
         <StickyAction>
-          <div className="q-fadeline">
-            <PrimaryButton onClick={onContinue}>{continueLabel}</PrimaryButton>
-          </div>
+          <div className="q-fadeline"><PrimaryButton onClick={onContinue}>Continue</PrimaryButton></div>
         </StickyAction>
       )}
     </>
   );
 }
 
-// ── Screen 1 reveal (scrollable belief-builder) ──────────────────────────────
-function GoalRevealScreen({ answers, onContinue }: { answers: Answers; onContinue: () => void }) {
-  const meta = GOAL_META[answers.goal ?? "20_35"];
-  const dateLabel = useMemo(() => fmtDate(12), []);
-  const [done, setDone] = useState(false);
-  useEffect(() => {
-    const t = window.setTimeout(() => setDone(true), GOAL_REVEAL_LINES.length * STEP_DELAY * 1000 + 500);
-    return () => clearTimeout(t);
-  }, []);
+function FlipBadge() {
+  return (
+    <div className="flex items-center gap-3 rounded-[1.35rem] border-2 border-[#d62a7a] bg-white p-4 shadow-[0_18px_40px_-28px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.9)]">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
+        <Check className="h-5 w-5" strokeWidth={3} />
+      </span>
+      <p className="text-[15px] font-semibold leading-snug text-[#8c114a]">A real shift most plans never tell you.</p>
+    </div>
+  );
+}
+
+// ── Slider discovery (S6) ────────────────────────────────────────────────────
+function SliderScreen({ onContinue }: { onContinue: () => void }) {
+  const [guess, setGuess] = useState(50);
+  const [locked, setLocked] = useState(false);
+  const lock = () => {
+    if (locked) return;
+    setLocked(true);
+    track("discovery_interaction", { flip: "F1", guess });
+  };
   return (
     <>
-      <Content align="top">
+      <Content align="center">
         <CoachHeader />
-        <div className="mt-6">
-          <FadeLines lines={GOAL_REVEAL_LINES} />
+        <p className="q-fadeline mt-6 text-[20px] sm:text-[22px] font-medium leading-[1.4] text-[#15102a]">{SLIDER_INTRO}</p>
+        <p className="mt-5 text-[17px] font-semibold text-[#6b5b6e]">{SLIDER_PROMPT}</p>
+
+        <div className="mt-5 rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+          <div className="flex justify-between text-[13px] font-bold uppercase tracking-wide text-[#c41e6a]">
+            <span>Food {guess}%</span>
+            <span>Exercise {100 - guess}%</span>
+          </div>
+          <input type="range" min={0} max={100} value={guess} disabled={locked} onChange={(e) => setGuess(Number(e.target.value))} className="mt-3 w-full accent-[#d62a7a]" style={{ height: 28 }} />
+
+          {!locked ? (
+            <button onClick={lock} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[16px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5" style={{ background: PINK }}>
+              Lock in my guess
+            </button>
+          ) : (
+            <div className="mt-5 q-rise">
+              <div className="flex items-center justify-between text-[14px] font-semibold text-[#6b5b6e]">
+                <span>Your guess: {guess}% food</span>
+                <span className="text-[#8c114a]">The truth: 80% food</span>
+              </div>
+              <div className="mt-2 h-3 w-full overflow-hidden rounded-full bg-[#f3d3d3]">
+                <div className="h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: "80%", background: PINK }} />
+              </div>
+            </div>
+          )}
         </div>
-        <div className="q-fadeline mt-7 rounded-3xl bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]" style={{ animationDelay: `${GOAL_REVEAL_LINES.length * STEP_DELAY}s` }}>
-          <p className="mb-2 text-[14px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">What your next 12 weeks could look like</p>
-          <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} />
-        </div>
-        <div className="mt-6">
-          <TransformationCarousel items={TRANSF_GOAL} />
-        </div>
+
+        {locked && <div className="mt-6"><FadeLines lines={SLIDER_REVEAL} /></div>}
       </Content>
-      {done && (
+      {locked && (
         <StickyAction>
-          <div className="q-fadeline">
+          <div className="q-fadeline" style={{ animationDelay: `${SLIDER_REVEAL.length * STEP_DELAY}s` }}>
             <PrimaryButton onClick={onContinue}>Continue</PrimaryButton>
           </div>
         </StickyAction>
@@ -811,67 +519,56 @@ function GoalRevealScreen({ answers, onContinue }: { answers: Answers; onContinu
   );
 }
 
-// ── Reveal visuals ───────────────────────────────────────────────────────────
-function PhotoCard({ src, caption, compact }: { src: string; caption?: string; compact?: boolean }) {
+// ── Discovery visuals ────────────────────────────────────────────────────────
+function BodyShiftGraphic({ age }: { age?: string }) {
+  const decade = { "30s": "30s", "40s": "40s", "50s": "50s", "60plus": "60+" }[age ?? "40s"] ?? "40s";
   return (
-    <div className="relative overflow-hidden rounded-3xl shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
-      <img src={src} alt="JJ Smith" className={`block w-full object-cover ${compact ? "h-44" : "h-60"}`} loading="lazy" />
-      {caption && (
-        <>
-          <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
-          <p className="absolute inset-x-0 bottom-0 p-5 font-serif italic text-[19px] leading-snug text-white drop-shadow">{caption}</p>
-        </>
-      )}
+    <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+      <p className="mb-3 text-center text-[13px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">Where the weight moves</p>
+      <div className="flex items-end justify-center gap-8">
+        {[{ d: "30s", belly: 10 }, { d: decade, belly: 30, active: true }].map((b, i) => (
+          <div key={i} className="flex flex-col items-center">
+            <svg viewBox="0 0 60 110" className="h-28 w-16" aria-hidden>
+              <circle cx="30" cy="14" r="9" fill={b.active ? "#b81860" : "#e7b9cb"} />
+              <path d="M18 26 Q30 22 42 26 L40 70 Q30 76 20 70 Z" fill={b.active ? "#d62a7a" : "#eccdd8"} />
+              <ellipse cx="30" cy="52" rx={b.belly / 2 + 8} ry={b.belly / 3 + 6} fill={b.active ? "#8c114a" : "#dca9bd"} opacity={b.active ? 0.55 : 0.4} />
+              <rect x="22" y="74" width="6" height="30" rx="3" fill={b.active ? "#d62a7a" : "#eccdd8"} />
+              <rect x="32" y="74" width="6" height="30" rx="3" fill={b.active ? "#d62a7a" : "#eccdd8"} />
+            </svg>
+            <span className={`mt-1 text-[13px] font-bold ${b.active ? "text-[#8c114a]" : "text-[#9a7f8a]"}`}>{b.d}</span>
+          </div>
+        ))}
+      </div>
+      <p className="mt-2 text-center text-[14px] font-semibold text-[#15102a]">Same habits. The fat just moves to the middle.</p>
     </div>
   );
 }
 
-function IconCard({ Icon, text }: { Icon: React.ComponentType<{ className?: string; strokeWidth?: number }>; text: string }) {
+function TwoPathGraphic() {
   return (
-    <div className="flex items-center gap-4 rounded-3xl bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
-      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
-        <Icon className="h-7 w-7" strokeWidth={2} />
-      </span>
-      <p className="text-[18px] font-semibold leading-snug text-[#15102a]">{text}</p>
-    </div>
-  );
-}
-
-// "Every other plan vs With me" contrast: muted loser, elevated brand winner.
-function MissingGraphic() {
-  return (
-    <div className="relative">
-      <div className="ml-1 flex items-center gap-3 rounded-2xl border border-[#e7d3da] bg-[#f4eaee] p-3.5 opacity-90">
-        <FileText className="h-6 w-6 shrink-0 text-[#a9909b]" />
-        <p className="flex-1 text-[15px] font-semibold leading-snug text-[#8a7782]">Every other plan: hands you info, then they're gone</p>
-        <LogOut className="h-5 w-5 shrink-0 text-[#bfa3b0]" />
-      </div>
-
-      <div className="relative z-10 my-1 flex justify-center">
-        <span className="rounded-full bg-white px-3 py-0.5 text-[12px] font-bold uppercase tracking-[0.14em] text-[#c41e6a] shadow-sm">vs</span>
-      </div>
-
-      <div className="-mt-1 flex items-center gap-3.5 rounded-3xl border-2 border-[#d62a7a] bg-white p-5 shadow-[0_24px_50px_-26px_rgba(140,17,74,0.95)]">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
-          <HeartHandshake className="h-6 w-6" />
-        </span>
-        <p className="flex-1 text-[17px] font-bold leading-snug text-[#15102a]">With me: someone with you, every single day</p>
-        <Check className="h-6 w-6 shrink-0 text-[#d62a7a]" strokeWidth={3} />
-      </div>
+    <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+      <p className="mb-2 text-center text-[13px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">Two paths</p>
+      <svg viewBox="0 0 300 150" className="w-full" role="img" aria-label="Crash and regain vs steady">
+        <path d="M16 40 Q150 70 284 96" fill="none" stroke="#d9b8c6" strokeWidth="3" strokeLinecap="round" />
+        <text x="284" y="90" fontSize="10" fontWeight="700" fill="#9a7f8a" textAnchor="end">steady</text>
+        <path d="M16 70 L60 110 L100 60 L140 115 L180 55 L220 120 L260 45 L284 125" fill="none" stroke="#b81860" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+        <text x="16" y="60" fontSize="10" fontWeight="800" fill="#8c114a">crash and regain</text>
+      </svg>
+      <p className="mt-1 text-center text-[14px] font-semibold text-[#15102a]">Each crash leaves you a little heavier than before.</p>
     </div>
   );
 }
 
 function AgeCurveGraphic({ age }: { age: string }) {
   const decades = ["20s", "30s", "40s", "50s", "60+"];
-  const idxByAge: Record<string, number> = { under_30: 0, "30s": 1, "40s": 2, "50s": 3, "60_plus": 4 };
+  const idxByAge: Record<string, number> = { "30s": 1, "40s": 2, "50s": 3, "60plus": 4 };
   const active = idxByAge[age] ?? 2;
   const ys = [40, 56, 78, 100, 116];
   const W = 300;
   const xAt = (i: number) => 30 + (i / (decades.length - 1)) * (W - 60);
   const path = `M ${decades.map((_, i) => `${xAt(i)},${ys[i]}`).join(" L ")}`;
   return (
-    <div className="rounded-3xl bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
+    <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
       <p className="mb-2 text-[14px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">How metabolism shifts</p>
       <svg viewBox={`0 0 ${W} 150`} className="w-full" role="img" aria-label="Metabolism declining by decade">
         <defs>
@@ -885,9 +582,7 @@ function AgeCurveGraphic({ age }: { age: string }) {
         {decades.map((d, i) => (
           <g key={d}>
             <circle cx={xAt(i)} cy={ys[i]} r={i === active ? 7 : 4} fill={i === active ? "#b81860" : "#e7b9cb"} stroke="#fff" strokeWidth="2" />
-            <text x={xAt(i)} y={146} fontSize="12" fontWeight={i === active ? 800 : 600} fill={i === active ? "#8c114a" : "#9a7f8a"} textAnchor="middle">
-              {d}
-            </text>
+            <text x={xAt(i)} y={146} fontSize="12" fontWeight={i === active ? 800 : 600} fill={i === active ? "#8c114a" : "#9a7f8a"} textAnchor="middle">{d}</text>
           </g>
         ))}
       </svg>
@@ -896,72 +591,23 @@ function AgeCurveGraphic({ age }: { age: string }) {
   );
 }
 
-// Jumpstart curve: steep early drop ("Your jumpstart"), then steady loss.
-function JumpstartCurve() {
-  const W = 320;
-  const H = 170;
-  const left = 16;
-  const right = W - 16;
-  const top = 22;
-  const bottom = H - 34;
-  const pw = right - left;
-  const ph = bottom - top;
-  const f = (t: number) => 1 - Math.pow(1 - t, 2.3); // front-loaded loss
-  const N = 40;
-  const pts = Array.from({ length: N + 1 }, (_, k) => {
-    const t = k / N;
-    return `${left + t * pw},${top + f(t) * ph}`;
-  });
-  const line = `M ${pts.join(" L ")}`;
-  const area = `${line} L ${right},${bottom} L ${left},${bottom} Z`;
-  const jx = left + 0.28 * pw;
-  return (
-    <div className="rounded-3xl bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
-      <p className="mb-2 text-center text-[14px] font-bold uppercase tracking-[0.12em] text-[#6b5b6e]">Your jumpstart</p>
-      <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Fast early weight loss then steady decline">
-        <defs>
-          <linearGradient id="jsFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#d62a7a" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="#d62a7a" stopOpacity="0.02" />
-          </linearGradient>
-          <linearGradient id="jsLine" x1="0" y1="0" x2="1" y2="0">
-            <stop offset="0%" stopColor="#d62a7a" />
-            <stop offset="100%" stopColor="#8c114a" />
-          </linearGradient>
-        </defs>
-        <rect x={left} y={top} width={jx - left} height={ph} fill="#f7c9dd" opacity="0.35" />
-        <path d={area} fill="url(#jsFill)" />
-        <path d={line} className="q-draw" fill="none" stroke="url(#jsLine)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
-        <text x={(left + jx) / 2} y={top + 16} fontSize="11" fontWeight="800" fill="#8c114a" textAnchor="middle">the first pounds, fast</text>
-        <text x={right} y={bottom - 6} fontSize="11" fontWeight="700" fill="#c41e6a" textAnchor="end">steady from here</text>
-        <line x1={jx} y1={top} x2={jx} y2={bottom} stroke="#d62a7a" strokeWidth="1" strokeDasharray="2 4" opacity="0.5" />
-      </svg>
-    </div>
-  );
-}
-
-// ── Auto-advancing, swipeable transformation carousel ────────────────────────
+// ── Transformation carousel ──────────────────────────────────────────────────
 function TransformationCarousel({ items }: { items: { src: string; quote: string }[] }) {
   const [i, setI] = useState(0);
   const [paused, setPaused] = useState(false);
   const startX = useRef<number | null>(null);
   const go = (d: number) => setI((p) => (p + d + items.length) % items.length);
-
   useEffect(() => {
     if (paused || items.length < 2) return;
     const id = window.setInterval(() => setI((p) => (p + 1) % items.length), 4000);
     return () => clearInterval(id);
   }, [paused, items.length]);
-
   return (
     <div
-      className="overflow-hidden rounded-3xl bg-white shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]"
+      className="overflow-hidden rounded-[1.9rem] bg-white shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
-      onTouchStart={(e) => {
-        startX.current = e.touches[0].clientX;
-        setPaused(true);
-      }}
+      onTouchStart={(e) => { startX.current = e.touches[0].clientX; setPaused(true); }}
       onTouchEnd={(e) => {
         if (startX.current === null) return;
         const dx = e.changedTouches[0].clientX - startX.current;
@@ -974,20 +620,8 @@ function TransformationCarousel({ items }: { items: { src: string; quote: string
         <img src={items[i].src} alt="Sister transformation" className="block max-h-[420px] w-full bg-[#fbe3ea] object-contain" loading="lazy" />
         {items.length > 1 && (
           <>
-            <button
-              onClick={() => go(-1)}
-              aria-label="Previous"
-              className="absolute left-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"
-            >
-              <ChevronLeft className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => go(1)}
-              aria-label="Next"
-              className="absolute right-2 top-1/2 -translate-y-1/2 flex h-9 w-9 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"
-            >
-              <ChevronRight className="h-5 w-5" />
-            </button>
+            <button onClick={() => go(-1)} aria-label="Previous" className="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"><ChevronLeft className="h-5 w-5" /></button>
+            <button onClick={() => go(1)} aria-label="Next" className="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#8c114a] shadow-md hover:bg-white"><ChevronRight className="h-5 w-5" /></button>
           </>
         )}
       </div>
@@ -996,12 +630,7 @@ function TransformationCarousel({ items }: { items: { src: string; quote: string
         {items.length > 1 && (
           <div className="mt-4 flex justify-center gap-2">
             {items.map((_, k) => (
-              <button
-                key={k}
-                onClick={() => setI(k)}
-                aria-label={`Slide ${k + 1}`}
-                className={`h-2 rounded-full transition-all ${k === i ? "w-6 bg-[#d62a7a]" : "w-2 bg-[#d62a7a]/30"}`}
-              />
+              <button key={k} onClick={() => setI(k)} aria-label={`Slide ${k + 1}`} className={`h-2 rounded-full transition-all ${k === i ? "w-6 bg-[#d62a7a]" : "w-2 bg-[#d62a7a]/30"}`} />
             ))}
           </div>
         )}
@@ -1010,110 +639,63 @@ function TransformationCarousel({ items }: { items: { src: string; quote: string
   );
 }
 
-// ── Marquee (press logos, reuse landing styling) ─────────────────────────────
-function PressMarquee() {
-  const track = [...PRESS, ...PRESS];
-  return (
-    <div className="relative -mx-6 overflow-hidden">
-      <div className="flex w-max items-center gap-10 animate-marquee">
-        {track.map((p, i) => (
-          <img key={i} src={p.src} alt={p.alt} className="h-12 w-auto shrink-0 object-contain opacity-80" loading="eager" />
-        ))}
-      </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-[#fdebeb] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#fdebeb] to-transparent" />
-    </div>
-  );
-}
-
-// ── Proof screen (S5) ────────────────────────────────────────────────────────
-function ProofScreen({ onContinue }: { onContinue: () => void }) {
+// ── Trust beat (S17) ─────────────────────────────────────────────────────────
+function TrustScreen({ onContinue }: { onContinue: () => void }) {
+  const [done, setDone] = useState(false);
+  useEffect(() => {
+    track("trust_beat_shown");
+    const t = window.setTimeout(() => setDone(true), TRUST_LINES.length * STEP_DELAY * 1000 + 500);
+    return () => clearTimeout(t);
+  }, []);
   return (
     <>
-      <Content align="top">
-        <div className="q-rise">
-          <h2 className="font-sans font-bold text-[26px] sm:text-[31px] leading-[1.15] text-[#15102a]">This is what happens with JJ in your corner.</h2>
-
-          <p className="mt-6 text-center text-[12px] font-bold uppercase tracking-[0.2em] text-[#9a7f8a]">As seen on</p>
-          <div className="mt-3">
-            <PressMarquee />
-          </div>
-
-          <div className="mt-6 grid grid-cols-3 gap-3">
-            {[
-              { stat: "800K", label: "women helped" },
-              { stat: "5M", label: "pounds lost" },
-              { stat: "NYT", label: "bestselling author" },
-            ].map((t) => (
-              <div key={t.label} className="rounded-2xl bg-white px-3 py-5 text-center shadow-[0_16px_34px_-26px_rgba(140,17,74,0.8)]">
-                <div className="text-[26px] sm:text-[30px] font-bold leading-none text-[#c41e6a]">{t.stat}</div>
-                <div className="mt-2 text-[13px] font-semibold leading-tight text-[#6b5b6e]">{t.label}</div>
-              </div>
-            ))}
-          </div>
-
-          <div className="mt-6">
-            <TransformationCarousel items={TRANSF_PROOF} />
-          </div>
-
-          <div className="mt-7">
-            <CoachHeader />
-            <div className="mt-4">
-              <FadeLines lines={PROOF_LINES} />
-            </div>
+      <Content align="center">
+        <CoachHeader />
+        <div className="mt-6"><FadeLines lines={TRUST_LINES} /></div>
+        <div className="q-fadeline mt-7 rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]" style={{ animationDelay: `${TRUST_LINES.length * STEP_DELAY}s` }}>
+          <p className="mb-3 text-center text-[12px] font-bold uppercase tracking-[0.2em] text-[#9a7f8a]">As seen on</p>
+          <div className="grid grid-cols-4 items-center gap-3 opacity-80">
+            {PRESS.map((p) => (<img key={p.alt} src={p.src} alt={p.alt} className="h-7 w-full object-contain" loading="lazy" />))}
           </div>
         </div>
       </Content>
-      <StickyAction>
-        <PrimaryButton onClick={onContinue}>Continue</PrimaryButton>
-      </StickyAction>
+      {done && (
+        <StickyAction>
+          <div className="q-fadeline"><PrimaryButton onClick={onContinue}>Continue</PrimaryButton></div>
+        </StickyAction>
+      )}
     </>
   );
 }
 
-// ── Name (S6) ────────────────────────────────────────────────────────────────
+// ── Name (before the plan) ───────────────────────────────────────────────────
 function NameScreen({ onSubmit }: { onSubmit: (name: string) => void }) {
   const [val, setVal] = useState("");
   const ref = useRef<HTMLInputElement | null>(null);
-  useEffect(() => {
-    ref.current?.focus();
-  }, []);
-  const submit = () => {
-    if (val.trim()) onSubmit(val.trim());
-  };
+  useEffect(() => { ref.current?.focus(); }, []);
+  const submit = () => { if (val.trim()) onSubmit(val.trim()); };
   return (
     <>
       <Content align="center">
         <div className="q-rise">
           <Question>What do I call you, sis?</Question>
           <p className="mt-3 text-[18px] sm:text-[20px] text-[#6b5b6e]">I like to know who I'm talking to.</p>
-          <input
-            ref={ref}
-            type="text"
-            autoComplete="given-name"
-            placeholder="Your name"
-            value={val}
-            onChange={(e) => setVal(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            className="mt-7 w-full rounded-2xl border-2 border-[#f0c9d8] bg-white px-5 py-5 text-[20px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]"
-          />
+          <input ref={ref} type="text" autoComplete="given-name" placeholder="Your name" value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} className="mt-7 w-full rounded-[1.35rem] border-2 border-[#f0c9d8] bg-white px-5 py-5 text-[20px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]" />
         </div>
       </Content>
       <StickyAction>
-        <PrimaryButton onClick={submit} disabled={!val.trim()}>
-          Continue
-        </PrimaryButton>
+        <PrimaryButton onClick={submit} disabled={!val.trim()}>Continue</PrimaryButton>
       </StickyAction>
     </>
   );
 }
 
-// ── Build beat (S11) ─────────────────────────────────────────────────────────
-function BuildScreen({ answers, onDone }: { answers: Answers; onDone: () => void }) {
+// ── Build beat ───────────────────────────────────────────────────────────────
+function BuildScreen({ state, onDone }: { state: State; onDone: () => void }) {
   const lines = [
     "Reading what's tripped you up before",
     "Building it for the body you have now",
-    `Mapping your meals around ${FOOD_LABEL[answers.food ?? "comfort"]}`,
+    "Mapping your meals around the food you love",
     "Setting your jumpstart",
   ];
   const [shown, setShown] = useState(0);
@@ -1128,22 +710,14 @@ function BuildScreen({ answers, onDone }: { answers: Answers; onDone: () => void
   return (
     <Content align="center">
       <div className="q-rise">
-        <Question>{fill("Building your plan, {name}.", answers)}</Question>
+        <Question>{fillName("Building your plan, {name}.", state)}</Question>
         <div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-[#f3d3d3]">
           <div className="h-full rounded-full transition-[width] duration-700 ease-out" style={{ width: `${pct}%`, background: PINK }} />
         </div>
         <ul className="mt-7 space-y-4">
           {lines.map((line, i) => (
-            <li
-              key={line}
-              className={`flex items-center gap-3 text-[18px] sm:text-[20px] leading-snug transition-all duration-500 ${
-                i < shown ? "translate-y-0 text-[#15102a] opacity-100" : "translate-y-1 text-[#b79aa6] opacity-50"
-              }`}
-            >
-              <span
-                className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white transition-transform ${i < shown ? "scale-100" : "scale-0"}`}
-                style={{ background: PINK }}
-              >
+            <li key={line} className={`flex items-center gap-3 text-[18px] sm:text-[20px] leading-snug transition-all duration-500 ${i < shown ? "translate-y-0 text-[#15102a] opacity-100" : "translate-y-1 text-[#b79aa6] opacity-50"}`}>
+              <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white transition-transform ${i < shown ? "scale-100" : "scale-0"}`} style={{ background: PINK }}>
                 <Check className="h-4 w-4" strokeWidth={3} />
               </span>
               <span>{line}</span>
@@ -1155,54 +729,39 @@ function BuildScreen({ answers, onDone }: { answers: Answers; onDone: () => void
   );
 }
 
-// ── Email gate (S12) ─────────────────────────────────────────────────────────
-function EmailScreen({ answers, onSubmit }: { answers: Answers; onSubmit: (email: string) => void }) {
+// ── Email gate ("Your plan is ready") ────────────────────────────────────────
+function EmailScreen({ state, onSubmit }: { state: State; onSubmit: (email: string) => void }) {
   const [val, setVal] = useState("");
   const valid = /.+@.+\..+/.test(val.trim());
-  const submit = () => {
-    if (valid) onSubmit(val.trim());
-  };
+  const submit = () => { if (valid) onSubmit(val.trim()); };
   return (
     <>
       <Content align="center">
         <div className="q-rise">
-          <Question>{fill("Your plan is ready, {name}.", answers)}</Question>
+          <Question>{fillName("Your plan is ready, {name}.", state)}</Question>
           <p className="mt-3 text-[18px] sm:text-[20px] leading-snug text-[#6b5b6e]">
             Tell me where to send it, and I'll show you everything I put together for you.
           </p>
-          <LockedPlanPreview answers={answers} />
-          <input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            placeholder="you@email.com"
-            value={val}
-            onChange={(e) => setVal(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && submit()}
-            className="mt-5 w-full rounded-2xl border-2 border-[#f0c9d8] bg-white px-5 py-5 text-[20px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]"
-          />
+          <LockedPlanPreview state={state} />
+          <input type="email" inputMode="email" autoComplete="email" placeholder="you@email.com" value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} className="mt-5 w-full rounded-[1.35rem] border-2 border-[#f0c9d8] bg-white px-5 py-5 text-[20px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]" />
         </div>
       </Content>
       <StickyAction>
-        <PrimaryButton onClick={submit} disabled={!valid}>
-          Show Me My Plan
-        </PrimaryButton>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]">
-          <Lock className="h-4 w-4" /> No spam, ever. Just your plan and a note from me.
-        </p>
+        <PrimaryButton onClick={submit} disabled={!valid}>Show Me My Plan</PrimaryButton>
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]"><Lock className="h-4 w-4" /> No spam, ever. Just your plan and a note from me.</p>
       </StickyAction>
     </>
   );
 }
 
-function LockedPlanPreview({ answers }: { answers: Answers }) {
-  const meta = GOAL_META[answers.goal ?? "20_35"];
+function LockedPlanPreview({ state }: { state: State }) {
+  const meta = goalMeta(state);
   return (
-    <div className="relative mt-6 overflow-hidden rounded-3xl shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
+    <div className="relative mt-6 overflow-hidden rounded-[1.9rem] shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
       <div className="select-none blur-[5px]" aria-hidden>
         <div className="px-5 py-4 text-white" style={{ background: PINK }}>
           <p className="text-[13px] font-semibold uppercase tracking-wide opacity-90">Your 12 week plan</p>
-          <p className="text-[24px] font-bold">{fill("{name}'s plan", answers)}</p>
+          <p className="text-[24px] font-bold">{fillName("{name}'s plan", state)}</p>
         </div>
         <div className="bg-white p-5">
           <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate={false} dateLabel="" />
@@ -1214,28 +773,21 @@ function LockedPlanPreview({ answers }: { answers: Answers }) {
         </div>
       </div>
       <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[1px]">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg" style={{ background: PINK }}>
-          <Lock className="h-6 w-6" />
-        </span>
+        <span className="flex h-14 w-14 items-center justify-center rounded-full text-white shadow-lg" style={{ background: PINK }}><Lock className="h-6 w-6" /></span>
         <p className="mt-2 text-[14px] font-bold uppercase tracking-[0.12em] text-[#8c114a]">Enter your email to unlock your plan</p>
       </div>
     </div>
   );
 }
 
-// ── Plan / Results (S13, sale-closer) ────────────────────────────────────────
-function fmtDate(weeksAhead: number): string {
-  const d = new Date();
-  d.setDate(d.getDate() + weeksAhead * 7);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
-}
-
-function PlanScreen({ answers, onContinue }: { answers: Answers; onContinue: () => void }) {
-  const meta = GOAL_META[answers.goal ?? "20_35"];
+// ── Plan reveal (the full breakdown) ─────────────────────────────────────────
+function PlanScreen({ state, onContinue }: { state: State; onContinue: () => void }) {
+  const meta = goalMeta(state);
   const dateLabel = useMemo(() => fmtDate(12), []);
-  const ageWord = AGE_DISPLAY[answers.age ?? "40s"];
+  const ageVal = (state.answers["F1q"] as string) ?? "40s";
+  const ageWord = AGE_DISPLAY[ageVal] ?? "your 40s";
   const ageSub =
-    answers.age === "50s"
+    ageVal === "50s"
       ? "Built for your body, your hormones, your real schedule. Made for life after menopause. Not a generic template, a plan that fits the life you actually live."
       : "Built for your body, your hormones, your real schedule. Not a generic template, a plan that fits the life you actually live.";
 
@@ -1251,24 +803,20 @@ function PlanScreen({ answers, onContinue }: { answers: Answers; onContinue: () 
   return (
     <>
       <Content align="top">
-        <h2 className="q-rise font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.01em] text-[#15102a]">
-          {fill("{name}, here is what the next 12 weeks look like with me.", answers)}
+        <h2 className="q-rise font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">
+          {fillName("{name}, here is what the next 12 weeks look like with me.", state)}
         </h2>
 
-        {/* Plan graph */}
-        <div className="q-rise mt-5 overflow-hidden rounded-3xl bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9)]">
+        <div className="q-rise mt-5 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
           <div className="px-5 py-4 text-white" style={{ background: PINK }}>
             <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
-            <p className="text-[20px] font-bold leading-tight">
-              {meta.chapterOne ? "A strong start" : `About ${meta.target} pounds`}, by {dateLabel}
-            </p>
+            <p className="text-[20px] font-bold leading-tight">{meta.chapterOne ? "A strong start" : `About ${meta.target} pounds`}, by {dateLabel}</p>
           </div>
           <div className="p-5">
             <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
           </div>
         </div>
 
-        {/* Narrative */}
         <div className="mt-6 space-y-3 text-[18px] leading-[1.5] text-[#15102a]">
           <p className="font-semibold">We start fast.</p>
           <p>Your jumpstart is built to fit your life, so you feel it working in your first days.</p>
@@ -1286,11 +834,10 @@ function PlanScreen({ answers, onContinue }: { answers: Answers; onContinue: () 
           ))}
         </div>
 
-        {/* Inclusions as outcomes */}
         <ul className="mt-7 space-y-3">
           {inclusions.map(({ Icon, label, sub }) => (
-            <li key={label} className="flex items-start gap-3.5 rounded-2xl bg-white p-4 shadow-[0_14px_30px_-24px_rgba(140,17,74,0.8)]">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white" style={{ background: PINK }}>
+            <li key={label} className="flex items-start gap-3.5 rounded-[1.35rem] bg-white p-4 shadow-[0_14px_30px_-24px_rgba(140,17,74,0.8),inset_0_1px_0_rgba(255,255,255,0.9)]">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
                 <Icon className="h-5 w-5" strokeWidth={2} />
               </span>
               <div className="min-w-0">
@@ -1301,30 +848,21 @@ function PlanScreen({ answers, onContinue }: { answers: Answers; onContinue: () 
           ))}
         </ul>
 
-        {/* Age/metabolism graphic, personalized */}
-        <div className="mt-5">
-          <AgeCurveGraphic age={answers.age ?? "40s"} />
-        </div>
+        <div className="mt-5"><AgeCurveGraphic age={ageVal} /></div>
 
         {/* Circle of sisters image (David to provide). Placeholder reserves it. */}
-        <div className="mt-5 flex items-center justify-center rounded-3xl bg-gradient-to-br from-[#fbe3ea] to-[#efd6e0] p-8" aria-hidden>
+        <div className="mt-5 flex items-center justify-center rounded-[1.9rem] bg-gradient-to-br from-[#fbe3ea] to-[#efd6e0] p-8" aria-hidden>
           <Users className="h-10 w-10 text-[#c98aa3]" />
         </div>
 
-        {/* Transformations carousel (different images, quotes only) */}
         <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Sisters who did it with me</p>
-        <div className="mt-3">
-          <TransformationCarousel items={TRANSF_PLAN} />
-        </div>
+        <div className="mt-3"><TransformationCarousel items={TRANSF_PLAN} /></div>
 
-        {/* Closing line + second CTA at natural end */}
         <p className="mt-8 text-[19px] leading-[1.5] font-medium text-[#15102a]">
-          {fill("This is your plan, {name}. Built for you, around your life, with me in your corner the whole way.", answers)}
+          {fillName("This is your plan, {name}. Built for you, around your life, with me in your corner the whole way.", state)}
         </p>
         <p className="mt-2 text-[19px] leading-[1.5] font-bold text-[#c41e6a]">All you have to do is show up. I will handle the rest.</p>
-        <div className="mt-6">
-          <PrimaryButton onClick={onContinue}>Let's Get Started, sis</PrimaryButton>
-        </div>
+        <div className="mt-6"><PrimaryButton onClick={onContinue}>Let's Get Started, sis</PrimaryButton></div>
       </Content>
 
       <StickyAction>
@@ -1334,74 +872,31 @@ function PlanScreen({ answers, onContinue }: { answers: Answers; onContinue: () 
   );
 }
 
-// ── Offer (S15) ──────────────────────────────────────────────────────────────
-const VALUE_STACK = [
-  { label: "Weekly 1 on 1 coaching with JJ", value: 1200 },
-  { label: "Daily check ins from JJ", value: 400 },
-  { label: "Your done for you meal plan", value: 300 },
-  { label: "A plan for your body and your life", value: 200 },
-  { label: "The eating out and family meals playbook", value: 150 },
-  { label: "Your jumpstart", value: 97 },
-  { label: "The recipe vault", value: 97 },
-  { label: "The circle of sisters", value: 200 },
-];
-const VALUE_TOTAL = 2650;
-
-const FAQ_ITEMS = [
-  {
-    q: "I'm in my 50s and nothing's worked. Will this?",
-    a: "Sister, this is who I built it for. Most of the women I work with are 40+ navigating perimenopause, menopause, and hormone shifts. Your plan is built around all of that, and I'm right there with you the whole way.",
-  },
-  {
-    q: "I work full-time and have kids. Do I have time?",
-    a: "Yes. Personalizing your plan means it fits your life, not the other way around. And I'm meeting you right where you are, every day. Most sisters spend 20 to 30 minutes a day on this.",
-  },
-  {
-    q: "Do I have to drink green smoothies?",
-    a: "Only if you want to. This isn't the cleanse. Your plan is built around foods you actually love.",
-  },
-  {
-    q: "What makes this different from your other programs?",
-    a: "My books and challenges gave you the information. This one gives you me, every step of the way. The information was never the problem. Being alone on the hard days was.",
-  },
-  {
-    q: "What if I miss this cohort?",
-    a: "I keep enrollment small so every sister gets the real attention she deserves. Once these limited spots are gone, you'll have to wait until I open the next round.",
-  },
-];
-
-function OfferScreen({
-  answers,
-  pricing,
-  onCheckout,
-}: {
-  answers: Answers;
-  pricing: Pricing;
-  onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void;
-}) {
+// ── Offer ────────────────────────────────────────────────────────────────────
+function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pricing; onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void }) {
   const { monthly, full } = pricing;
+  useEffect(() => {
+    track("offer_viewed");
+  }, []);
   return (
     <>
       <Content align="top">
         <div className="q-rise inline-flex self-start rounded-full bg-[#15102a] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white">
           Your plan is ready
         </div>
-        <h2 className="mt-4 font-sans font-bold text-[28px] sm:text-[33px] leading-[1.12] tracking-[-0.01em] text-[#15102a]">
-          {fill("So let's go get her, {name}.", answers)}
+        <h2 className="mt-4 font-sans font-bold text-[28px] sm:text-[33px] leading-[1.12] tracking-[-0.02em] text-[#15102a]">
+          {fillName("So let's go get her, {name}.", state)}
         </h2>
         <p className="mt-3 text-[18px] sm:text-[20px] leading-[1.4] text-[#15102a]">
           Everything you just saw is waiting for you. Me, in your corner, one on one, every single day for the next 12 weeks.
         </p>
 
-        {/* Value stack */}
-        <div className="mt-6 rounded-3xl bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9)]">
+        <div className="mt-6 rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
           <p className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything you're getting</p>
           <ul className="mt-3 divide-y divide-dashed divide-[#f0c9d8]">
             {VALUE_STACK.map((it) => (
               <li key={it.label} className="flex items-center justify-between gap-3 py-2.5">
-                <span className="flex items-center gap-2 text-[16px] leading-snug text-[#15102a]">
-                  <Check className="h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}
-                </span>
+                <span className="flex items-center gap-2 text-[16px] leading-snug text-[#15102a]"><Check className="h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
                 <span className="shrink-0 text-[16px] font-semibold text-[#6b5b6e]">${it.value.toLocaleString()}</span>
               </li>
             ))}
@@ -1411,23 +906,15 @@ function OfferScreen({
             <span className="text-[20px] font-bold text-[#b79aa6] line-through">${VALUE_TOTAL.toLocaleString()}</span>
           </div>
           <p className="mt-1 text-right text-[15px] font-semibold text-[#c41e6a]">Your price today: ${full}</p>
-          <p className="mt-3 text-[16px] leading-snug text-[#15102a]">
-            More than $2,600 of coaching, meals, and real support. Yours today for ${full}.
-          </p>
+          <p className="mt-3 text-[16px] leading-snug text-[#15102a]">More than $2,600 of coaching, meals, and real support. Yours today for ${full}.</p>
         </div>
 
-        {/* Two payment options with "or" */}
         <div className="mt-6 space-y-1">
-          <div className="relative rounded-3xl border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
+          <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
             <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
             <p className="text-[18px] font-bold text-[#15102a]">Pay in full. ${full} today.</p>
             <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
-            <button
-              onClick={() => onCheckout("FULL_PROGRAM")}
-              disabled={pricing.loading}
-              className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50"
-              style={{ background: PINK }}
-            >
+            <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
               {pricing.loading ? "Loading…" : `Start With JJ, $${full}`}
             </button>
           </div>
@@ -1438,20 +925,15 @@ function OfferScreen({
             <span className="h-px flex-1 bg-[#e7c6d3]" />
           </div>
 
-          <div className="rounded-3xl border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
+          <div className="rounded-[1.9rem] border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
             <p className="text-[18px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
             <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
-            <button
-              onClick={() => onCheckout("MONTHLY")}
-              disabled={pricing.loading}
-              className="mt-4 block w-full rounded-2xl border-2 border-[#d62a7a] px-6 py-4 text-center text-[17px] font-bold text-[#b81860] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50"
-            >
+            <button onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl border-2 border-[#d62a7a] px-6 py-4 text-center text-[17px] font-bold text-[#b81860] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
               {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
             </button>
           </div>
         </div>
 
-        {/* Start now + scarcity */}
         <div className="mt-6 space-y-3 text-[17px] leading-[1.5] text-[#15102a]">
           <p className="font-semibold">The moment you say yes, we book your first call with me and your 12 weeks begin.</p>
           <p>You are not waiting for Monday. We start now.</p>
@@ -1460,7 +942,6 @@ function OfferScreen({
           This is a founding price for a small group, and this start date is filling up. When the spots are gone, they are gone, and this price goes with them.
         </p>
 
-        {/* Guarantee (pulled from landing) */}
         <div className="mt-5 flex items-start gap-3 rounded-2xl border border-[#f0c9d8] bg-white/70 p-4">
           <ShieldCheck className="h-7 w-7 shrink-0 text-[#c41e6a]" />
           <p className="font-serif italic text-[16px] leading-[1.6] text-[#15102a]">
@@ -1469,15 +950,13 @@ function OfferScreen({
           </p>
         </div>
 
-        {/* Last call reframe (pulled from landing) */}
-        <div className="mt-7 rounded-3xl bg-[#15102a] p-6 text-center text-white">
+        <div className="mt-7 rounded-[1.9rem] bg-[#15102a] p-6 text-center text-white">
           <p className="font-serif text-[24px] sm:text-[28px] leading-[1.15]">The months ahead are happening either way.</p>
           <p className="mt-3 text-[16px] leading-[1.6] text-white/85">
             You can spend them like the last ones. Or you can spend them with me right there with you, every Tuesday morning, every Thursday night, every time life hits. This time, sister, you don't have to do it alone.
           </p>
         </div>
 
-        {/* FAQ (pulled from landing) */}
         <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Questions sisters ask me</p>
         <Accordion type="single" collapsible className="mt-2 w-full">
           {FAQ_ITEMS.map((it, i) => (
@@ -1493,28 +972,14 @@ function OfferScreen({
         <PrimaryButton onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading}>
           {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
         </PrimaryButton>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]">
-          <Lock className="h-4 w-4" /> 14 day money back guarantee. Secure checkout.
-        </p>
+        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]"><Lock className="h-4 w-4" /> 14 day money back guarantee. Secure checkout.</p>
       </StickyAction>
     </>
   );
 }
 
 // ── Projection chart ─────────────────────────────────────────────────────────
-function ProjectionChart({
-  target,
-  chapterOne,
-  animate,
-  dateLabel,
-  detailed = false,
-}: {
-  target: number;
-  chapterOne: boolean;
-  animate: boolean;
-  dateLabel: string;
-  detailed?: boolean;
-}) {
+function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = false }: { target: number; chapterOne: boolean; animate: boolean; dateLabel: string; detailed?: boolean }) {
   const W = 320;
   const H = detailed ? 200 : 180;
   const left = 16;
@@ -1555,24 +1020,17 @@ function ProjectionChart({
         </linearGradient>
       </defs>
 
-      {/* gridlines + week markers (detailed) */}
-      {detailed &&
-        [0, 4, 8, 12].map((w) => (
-          <g key={w}>
-            <line x1={x(w)} y1={top} x2={x(w)} y2={bottom} stroke="#f3d9e2" strokeWidth="1" strokeDasharray="2 4" />
-            <text x={x(w)} y={bottom + 16} fontSize="11" fontWeight="700" fill="#9a7f8a" textAnchor={w === 0 ? "start" : w === 12 ? "middle" : "middle"}>
-              {w === 0 ? "Today" : `Wk ${w}`}
-            </text>
-          </g>
-        ))}
+      {detailed && [0, 4, 8, 12].map((w) => (
+        <g key={w}>
+          <line x1={x(w)} y1={top} x2={x(w)} y2={bottom} stroke="#f3d9e2" strokeWidth="1" strokeDasharray="2 4" />
+          <text x={x(w)} y={bottom + 16} fontSize="11" fontWeight="700" fill="#9a7f8a" textAnchor={w === 0 ? "start" : "middle"}>{w === 0 ? "Today" : `Wk ${w}`}</text>
+        </g>
+      ))}
 
-      {/* jumpstart shaded phase (detailed) */}
       {detailed && (
         <>
           <rect x={left} y={top} width={jumpX - left} height={plotH} fill="#f7c9dd" opacity="0.35" />
-          <text x={(left + jumpX) / 2} y={top + 14} fontSize="10" fontWeight="800" fill="#8c114a" textAnchor="middle">
-            Your jumpstart
-          </text>
+          <text x={(left + jumpX) / 2} y={top + 14} fontSize="10" fontWeight="800" fill="#8c114a" textAnchor="middle">Your jumpstart</text>
         </>
       )}
 
@@ -1580,28 +1038,15 @@ function ProjectionChart({
       <path d={areaPath} fill="url(#projFill)" />
       <path d={linePath} className={animate ? "q-draw" : undefined} fill="none" stroke="url(#projLine)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
 
-      {chapterOne && (
-        <path d={`M ${endX},${endY} L ${right},${y(maxLoss)}`} fill="none" stroke="#c41e6a" strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />
-      )}
-
+      {chapterOne && <path d={`M ${endX},${endY} L ${right},${y(maxLoss)}`} fill="none" stroke="#c41e6a" strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />}
       <circle cx={endX} cy={endY} r="6" fill="#b81860" stroke="#fff" strokeWidth="2.5" />
 
-      {!detailed && (
-        <text x={left} y={top - 8} fontSize="12" fontWeight="700" fill="#6b5b6e">Today</text>
-      )}
+      {!detailed && <text x={left} y={top - 8} fontSize="12" fontWeight="700" fill="#6b5b6e">Today</text>}
       {dateLabel && (
-        <text x={chapterOne ? endX : right} y={top - 8} fontSize="12" fontWeight="700" fill="#c41e6a" textAnchor={chapterOne ? "middle" : "end"}>
-          {chapterOne ? `Week 12` : `by ${dateLabel}`}
-        </text>
+        <text x={chapterOne ? endX : right} y={top - 8} fontSize="12" fontWeight="700" fill="#c41e6a" textAnchor={chapterOne ? "middle" : "end"}>{chapterOne ? "Week 12" : `by ${dateLabel}`}</text>
       )}
-      <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">
-        {target} lbs off
-      </text>
-      {chapterOne && (
-        <text x={right} y={y(maxLoss) - 8} fontSize="11" fontWeight="700" fill="#c41e6a" textAnchor="end">
-          we keep going
-        </text>
-      )}
+      <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">{target} lbs off</text>
+      {chapterOne && <text x={right} y={y(maxLoss) - 8} fontSize="11" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
     </svg>
   );
 }
