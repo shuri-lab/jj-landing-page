@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from "react";
-import { ChevronLeft, ChevronRight, HelpCircle, ClipboardList, Phone, Check } from "lucide-react";
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode, type CSSProperties } from "react";
+import { ChevronLeft, ChevronRight, HelpCircle, ClipboardList, Phone, Check, Award, TrendingDown } from "lucide-react";
 import QuizTakeoverV3 from "@/components/quiz/QuizTakeoverV3";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import heroMobileC from "@/assets/landing/quiz-hero-image-mobile.png";
@@ -80,7 +80,10 @@ function Landing() {
   const [quizOpen, setQuizOpen] = useState(false);
   return (
     <QuizContext.Provider value={() => setQuizOpen(true)}>
-      <div className="overflow-x-hidden bg-background text-foreground">
+      <div
+        className="overflow-x-hidden bg-background text-foreground"
+        style={{ fontFamily: "'DM Sans', sans-serif", "--font-serif": "'Lora', Georgia, serif" } as CSSProperties}
+      >
         <Header />
         <main>
           <Hero />
@@ -118,6 +121,36 @@ function PrimaryCta({ subline, className = "" }: { subline?: string; className?:
   );
 }
 
+// Social-proof trust bar: an icon before each stat, and the familiar stacked
+// avatar circles before the "women helped" count. Stays on one line.
+function TrustBar({ center = false }: { center?: boolean }) {
+  const avatars = [t8, t10, t4];
+  const divider = <span className="h-3.5 w-px shrink-0 bg-[#e6b6cc]" aria-hidden />;
+  return (
+    <div
+      className={`flex items-center gap-2.5 whitespace-nowrap text-[12px] font-semibold sm:gap-3.5 sm:text-[13px] ${center ? "justify-center" : ""}`}
+      style={{ color: "#8c114a" }}
+    >
+      <span className="inline-flex items-center gap-1.5">
+        <Award className="h-4 w-4 shrink-0 text-[#c41e6a]" strokeWidth={2.2} /> NYT Bestseller
+      </span>
+      {divider}
+      <span className="inline-flex items-center gap-1.5">
+        <TrendingDown className="h-4 w-4 shrink-0 text-[#c41e6a]" strokeWidth={2.2} /> 5M+ lbs lost
+      </span>
+      {divider}
+      <span className="inline-flex items-center gap-1.5">
+        <span className="flex -space-x-2 shrink-0">
+          {avatars.map((src, i) => (
+            <img key={i} src={src} alt="" className="h-6 w-6 rounded-full object-cover object-top ring-2 ring-[#fdebeb]" loading="lazy" />
+          ))}
+        </span>
+        800K+ women helped
+      </span>
+    </div>
+  );
+}
+
 // Soft highlight behind key phrases (matches the reference hero treatment).
 function Hi({ children }: { children: ReactNode }) {
   return (
@@ -145,7 +178,7 @@ function Header() {
   return (
     <header style={{ backgroundColor: BLUSH }}>
       <div className="mx-auto flex max-w-[1200px] items-center justify-center px-5 py-4 sm:justify-between">
-        <Wordmark className="h-6 sm:h-7" />
+        <Wordmark className="h-4 sm:h-7" />
         <button
           onClick={openQuiz}
           data-cta="take-quiz"
@@ -161,57 +194,117 @@ function Header() {
 // ── 2. Hero ──────────────────────────────────────────────────────────────────
 function Hero() {
   return (
-    <section className="px-5 pb-14 pt-4 sm:pb-16 lg:pb-20" style={{ backgroundColor: BLUSH }}>
+    <section className="px-5 pb-0 pt-4 lg:pb-20" style={{ backgroundColor: BLUSH }}>
       <div className="mx-auto max-w-[640px] lg:max-w-[1200px]">
-        <div className="lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10">
+        {/* ── Desktop layout (unchanged) ── */}
+        <div className="hidden lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10">
           <div className="lg:order-1">
-            <h1 className="text-left font-serif font-medium text-[34px] leading-[1.1] tracking-[-0.02em] sm:text-[44px] lg:text-[52px]">
-              <span style={{ color: "#15102a" }}>Why losing weight after 40 feels impossible</span>{" "}
-              <em className="not-italic" style={{ color: "#c41e6a" }}>(and the one shift that changes everything).</em>
-            </h1>
-            <ul className="mt-6 max-w-[560px] space-y-3">
-              {["This quiz reveals what finally turns it around.", "Get a free personal diagnosis in 60 seconds"].map((point) => (
-                <li key={point} className="flex items-start gap-2.5 text-left text-[18px] font-medium leading-[1.4] text-ink sm:text-[21px]">
-                  <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}>
-                    <Check className="h-4 w-4" strokeWidth={3} />
-                  </span>
-                  {point}
-                </li>
-              ))}
-            </ul>
-
-            {/* Desktop CTA + trust live in the left column */}
-            <div className="mt-8 hidden max-w-[420px] lg:block">
+            <Headline />
+            <BulletList className="mt-6" />
+            <div className="mt-8 max-w-[420px]">
               <PrimaryCta />
             </div>
-            <p className="mt-5 hidden text-[13px] font-semibold tracking-wide lg:block" style={{ color: "#8c114a" }}>
-              NYT bestselling author · 5 million pounds lost · 800,000 women helped
-            </p>
+            <div className="mt-7">
+              <TrustBar />
+            </div>
           </div>
-
-          {/* Desktop image (right column) */}
-          <div className="hidden lg:order-2 lg:block">
+          <div className="relative lg:order-2">
             <img src={heroDesktopC} alt="JJ Smith, your personal coach for 12 weeks" className="h-auto w-full" width={2000} height={2000} />
-          </div>
-
-          {/* Mobile: image sits flush on top of the CTA */}
-          <div className="mx-auto mt-8 w-full max-w-[440px] lg:hidden">
-            <img src={heroMobileC} alt="JJ Smith, your personal coach for 12 weeks" className="mx-auto block h-auto w-full max-w-[200px]" width={2000} height={2000} />
-            <PrimaryCta className="relative z-10" />
-            <p className="mt-5 text-center text-[13px] font-semibold tracking-wide" style={{ color: "#8c114a" }}>
-              NYT bestselling author · 5 million pounds lost · 800,000 women helped
-            </p>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent" aria-hidden />
           </div>
         </div>
 
-        <div className="mt-12">
+        {/* Desktop press bar (with label) */}
+        <div className="mt-12 hidden lg:block">
           <p className="text-center text-[11px] font-bold uppercase tracking-[0.22em] text-ink-faint">As seen on</p>
           <div className="mt-5">
             <PressMarquee />
           </div>
         </div>
+
+        {/* ── Mobile layout (conversion-optimized order) ── */}
+        <div className="lg:hidden">
+          <div className="flex justify-center">
+            <TrustPill />
+          </div>
+          <div className="mt-6">
+            <Headline />
+          </div>
+          <BulletList className="mt-6" />
+          <div className="mt-7">
+            <PrimaryCta />
+          </div>
+          <div className="mt-7">
+            <PressMarquee />
+          </div>
+          <img
+            src={heroMobileC}
+            alt="JJ Smith, your personal coach for 12 weeks"
+            className="mx-auto mt-8 block h-auto w-full max-w-[230px]"
+            width={2000}
+            height={2000}
+          />
+        </div>
       </div>
     </section>
+  );
+}
+
+function Headline() {
+  return (
+    <>
+      <h1
+        className="text-left text-[34px] leading-[1.12] tracking-[-0.015em] text-[#15102a] sm:text-[44px] lg:text-[52px]"
+        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
+      >
+        Why losing weight after 40 feels <span style={{ color: "#c41e6a" }}>impossible</span>
+      </h1>
+      <p
+        className="mt-3 text-left text-[20px] font-bold leading-[1.25] tracking-[-0.01em] sm:mt-4 sm:text-[22px] lg:whitespace-nowrap lg:text-[24px]"
+        style={{ fontFamily: "'DM Sans', sans-serif", color: "#c41e6a" }}
+      >
+        (and the one shift that changes everything).
+      </p>
+    </>
+  );
+}
+
+function BulletList({ className = "" }: { className?: string }) {
+  return (
+    <ul className={`max-w-[560px] space-y-3 ${className}`}>
+      {["This quiz reveals what finally turns it around.", "Get a free personal diagnosis in 60 seconds"].map((point) => (
+        <li key={point} className="flex items-start gap-2.5 text-left text-[18px] font-medium leading-[1.4] text-ink sm:text-[21px]">
+          <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}>
+            <Check className="h-4 w-4" strokeWidth={3} />
+          </span>
+          {point}
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+// Compact single-line trust pill for the top of the mobile hero.
+function TrustPill() {
+  const avatars = [t8, t10, t4];
+  return (
+    <div
+      className="inline-flex items-center gap-2.5 rounded-full border border-[#f2cede] bg-white/85 px-4 py-2 text-[14px] font-semibold shadow-[0_10px_24px_-14px_rgba(184,24,96,0.5)]"
+      style={{ color: "#8c114a" }}
+    >
+      <span className="inline-flex shrink-0 items-center gap-1.5">
+        <TrendingDown className="h-[18px] w-[18px] text-[#c41e6a]" strokeWidth={2.2} /> 5M+ lbs lost
+      </span>
+      <span className="h-3.5 w-px shrink-0 bg-[#e6b6cc]" aria-hidden />
+      <span className="inline-flex shrink-0 items-center gap-1.5">
+        <span className="flex -space-x-1.5">
+          {avatars.map((src, i) => (
+            <img key={i} src={src} alt="" className="h-5 w-5 rounded-full object-cover object-top ring-1 ring-white" loading="lazy" />
+          ))}
+        </span>
+        800K+ women helped
+      </span>
+    </div>
   );
 }
 
