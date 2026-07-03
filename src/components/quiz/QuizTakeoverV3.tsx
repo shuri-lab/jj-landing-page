@@ -36,6 +36,9 @@ import {
   Search,
   Sparkles,
   RefreshCcw,
+  CloudRain,
+  Wind,
+  Gauge,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
@@ -59,6 +62,7 @@ import {
   track,
   DISC_MIDLIFE,
   SLIDER_PROMPT,
+  SLIDER_LOCKED_TITLE,
   SLIDER_REVEAL,
   discHistory,
   discDay,
@@ -95,6 +99,7 @@ const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidt
   anchor: Anchor, droplets: Droplets, cookie: Cookie, battery: Battery,
   cloudfog: CloudFog, flame: Flame, target: Target,
   zap: Zap, heart: Heart, heartpulse: HeartPulse, calendar: Calendar, users: Users,
+  cloudrain: CloudRain, wind: Wind, gauge: Gauge, utensilscrossed: UtensilsCrossed,
 };
 
 // Goal -> 12-week projection metadata.
@@ -229,7 +234,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
 
   if (!open) return null;
 
-  const progressQids = ["A1", "F1q", "B1", "C1", "C2", "D1", "D4", "D6", "E1", "F3q", "G1"];
+  const progressQids = ["A1", "F1q", "B1", "C1", "C2", "C3", "D1", "D2", "D4", "D6", "D7", "E1", "F3q", "G1"];
   const answeredCount = progressQids.filter((qid) => state.answers[qid] !== undefined).length;
   const progress = Math.min(100, Math.round((answeredCount / progressQids.length) * 100));
   const showProgress = !["ANALYZING", "GATE", "PREPARING", "DIAGNOSIS", "SOLUTION", "OFFER"].includes(stepKey);
@@ -305,7 +310,7 @@ function Screen({
     }
     case "DISC_DAY": {
       const d1 = state.answers["D1"] as string;
-      return <DiscoveryScreen lines={discDay(d1, state.flags.FLAG_ED_watch)} flip="day" onContinue={() => onAdvance("DISC_DAY")} />;
+      return <DiscoveryScreen lines={discDay(d1)} flip="day" onContinue={() => onAdvance("DISC_DAY")} />;
     }
     case "DISC_MIDLIFE":
       return <DiscoveryScreen lines={DISC_MIDLIFE} flip="midlife" onContinue={() => onAdvance("DISC_MIDLIFE")} />;
@@ -562,13 +567,26 @@ function SliderScreen({ onContinue }: { onContinue: (guess: number) => void }) {
       <>
         <Content align="center">
           <div className="q-rise">
-            <Question>It's about 80% food, 20% exercise. Here's the truth...</Question>
-            <div className="mt-8 flex items-end justify-between gap-6">
-              <SliderSide Icon={UtensilsCrossed} label="Food" pct={80} color={FOOD_COLOR} />
-              <SliderSide Icon={Dumbbell} label="Exercise" pct={20} color={EXERCISE_COLOR} />
+            {/* The real split is blurred out (revealed only at the end), with the
+                teaser headline sitting in front of it. */}
+            <div className="relative mt-2 py-6">
+              <div className="pointer-events-none select-none blur-[15px] saturate-[0.9]" aria-hidden>
+                <div className="flex items-end justify-between gap-6">
+                  <SliderSide Icon={UtensilsCrossed} label="Food" pct={80} color={FOOD_COLOR} />
+                  <SliderSide Icon={Dumbbell} label="Exercise" pct={20} color={EXERCISE_COLOR} />
+                </div>
+                <div className="mt-6"><SplitBar guess={80} /></div>
+              </div>
+              <div className="absolute inset-0 flex items-center justify-center px-3">
+                <p
+                  className="max-w-[92%] rounded-[1.35rem] bg-white/92 px-6 py-4 text-center text-[24px] font-bold leading-[1.15] tracking-[-0.01em] text-[#15102a] shadow-[0_16px_40px_-18px_rgba(140,17,74,0.55)] ring-1 ring-[#f2d0e0] backdrop-blur-sm sm:text-[29px]"
+                  style={{ fontFamily: QUIZ_FONT }}
+                >
+                  {SLIDER_LOCKED_TITLE}
+                </p>
+              </div>
             </div>
-            <div className="mt-6"><SplitBar guess={80} /></div>
-            <div className="mt-7"><FadeLines lines={SLIDER_REVEAL.slice(1)} /></div>
+            <div className="mt-6"><FadeLines lines={SLIDER_REVEAL} /></div>
           </div>
         </Content>
         <StickyAction>
@@ -1020,10 +1038,16 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
           </div>
         </div>
         {flagLines.goalNote && <p className="mt-3 text-[16px] leading-snug text-[#6b5b6e]">{flagLines.goalNote}</p>}
+        {flagLines.progress && (
+          <div className="mt-3 flex items-start gap-2.5 rounded-2xl bg-[#fff0f5] p-4 text-[16px] font-medium leading-snug text-[#8c114a]">
+            <Gauge className="mt-0.5 h-5 w-5 shrink-0 text-[#c41e6a]" strokeWidth={2} />
+            <span>{flagLines.progress}</span>
+          </div>
+        )}
 
         <div className={`mt-6 space-y-3 text-[22px] sm:text-[24px] leading-[1.6] text-[#241d2e] ${READ_CARD}`} style={{ fontFamily: READ_FONT }}>
           <p className="font-semibold">We start fast.</p>
-          <p>Your jumpstart is built to fit your life, so you feel it working in your first days.</p>
+          <p>Your jumpstart is built to fit your life, so you feel it in the first few days, not the first month. The cravings quiet down, the bloat comes off, your energy comes back, and you get that early win that makes you believe it is possible again. It is not the whole plan. It is the running start.</p>
           <p>Then it is real food you already love, made simple, with your meals planned for you every single week, so you never have to wonder what to eat.</p>
           <p>And the whole way through, I am right here with you. Texting you in the morning. Calling you every week. Catching you before a slip becomes a week.</p>
           <p className="font-semibold text-[#b81860]">You are not doing this alone, not for one single day.</p>

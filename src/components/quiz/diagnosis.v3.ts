@@ -121,7 +121,6 @@ const TRIED_FRAGMENT: Record<string, string> = {
 const HAPPENED_FRAGMENT: Record<string, string> = {
   regained: "And every time, you lost it, and it found its way back.",
   couldnt_stick: "And you could not make it stick past a few weeks.",
-  barely_lost: "And you followed it closely, and the scale barely moved.",
   stalled: "And it worked, until it just stopped.",
 };
 
@@ -138,7 +137,50 @@ const ALONE_TENDER: Record<string, string> = {
   fizzles: "And you start with people, then find yourself on your own again.",
 };
 
-function buildMirror(s: State): string {
+// "What gets in the way" (C3) and "when it's time to eat" (D2) fragments, in her
+// words, for the Mirror. One is woven in when it is central to her primary.
+const GETS_FRAGMENT: Record<string, string> = {
+  blownit: "And you said it plainly: one bad day and you figure you have blown it.",
+  driftoff: "You start strong, and then you quietly drift off.",
+  losesteam: "And you lose steam the moment the scale stops moving.",
+  hungryrestricted: "And you have been hungry and restricted the whole time.",
+  putmelast: "And life gets busy, so you put yourself last.",
+};
+
+const MEAL_FRAGMENT: Record<string, string> = {
+  comfort: "You reach for comfort food when you are tired or stressed.",
+  quick: "You grab whatever is quick, because there is nothing left in you to cook.",
+  everyoneelse: "You feed everyone else first and eat whatever is left.",
+  dontknow: "And you do not even know what you are supposed to eat anymore.",
+};
+
+// The one extra "telling" fragment (gets-in-the-way or mealtime) woven into the
+// Mirror, chosen only when it is central to her primary reason (keeps it tight).
+function mirrorExtra(primary: ReasonKey, s: State): string {
+  const gets = s.answers["C3"] as string | undefined;
+  const meal = s.answers["D2"] as string | undefined;
+  switch (primary) {
+    case "R5":
+      return gets && GETS_FRAGMENT[gets] && ["blownit", "losesteam", "driftoff"].includes(gets) ? GETS_FRAGMENT[gets] : "";
+    case "R6":
+      if (meal === "everyoneelse") return MEAL_FRAGMENT.everyoneelse;
+      if (gets === "driftoff") return GETS_FRAGMENT.driftoff;
+      if (gets === "putmelast") return GETS_FRAGMENT.putmelast;
+      return "";
+    case "R9":
+      return meal === "comfort" || meal === "quick" ? MEAL_FRAGMENT[meal] : "";
+    case "R7":
+      return meal === "dontknow" ? MEAL_FRAGMENT.dontknow : "";
+    case "R4":
+      return gets === "hungryrestricted" ? GETS_FRAGMENT.hungryrestricted : "";
+    case "R8":
+      return gets === "putmelast" ? GETS_FRAGMENT.putmelast : "";
+    default:
+      return "";
+  }
+}
+
+function buildMirror(s: State, primary: ReasonKey): string {
   const tried = asArray(s.answers["C1"]);
   const happened = s.answers["C2"] as string | undefined;
   const day = s.answers["D1"] as string | undefined;
@@ -162,6 +204,10 @@ function buildMirror(s: State): string {
 
   // A normal day (the felt behavior).
   if (day && DAY_FRAGMENT[day]) parts.push(DAY_FRAGMENT[day]);
+
+  // One extra telling fragment from the new questions, when central to her primary.
+  const extra = mirrorExtra(primary, s);
+  if (extra) parts.push(extra);
 
   // End on the tenderest: carrying it alone.
   if (alone && ALONE_TENDER[alone]) parts.push(ALONE_TENDER[alone]);
@@ -211,6 +257,9 @@ function consequenceConnectors(primary: ReasonKey, contributing: ReasonKey | nul
   const happened = s.answers["C2"] as string | undefined;
   const day = s.answers["D1"] as string | undefined;
   const stress = s.answers["D4"] as string | undefined;
+  const gets = s.answers["C3"] as string | undefined;
+  const meal = s.answers["D2"] as string | undefined;
+  const supp = s.answers["D7"] as string | undefined;
   const symptoms = asArray(s.answers["E1"]);
   const out: string[] = [];
   const triedCount = tried.filter((t) => t !== "everything").length + (tried.includes("everything") ? 1 : 0);
@@ -229,8 +278,8 @@ function consequenceConnectors(primary: ReasonKey, contributing: ReasonKey | nul
       push(tried.includes("gym"), "And the hard workouts cost you more of the muscle the cycle was already taking.");
       break;
     case "R4":
-      push(happened === "barely_lost", "It is the whole reason you followed a plan closely and the scale barely moved.");
       push(day === "barely_eat", "The starving-by-night is the tell, a debt you ran up all day.");
+      push(gets === "hungryrestricted", "You named it yourself, being hungry and restricted all the time, that is the setup, not a failing.");
       push(symptoms.includes("cravings"), "And the cravings you can't control are not weakness, they are the alarm.");
       push(tried.includes("fasting"), "The fasting was the restriction your body kept correcting for.");
       break;
@@ -238,35 +287,44 @@ function consequenceConnectors(primary: ReasonKey, contributing: ReasonKey | nul
       push(day === "clean_stuck", "That is why clean eating never cracked the belly.");
       push(symptoms.includes("exhausted") || symptoms.includes("brain_fog"), "The exhaustion and the fog are part of the same story, a run-down body holding on to everything.");
       push(stress === "white_knuckle", "You have been burning out and dieting at the same time, signaling danger to your body while asking it to let go.");
+      push(gets === "putmelast", "And putting yourself last, every time, is how the load never lifts.");
       push(symptoms.includes("belly"), "The belly that will not move is the loudest sign of it.");
       break;
     case "R5":
+      push(gets === "blownit", "You said it yourself, one bad day and you figure you have blown it. That one thought has cost you more than any meal ever did.");
       push(day === "weekend", "The weekend is the whole pattern in miniature, five good days a single slip erases.");
       push(happened === "couldnt_stick", "It is why nothing stuck past a few weeks, the first imperfect day ended the whole thing.");
+      push(gets === "losesteam", "And when the scale stalls, the whole thing loses its air, because perfect was the only setting.");
       push(tried.includes("everything"), "Every new diet was a fresh start after the last slip. You do not need another one.");
       break;
     case "R6":
+      push(supp === "yesneverhad", "And you told me the truth of it, the thing you have never had is someone in your corner. That was the missing piece the whole time.");
+      push(meal === "everyoneelse", "You feed everyone else first and eat what is left, the way you have given to everyone but you.");
+      push(gets === "driftoff", "You start strong and then quietly drift off, and there is never anyone there to notice or catch you.");
       push(happened === "couldnt_stick", "Week two or three, when the newness wore off and no one was watching, is exactly when the tank ran dry.");
-      push(stress === "stop_caring", "And when life got hard with no one in your corner, you were the first thing off your own list.");
+      push(stress === "stop_caring" || gets === "putmelast", "And when life got hard with no one in your corner, you were the first thing off your own list.");
       push(s.answers["D6"] === "fizzles", "You start with people and end alone, which is right when it always falls apart.");
       break;
     case "R3":
       push(tried.includes("gym"), "All those hard sessions were the effort of someone who refused to quit, spent where it pays back least.");
-      push(happened === "barely_lost", "It is why you barely lost despite working so hard.");
       push(day === "clean_stuck", "You had the food closer to right than you think. The punishing exercise was the misfire.");
       break;
     case "R1":
       push(happened === "stalled", "The stall was your old plan meeting your new body, and losing.");
       push(day === "clean_stuck", "Food was never the lever that slipped. The muscle was.");
       push(symptoms.includes("lose_but_stomach"), "Losing it everywhere but the middle is the midlife shift with your name on it.");
+      push(symptoms.includes("hot_flashes"), "The hot flashes are your body telling you the season changed; the plan never did.");
       break;
     case "R9":
       push(day === "night_stress", "The nights are where you see it clearest, the plan-making part of you clocks out right when you need it most.");
+      push(meal === "comfort", "You reach for comfort food when you are tired or stressed, because it is the fastest comfort there is, that is human, not weak.");
       push(stress === "reach_food", "Food being where you go is the signal that the hard moments were never covered.");
+      push(meal === "quick", "And grabbing whatever is quick when you are drained is not the problem to fix, it is the tiredness underneath it.");
       push(symptoms.includes("cravings"), "And the cravings are that same pull, not a flaw.");
       break;
     case "R7":
       push(triedCount >= 3, "The sheer number of things you tried is a receipt for the bad advice, not a list of your failures.");
+      push(meal === "dontknow", "You told me you do not even know what you are supposed to eat anymore, that is not on you, that is what years of contradictions do.");
       push(happened === "regained", "Each one worked briefly and rebounded because each was built to sell a result, not to keep it.");
       push(symptoms.includes("bloated"), "Even the bloat you were sold a supplement for was usually just the wrong foods.");
       break;
@@ -298,12 +356,12 @@ function turnAddenda(s: State, res: Resolution): string[] {
     add.push("This is gentler than what you have been doing to yourself, not harder. And it is not something you should have to figure out alone.");
   }
 
-  // GLP-1 grace-first.
+  // GLP-1 grace-first, now sourced (spec §6.5). [clinician check: confirm figures, keep hedges]
   if (s.flags.FLAG_GLP1) {
-    add.push("And if you are on the shot, or thinking about it, there is no judgment here. It can quiet your appetite. It cannot build the habits or be in your corner on the hard days. That part is the work, and it is the part that lasts.");
+    add.push("A shot can quiet your appetite, and for some women that helps. But up to about 40 percent of what it takes off is muscle, not fat, the muscle that keeps your metabolism up, and most women who stop regain about two-thirds of the weight within a year, as fat. It works on your appetite. It cannot build the habits, protect your muscle, or be in your corner on the hard days. That part is the work, and it is the part that lasts.");
   }
   if (s.flags.FLAG_GLP1_cameoff) {
-    add.push("Coming off it is exactly when the muscle-protecting, supported version matters most.");
+    add.push("Coming off it is exactly when protecting your muscle and your results matters most, that is the window it wants to come back.");
   }
 
   // Health / family why.
@@ -346,7 +404,7 @@ export function composeDiagnosis(s: State, res: Resolution): ComposedDiagnosis {
   const sections: DiagnosisSection[] = [];
 
   // 1. Mirror.
-  sections.push({ kind: "mirror", text: buildMirror(s) });
+  sections.push({ kind: "mirror", text: buildMirror(s, res.primary) });
 
   // 2. Pattern.
   sections.push({ kind: "pattern", text: buildPattern(core, res) });
@@ -431,11 +489,14 @@ export const SOLUTION_LINES: Record<ReasonKey, Partial<Record<ComponentKey, stri
   },
 };
 
-export function solutionFlagLines(s: State): { plan?: string; header?: string; goalNote?: string } {
-  const out: { plan?: string; header?: string; goalNote?: string } = {};
+export function solutionFlagLines(s: State): { plan?: string; header?: string; goalNote?: string; progress?: string } {
+  const out: { plan?: string; header?: string; goalNote?: string; progress?: string } = {};
   if (s.flags.FLAG_GLP1) out.plan = "And if you are on the shot, this is the part it cannot do, the habits, the muscle, the person in your corner. That is what makes it last.";
   if (s.flags.FLAG_health_why) out.header = "This was never only about a number. It is about your energy and being here strong for the people who need you.";
   if (s.flags.FLAG_goalBig) out.goalNote = "A goal like yours is likely more than one focused stretch, done in a way that lasts. We start now, and I am with you the whole way.";
+  // "I lose steam when the scale stalls" -> the progress-tracking payoff (she needs to
+  // see herself changing beyond the one number).
+  if (s.answers["C3"] === "losesteam") out.progress = "And you will see yourself changing even on the weeks the scale is being stubborn, so you are never flying blind on one number again.";
   return out;
 }
 

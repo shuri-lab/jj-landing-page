@@ -101,12 +101,13 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       { value: "30s", label: "My 30s" },
       { value: "40s", label: "My 40s" },
       { value: "50s", label: "My 50s" },
-      { value: "60plus", label: "60 and fabulous" },
+      { value: "60plus", label: "60+ and fabulous" },
     ],
   },
   TRIED: {
     key: "TRIED", qid: "C1", type: "multi",
-    prompt: "What have you tried before? Tap everything that rings true.",
+    prompt: "What have you tried before?",
+    sub: "Tap everything that rings true.",
     options: [
       { value: "keto", label: "Keto or low-carb", icon: "leaf" },
       { value: "calories", label: "Counting calories or macros", icon: "smartphone" },
@@ -114,7 +115,6 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       { value: "fasting", label: "Fasting or skipping meals", icon: "clock" },
       { value: "shakes", label: "Shakes, cleanses, or detoxes", icon: "glass" },
       { value: "ww", label: "Weight Watchers or points", icon: "clipboard" },
-      { value: "shot", label: "The shot (Ozempic, Wegovy, etc.)", icon: "droplet" },
       { value: "everything", label: "Honestly, a little of everything", icon: "shuffle" },
     ],
   },
@@ -122,10 +122,21 @@ export const QUESTIONS: Record<string, QuestionDef> = {
     key: "HAPPENED", qid: "C2", type: "single",
     prompt: "And when you tried, what usually happened?",
     options: [
-      { value: "regained", label: "I lost it, then it all came back" },
-      { value: "couldnt_stick", label: "I couldn't stick with it past a few weeks" },
-      { value: "barely_lost", label: "I followed it and barely lost anything" },
+      { value: "regained", label: "I lost it, then it came back" },
+      { value: "couldnt_stick", label: "I couldn't stick with it" },
       { value: "stalled", label: "It worked, then just... stalled" },
+    ],
+  },
+  WHATGETS: {
+    key: "WHATGETS", qid: "C3", type: "single",
+    prompt: "When you start something, what usually gets in the way?",
+    sub: "Pick the one that feels most like you.",
+    options: [
+      { value: "blownit", label: "One bad day and I figure I've blown it", icon: "cloudrain" },
+      { value: "driftoff", label: "I start strong, then quietly drift off", icon: "wind" },
+      { value: "losesteam", label: "I lose steam when the scale stops moving", icon: "gauge" },
+      { value: "hungryrestricted", label: "Being hungry and restricted all the time", icon: "utensilscrossed" },
+      { value: "putmelast", label: "Life gets busy and I put myself last", icon: "users" },
     ],
   },
   DAY: {
@@ -137,6 +148,16 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       { value: "graze", label: "I graze and snack all day without thinking" },
       { value: "night_stress", label: "I'm good all day, then night or stress hits" },
       { value: "weekend", label: "Good all week, then the weekend undoes it" },
+    ],
+  },
+  MEAL: {
+    key: "MEAL", qid: "D2", type: "single",
+    prompt: "When it's time to eat, what usually happens?",
+    options: [
+      { value: "comfort", label: "I reach for comfort food, mostly when I'm tired or stressed" },
+      { value: "quick", label: "I grab whatever's quick, I don't have it in me to cook" },
+      { value: "everyoneelse", label: "I feed everyone else first and just eat what they're having" },
+      { value: "dontknow", label: "I don't even know what I'm supposed to eat anymore" },
     ],
   },
   STRESS: {
@@ -156,6 +177,15 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       { value: "always_alone", label: "Always alone, nobody really knew" },
       { value: "had_group", label: "I had a person or group, and it helped" },
       { value: "fizzles", label: "I start with people, but it fizzles out" },
+    ],
+  },
+  SUPPORT: {
+    key: "SUPPORT", qid: "D7", type: "single",
+    prompt: "Do you think having someone in your corner, every day, would make the difference this time?",
+    options: [
+      { value: "yesneverhad", label: "Honestly, yes. That's the part I've never had" },
+      { value: "ifkeptup", label: "Maybe, if they actually kept up with me" },
+      { value: "myself", label: "I've always figured I should be able to do this myself" },
     ],
   },
   SYMPTOMS: {
@@ -196,93 +226,77 @@ export const QUESTIONS: Record<string, QuestionDef> = {
 
 // ── Discovery content ────────────────────────────────────────────────────────
 
-// The signature food-vs-exercise slider (spec screen 3): guess, then reveal.
+// The signature food-vs-exercise slider (spec screen 3): guess, then a blurred
+// teaser (the real answer is deferred to keep her curious to the end).
 export const SLIDER_INTRO = "Take your best guess. Most women get this one backwards.";
 export const SLIDER_PROMPT = "How much of weight loss do you think is food vs. exercise?";
+export const SLIDER_LOCKED_TITLE = "Most women are off by a lot here...";
 export const SLIDER_REVEAL: string[] = [
-  "It's about 80% food, 20% exercise.",
-  "Even most active women burn under 100 calories a day working out. That's about 5% of what your body uses. The food on your plate has roughly 20 times more pull on your weight than the gym does.",
-  "Exercise still matters for your health. It was just never the lever that moves the scale.",
+  "The real answer surprises almost everyone. I'll show you at the end.",
 ];
 
+// Mid-quiz reveals are CLIFFHANGERS, not lessons (spec §4): each lands one true,
+// slightly surprising thing and points forward to the diagnosis, without giving
+// away the mechanism the diagnosis delivers as the aha.
 export function discHistory(c2: string): string[] {
   switch (c2) {
     case "regained":
       return [
-        "Here's why it keeps coming back. When weight comes off fast, a lot of what leaves is muscle, not just fat.",
-        "And when it returns, it comes back as fat. So each round quietly trades away the very thing that keeps your metabolism up, which is why every attempt feels a little harder than the last.",
-        "The weight coming back was not you slipping. It was built into how fast you lost it.",
+        "Oh, I know this one. It came back every time, and a little heavier. That is not you failing.",
+        "There is a real reason it keeps happening, and it is not what you have been told. I will show you.",
       ];
     case "couldnt_stick":
       return [
-        "The women who keep it off are not tougher than you. They just are not running on willpower, because willpower is a battery, and it runs down for everyone.",
-        "Sticking with something has never come from gritting your teeth harder. It comes from the setup around you being built so you do not have to.",
-        "You were asked to white-knuckle something that was never meant to be done on grit alone.",
-      ];
-    case "barely_lost":
-      return [
-        "If you followed a plan closely and the scale barely moved, the effort was never the problem.",
-        "It usually means the plan was aimed at the wrong lever, either too much weight on exercise, or so little food that your body slowed down to protect itself.",
-        "Either way, the answer is not to try harder. It is to aim at the thing that actually moves.",
+        "You are not the problem here. The women who keep it off are not more disciplined than you, they just have something you have never had.",
+        "Hold that thought.",
       ];
     case "stalled":
     default:
       return [
-        "That stall is your body adapting. It gets more efficient, some muscle slips away, and the plan that used to work quietly stops working.",
-        "Doing more of the same rarely restarts it, and often makes it dig in harder.",
-        "What gets things moving again is protecting the muscle that sets your pace, not cutting further.",
+        "That stall is not you slipping. Your body did something specific, and pushing harder is exactly the wrong answer.",
+        "I will show you what actually works.",
       ];
   }
 }
 
-export function discDay(d1: string, gentle: boolean): string[] {
+export function discDay(d1: string): string[] {
   switch (d1) {
     case "barely_eat":
-      return gentle
-        ? [
-            "Barely eating all day and then feeling ravenous at night is not a discipline problem. It is your body running low and sounding the alarm.",
-            "When food stays too scarce for too long, your body slows down to protect you.",
-            "It is asking for steady fuel, not less of it. This was never a lack of discipline. You've had plenty.",
-          ]
-        : [
-            "Barely eating all day and then feeling ravenous at night is not a discipline problem. It is your body running low and sounding the alarm.",
-            "When food stays too scarce for too long, your body slows down to protect you, then drives you to eat later.",
-            "It is asking for steady fuel, not less of it.",
-          ];
+      return [
+        "I hear this all the time, and I need you to know it is not a discipline problem. Your body is doing something to protect you, and the fix is the opposite of what you would think.",
+        "I will show you.",
+      ];
     case "clean_stuck":
       return [
-        "Eating clean and still not losing means the problem is not on your plate, it is somewhere the plate can't reach.",
-        "For some women that is lost muscle, for others it is stress, or a body that has slowed to protect itself.",
-        "Clean eating is not the fix on its own, because it was never the missing piece. In a moment we'll show you which piece is yours.",
+        "This is the one that breaks women's hearts, doing everything right and the scale just sits there. If you are eating clean and it will not move, the thing holding your weight is not on your plate.",
+        "Your answers already told me where it is. Almost there.",
       ];
     case "graze":
       return [
-        "It's not just how much you're nibbling, it's what.",
-        "A lot of everyday food is designed to be easy to overeat without ever feeling full. In one careful study, people ate about 500 extra calories a day on processed food, same hunger, more calories, without noticing.",
-        "It was not weak willpower. The food was built to slip right past it.",
+        "You are not weak, and you are not lazy. A lot of everyday food is built to slip right past you without ever filling you up.",
+        "But that is only part of your story, and the rest is what your results are about to show you.",
       ];
     case "night_stress":
       return [
-        "Reaching for food when you're stressed or drained is not weakness.",
-        "Under stress, your body turns up the pull toward comfort food and turns down your ability to resist, at the very same moment. That is a setup, not a character flaw.",
-        "Which means the fix was never about resisting harder on the hard nights. It's about what is driving them.",
+        "Reaching for food when you are drained is not a character flaw, it is human. Something real happens on those hard nights, and it was never about resisting harder.",
+        "What it is really about is in your results.",
       ];
     case "weekend":
     default:
       return [
-        "Look closely and you are not failing all week, you are winning all week, and one weekend erases it in your mind.",
-        "The slip was never the problem. The problem is that a single off day ends the whole thing instead of being just one day you move past.",
-        "Staying mostly on track beats being perfect, every time.",
+        "Here is what I see: you are not failing all week, you are winning all week, and one weekend gets to erase it in your head. The slip was never the real problem.",
+        "What the real problem is might surprise you. Keep going.",
       ];
   }
 }
 
-// Midlife discovery (spec screen 12), gated in isShown().
+// Midlife discovery (spec screen 15), gated in isShown(). Kept slightly fuller
+// than the other reveals (it carries credibility weight for the 50+ audience),
+// but still points forward to the diagnosis rather than fully resolving.
 export const DISC_MIDLIFE: string[] = [
-  "After 40, something shifts that no plan warns you about.",
-  "As your hormones change, you slowly lose the muscle that keeps your metabolism running, and your body starts storing fat around your middle. It happens even when you're eating exactly the way you always have.",
-  "So when the old approach stops working, it is not that you stopped trying.",
-  "The body changed, and the plan never got updated to match.",
+  "After 40, something shifts that no plan warns you about. As your hormones change, you slowly lose the muscle that keeps your metabolism running, and your body starts holding weight around your middle, even when you are eating exactly the way you always have.",
+  "So when the old approach stopped working, it was never that you stopped trying. Your body changed, and no one updated the plan.",
+  "How much this is driving your specific pattern is in your results.",
 ];
 
 export const ANALYZING_TICKS: string[] = [
@@ -335,12 +349,15 @@ export function scoreAnswer(prev: State, qid: string, value: string | string[]):
       break;
     }
     case "C1": {
+      // Note: the shot is NOT here anymore (its own screen, F3q, is the single
+      // source for the GLP1 flag). This eliminates the double-ask.
       const v = asArray(value);
       if (v.includes("keto")) add(s, "R7", 1);
+      if (v.includes("calories")) add(s, "R6", 1); // "doing the math alone" angle
       if (v.includes("gym")) add(s, "R3", 3);
       if (v.includes("fasting")) add(s, "R4", 2);
       if (v.includes("shakes")) add(s, "R7", 1);
-      if (v.includes("shot")) s.flags.FLAG_GLP1 = true;
+      if (v.includes("ww")) add(s, "R7", 1); // "points forever, still on your own"
       if (v.includes("everything")) {
         add(s, "R7", 2);
         add(s, "R5", 1);
@@ -353,22 +370,52 @@ export function scoreAnswer(prev: State, qid: string, value: string | string[]):
       } else if (value === "couldnt_stick") {
         add(s, "R5", 2);
         add(s, "R6", 1);
-      } else if (value === "barely_lost") {
-        add(s, "R4", 2);
       } else if (value === "stalled") {
         add(s, "R1", 2);
         add(s, "R4", 1);
       }
       break;
     }
+    case "C3": {
+      // What gets in the way (spec screen 7): pattern behind the outcome + motivation.
+      if (value === "blownit") add(s, "R5", 3);
+      else if (value === "driftoff") {
+        add(s, "R6", 2);
+        add(s, "R5", 1);
+      } else if (value === "losesteam") {
+        add(s, "R6", 1);
+        add(s, "R5", 1);
+      } else if (value === "hungryrestricted") add(s, "R4", 2);
+      else if (value === "putmelast") {
+        add(s, "R6", 2);
+        add(s, "R8", 1);
+      }
+      break;
+    }
+    case "D2": {
+      // When it's time to eat (spec screen 10): the 6pm reality + not-knowing-what-to-eat.
+      if (value === "comfort") add(s, "R9", 3);
+      else if (value === "quick") {
+        add(s, "R9", 1);
+        add(s, "R7", 1);
+      } else if (value === "everyoneelse") {
+        add(s, "R6", 2);
+        add(s, "R9", 1);
+      } else if (value === "dontknow") add(s, "R7", 2);
+      break;
+    }
+    case "D7": {
+      // Would support help (spec screen 13): she names her own need. "myself" not scored down.
+      if (value === "yesneverhad") add(s, "R6", 3);
+      else if (value === "ifkeptup") add(s, "R6", 1);
+      break;
+    }
     case "D1": {
       if (value === "barely_eat") {
         add(s, "R4", 3);
-        // ED candidate: barely-eat + a restriction signal (fasting or barely-lost).
+        // ED candidate: barely-eating all day + fasting/skipping is the reliable signal.
         const tried = asArray(s.answers["C1"] ?? []);
-        if (tried.includes("fasting") || s.answers["C2"] === "barely_lost") {
-          s.flags.FLAG_ED_watch = true;
-        }
+        if (tried.includes("fasting")) s.flags.FLAG_ED_watch = true;
       } else if (value === "clean_stuck") {
         add(s, "R1", 2);
       } else if (value === "graze") {
@@ -440,9 +487,9 @@ export function scoreAnswer(prev: State, qid: string, value: string | string[]):
 // ── Flow / skip logic (spec §2) ──────────────────────────────────────────────
 export const ORDER = [
   "GOAL", "AGE", "SLIDER", "TRIED", "HAPPENED", "DISC_HISTORY",
-  "DAY", "DISC_DAY", "STRESS", "ALONE", "SYMPTOMS", "DISC_MIDLIFE",
-  "SHOT", "WHY", "NAME", "ANALYZING", "GATE", "PREPARING",
-  "DIAGNOSIS", "SOLUTION", "OFFER",
+  "WHATGETS", "DAY", "DISC_DAY", "MEAL", "STRESS", "ALONE",
+  "SUPPORT", "SYMPTOMS", "DISC_MIDLIFE", "SHOT", "WHY", "NAME",
+  "ANALYZING", "GATE", "PREPARING", "DIAGNOSIS", "SOLUTION", "OFFER",
 ] as const;
 
 export function isShown(key: string, s: State): boolean {
@@ -491,6 +538,16 @@ export function resolve(s: State): Resolution {
   const reasons = Object.keys(s.reasonScores) as ReasonKey[];
   const score = (r: ReasonKey) => s.reasonScores[r];
 
+  // R6 rebalance rule (spec §9.2): no-support may now accumulate from many places,
+  // so it only wins as primary when her DIRECT support answers back it up (she is
+  // doing it alone/fades, or she said support would make the difference). Otherwise
+  // it drops to contributing and the next reason leads, so R6 never swamps a woman
+  // whose real pattern is elsewhere by accumulation alone.
+  const r6Backed =
+    s.answers["D6"] === "always_alone" ||
+    s.answers["D6"] === "fizzles" ||
+    s.answers["D7"] === "yesneverhad";
+
   const ranked = [...reasons].sort((a, b) => {
     if (score(b) !== score(a)) return score(b) - score(a);
     return PRIORITY.indexOf(a) - PRIORITY.indexOf(b); // behavioral-first tie-break
@@ -498,11 +555,20 @@ export function resolve(s: State): Resolution {
 
   let primary = ranked[0];
 
+  // R6 guard: if unbacked R6 is on top, hand the lead to the next scoring reason.
+  if (primary === "R6" && !r6Backed) {
+    const next = ranked.find((r) => r !== "R6" && score(r) > 0);
+    if (next) primary = next;
+  }
+
   // Fallback demotion: R1/R7 only lead when they clearly dominate. If the top
   // reason is R1 or R7 and a behavioral reason is within FALLBACK_DOMINANCE
   // points, the behavioral reason leads instead (the anti-"it's your age" fix).
+  // An unbacked R6 is not eligible to be promoted here.
   if (FALLBACK.includes(primary)) {
-    const bestBehavioral = ranked.find((r) => !FALLBACK.includes(r) && score(r) > 0);
+    const bestBehavioral = ranked.find(
+      (r) => !FALLBACK.includes(r) && score(r) > 0 && (r !== "R6" || r6Backed),
+    );
     if (bestBehavioral && score(primary) - score(bestBehavioral) < FALLBACK_DOMINANCE) {
       primary = bestBehavioral;
     }
