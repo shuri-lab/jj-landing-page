@@ -102,7 +102,7 @@ function Landing() {
 }
 
 // ── Reusable CTA ─────────────────────────────────────────────────────────────
-function PrimaryCta({ subline, className = "" }: { subline?: string; className?: string }) {
+function PrimaryCta({ subline, label = "Get my free diagnosis", className = "" }: { subline?: string; label?: string; className?: string }) {
   const openQuiz = useOpenQuiz();
   return (
     <div className={`w-full ${className}`}>
@@ -113,13 +113,14 @@ function PrimaryCta({ subline, className = "" }: { subline?: string; className?:
         style={{ background: PINK }}
       >
         <span className="inline-flex items-center justify-center gap-2">
-          Take the 1-minute quiz <span aria-hidden>→</span>
+          {label} <span aria-hidden>→</span>
         </span>
       </button>
       {subline && <p className="mt-3 text-center text-[15px] sm:text-[16px] font-semibold" style={{ color: "#8c114a" }}>{subline}</p>}
     </div>
   );
 }
+
 
 // Social-proof trust bar: an icon before each stat, and the familiar stacked
 // avatar circles before the "women helped" count. Stays on one line.
@@ -151,10 +152,14 @@ function TrustBar({ center = false }: { center?: boolean }) {
   );
 }
 
-// Soft highlight behind key phrases (matches the reference hero treatment).
+// Subtle highlight behind key phrases: a soft marker stroke that only covers the
+// lower portion of the words, so it reads as a gentle underline-highlight.
 function Hi({ children }: { children: ReactNode }) {
   return (
-    <mark className="rounded-sm px-1 text-ink" style={{ backgroundColor: "#f6dedb" }}>
+    <mark
+      className="bg-transparent px-0.5 text-ink"
+      style={{ backgroundImage: "linear-gradient(to top, #f4cbde 34%, transparent 34%)" }}
+    >
       {children}
     </mark>
   );
@@ -184,7 +189,7 @@ function Header() {
           data-cta="take-quiz"
           className="hidden rounded-full border-2 border-[#d62a7a] px-5 py-2.5 text-[14px] font-bold uppercase tracking-wide text-[#b81860] transition-colors hover:bg-[#d62a7a] hover:text-white sm:inline-flex"
         >
-          Take the 1-minute quiz →
+          Get my free diagnosis →
         </button>
       </div>
     </header>
@@ -230,9 +235,15 @@ function Hero() {
           <div className="mt-6">
             <Headline />
           </div>
-          <BulletList className="mt-6" />
+          <BulletList
+            className="mt-6"
+            textClass="text-[20px]"
+            points={[
+              <>Get a <Hi>free</Hi> personal diagnosis in <Hi>60 seconds</Hi></>,
+            ]}
+          />
           <div className="mt-7">
-            <PrimaryCta />
+            <PrimaryCta label="Get my diagnosis" />
           </div>
           <div className="mt-7">
             <PressMarquee />
@@ -260,7 +271,7 @@ function Headline() {
         Why losing weight after 40 feels <span style={{ color: "#c41e6a" }}>impossible</span>
       </h1>
       <p
-        className="mt-3 text-left text-[20px] font-bold leading-[1.25] tracking-[-0.01em] sm:mt-4 sm:text-[22px] lg:whitespace-nowrap lg:text-[24px]"
+        className="mt-3 text-left text-[22px] font-bold leading-[1.25] tracking-[-0.01em] sm:mt-4 sm:text-[22px] lg:whitespace-nowrap lg:text-[24px]"
         style={{ fontFamily: "'DM Sans', sans-serif", color: "#c41e6a" }}
       >
         (and the one shift that changes everything).
@@ -269,15 +280,17 @@ function Headline() {
   );
 }
 
-function BulletList({ className = "" }: { className?: string }) {
+const HERO_BULLETS = ["This quiz reveals what finally turns it around.", "Get a free personal diagnosis in 60 seconds"];
+
+function BulletList({ className = "", points = HERO_BULLETS, textClass = "text-[18px] sm:text-[21px]" }: { className?: string; points?: ReactNode[]; textClass?: string }) {
   return (
     <ul className={`max-w-[560px] space-y-3 ${className}`}>
-      {["This quiz reveals what finally turns it around.", "Get a free personal diagnosis in 60 seconds"].map((point) => (
-        <li key={point} className="flex items-start gap-2.5 text-left text-[18px] font-medium leading-[1.4] text-ink sm:text-[21px]">
+      {points.map((point, i) => (
+        <li key={i} className={`flex items-start gap-2.5 text-left font-medium leading-[1.4] text-ink ${textClass}`}>
           <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}>
             <Check className="h-4 w-4" strokeWidth={3} />
           </span>
-          {point}
+          <span>{point}</span>
         </li>
       ))}
     </ul>
@@ -533,7 +546,7 @@ function StickyCta() {
         className="block w-full rounded-xl px-5 py-4 text-center text-[16px] font-bold uppercase tracking-wide text-white shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]"
         style={{ background: PINK }}
       >
-        Take the 1-minute quiz →
+        Get my diagnosis →
       </button>
     </div>
   );
