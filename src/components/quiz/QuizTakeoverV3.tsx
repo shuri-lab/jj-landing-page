@@ -77,7 +77,8 @@ import {
 import {
   composeDiagnosis,
   type DiagnosisSection,
-  gatePattern,
+  type VisualKind,
+  gateMirror,
   GATE_REVEALS,
   SOLUTION_LINES,
   solutionFlagLines,
@@ -261,7 +262,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
       </div>
 
       <div ref={scrollRef} onScroll={checkBottom} className="relative flex-1 overflow-y-auto">
-        <div className={`mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : "max-w-[540px]"}`}>
+        <div className={`mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : "max-w-[540px]"}`}>
           <Screen
             key={stepKey}
             stepKey={stepKey}
@@ -886,7 +887,7 @@ function TransitionScreen({ title, ticks, onDone }: { title: string; ticks: stri
 // ── Result gate (pattern name free; email unlocks the full breakdown) ─────────
 function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: string) => void }) {
   const res = useMemo(() => resolve(state), [state]);
-  const pattern = gatePattern(res);
+  const mirror = useMemo(() => gateMirror(state), [state]);
   const [val, setVal] = useState("");
   const valid = /.+@.+\..+/.test(val.trim());
   const submit = () => { if (valid) onSubmit(val.trim()); };
@@ -897,9 +898,11 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
     <>
       <Content align="top">
         <div className="q-rise">
-          <p className="text-[14px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Your pattern</p>
-          <h2 className="mt-2 font-serif text-[30px] sm:text-[36px] leading-[1.1] capitalize text-[#15102a]">{pattern.name}</h2>
-          <p className="mt-3 text-[19px] sm:text-[21px] leading-[1.4] font-medium text-[#15102a]">{pattern.essence}</p>
+          <p className="text-[14px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">I can see it now</p>
+          {/* No pattern name here (it lands in the paid breakdown). Reflect her own
+              words back: a short Mirror, distinct from the one that opens the diagnosis. */}
+          <h2 className="mt-2 font-serif text-[26px] sm:text-[32px] leading-[1.18] text-[#15102a]">{mirror}</h2>
+          <p className="mt-3 text-[18px] sm:text-[20px] leading-[1.45] font-medium text-[#6b5b6e]">It was never your willpower, and it was never just one thing.</p>
 
           {/* Full breakdown teaser: real chart blurred behind, reveals listed on top. */}
           <div className="relative mt-6 overflow-hidden rounded-[1.9rem] shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
@@ -909,7 +912,7 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
               </div>
             </div>
             <div className="absolute inset-0 flex flex-col justify-center bg-white/72 p-5 backdrop-blur-[1px]">
-              <p className="text-[14px] font-bold uppercase tracking-[0.12em] text-[#8c114a]">Your full breakdown reveals</p>
+              <p className="text-[14px] font-bold uppercase tracking-[0.12em] text-[#8c114a]">Your full breakdown</p>
               <ul className="mt-3 space-y-2.5">
                 {GATE_REVEALS.map((r, i) => {
                   const RI = revealIcons[i] ?? Search;
@@ -929,7 +932,7 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
         </div>
       </Content>
       <StickyAction>
-        <PrimaryButton onClick={submit} disabled={!valid}>Unlock My Full Breakdown</PrimaryButton>
+        <PrimaryButton onClick={submit} disabled={!valid}>Unlock my breakdown</PrimaryButton>
         <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]"><Lock className="h-4 w-4" /> Free. Your complete breakdown, and how to fix it.</p>
       </StickyAction>
     </>
@@ -937,16 +940,6 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
 }
 
 // ── Full diagnosis (composed) ────────────────────────────────────────────────
-const DIAG_LABEL: Record<string, string> = {
-  mirror: "What you told me",
-  pattern: "Your pattern",
-  aha: "What's really going on",
-  slider: "About that slider",
-  diets: "Why what you tried didn't last",
-  throughline: "The real picture",
-  turn: "What changes it",
-};
-
 // Split composed prose into sentences so each card reads as short, scannable
 // lines instead of one block. Content is unchanged; only the line breaks differ.
 function splitSentences(text: string): string[] {
@@ -956,7 +949,6 @@ function splitSentences(text: string): string[] {
 
 function DiagnosisSectionCard({ section, delay }: { section: DiagnosisSection; delay: number }) {
   const { kind, text, bullets } = section;
-  const label = DIAG_LABEL[kind] ?? "";
   const pivot = kind === "pattern" || kind === "throughline" || kind === "turn"; // the anchors
   const sentences = splitSentences(text);
   return (
@@ -966,55 +958,145 @@ function DiagnosisSectionCard({ section, delay }: { section: DiagnosisSection; d
       }`}
       style={{ animationDelay: `${delay}s` }}
     >
-      {/* Statement title (bold sans), like the "/" reveal cards. */}
-      <div className="mb-4 flex items-center gap-2.5">
-        <span className="h-5 w-1.5 shrink-0 rounded-full" style={{ background: pivot ? PINK : "#f0b9d2" }} aria-hidden />
-        <h3 className={`font-sans text-[19px] sm:text-[21px] font-bold leading-tight tracking-tight ${pivot ? "text-[#b81860]" : "text-[#15102a]"}`}>{label}</h3>
-      </div>
 
       {bullets ? (
         <ul className="space-y-3">
           {bullets.map((b, i) => (
             <li key={i} className="flex gap-3">
               <span className="mt-[14px] h-2 w-2 shrink-0 rounded-full" style={{ background: PINK }} aria-hidden />
-              <span className="text-[19px] sm:text-[21px] leading-[1.55] text-[#2f2740]" style={{ fontFamily: READ_FONT }}>{b}</span>
+              <span className="text-[22px] sm:text-[24px] leading-[1.55] text-[#2f2740]" style={{ fontFamily: READ_FONT }}>{b}</span>
             </li>
           ))}
         </ul>
       ) : (
         <div className="space-y-2.5">
-          {sentences.map((s, i) => (
-            <p
-              key={i}
-              className={
-                i === 0
-                  ? "text-[21px] sm:text-[23px] font-semibold leading-[1.5] text-[#15102a]"
-                  : "text-[19px] sm:text-[21px] leading-[1.55] text-[#3a3147]"
-              }
-              style={{ fontFamily: READ_FONT }}
-            >
-              {s}
-            </p>
-          ))}
+          {sentences.map((s, i) => {
+            // JJ writes in a punch-explain-punch rhythm: the SHORT lines are the
+            // payoffs. Rendering the lead and the short punches bold in dark ink (and
+            // the explaining lines lighter) gives the eye skimmable anchors, so a long
+            // card reads much shorter than it is, with no change to the words.
+            const isLead = i === 0;
+            const isPunch = !isLead && s.split(/\s+/).length <= 9;
+            return (
+              <p
+                key={i}
+                className={
+                  isLead
+                    ? "text-[23px] sm:text-[25px] font-semibold leading-[1.5] text-[#15102a]"
+                    : isPunch
+                      ? "text-[22px] sm:text-[24px] font-semibold leading-[1.45] text-[#15102a]"
+                      : "text-[22px] sm:text-[24px] leading-[1.55] text-[#3a3147]"
+                }
+                style={{ fontFamily: READ_FONT }}
+              >
+                {s}
+              </p>
+            );
+          })}
         </div>
       )}
     </div>
   );
 }
 
+// ── Diagnosis support graphics ────────────────────────────────────────────────
+// Small, on-brand visuals that ride alongside a beat: pinned in a sticky rail on
+// desktop, stacked inline under their card on mobile.
+function VizCard({ title, caption, children }: { title: string; caption: string; children: React.ReactNode }) {
+  return (
+    <div className="rounded-[1.5rem] bg-white p-5 shadow-[0_18px_40px_-28px_rgba(140,17,74,0.55)] ring-1 ring-[#f6e0ea]">
+      <p className="text-[13px] font-bold uppercase tracking-[0.13em] text-[#c41e6a]">{title}</p>
+      <div className="mt-4">{children}</div>
+      {/* The description is desktop-only: on mobile it stacks under the beat and
+          made the page too long, and the surrounding beat text already gives context. */}
+      <p className="mt-4 hidden text-[22px] leading-[1.55] text-[#3f3448] lg:block lg:text-[24px]" style={{ fontFamily: READ_FONT }}>{caption}</p>
+    </div>
+  );
+}
+
+// Matches the food-vs-exercise slider from the quiz question (SliderSide + SplitBar),
+// shown here at the real ~85/15 split as the payoff.
+function SliderSplitViz() {
+  return (
+    <VizCard title="What actually moves the scale" caption="For most women it is mostly the food. Exercise is wonderful for your heart and your head, but it is a small slice of the scale.">
+      <div className="flex items-end justify-between gap-6">
+        <SliderSide Icon={UtensilsCrossed} label="Food" pct={85} color={FOOD_COLOR} />
+        <SliderSide Icon={Dumbbell} label="Exercise" pct={15} color={EXERCISE_COLOR} />
+      </div>
+      <div className="mt-5"><SplitBar guess={85} /></div>
+    </VizCard>
+  );
+}
+
+function RegainViz() {
+  const pts: [number, number][] = [[18, 55], [70, 115], [122, 60], [174, 105], [226, 66], [282, 96]];
+  return (
+    <VizCard title="The fast-loss cycle" caption="Each rebound comes back as fat, not the muscle you lost, so every round starts a little harder than the last.">
+      <svg viewBox="0 0 300 140" className="w-full" fill="none" role="img" aria-label="A weight line dropping and rebounding, each low point creeping higher.">
+        <line x1="14" y1="130" x2="286" y2="130" stroke="#f0dbe5" strokeWidth="1.5" />
+        <path d="M70 120 L282 100" stroke="#e7a9c6" strokeWidth="2" strokeDasharray="4 6" />
+        <path d={`M${pts.map((p) => p.join(" ")).join(" L")}`} stroke="#c41e6a" strokeWidth="3.5" strokeLinejoin="round" strokeLinecap="round" />
+        {pts.map(([x, y], i) => (
+          <circle key={i} cx={x} cy={y} r="4" fill={i % 2 === 0 ? "#8c114a" : "#d62a7a"} />
+        ))}
+      </svg>
+    </VizCard>
+  );
+}
+
+function MidlifeCurveViz() {
+  return (
+    <VizCard title="What changes after 40" caption="Muscle and daily calorie burn quietly decline, and fat shifts toward your middle, on the exact same plan that used to work.">
+      <svg viewBox="0 0 300 140" className="w-full" fill="none" role="img" aria-label="A muscle and metabolism line staying level, then declining after age 40.">
+        <line x1="14" y1="122" x2="286" y2="122" stroke="#f0dbe5" strokeWidth="1.5" />
+        <line x1="104" y1="24" x2="104" y2="122" stroke="#e7a9c6" strokeWidth="2" strokeDasharray="4 6" />
+        <text x="104" y="136" textAnchor="middle" fontSize="13" fontWeight="700" fill="#b81860">40</text>
+        <path d="M18 46 L104 48 Q160 54 210 86 Q246 112 282 118" stroke="#c41e6a" strokeWidth="3.5" strokeLinecap="round" />
+        <circle cx="18" cy="46" r="4" fill="#8c114a" />
+        <circle cx="282" cy="118" r="4" fill="#d62a7a" />
+      </svg>
+    </VizCard>
+  );
+}
+
+function DiagVisual({ kind }: { kind: VisualKind }) {
+  if (kind === "sliderSplit") return <SliderSplitViz />;
+  if (kind === "regain") return <RegainViz />;
+  return <MidlifeCurveViz />;
+}
+
 function DiagnosisScreen({ state, atBottom, onNudge, onContinue }: { state: State; atBottom: boolean; onNudge: () => void; onContinue: () => void }) {
   const res = useMemo(() => resolve(state), [state]);
   const diag = useMemo(() => composeDiagnosis(state, res), [state, res]);
   useEffect(() => { track("diagnosis_shown", { primary: res.primary, confidence: res.confidence }); }, [res.primary, res.confidence]);
+
+  // Layout: one constant-width text column (readability sweet spot) for EVERY beat,
+  // with the two graphics fixed beside their own card in a 300px column. Text-only
+  // beats leave that column as whitespace, so text width never changes. On mobile the
+  // row collapses and the graphic stacks directly under its beat.
   return (
     <>
       <Content align="top">
-        <CoachHeader />
-        <h2 className="q-rise mt-5 font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">{diag.title}</h2>
-        <div className="mt-5 space-y-3.5">
-          {diag.sections.map((sec, i) => (
-            <DiagnosisSectionCard key={i} section={sec} delay={Math.min(i, 4) * 0.12} />
-          ))}
+        <div className="lg:mx-auto lg:w-[884px]">
+          <CoachHeader />
+          <h2 className="q-rise mt-5 font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">{diag.title}</h2>
+          <div className="mt-5 space-y-3.5">
+            {diag.sections.map((sec, i) => (
+              // Constant-width text column for every beat (lg:pr reserves the right
+              // gutter). The visual sits ABOVE its card on mobile; on desktop it is
+              // absolutely placed in the right gutter and OUT OF FLOW, so a graphic
+              // taller than its card overflows down beside the following card instead
+              // of pushing the next beat lower.
+              <div key={i} className="lg:relative lg:pr-[324px]">
+                {sec.visual && (
+                  <div className="mb-3 lg:absolute lg:right-0 lg:top-0 lg:mb-0 lg:w-[300px]">
+                    <DiagVisual kind={sec.visual} />
+                  </div>
+                )}
+                <DiagnosisSectionCard section={sec} delay={Math.min(i, 4) * 0.12} />
+              </div>
+            ))}
+          </div>
         </div>
       </Content>
       <StickyAction>

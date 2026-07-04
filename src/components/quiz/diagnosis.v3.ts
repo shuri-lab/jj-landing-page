@@ -35,47 +35,47 @@ const CORES: Record<ReasonKey, Core> = {
   R1: {
     patternShort: "the midlife shift",
     essence: "Your body changed the rules after 40, and no one handed you the new ones.",
-    aha: "Most women are told their metabolism slowed down, which sounds vague and permanent. Here is what actually happened, and it is two separate things wearing one disguise. Starting in your 40s you began losing muscle, the tissue that burns energy all day, so your body burns less even while you sleep, even eating exactly what you always did. And as estrogen drops, your body relocates fat to your middle, so the belly is often not new fat, it is the same fat moving.",
-    reframe: "You did not get lazy or lose your discipline. Your body quietly changed underneath you, and the plan you were handed was built for a body you no longer have.",
+    aha: "Most women are told their metabolism just slowed down. Here is what actually happened, and it is two things wearing one disguise. After 40 you started losing muscle, the tissue that burns energy all day, so you burn less even in your sleep, eating exactly what you always did. And as estrogen drops, your body moves fat to your middle, so the belly is often not new fat, it is the same fat relocating.",
+    reframe: "You did not get lazy. Your body changed the rules underneath you, and the plan you were handed was built for a body you no longer have.",
     turn: "The fix is not eating less and doing more cardio, which costs you more of the muscle you cannot afford to lose. It is protecting and rebuilding that muscle, eating enough protein, and working with your hormones instead of against them.",
     closingSensation: "relief and permission",
   },
   R2: {
     patternShort: "the fast-loss cycle",
     essence: "It is not that the weight comes back. It is how it comes back.",
-    aha: "Here is the part the scale never showed you. When you lose weight fast, you do not only lose fat, you lose muscle along with it. But when the weight finds its way back, it tends to come back mostly as fat. So round after round, if you were never training to hold onto it, you can end up with a little less muscle than you had before, and muscle is the tissue that keeps you burning through the day. That is a big part of why each attempt can feel harder than the last, and why the fast diet that works quickest is so often the one that sets up the next regain.",
-    reframe: "So when anyone tells you that you just have to keep it off this time, they are skipping the part that matters. Fast loss itself, without protecting your muscle, is part of why it keeps coming back. It was never a shortage of willpower. It was the method.",
+    aha: "Here is the part the scale never showed you. When you lose weight fast, you lose muscle along with the fat. But when it comes back, it comes back mostly as fat. So round after round, if nothing was protecting your muscle, you end up with a little less of it each time, and muscle is what keeps you burning all day. That is why every attempt feels harder than the last.",
+    reframe: "It was never a shortage of willpower. It was the method.",
     turn: "The way out is not another fast round. It is one round done differently, slow enough and supported enough to hold onto your muscle this time, so more of what you lose is actually fat, and more of it actually stays gone.",
     closingSensation: "clarity and resolve",
   },
   R3: {
     patternShort: "a fight on the wrong front, out-exercising your plate",
     essence: "You have been pouring real effort into the one lever that moves the scale least.",
-    aha: "You already know exercise matters, so the usual line about it being 80 percent food lands as a shrug. Here is the part that actually stings. For a lot of people, hard exercise quietly works against the scale. It can drive your appetite up, so you eat a little more without noticing, and it can leave you so wiped that you move less the rest of the day, also without noticing. So the punishing workouts were often not just the wrong tool, they were partly canceling themselves out.",
-    reframe: "You were never lazy or inconsistent. You were sold a story that sweat equals weight loss, and you believed it and worked harder than most people ever would, aimed at the wrong target.",
+    aha: "You already know exercise matters, so the line about it being 80 percent food lands as a shrug. Here is the part that stings. For a lot of people, hard exercise quietly works against the scale: it drives your appetite up, and it leaves you so wiped you move less the rest of the day, both without noticing. So the punishing workouts were often canceling themselves out.",
+    reframe: "You were never lazy. You were sold a story that sweat equals weight loss, and you worked harder at it than most people ever would, aimed at the wrong target.",
     turn: "The relief is that the answer asks less of you, not more. Lead with your food, where the results actually live, and let movement you enjoy support it instead of punish you. You get to leave the war you could not win.",
     closingSensation: "relief that it can be easier",
   },
   R4: {
     patternShort: "the restriction trap",
     essence: "You are not eating too much. You have been eating too little, and it keeps backfiring.",
-    aha: "This is the one almost no one sees, because it is the opposite of everything you have been told. When you hold yourself to very little for too long, two things happen. Your body adapts a little, settling in to run on less, so the scale stalls even though you are barely eating. And then, almost every time, the restriction snaps back on you: the barely-eating all day becomes the ravenous, out-of-control evening, because a body kept too hungry for too long eventually takes the wheel. That is not weak willpower at night. It is the completely predictable rebound to being too restricted by day.",
-    reframe: "Your discipline was never the problem. It has been real, and relentless, and pointed in exactly the wrong direction. You were told the answer was less, and you did less better than almost anyone.",
+    aha: "This is the one almost no one sees, because it is the opposite of what you were told. When you hold yourself to very little for too long, two things happen. Your body settles in to run on less, so the scale stalls even though you are barely eating. And the restriction snaps back: the barely-eating all day becomes the ravenous, out-of-control evening, because a body kept too hungry eventually takes the wheel.",
+    reframe: "That is not weak willpower at night. It is the predictable rebound to being too restricted by day, and your discipline was never the problem.",
     turn: "The fix feels wrong until it works: eat enough of the right food, steadily, especially protein, so the day is not one long deprivation the night has to correct. More structure, not more restriction.",
     closingSensation: "a stunned unlock",
   },
   R5: {
     patternShort: "an all-or-nothing pattern",
     essence: "You do not have a willpower problem. You have an all-or-nothing problem.",
-    aha: "Look at the real math, because it will change how you see every attempt you called a failure. One slip, a single big meal, is almost nothing. It could never undo your week. What undid your week was not the slip, it was the thought that followed it: I blew it, might as well. That one thought turned a five-minute slip into a lost weekend, into I will start Monday, into three weeks off. The damage was never in the food. It was in the days of quitting the slip triggered.",
-    reframe: "Which means you were never weak, and you were never inconsistent by nature. You are actually one of the most disciplined people you know, right up until one imperfect moment flips a switch that no one ever taught you how to turn off.",
+    aha: "Look at the real math, because it changes how you see every attempt you called a failure. One slip, a single big meal, is almost nothing. What undid your week was never the slip, it was the thought that followed it: I blew it, might as well. That one thought turned a five-minute slip into a lost weekend, into I will start Monday, into three weeks off. The damage was never in the food. It was in the quitting the slip triggered.",
+    reframe: "So you were never weak or inconsistent by nature. You are one of the most disciplined people you know, right up until one imperfect moment flips a switch no one taught you how to turn off.",
     turn: "The fix is not more willpower or a stricter plan. It is a way to have a bad day and simply keep going, so your effort finally stacks instead of resetting. A woman who is 80 percent consistent forever beats a woman who is 100 percent then 0 percent, by a mile, every time.",
     closingSensation: "self-forgiveness",
   },
   R6: {
     patternShort: "doing this without anyone in your corner",
     essence: "You were never weak. You were doing it without anyone in your corner.",
-    aha: "Here is what the research on people who actually keep the weight off keeps finding, and it is not what you would guess. The biggest predictor is not the diet they chose, it is whether someone was in their corner holding them accountable. Willpower is not a character trait, it is a fuel tank, and it drains a little every day, which is exactly why every attempt died around week two or three when the tank ran dry. Someone checking on you does what willpower cannot: it outsources the effort so you do not have to generate it alone every single morning.",
+    aha: "Here is what the research on people who actually keep it off keeps finding, and it is not what you would guess. The biggest predictor is not the diet they chose, it is whether someone was in their corner. Willpower is not a character trait, it is a fuel tank, and it drains a little every day, which is why so many attempts die around week two or three when the tank runs dry. Someone checking on you does what willpower cannot: it carries the effort so you are not generating it alone every morning.",
     reframe: "You quit when no one was watching because that is what almost everyone does alone. It was never a flaw in you. It was a missing piece outside you.",
     turn: "The fix is not becoming a more disciplined person. It is never having to do the hard part alone again: daily support and people on the same climb, the one thing that carries you through the weeks willpower cannot.",
     closingSensation: "being seen and less alone",
@@ -83,24 +83,24 @@ const CORES: Record<ReasonKey, Core> = {
   R7: {
     patternShort: "years of following the wrong rules",
     essence: "You did everything you were told. You were told wrong.",
-    aha: "Sit with this, because it reframes years of your life. You are not a person who fails at diets. You are a smart, disciplined person who was handed broken instructions by an industry that profits when you regain. The reason you got contradictory advice, eat this, never that, this is the secret, no this is, is that most of it was built to sell, not to work. And here is the tell that proves it was never you: a disciplined person following bad instructions gets bad results, every time. The fact that you tried so many things and none of them held is not evidence that you are broken. It is evidence the information is.",
-    reframe: "So every failure was garbage instructions in, garbage results out. That is not the same as failing. You cannot win a game whose rulebook was wrong.",
+    aha: "Sit with this, because it reframes years of your life. You are not a person who fails at diets. You are a smart, disciplined person who was handed broken instructions by an industry that profits when you regain. The contradictory advice, eat this, never that, this is the secret, no this is, was mostly built to sell, not to work. A disciplined person following bad instructions gets bad results every time, so the fact that none of it held is not proof you are broken. It is proof the information was.",
+    reframe: "That is not the same as failing. You cannot win a game whose rulebook was wrong.",
     turn: "The fix is almost embarrassingly simple after all the noise: the handful of things that are actually true, from someone with no reason to sell you the next myth, who stays with you while you unlearn the old ones.",
     closingSensation: "vindication",
   },
   R8: {
     patternShort: "a body carrying too much stress",
     essence: "This was never only about food. Your body has been bracing.",
-    aha: "Here is a connection no one drew for you. When you are running on too little sleep and too much stress, month after month, two things happen that have nothing to do with how disciplined you are. First, you reliably eat more, especially the quick-energy carbs, often without fully clocking it, because a tired, stretched body reaches for fast fuel. Second, women carrying chronic stress and short sleep tend to hold more weight around the middle. It is not one clean hormone switch, whatever the internet told you. It is your whole body, run down and bracing, making the belly the last place anything wants to leave.",
-    reframe: "Which means the times you did everything right and it still would not move were not failures. You were trying to out-discipline a body that was worn thin and holding on, and no amount of clean eating fixes a body that is running on empty.",
+    aha: "Here is a connection no one drew for you. When you run on too little sleep and too much stress, month after month, two things happen that have nothing to do with discipline. You reliably eat more, especially the quick-energy carbs, because a tired, stretched body reaches for fast fuel. And a body under chronic stress tends to hold more weight around the middle. It is not one clean hormone switch, whatever the internet told you. It is your whole body, run down and bracing, making the belly the last place anything wants to leave.",
+    reframe: "So the times you did everything right and it still would not move were not failures. You were trying to out-discipline a body that was worn thin and holding on.",
     turn: "The fix is to ease the load your body is bracing against, your sleep, your stress, the weight you carry, right alongside your food, so it finally has room to let go. And you should not have to carry any of it, or fix it, alone.",
     closingSensation: "permission to rest",
   },
   R9: {
     patternShort: "food becoming how you cope with a hard day",
     essence: "It was never weak willpower. It is how you have coped with a hard day.",
-    aha: "Here is why just do not eat it has never once worked for you, and it is not a character flaw. In a moment of real stress or exhaustion, the part of you that made the plan and knows better gets quiet, and the part that just wants to feel better right now takes over, and it has learned that food is the fastest relief it knows. So at the exact moment you needed willpower most, the part of you that produces it had already checked out. You have been trying to out-think a feeling, and feelings do not answer to a to-do list.",
-    reframe: "So all those nights you gave in, you were not failing at self-control. You were a human being reaching for the fastest relief available, exactly as your brain is wired to. The shame you carried was for something that was never a character flaw.",
+    aha: "Here is why just do not eat it has never once worked for you, and it is not a character flaw. In a moment of real stress or exhaustion, the part of you that made the plan gets quiet, and the part that wants to feel better right now takes over, and it has learned that food is the fastest relief it knows. So at the exact moment you needed willpower most, the part that produces it had already checked out.",
+    reframe: "You were not failing at self-control. You were a human being reaching for the fastest relief available, exactly as your brain is wired to.",
     turn: "The fix is not another rule to break. It is real support for the hard moments and gentler ways to meet them, so that when the craving comes, you are not facing it alone with only a rule. When the hard nights are covered, the eating that came with them tends to settle on its own.",
     closingSensation: "compassion and relief",
   },
@@ -266,7 +266,7 @@ function sliderPayoff(s: State): string {
     if (s.flags.FLAG_ED_watch) {
       return `And that slider at the start? You guessed ${g} percent food. Here is the truth I held back: most of this is about the food, and exercise, as good as it is for you, has a smaller say over the scale than anyone tells you. It was never about pushing yourself harder. So if you have been moving your body and barely losing, that is why.`;
     }
-    return `And that slider at the start? You guessed ${g} percent food. Here is the truth I held back: for most women, what you eat is around 80 to 90 percent of it, and exercise, as good as it is for your heart and your head, is a small slice. Most women burn under 100 calories in a workout, about 5 percent of what the body uses in a day. It was never the lever that moves the scale. So if you have been working out and barely losing, now you know why.`;
+    return `And that slider at the start? You guessed ${g} percent food. Here is the truth I held back: for most women it is around 80 to 90 percent food. Exercise is wonderful for your heart and your head, but it was never the lever that moves the scale. So if you have been working out and barely losing, now you know why.`;
   }
   // Close: honor it.
   return `And that slider at the start? Your guess was actually close. Most of this really is about the food, and the fact that you already sensed that tells me you are sharper about this than most. You have just never had a plan that put it into practice for you.`;
@@ -275,13 +275,13 @@ function sliderPayoff(s: State): string {
 // ── Beat 4: why what SHE tried did not last (blueprint §4b) ────────────────────
 // Never "X does not work"; always why it did not last FOR HER. Woven, not listed.
 const DIET_LINE: Record<string, string> = {
-  keto: "Keto worked by cutting out whole groups of food, which is exactly why it never lasted. No one lives without bread and fruit and the foods they love forever, so the minute real life came back, so did the weight. That was never your discipline failing, it was a plan built to be temporary.",
-  calories: "Counting every calorie turns eating into a math problem you have to solve by yourself, every single day. It can work while you have the energy to track it, but the first busy week, the tracking is the first thing to go.",
-  gym: "You cannot out-train your plate. Hard workouts can push your appetite up and leave you too drained to move the rest of the day, so you can grind and barely lose. You were never not working hard enough. You were working hard at the thing that moves the scale least.",
-  fasting: "Skipping meals feels like control, but it usually flips on you. You are so hungry by night that one evening undoes the whole day, and your body learns to hold on tighter. The going-without was never the fix.",
-  shakes: "The shakes and cleanses give you a fast drop that feels amazing for a week, and then it comes right back, because they were never built to teach you how to actually eat day to day. A quick fix is always temporary.",
-  ww: "Points work while you are counting, but it is one more thing to track on your own, and the day you stop counting, there is nothing holding it in place. It was you, an app, and your willpower, with no one actually in it with you.",
-  everything: "And there it is. You have tried more than most people ever will, and not one of them held. That is not a list of your failures, it is proof the problem was never you. Not one of them was built for your body, and you were doing every single one on your own.",
+  keto: "Keto worked by cutting out whole groups of food, which is exactly why it never lasted, because no one lives without bread and fruit and the foods they love forever.",
+  calories: "Counting every calorie turns eating into a math problem you solve alone every day, and the first busy week, the tracking is the first thing to go.",
+  gym: "You cannot out-train your plate; hard workouts can push your appetite up and leave you too drained to move, so you grind and barely lose.",
+  fasting: "Skipping meals feels like control, but it flips on you: you are so hungry by night that one evening undoes the whole day.",
+  shakes: "The shakes and cleanses give you a fast drop that comes right back, because they were never built to teach you how to actually eat.",
+  ww: "Points work while you are counting, but the day you stop, there is nothing holding it in place, just you and an app and your willpower.",
+  everything: "And there it is. You have tried more than most people ever will, and not one of them held. That is not a list of your failures, it is proof the problem was never you, and that not one of them was built for your body.",
 };
 const DIET_ORDER = ["gym", "keto", "fasting", "shakes", "ww", "calories"];
 
@@ -349,9 +349,11 @@ function turnBeat(core: Core, s: State, res: Resolution, primary: ReasonKey): st
   // The corner: leads for R6, soft for R9, a light close for R2/R5/R7 only when
   // her answers earned it, and absent for the food/midlife/plan reasons.
   if (primary === "R6") {
-    parts.push("Not becoming a more disciplined person, you already are one. Just never having to do the hard part alone again, someone who checks in, who remembers what you said, and who notices when you go quiet.");
+    // Core turn already names "never doing the hard part alone"; add only the new
+    // texture of what that support looks like (advance, do not restate).
+    parts.push("The kind who checks in, remembers what you said, and notices when you go quiet.");
   } else if (primary === "R9") {
-    parts.push("So when the craving comes, you are not standing there alone with only your willpower.");
+    // Core turn already lands "when the craving comes, you are not alone"; no restatement.
   } else if (supp && (primary === "R2" || primary === "R5")) {
     parts.push("And someone to catch the slip before it becomes a lost week, so you are not doing the hard part alone this time.");
   } else if (supp && primary === "R7") {
@@ -367,7 +369,7 @@ function turnBeat(core: Core, s: State, res: Resolution, primary: ReasonKey): st
   if (s.flags.FLAG_GLP1) {
     parts.push(res.edMode
       ? "A shot can quiet your appetite, but it cannot build the habits or be in your corner on the hard days. That part is the work, and it is the part that lasts."
-      : "A shot can quiet your appetite, and for some women that helps. But up to about 40 percent of what it takes off is muscle, not fat, the muscle that keeps your metabolism up, and most women who stop regain about two thirds of the weight within a year, as fat. It works on your appetite. It cannot build the habits, protect your muscle, or be in your corner on the hard days. That part is the work, and it is the part that lasts.");
+      : "A shot can quiet your appetite, and for some women that helps. But up to about 40 percent of what it takes off can be muscle, not fat, the very muscle that keeps your metabolism up. It works on your appetite, but it cannot build your habits or protect your muscle, and that part is the work that lasts.");
   }
   if (s.flags.FLAG_GLP1_cameoff) {
     parts.push("Coming off it is exactly when protecting your muscle and your results matters most, that is the window it wants to come back.");
@@ -398,13 +400,17 @@ function buildPattern(core: Core, res: Resolution): string {
 
 // ── Flag / goal / hope addenda to the Turn ────────────────────────────────────
 const PERI_WEAVE =
-  "And with the hot flashes you told me about, your body is also moving into a new season, which pulls in the very same direction: less of the muscle that keeps you burning, and more settling at your middle.";
+  "And the hot flashes you mentioned tell me your body is also entering a new season, which pulls the same way: less of the muscle that keeps you burning, more settling at the middle.";
 
 // ── The public composition (the six beats, blueprint §1) ──────────────────────
 // Each beat carries a `kind` so the UI can give it a labeled header and the right
 // emphasis (pattern, through-line, and turn are the anchors).
 export type SectionKind = "mirror" | "pattern" | "aha" | "slider" | "diets" | "throughline" | "turn";
-export type DiagnosisSection = { kind: SectionKind; text: string; bullets?: string[] };
+// A supporting graphic that rides alongside a beat (pinned on desktop, stacked on
+// mobile). sliderSplit = the food-vs-exercise result; regain = the fast-loss
+// rebound; midlifeCurve = the after-40 muscle/burn decline.
+export type VisualKind = "sliderSplit" | "regain" | "midlifeCurve";
+export type DiagnosisSection = { kind: SectionKind; text: string; bullets?: string[]; visual?: VisualKind };
 
 export type ComposedDiagnosis = {
   title: string;
@@ -424,18 +430,28 @@ export function composeDiagnosis(s: State, res: Resolution): ComposedDiagnosis {
   // 2. Pattern, named (near-tie -> "two things pulling together").
   sections.push({ kind: "pattern", text: buildPattern(core, res) });
 
-  // 3. Aha — the honest mechanism + blame lift. For the midlife/peri woman the
-  //    after-40 mechanism weaves in; for a near-tie the contributing thread joins.
+  // 3. Aha — the honest mechanism + blame lift. For a near-tie the contributing
+  //    thread joins; for the midlife/peri woman the after-40 mechanism weaves in.
+  //    These are deduped: when the second thread is already R1 (midlife), the weave
+  //    carries the after-40 point, so PERI_WEAVE is skipped (no two midlife threads).
   let aha = `${core.aha} ${core.reframe}`;
-  if (s.flags.FLAG_peri && res.primary !== "R1") aha += ` ${PERI_WEAVE}`;
-  if (res.confidence === "near_tie" && res.contributing) {
-    const weave = buildWeave(res.primary, res.contributing);
-    if (weave) aha += ` ${weave}`;
-  }
-  sections.push({ kind: "aha", text: aha });
+  const nearTieWeave =
+    res.confidence === "near_tie" && res.contributing ? buildWeave(res.primary, res.contributing) : "";
+  if (nearTieWeave) aha += ` ${nearTieWeave}`;
+  if (s.flags.FLAG_peri && res.primary !== "R1" && res.contributing !== "R1") aha += ` ${PERI_WEAVE}`;
+  // The Aha carries a graphic when its mechanism is visual: the fast-loss rebound
+  // for the yo-yo woman, the after-40 decline for the midlife/peri woman.
+  const ahaVisual: VisualKind | undefined =
+    res.primary === "R2"
+      ? "regain"
+      : res.primary === "R1" || s.flags.FLAG_peri
+        ? "midlifeCurve"
+        : undefined;
+  sections.push({ kind: "aha", text: aha, visual: ahaVisual });
 
-  // 3b. The slider payoff (always shown, delivered here not mid-quiz).
-  sections.push({ kind: "slider", text: sliderPayoff(s) });
+  // 3b. The slider payoff (always shown, delivered here not mid-quiz), with the
+  //     food-vs-exercise split graphic.
+  sections.push({ kind: "slider", text: sliderPayoff(s), visual: "sliderSplit" });
 
   // 4. Why what SHE tried did not last (one honest line per diet she selected).
   const diets = dietsBeat(s);
@@ -455,13 +471,70 @@ export function composeDiagnosis(s: State, res: Resolution): ComposedDiagnosis {
 }
 
 // ── Result gate content (spec §16) ────────────────────────────────────────────
+// We do NOT name the pattern here. Naming a single reason on the gate either
+// pre-commits her to one thread the multi-threaded breakdown then reframes, or
+// makes the tailored breakdown feel one-note. Instead we reflect her own words
+// back: recognition, not a label, is what earns the email. The pattern name is
+// saved for the paid reveal (the diagnosis), where it lands harder unspent.
 export function gatePattern(res: Resolution): { name: string; essence: string } {
   return { name: CORES[res.primary].patternShort, essence: CORES[res.primary].essence };
 }
 
+// A SHORT one-line Mirror in her voice, composed from her two most telling
+// answers, deliberately worded differently from the fuller Mirror that opens the
+// diagnosis so she never reads the same sentence twice. Structure: a "situation"
+// lead (her words) + the "outcome" tail (what happened). Priority for the lead:
+// tried-breadth > alone/support > eating shape > symptoms. The tail is always her
+// what-happened answer (C2 is always one of the three).
+const GATE_LEAD: Record<string, string> = {
+  everything: "You've tried nearly everything",
+  always_alone: "You've been doing this on your own",
+  fizzles: "You start out with people, then end up on your own",
+  clean_stuck: "You eat clean",
+  barely_eat: "You barely eat all day",
+  night_stress: "You keep it together all day",
+  graze: "You graze all day without really thinking",
+  weekend: "You're good all week",
+  lose_but_stomach: "The weight keeps settling at your middle",
+  belly: "The weight keeps settling at your middle",
+  exhausted: "You're running on empty",
+  cravings: "The cravings run the show",
+};
+const GATE_TAIL: Record<string, string> = {
+  regained: "it keeps coming back",
+  couldnt_stick: "it never quite sticks",
+  stalled: "the scale just will not move",
+};
+
+export function gateMirror(s: State): string {
+  const tried = asArray(s.answers["C1"]);
+  const symptoms = asArray(s.answers["E1"]);
+  const d1 = s.answers["D1"] as string | undefined;
+  const d6 = s.answers["D6"] as string | undefined;
+  const c2 = s.answers["C2"] as string | undefined;
+
+  let lead = "";
+  if (tried.includes("everything") || tried.filter((t) => t !== "everything").length >= 3) {
+    lead = GATE_LEAD.everything;
+  } else if (d6 && GATE_LEAD[d6]) {
+    lead = GATE_LEAD[d6];
+  } else if (d1 && GATE_LEAD[d1]) {
+    lead = GATE_LEAD[d1];
+  } else {
+    const sym = symptoms.find((x) => GATE_LEAD[x]);
+    if (sym) lead = GATE_LEAD[sym];
+  }
+
+  const tail = (c2 && GATE_TAIL[c2]) || "";
+  if (lead && tail) return `${lead}, and ${tail}.`;
+  if (lead) return `${lead}.`;
+  if (tail) return `And still, ${tail}.`;
+  return "You've been trying so hard, and it still hasn't added up.";
+}
+
 export const GATE_REVEALS = [
   "What's really driving it",
-  "Why the things you've tried haven't worked",
+  "Why nothing has stuck, for you",
   "What actually works for your pattern",
 ];
 
