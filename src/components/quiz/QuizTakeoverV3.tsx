@@ -260,7 +260,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
       </div>
 
       <div ref={scrollRef} onScroll={checkBottom} className="relative flex-1 overflow-y-auto">
-        <div className={`q-zoom-desktop mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "GATE" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
+        <div className={`q-zoom-desktop mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "GATE" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[960px]" : "max-w-[540px]"}`}>
           <Screen
             key={stepKey}
             stepKey={stepKey}
@@ -343,9 +343,9 @@ function Content({ children, align = "center" }: { children: React.ReactNode; al
   return <div className={`flex flex-1 flex-col ${align === "center" ? "justify-center" : "justify-start pt-3"} pb-6`}>{children}</div>;
 }
 
-function StickyAction({ children, innerClassName = "max-w-[560px]" }: { children: React.ReactNode; innerClassName?: string }) {
+function StickyAction({ children, innerClassName = "max-w-[560px]", className = "" }: { children: React.ReactNode; innerClassName?: string; className?: string }) {
   return (
-    <div className="sticky bottom-0 z-20 -mx-6 mt-2 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent px-6 pt-6" style={{ paddingBottom: "calc(1.1rem + env(safe-area-inset-bottom, 0px))" }}>
+    <div className={`sticky bottom-0 z-40 -mx-6 mt-2 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent px-6 pt-6 ${className}`} style={{ paddingBottom: "calc(1.1rem + env(safe-area-inset-bottom, 0px))" }}>
       {/* Inner width matches the screen's content column so the CTA aligns with it. */}
       <div className={`mx-auto w-full ${innerClassName}`}>{children}</div>
     </div>
@@ -992,7 +992,9 @@ function DiagnosisSectionCard({ section, delay }: { section: DiagnosisSection; d
             // the explaining lines lighter) gives the eye skimmable anchors, so a long
             // card reads much shorter than it is, with no change to the words.
             const isLead = i === 0;
-            const isPunch = !isLead && s.split(/\s+/).length <= 9;
+            // The Mirror is just her answers reflected back; only the lead line is
+            // emphasized there, so it does not fill up with bolded short sentences.
+            const isPunch = !isLead && kind !== "mirror" && s.split(/\s+/).length <= 9;
             return (
               <p
                 key={i}
@@ -1173,55 +1175,67 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
   return (
     <>
       <Content align="top">
-        <div className="lg:mx-auto lg:max-w-[640px]">
-          <CoachHeader />
+        <div className="lg:mx-auto lg:max-w-[960px]">
+          {/* Desktop: two columns — JJ's voice on the left, the proof/visuals on the
+              right, so she reads and sees in parallel and the page is half as tall.
+              Mobile: one stacked column (voice, then visuals, then the why-close). */}
+          <div className="lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-10">
+            {/* LEFT: the voice. */}
+            <div>
+              <CoachHeader />
+              {/* The catch (short and clear). */}
+              <h2 className="q-rise mt-3 font-sans font-bold text-[24px] sm:text-[27px] lg:text-[30px] leading-[1.16] tracking-[-0.02em] text-[#15102a]">
+                {fillName("{name}, here's how we fix this, together.", state)}
+              </h2>
+              <p className="q-rise mt-2 text-[20px] sm:text-[22px] font-semibold leading-[1.35] text-[#b81860]" style={{ fontFamily: READ_FONT }}>
+                Me, with you, the whole way.
+              </p>
 
-          {/* 1. The catch (one breath). */}
-          <h2 className="q-rise mt-5 font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">
-            {fillName("{name}, everything we just went through is exactly what the next 12 weeks finally fix.", state)}
-          </h2>
-          <p className="q-rise mt-3 text-[22px] sm:text-[24px] font-semibold leading-[1.4] text-[#b81860]" style={{ fontFamily: READ_FONT }}>
-            Me, with you, the whole way.
-          </p>
+              {/* What it's like — feeling cards. */}
+              <p className="mt-5 text-[13px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">What it's like, starting day one</p>
+              <div className="mt-2.5 space-y-2.5">
+                {feelItems.map(({ Icon, text, her, strip }) => (
+                  <React.Fragment key={text}>
+                    <div
+                      className={`flex items-center gap-3.5 rounded-[1.5rem] p-4 sm:p-[18px] ring-1 ${
+                        her ? "bg-[#fff5f9] ring-[#f3b9d2]" : "bg-white ring-[#f6e0ea]"
+                      } shadow-[0_16px_34px_-28px_rgba(140,17,74,0.8)]`}
+                    >
+                      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
+                        <Icon className="h-5 w-5" strokeWidth={2} />
+                      </span>
+                      <p className={`text-[19px] sm:text-[20px] leading-[1.4] text-[#241d2e] ${her ? "font-semibold text-[#8c114a]" : ""}`} style={{ fontFamily: READ_FONT }}>{text}</p>
+                    </div>
+                    {/* Meal photos, right under the meal card. */}
+                    {strip && <MealStrip />}
+                  </React.Fragment>
+                ))}
+              </div>
+            </div>
 
-          {/* 2. What it's like — feeling cards (visual, breathing, one line each). */}
-          <p className="mt-7 text-[13px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">What it's like, starting day one</p>
-          <div className="mt-3 space-y-2.5">
-            {feelItems.map(({ Icon, text, her, strip }) => (
-              <React.Fragment key={text}>
-                <div
-                  className={`flex items-center gap-3.5 rounded-[1.5rem] p-4 sm:p-[18px] ring-1 ${
-                    her ? "bg-[#fff5f9] ring-[#f3b9d2]" : "bg-white ring-[#f6e0ea]"
-                  } shadow-[0_16px_34px_-28px_rgba(140,17,74,0.8)]`}
-                >
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
-                    <Icon className="h-5 w-5" strokeWidth={2} />
-                  </span>
-                  <p className={`text-[19px] sm:text-[20px] leading-[1.4] text-[#241d2e] ${her ? "font-semibold text-[#8c114a]" : ""}`} style={{ fontFamily: READ_FONT }}>{text}</p>
+            {/* RIGHT: the proof and visuals. Spread to track the taller left column. */}
+            <div className="mt-8 lg:mt-0 lg:flex lg:flex-col lg:justify-between lg:gap-8">
+              {/* The goal picture. */}
+              <div className="q-rise mt-7 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)] lg:mt-0">
+                <div className="px-5 py-4 text-white" style={{ background: PINK }}>
+                  <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
+                  <p className="text-[20px] font-bold leading-tight">Where you could be by {dateLabel}</p>
                 </div>
-                {strip && <MealStrip />}
-              </React.Fragment>
-            ))}
-          </div>
+                <div className="p-5">
+                  <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
+                </div>
+              </div>
 
-          {/* 3. The goal picture (chart moved here, after the feeling). */}
-          <div className="q-rise mt-7 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-            <div className="px-5 py-4 text-white" style={{ background: PINK }}>
-              <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
-              <p className="text-[20px] font-bold leading-tight">Where you could be by {dateLabel}</p>
-            </div>
-            <div className="p-5">
-              <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
+              {/* The proof. */}
+              <div className="mt-9 lg:mt-0">
+                <h3 className="font-serif text-[26px] sm:text-[30px] leading-[1.12] text-[#15102a]">Here's what happens with me by your side.</h3>
+                <div className="mt-6"><ProofCarousel /></div>
+              </div>
             </div>
           </div>
-          {/* 5. The proof. */}
-          <div className="mt-10">
-            <h3 className="font-serif text-[26px] sm:text-[30px] leading-[1.12] text-[#15102a]">Here's what happens with me by your side.</h3>
-            <div className="mt-6"><ProofCarousel /></div>
-          </div>
 
-          {/* 6. The why-close: her own reason, the last note before she decides. */}
-          <div className="mt-10 rounded-[1.9rem] bg-[#fff5f9] p-6 sm:p-7 ring-1 ring-[#f3b9d2]">
+          {/* The why-close: her own reason, full-width, the last note before she decides. */}
+          <div className="mt-10 rounded-[1.9rem] bg-[#fff5f9] p-6 sm:p-7 ring-1 ring-[#f3b9d2] lg:mx-auto lg:mt-12 lg:max-w-[760px] lg:text-center">
             <p className="text-[22px] sm:text-[24px] font-semibold leading-[1.45] text-[#8c114a]" style={{ fontFamily: READ_FONT }}>
               {solutionWhyClose(state)}
             </p>
@@ -1229,7 +1243,7 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
         </div>
       </Content>
 
-      <StickyAction innerClassName="lg:max-w-[640px]">
+      <StickyAction innerClassName="lg:max-w-[560px]">
         {atBottom
           ? <PrimaryButton onClick={onContinue}>Show Me How to Start</PrimaryButton>
           : <ScrollHint label="Keep reading" onNudge={onNudge} />}
@@ -1238,7 +1252,39 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
   );
 }
 
-// ── Offer ────────────────────────────────────────────────────────────────────
+// ── Offer / pricing (the DECIDE screen: choice first, then justify + de-risk) ──
+function PriceOptions({ monthly, full, loading, onCheckout }: { monthly: number; full: number; loading: boolean; onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void }) {
+  // Both options carry equal visual weight (solid buttons); the low-friction $monthly
+  // start leads, so a hesitant buyer is not nudged toward the bigger number first.
+  return (
+    <div className="space-y-3">
+      <div className="relative rounded-[1.9rem] border-2 border-[#d62a7a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
+        <span className="absolute -top-3 left-5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white" style={{ background: PINK }}>Easiest start</span>
+        <p className="text-[19px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
+        <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
+        <button onClick={() => onCheckout("MONTHLY")} disabled={loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
+          {loading ? "Loading…" : `Start Today for $${monthly}`}
+        </button>
+      </div>
+
+      <div className="flex items-center gap-3 py-0.5">
+        <span className="h-px flex-1 bg-[#e7c6d3]" />
+        <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#9a7f8a]">or</span>
+        <span className="h-px flex-1 bg-[#e7c6d3]" />
+      </div>
+
+      <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
+        <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
+        <p className="text-[19px] font-bold text-[#15102a]">Pay in full, ${full}.</p>
+        <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
+        <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={loading} className="mt-4 block w-full rounded-2xl border-2 border-[#15102a] px-6 py-4 text-center text-[17px] font-bold text-[#15102a] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
+          {loading ? "Loading…" : `Pay in Full, $${full}`}
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pricing; onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void }) {
   const { monthly, full } = pricing;
   useEffect(() => {
@@ -1247,12 +1293,12 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
   return (
     <>
       <Content align="top">
-        {/* Header (constrained + centered on desktop for readability). */}
+        {/* Warm bridge from the Solution screen (no hard turn into a price list). */}
         <div className="lg:mx-auto lg:max-w-[820px] lg:text-center">
           <div className="q-rise inline-flex self-start rounded-full bg-[#15102a] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white">
             {OFFER_COPY.eyebrow}
           </div>
-          <h2 className="mt-4 font-sans font-bold text-[28px] sm:text-[33px] lg:text-[40px] leading-[1.12] tracking-[-0.02em] text-[#15102a]">
+          <h2 className="mt-4 font-sans font-bold text-[26px] sm:text-[31px] lg:text-[36px] leading-[1.12] tracking-[-0.02em] text-[#15102a]">
             {fillName("So let's go get her, {name}.", state)}
           </h2>
           <p className="mt-3 text-[18px] sm:text-[20px] leading-[1.4] text-[#15102a] lg:mx-auto lg:max-w-[620px]">
@@ -1260,94 +1306,87 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
           </p>
         </div>
 
-        {/* Value stack + pricing side by side on desktop. Mobile keeps the stacked order. */}
-        <div className="mt-6 lg:mx-auto lg:mt-9 lg:max-w-[820px] space-y-6 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-7 lg:space-y-0">
-          <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-            <p className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything you're getting</p>
-            <ul className="mt-3 divide-y divide-dashed divide-[#f0c9d8]">
-              {VALUE_STACK.map((it) => (
-                <li key={it.label} className="flex items-center justify-between gap-3 py-2.5">
-                  <span className="flex items-center gap-2 text-[16px] leading-snug text-[#15102a]"><Check className="h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
-                  <span className="shrink-0 text-[16px] font-semibold text-[#6b5b6e]">${it.value.toLocaleString()}</span>
-                </li>
-              ))}
-            </ul>
-            <div className="mt-3 flex items-center justify-between border-t-2 border-[#15102a] pt-3">
-              <span className="text-[17px] font-bold text-[#15102a]">Total value</span>
-              <span className="text-[20px] font-bold text-[#b79aa6] line-through">${VALUE_TOTAL.toLocaleString()}</span>
-            </div>
-            <p className="mt-1 text-right text-[15px] font-semibold text-[#c41e6a]">Your price today: ${full}</p>
-            <p className="mt-3 text-[16px] leading-snug text-[#15102a]">More than $2,600 of coaching, meals, and real support. Yours today for ${full}.</p>
+        {/* Desktop: pricing (the decision) is a sticky right column; the justification /
+            de-risk sequence flows on the left. Mobile: pricing first, then the sequence
+            (pricing is first in the DOM). */}
+        <div className="mt-7 lg:mx-auto lg:mt-9 lg:max-w-[920px] lg:grid lg:grid-cols-[1fr_360px] lg:items-start lg:gap-10">
+          {/* THE DECISION — first in DOM (mobile top), sticky right column on desktop. */}
+          <div className="lg:col-start-2 lg:row-start-1 lg:sticky lg:top-4">
+            <PriceOptions monthly={monthly} full={full} loading={pricing.loading} onCheckout={onCheckout} />
           </div>
 
-          <div className="space-y-1 lg:sticky lg:top-3">
-            <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
-              <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
-              <p className="text-[18px] font-bold text-[#15102a]">Pay in full. ${full} today.</p>
-              <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
-              <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
-                {pricing.loading ? "Loading…" : `Start With JJ, $${full}`}
-              </button>
+          {/* THE JUSTIFICATION + DE-RISK + CLOSER — left column on desktop. */}
+          <div className="mt-6 space-y-6 lg:col-start-1 lg:row-start-1 lg:mt-0">
+            {/* Value stack, demoted to justification: the anchor lands first and bold. */}
+            <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+                <span className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">What you're getting</span>
+                <span className="text-[16px] font-semibold text-[#9a7f8a]"><span className="line-through">${VALUE_TOTAL.toLocaleString()}</span> value</span>
+              </div>
+              <p className="mt-1 text-[24px] sm:text-[26px] font-extrabold leading-tight text-[#15102a]">Yours today for ${full}.</p>
+              <ul className="mt-3 space-y-1.5">
+                {VALUE_STACK.map((it) => (
+                  <li key={it.label} className="flex items-center justify-between gap-3 text-[14px] leading-snug text-[#6b5b6e]">
+                    <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
+                    <span className="shrink-0">${it.value.toLocaleString()}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="flex items-center gap-3 py-1">
-              <span className="h-px flex-1 bg-[#e7c6d3]" />
-              <span className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#9a7f8a]">or</span>
-              <span className="h-px flex-1 bg-[#e7c6d3]" />
+            {/* Trust cluster: the guarantee (prominent) grouped with the scarcity. */}
+            <div className="rounded-[1.9rem] border border-[#f0c9d8] bg-white p-6 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
+              <div className="flex items-start gap-3.5">
+                <ShieldCheck className="h-9 w-9 shrink-0 text-[#c41e6a]" strokeWidth={1.8} />
+                <div>
+                  <p className="text-[13px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">My promise to you</p>
+                  <p className="mt-1 font-serif italic text-[19px] leading-[1.5] text-[#15102a]">"{OFFER_COPY.guarantee}"</p>
+                  <p className="mt-1.5 text-[13px] font-semibold tracking-[0.16em] text-[#9a7f8a]">JJ</p>
+                </div>
+              </div>
+              <p className="mt-4 rounded-2xl bg-[#fff0f5] p-4 text-[15px] font-semibold leading-snug text-[#8c114a]">{OFFER_COPY.scarcity}</p>
             </div>
 
-            <div className="rounded-[1.9rem] border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
-              <p className="text-[18px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
-              <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
-              <button onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading} className="mt-4 block w-full rounded-2xl border-2 border-[#d62a7a] px-6 py-4 text-center text-[17px] font-bold text-[#b81860] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
-                {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
-              </button>
+            {/* Compact proof (not the full carousel): one before/after + a reassurance quote. */}
+            <div className="flex items-center gap-4 rounded-[1.9rem] bg-white p-4 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)] ring-1 ring-[#f6e0ea]">
+              <img src={t4} alt="A woman who did the 12 weeks with JJ" loading="lazy" className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28" />
+              <div>
+                <p className="font-serif italic text-[16px] leading-[1.5] text-[#15102a]">"Hearing JJ's voice and speaking to her held me accountable. There was no room for excuses."</p>
+                <p className="mt-1.5 text-[13px] font-bold tracking-[0.14em] text-[#9a7f8a]">MONIQUE</p>
+              </div>
             </div>
-          </div>
-        </div>
 
-        {/* Reassurance: two balanced columns on desktop, stacked on mobile. */}
-        <div className="mt-6 space-y-5 lg:mt-11 lg:mx-auto lg:max-w-[820px] lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
-          <div className="space-y-5">
-            <div className="space-y-3 text-[17px] leading-[1.5] text-[#15102a]">
-              <p className="font-semibold">{OFFER_COPY.startNow}</p>
-            </div>
-            <p className="rounded-2xl bg-[#fff0f5] p-4 text-[16px] font-semibold leading-snug text-[#8c114a]">
-              {OFFER_COPY.scarcity}
-            </p>
-          </div>
-          <div className="space-y-5">
-            <div className="flex items-start gap-3 rounded-2xl border border-[#f0c9d8] bg-white/70 p-4">
-              <ShieldCheck className="h-7 w-7 shrink-0 text-[#c41e6a]" />
-              <p className="font-serif italic text-[16px] leading-[1.6] text-[#15102a]">
-                "{OFFER_COPY.guarantee}"
-                <span className="mt-2 block font-sans not-italic text-[13px] font-semibold tracking-[0.16em] text-[#9a7f8a]">JJ</span>
-              </p>
-            </div>
+            {/* The emotional closer, right before the commit. */}
             <div className="rounded-[1.9rem] bg-[#15102a] p-6 text-center text-white">
-              <p className="font-serif text-[24px] sm:text-[28px] leading-[1.15]">The months ahead are happening either way.</p>
+              <p className="font-serif text-[23px] sm:text-[27px] leading-[1.15]">The months ahead are happening either way.</p>
               <p className="mt-3 text-[16px] leading-[1.6] text-white/85">
                 You can spend them like the last ones. Or you can spend them with me right there with you, and come out the other side feeling like yourself again.
               </p>
             </div>
+
+            {/* Objections handled. */}
+            <div>
+              <p className="text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Questions women ask me</p>
+              <Accordion type="single" collapsible className="mt-2 w-full">
+                {FAQ_ITEMS.map((it, i) => (
+                  <AccordionItem key={i} value={`q-${i}`} className="border-[#f0c9d8]">
+                    <AccordionTrigger className="py-4 text-left text-[17px] font-bold text-[#15102a] hover:no-underline">{it.q}</AccordionTrigger>
+                    <AccordionContent className="text-[16px] leading-[1.6] text-[#6b5b6e]">{it.a}</AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
           </div>
         </div>
-
-        {/* FAQ + trust line, full width but readable. */}
-        <div className="lg:mx-auto lg:mt-6 lg:max-w-[820px]">
-          <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Questions women ask me</p>
-          <Accordion type="single" collapsible className="mt-2 w-full">
-            {FAQ_ITEMS.map((it, i) => (
-              <AccordionItem key={i} value={`q-${i}`} className="border-[#f0c9d8]">
-                <AccordionTrigger className="py-5 text-left text-[17px] font-bold text-[#15102a] hover:no-underline">{it.q}</AccordionTrigger>
-                <AccordionContent className="text-[16px] leading-[1.6] text-[#6b5b6e]">{it.a}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-
-          <p className="mt-6 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]"><Lock className="h-4 w-4" /> 14 day money back guarantee. Secure checkout.</p>
-        </div>
       </Content>
+
+      {/* Sticky commit-from-anywhere CTA (mobile/tablet; desktop keeps the sticky column). */}
+      <StickyAction className="lg:hidden">
+        <PrimaryButton onClick={() => onCheckout("MONTHLY")} disabled={pricing.loading}>
+          {pricing.loading ? "Loading…" : `Start Today for $${monthly}`}
+        </PrimaryButton>
+        <p className="mt-2 flex items-center justify-center gap-1.5 text-center text-[13px] text-[#6b5b6e]"><Lock className="h-3.5 w-3.5" /> Secure checkout. 14 day money back guarantee.</p>
+      </StickyAction>
     </>
   );
 }
@@ -1355,11 +1394,11 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
 // ── Projection chart ─────────────────────────────────────────────────────────
 function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = false }: { target: number; chapterOne: boolean; animate: boolean; dateLabel: string; detailed?: boolean }) {
   const W = 320;
-  const H = detailed ? 200 : 180;
+  const H = detailed ? 216 : 180;
   const left = 16;
   const right = W - 16;
-  const top = 24;
-  const bottom = detailed ? H - 40 : H - 28;
+  const top = detailed ? 34 : 24; // headroom for the "up to X lbs" number
+  const bottom = detailed ? H - 46 : H - 28; // room for the Today…Wk 12 axis labels
   const plotW = right - left;
   const plotH = bottom - top;
 
@@ -1394,17 +1433,19 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
         </linearGradient>
       </defs>
 
+      {/* x-axis: Today (left) … Wk 12 (right), end-anchored so nothing overflows */}
       {detailed && [0, 4, 8, 12].map((w) => (
         <g key={w}>
           <line x1={x(w)} y1={top} x2={x(w)} y2={bottom} stroke="#f3d9e2" strokeWidth="1" strokeDasharray="2 4" />
-          <text x={x(w)} y={bottom + 16} fontSize="11" fontWeight="700" fill="#9a7f8a" textAnchor={w === 0 ? "start" : "middle"}>{w === 0 ? "Today" : `Wk ${w}`}</text>
+          <text x={x(w)} y={bottom + 18} fontSize="11" fontWeight="700" fill="#9a7f8a" textAnchor={w === 0 ? "start" : w === 12 ? "end" : "middle"}>{w === 0 ? "Today" : `Wk ${w}`}</text>
         </g>
       ))}
 
+      {/* jumpstart band, label along the bottom of the band so it never sits on the line */}
       {detailed && (
         <>
           <rect x={left} y={top} width={jumpX - left} height={plotH} fill="#f7c9dd" opacity="0.35" />
-          <text x={(left + jumpX) / 2} y={top + 14} fontSize="10" fontWeight="800" fill="#8c114a" textAnchor="middle">Your jumpstart</text>
+          <text x={(left + jumpX) / 2} y={bottom - 12} fontSize="10" fontWeight="800" fill="#8c114a" textAnchor="middle">Your jumpstart</text>
         </>
       )}
 
@@ -1413,14 +1454,16 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
       <path d={linePath} className={animate ? "q-draw" : undefined} fill="none" stroke="url(#projLineV3)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
 
       {chapterOne && <path d={`M ${endX},${endY} L ${right},${y(maxLoss)}`} fill="none" stroke="#c41e6a" strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />}
+      {chapterOne && detailed && <text x={right} y={y(maxLoss) - 7} fontSize="10.5" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
       <circle cx={endX} cy={endY} r="6" fill="#b81860" stroke="#fff" strokeWidth="2.5" />
 
+      {/* the projected number, in the clear top-right corner (never overlaps the line) */}
+      {detailed && <text x={right} y={top - 14} fontSize="14" fontWeight="800" fill="#8c114a" textAnchor="end">up to {target} lbs</text>}
+
+      {/* compact fallback labels for the small (non-detailed) chart */}
       {!detailed && <text x={left} y={top - 8} fontSize="12" fontWeight="700" fill="#6b5b6e">Today</text>}
-      {dateLabel && (
-        <text x={chapterOne ? endX : right} y={top - 8} fontSize="12" fontWeight="700" fill="#c41e6a" textAnchor={chapterOne ? "middle" : "end"}>{chapterOne ? "Week 12" : `by ${dateLabel}`}</text>
-      )}
-      <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">up to {target} lbs</text>
-      {chapterOne && <text x={right} y={y(maxLoss) - 8} fontSize="11" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
+      {!detailed && dateLabel && <text x={right} y={top - 8} fontSize="12" fontWeight="700" fill="#c41e6a" textAnchor="end">by {dateLabel}</text>}
+      {!detailed && <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">up to {target} lbs</text>}
     </svg>
   );
 }
