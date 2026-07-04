@@ -115,7 +115,7 @@ export const QUESTIONS: Record<string, QuestionDef> = {
       { value: "fasting", label: "Fasting or skipping meals", icon: "clock" },
       { value: "shakes", label: "Shakes, cleanses, or detoxes", icon: "glass" },
       { value: "ww", label: "Weight Watchers or points", icon: "clipboard" },
-      { value: "everything", label: "Honestly, a little of everything", icon: "shuffle" },
+      { value: "everything", label: "A bit of everything", icon: "shuffle" },
     ],
   },
   HAPPENED: {
@@ -142,50 +142,53 @@ export const QUESTIONS: Record<string, QuestionDef> = {
   DAY: {
     key: "DAY", qid: "D1", type: "single",
     prompt: "On a normal day, what does your eating actually look like?",
+    sub: "Pick the one that feels most like you.",
     options: [
-      { value: "barely_eat", label: "I barely eat, then I'm starving by night" },
-      { value: "clean_stuck", label: "I eat pretty clean, but the scale won't budge" },
-      { value: "graze", label: "I graze and snack all day without thinking" },
-      { value: "night_stress", label: "I'm good all day, then night or stress hits" },
-      { value: "weekend", label: "Good all week, then the weekend undoes it" },
+      { value: "barely_eat", label: "I barely eat, then I'm starving by night", icon: "utensilscrossed" },
+      { value: "graze", label: "I graze and snack all day without thinking", icon: "cookie" },
+      { value: "night_stress", label: "I'm good all day, then night or stress hits", icon: "moon" },
+      { value: "weekend", label: "Good all week, then the weekend undoes it", icon: "calendar" },
+      { value: "clean_stuck", label: "I eat pretty clean, but the scale won't budge", icon: "leaf" },
     ],
   },
   MEAL: {
     key: "MEAL", qid: "D2", type: "single",
     prompt: "When it's time to eat, what usually happens?",
+    sub: "Pick the one that feels most like you.",
     options: [
-      { value: "comfort", label: "I reach for comfort food, mostly when I'm tired or stressed" },
-      { value: "quick", label: "I grab whatever's quick, I don't have it in me to cook" },
-      { value: "everyoneelse", label: "I feed everyone else first and just eat what they're having" },
-      { value: "dontknow", label: "I don't even know what I'm supposed to eat anymore" },
+      { value: "quick", label: "I grab whatever's quick, I don't have it in me to cook", icon: "zap" },
+      { value: "everyoneelse", label: "I feed everyone else first and just eat what they're having", icon: "users" },
+      { value: "boring", label: "The healthy stuff is boring, so it never lasts", icon: "leaf" },
+      { value: "dontknow", label: "I don't even know what I'm supposed to eat anymore", icon: "help" },
     ],
   },
   STRESS: {
     key: "STRESS", qid: "D4", type: "single",
     prompt: "When life gets stressful, where does it usually go for you?",
+    sub: "Pick the one that feels most like you.",
     options: [
-      { value: "reach_food", label: "I reach for food, it's my comfort" },
-      { value: "stop_caring", label: "I stop taking care of myself" },
-      { value: "white_knuckle", label: "I push through and burn out" },
-      { value: "cope", label: "I've got decent ways to cope" },
+      { value: "reach_food", label: "I reach for food, it's my comfort", icon: "cookie" },
+      { value: "stop_caring", label: "I stop taking care of myself", icon: "heartcrack" },
+      { value: "white_knuckle", label: "I push through and burn out", icon: "battery" },
+      { value: "cope", label: "I usually handle it okay", icon: "smile" },
     ],
   },
   ALONE: {
     key: "ALONE", qid: "D6", type: "single",
     prompt: "When you've gone after this before, were you doing it on your own?",
     options: [
-      { value: "always_alone", label: "Always alone, nobody really knew" },
-      { value: "had_group", label: "I had a person or group, and it helped" },
-      { value: "fizzles", label: "I start with people, but it fizzles out" },
+      { value: "always_alone", label: "Always alone, nobody really knew", icon: "user" },
+      { value: "had_group", label: "I had a person or group, and it helped", icon: "users" },
+      { value: "fizzles", label: "I start with people, but it fizzles out", icon: "wind" },
     ],
   },
   SUPPORT: {
     key: "SUPPORT", qid: "D7", type: "single",
-    prompt: "Do you think having someone in your corner, every day, would make the difference this time?",
+    prompt: "Do you think having someone in your corner would make the difference?",
     options: [
-      { value: "yesneverhad", label: "Honestly, yes. That's the part I've never had" },
-      { value: "ifkeptup", label: "Maybe, if they actually kept up with me" },
-      { value: "myself", label: "I've always figured I should be able to do this myself" },
+      { value: "yesneverhad", label: "Yes. That's the part I've never had", icon: "heart" },
+      { value: "feltithelps", label: "I've felt how much it helps, I just haven't had it stick", icon: "users" },
+      { value: "ifkeptup", label: "Maybe, if they actually kept up with me", icon: "help" },
     ],
   },
   SYMPTOMS: {
@@ -263,7 +266,8 @@ export function discDay(d1: string): string[] {
   switch (d1) {
     case "barely_eat":
       return [
-        "I hear this all the time, and I need you to know it is not a discipline problem. Your body is doing something to protect you, and the fix is the opposite of what you would think.",
+        "I hear this all the time, and I need you to know it is not a discipline problem.",
+        "Your body is doing something to protect you, and the fix is the opposite of what you would think.",
         "I will show you.",
       ];
     case "clean_stuck":
@@ -273,8 +277,8 @@ export function discDay(d1: string): string[] {
       ];
     case "graze":
       return [
-        "You are not weak, and you are not lazy. A lot of everyday food is built to slip right past you without ever filling you up.",
-        "But that is only part of your story, and the rest is what your results are about to show you.",
+        "You are not weak, and you are not lazy. A lot of everyday food is built to slip right past you, filling you up with nothing.",
+        "But there is more to your story than that, and it is coming into focus.",
       ];
     case "night_stress":
       return [
@@ -290,13 +294,12 @@ export function discDay(d1: string): string[] {
   }
 }
 
-// Midlife discovery (spec screen 15), gated in isShown(). Kept slightly fuller
-// than the other reveals (it carries credibility weight for the 50+ audience),
-// but still points forward to the diagnosis rather than fully resolving.
+// Midlife discovery (spec screen 15), gated in isShown(). A cliffhanger, like the
+// others: it lands "your body changed the rules" (credibility + blame-lift for the
+// 50+ woman) and points forward. The biology moves to the R1 diagnosis aha.
 export const DISC_MIDLIFE: string[] = [
-  "After 40, something shifts that no plan warns you about. As your hormones change, you slowly lose the muscle that keeps your metabolism running, and your body starts holding weight around your middle, even when you are eating exactly the way you always have.",
-  "So when the old approach stopped working, it was never that you stopped trying. Your body changed, and no one updated the plan.",
-  "How much this is driving your specific pattern is in your results.",
+  "Your body changed the rules. Something shifts after 40 that no one warns you about, and it is why the old way stopped working.",
+  "It was never you giving up. I'll show you what changed.",
 ];
 
 export const ANALYZING_TICKS: string[] = [
@@ -393,20 +396,22 @@ export function scoreAnswer(prev: State, qid: string, value: string | string[]):
       break;
     }
     case "D2": {
-      // When it's time to eat (spec screen 10): the 6pm reality + not-knowing-what-to-eat.
-      if (value === "comfort") add(s, "R9", 3);
-      else if (value === "quick") {
-        add(s, "R9", 1);
+      // When it's time to eat (spec screen 10): the food ENVIRONMENT (sets up the
+      // meals module). Emotional eating is caught on Screen 8 + stress question, so
+      // no R9 here (de-duplicated).
+      if (value === "quick") add(s, "R7", 1);
+      else if (value === "everyoneelse") add(s, "R6", 2);
+      else if (value === "boring") {
+        add(s, "R4", 1);
         add(s, "R7", 1);
-      } else if (value === "everyoneelse") {
-        add(s, "R6", 2);
-        add(s, "R9", 1);
       } else if (value === "dontknow") add(s, "R7", 2);
       break;
     }
     case "D7": {
-      // Would support help (spec screen 13): she names her own need. "myself" not scored down.
+      // Would support help (spec screen 13): she names her own need. No opt-out option
+      // (all three are a version of yes/open), a clean R6 gradient.
       if (value === "yesneverhad") add(s, "R6", 3);
+      else if (value === "feltithelps") add(s, "R6", 2);
       else if (value === "ifkeptup") add(s, "R6", 1);
       break;
     }
@@ -470,7 +475,9 @@ export function scoreAnswer(prev: State, qid: string, value: string | string[]):
     case "F3q": {
       if (value === "on_it" || value === "considering" || value === "came_off") s.flags.FLAG_GLP1 = true;
       if (value === "came_off") {
-        add(s, "R2", 2);
+        // Honest yo-yo nudge, kept light (+1) so her behavioral answers decide;
+        // the shot messaging rides on the GLP1_cameoff flag, not this score.
+        add(s, "R2", 1);
         s.flags.FLAG_GLP1_cameoff = true;
       }
       break;
@@ -529,10 +536,19 @@ export type Resolution = {
 // they clearly dominate rather than by accumulation (spec §3, §9.2).
 const PRIORITY: ReasonKey[] = ["R2", "R9", "R5", "R6", "R4", "R3", "R8", "R1", "R7"];
 const FALLBACK: ReasonKey[] = ["R1", "R7"];
-// How far a fallback reason (R1/R7) must beat the best behavioral reason to be
-// allowed to lead. Below this it is demoted so "it's just your age/the info"
-// never swallows a real behavioral story.
-const FALLBACK_DOMINANCE = 2;
+// How far a fallback reason (R1/R7) must beat the best behavioral reason to lead
+// OUTRIGHT. At a smaller edge the behavioral reason leads and the fallback is woven
+// in as the second thread ("two things pulling together"). This is the same
+// principle as the R6 gate: fallback/accumulation reasons must not hijack a woman's
+// behavioral story on a slim margin. For the midlife woman especially, leading with
+// "it's just your age" is both fatalistic and the read she has already heard too
+// many times, so R1 must clearly dominate to take the lead alone.
+const FALLBACK_DOMINANCE = 3;
+// How far R6 (no-support) must beat the best behavioral reason to lead as PRIMARY.
+// Set to 4 (one past the near-tie band) so a woman whose behavioral pattern only
+// trails R6 by a point or two keeps her behavioral Aha, with support carried into
+// the through-line. A true R6 woman (support is the whole story) clears this easily.
+const R6_DOMINANCE = 4;
 
 export function resolve(s: State): Resolution {
   const reasons = Object.keys(s.reasonScores) as ReasonKey[];
@@ -546,7 +562,8 @@ export function resolve(s: State): Resolution {
   const r6Backed =
     s.answers["D6"] === "always_alone" ||
     s.answers["D6"] === "fizzles" ||
-    s.answers["D7"] === "yesneverhad";
+    s.answers["D7"] === "yesneverhad" ||
+    s.answers["D7"] === "feltithelps";
 
   const ranked = [...reasons].sort((a, b) => {
     if (score(b) !== score(a)) return score(b) - score(a);
@@ -555,10 +572,23 @@ export function resolve(s: State): Resolution {
 
   let primary = ranked[0];
 
-  // R6 guard: if unbacked R6 is on top, hand the lead to the next scoring reason.
-  if (primary === "R6" && !r6Backed) {
-    const next = ranked.find((r) => r !== "R6" && score(r) > 0);
-    if (next) primary = next;
+  // R6 dominance gate: support (R6) is the through-line for many women, so as a
+  // PRIMARY it should carry the Aha only when it clearly is the whole story, not
+  // when it edges a real behavioral pattern by a point or two of accumulation.
+  // R6 leads only when (a) her DIRECT support answers back it AND (b) it beats the
+  // best behavioral reason by >= R6_DOMINANCE. Otherwise it demotes to contributing
+  // and the behavioral pattern leads; her support signal still drives the
+  // through-line and Turn in composition (supportSignal, independent of primary).
+  if (primary === "R6") {
+    const bestBehavioral = ranked.find(
+      (r) => r !== "R6" && !FALLBACK.includes(r) && score(r) > 0,
+    );
+    const dominates = bestBehavioral
+      ? score("R6") - score(bestBehavioral) >= R6_DOMINANCE
+      : true; // nothing behavioral to yield to
+    if (!r6Backed || !dominates) {
+      primary = bestBehavioral ?? ranked.find((r) => r !== "R6" && score(r) > 0) ?? primary;
+    }
   }
 
   // Fallback demotion: R1/R7 only lead when they clearly dominate. If the top

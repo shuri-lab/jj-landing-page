@@ -91,7 +91,7 @@ const CORES: Record<ReasonKey, Core> = {
   R8: {
     patternShort: "a body carrying too much stress",
     essence: "This was never only about food. Your body has been bracing.",
-    aha: "Here is a connection no one drew for you. When you are running on too little sleep and too much stress, month after month, two things happen that have nothing to do with how disciplined you are. First, you reliably eat more, especially the quick-energy carbs, often without fully clocking it, because a tired, stretched body reaches for fast fuel. Second, women carrying chronic stress and short sleep tend to hold more weight around the middle. It is not one clean hormone switch, whatever the internet told you. It is your whole system, run down and bracing, making the belly the last place anything wants to leave.",
+    aha: "Here is a connection no one drew for you. When you are running on too little sleep and too much stress, month after month, two things happen that have nothing to do with how disciplined you are. First, you reliably eat more, especially the quick-energy carbs, often without fully clocking it, because a tired, stretched body reaches for fast fuel. Second, women carrying chronic stress and short sleep tend to hold more weight around the middle. It is not one clean hormone switch, whatever the internet told you. It is your whole body, run down and bracing, making the belly the last place anything wants to leave.",
     reframe: "Which means the times you did everything right and it still would not move were not failures. You were trying to out-discipline a body that was worn thin and holding on, and no amount of clean eating fixes a body that is running on empty.",
     turn: "The fix is to ease the load your body is bracing against, your sleep, your stress, the weight you carry, right alongside your food, so it finally has room to let go. And you should not have to carry any of it, or fix it, alone.",
     closingSensation: "permission to rest",
@@ -115,7 +115,7 @@ const TRIED_FRAGMENT: Record<string, string> = {
   shakes: "done the shakes and cleanses",
   ww: "done Weight Watchers",
   shot: "even looked at the shot",
-  everything: "tried a little of everything, honestly",
+  everything: "tried a little bit of everything",
 };
 
 const HAPPENED_FRAGMENT: Record<string, string> = {
@@ -148,9 +148,9 @@ const GETS_FRAGMENT: Record<string, string> = {
 };
 
 const MEAL_FRAGMENT: Record<string, string> = {
-  comfort: "You reach for comfort food when you are tired or stressed.",
   quick: "You grab whatever is quick, because there is nothing left in you to cook.",
   everyoneelse: "You feed everyone else first and eat whatever is left.",
+  boring: "And the healthy food bores you, so it never lasts.",
   dontknow: "And you do not even know what you are supposed to eat anymore.",
 };
 
@@ -168,9 +168,16 @@ function mirrorExtra(primary: ReasonKey, s: State): string {
       if (gets === "putmelast") return GETS_FRAGMENT.putmelast;
       return "";
     case "R9":
-      return meal === "comfort" || meal === "quick" ? MEAL_FRAGMENT[meal] : "";
+      // R9's felt behavior now comes from the Screen 8 day fragment, not this screen.
+      return "";
     case "R7":
-      return meal === "dontknow" ? MEAL_FRAGMENT.dontknow : "";
+      return meal === "dontknow"
+        ? MEAL_FRAGMENT.dontknow
+        : meal === "boring"
+          ? MEAL_FRAGMENT.boring
+          : meal === "quick"
+            ? MEAL_FRAGMENT.quick
+            : "";
     case "R4":
       return gets === "hungryrestricted" ? GETS_FRAGMENT.hungryrestricted : "";
     case "R8":
@@ -191,7 +198,7 @@ function buildMirror(s: State, primary: ReasonKey): string {
   // Behavior first: what she tried (up to 2 fragments, or the "everything" line).
   const triedOrder = ["keto", "calories", "gym", "fasting", "shakes", "ww"];
   if (tried.includes("everything")) {
-    parts.push("You have tried a little of everything, honestly.");
+    parts.push("You have tried a little bit of everything.");
   } else {
     const picked = triedOrder.filter((t) => tried.includes(t)).slice(0, 2);
     if (picked.length) {
@@ -250,86 +257,132 @@ function buildWeave(primary: ReasonKey, contributing: ReasonKey | null): string 
   return BESPOKE_WEAVE[`${primary}+${contributing}`] ?? GENERIC_WEAVE[contributing];
 }
 
-// ── Consequence connectors (spec §6.4 / design §4b) ───────────────────────────
-// For each primary, sentences keyed by an answer token; fire the matching ones.
-function consequenceConnectors(primary: ReasonKey, contributing: ReasonKey | null, s: State): string[] {
-  const tried = asArray(s.answers["C1"]);
-  const happened = s.answers["C2"] as string | undefined;
-  const day = s.answers["D1"] as string | undefined;
-  const stress = s.answers["D4"] as string | undefined;
-  const gets = s.answers["C3"] as string | undefined;
-  const meal = s.answers["D2"] as string | undefined;
-  const supp = s.answers["D7"] as string | undefined;
-  const symptoms = asArray(s.answers["E1"]);
-  const out: string[] = [];
-  const triedCount = tried.filter((t) => t !== "everything").length + (tried.includes("everything") ? 1 : 0);
-
-  const push = (cond: boolean, line: string) => {
-    if (cond && out.length < 3) out.push(line);
-  };
-
-  switch (primary) {
-    case "R2":
-      push(day === "clean_stuck", "It is exactly why eating clean stopped working. The food was never the piece that slipped.");
-      // Skip the "one cycle run many times" connector when the bespoke R2+R7
-      // weave already made that point (avoid saying it twice).
-      push(contributing !== "R7" && tried.some((t) => ["keto", "ww", "everything", "calories"].includes(t)), "Keto, the counting, all of it, each one worked and then rebounded, which was never five separate failures, it was one cycle run five times.");
-      push(stress === "white_knuckle", "And running each attempt while burning out only made the rebound more certain.");
-      push(tried.includes("gym"), "And the hard workouts cost you more of the muscle the cycle was already taking.");
-      break;
-    case "R4":
-      push(day === "barely_eat", "The starving-by-night is the tell, a debt you ran up all day.");
-      push(gets === "hungryrestricted", "You named it yourself, being hungry and restricted all the time, that is the setup, not a failing.");
-      push(symptoms.includes("cravings"), "And the cravings you can't control are not weakness, they are the alarm.");
-      push(tried.includes("fasting"), "The fasting was the restriction your body kept correcting for.");
-      break;
-    case "R8":
-      push(day === "clean_stuck", "That is why clean eating never cracked the belly.");
-      push(symptoms.includes("exhausted") || symptoms.includes("brain_fog"), "The exhaustion and the fog are part of the same story, a run-down body holding on to everything.");
-      push(stress === "white_knuckle", "You have been burning out and dieting at the same time, signaling danger to your body while asking it to let go.");
-      push(gets === "putmelast", "And putting yourself last, every time, is how the load never lifts.");
-      push(symptoms.includes("belly"), "The belly that will not move is the loudest sign of it.");
-      break;
-    case "R5":
-      push(gets === "blownit", "You said it yourself, one bad day and you figure you have blown it. That one thought has cost you more than any meal ever did.");
-      push(day === "weekend", "The weekend is the whole pattern in miniature, five good days a single slip erases.");
-      push(happened === "couldnt_stick", "It is why nothing stuck past a few weeks, the first imperfect day ended the whole thing.");
-      push(gets === "losesteam", "And when the scale stalls, the whole thing loses its air, because perfect was the only setting.");
-      push(tried.includes("everything"), "Every new diet was a fresh start after the last slip. You do not need another one.");
-      break;
-    case "R6":
-      push(supp === "yesneverhad", "And you told me the truth of it, the thing you have never had is someone in your corner. That was the missing piece the whole time.");
-      push(meal === "everyoneelse", "You feed everyone else first and eat what is left, the way you have given to everyone but you.");
-      push(gets === "driftoff", "You start strong and then quietly drift off, and there is never anyone there to notice or catch you.");
-      push(happened === "couldnt_stick", "Week two or three, when the newness wore off and no one was watching, is exactly when the tank ran dry.");
-      push(stress === "stop_caring" || gets === "putmelast", "And when life got hard with no one in your corner, you were the first thing off your own list.");
-      push(s.answers["D6"] === "fizzles", "You start with people and end alone, which is right when it always falls apart.");
-      break;
-    case "R3":
-      push(tried.includes("gym"), "All those hard sessions were the effort of someone who refused to quit, spent where it pays back least.");
-      push(day === "clean_stuck", "You had the food closer to right than you think. The punishing exercise was the misfire.");
-      break;
-    case "R1":
-      push(happened === "stalled", "The stall was your old plan meeting your new body, and losing.");
-      push(day === "clean_stuck", "Food was never the lever that slipped. The muscle was.");
-      push(symptoms.includes("lose_but_stomach"), "Losing it everywhere but the middle is the midlife shift with your name on it.");
-      push(symptoms.includes("hot_flashes"), "The hot flashes are your body telling you the season changed; the plan never did.");
-      break;
-    case "R9":
-      push(day === "night_stress", "The nights are where you see it clearest, the plan-making part of you clocks out right when you need it most.");
-      push(meal === "comfort", "You reach for comfort food when you are tired or stressed, because it is the fastest comfort there is, that is human, not weak.");
-      push(stress === "reach_food", "Food being where you go is the signal that the hard moments were never covered.");
-      push(meal === "quick", "And grabbing whatever is quick when you are drained is not the problem to fix, it is the tiredness underneath it.");
-      push(symptoms.includes("cravings"), "And the cravings are that same pull, not a flaw.");
-      break;
-    case "R7":
-      push(triedCount >= 3, "The sheer number of things you tried is a receipt for the bad advice, not a list of your failures.");
-      push(meal === "dontknow", "You told me you do not even know what you are supposed to eat anymore, that is not on you, that is what years of contradictions do.");
-      push(happened === "regained", "Each one worked briefly and rebounded because each was built to sell a result, not to keep it.");
-      push(symptoms.includes("bloated"), "Even the bloat you were sold a supplement for was usually just the wrong foods.");
-      break;
+// ── Beat 3b: the food-vs-exercise slider payoff (always shown, blueprint §4a) ──
+// The slider answer is delivered HERE, not mid-quiz. Tone adapts to how she guessed.
+function sliderPayoff(s: State): string {
+  const g = s.sliderGuess ?? 50;
+  // Off (guessed exercise-heavy / 50-50): reveal the truth she was made to wait for.
+  if (g <= 50) {
+    if (s.flags.FLAG_ED_watch) {
+      return `And that slider at the start? You guessed ${g} percent food. Here is the truth I held back: most of this is about the food, and exercise, as good as it is for you, has a smaller say over the scale than anyone tells you. It was never about pushing yourself harder. So if you have been moving your body and barely losing, that is why.`;
+    }
+    return `And that slider at the start? You guessed ${g} percent food. Here is the truth I held back: for most women, what you eat is around 80 to 90 percent of it, and exercise, as good as it is for your heart and your head, is a small slice. Most women burn under 100 calories in a workout, about 5 percent of what the body uses in a day. It was never the lever that moves the scale. So if you have been working out and barely losing, now you know why.`;
   }
-  return out;
+  // Close: honor it.
+  return `And that slider at the start? Your guess was actually close. Most of this really is about the food, and the fact that you already sensed that tells me you are sharper about this than most. You have just never had a plan that put it into practice for you.`;
+}
+
+// ── Beat 4: why what SHE tried did not last (blueprint §4b) ────────────────────
+// Never "X does not work"; always why it did not last FOR HER. Woven, not listed.
+const DIET_LINE: Record<string, string> = {
+  keto: "Keto worked by cutting out whole groups of food, which is exactly why it never lasted. No one lives without bread and fruit and the foods they love forever, so the minute real life came back, so did the weight. That was never your discipline failing, it was a plan built to be temporary.",
+  calories: "Counting every calorie turns eating into a math problem you have to solve by yourself, every single day. It can work while you have the energy to track it, but the first busy week, the tracking is the first thing to go.",
+  gym: "You cannot out-train your plate. Hard workouts can push your appetite up and leave you too drained to move the rest of the day, so you can grind and barely lose. You were never not working hard enough. You were working hard at the thing that moves the scale least.",
+  fasting: "Skipping meals feels like control, but it usually flips on you. You are so hungry by night that one evening undoes the whole day, and your body learns to hold on tighter. The going-without was never the fix.",
+  shakes: "The shakes and cleanses give you a fast drop that feels amazing for a week, and then it comes right back, because they were never built to teach you how to actually eat day to day. A quick fix is always temporary.",
+  ww: "Points work while you are counting, but it is one more thing to track on your own, and the day you stop counting, there is nothing holding it in place. It was you, an app, and your willpower, with no one actually in it with you.",
+  everything: "And there it is. You have tried more than most people ever will, and not one of them held. That is not a list of your failures, it is proof the problem was never you. Not one of them was built for your body, and you were doing every single one on your own.",
+};
+const DIET_ORDER = ["gym", "keto", "fasting", "shakes", "ww", "calories"];
+
+function dietsBeat(s: State): string {
+  const tried = asArray(s.answers["C1"]);
+  const hasEverything = tried.includes("everything");
+  const specific = DIET_ORDER.filter((t) => tried.includes(t)).slice(0, hasEverything ? 2 : 3);
+  const lines = specific.map((t) => DIET_LINE[t]);
+  if (hasEverything) lines.push(DIET_LINE.everything);
+  if (!lines.length) return "";
+  return "Now look at what you actually tried. " + lines.join(" ");
+}
+
+// ── Support gating: the corner only leads where her answers make it hers ──────
+function supportSignal(s: State): boolean {
+  return (
+    s.answers["D6"] === "always_alone" ||
+    s.answers["D6"] === "fizzles" ||
+    s.answers["D7"] === "yesneverhad" ||
+    s.answers["D7"] === "feltithelps"
+  );
+}
+
+// ── Beat 5: the through-line (her real missing piece, NOT always support) ──────
+// blueprint §5: support LEADS only for R6 and, softly, R9. Everyone else points
+// at food / plan / eating-enough / consistency / the truth.
+function throughline(primary: ReasonKey, s: State, name: string): string {
+  const supp = supportSignal(s);
+  const open = `So here is the real picture, ${name}. `;
+  switch (primary) {
+    case "R1":
+      return open + "You are a disciplined woman doing the right things with a plan built for a body you no longer have. The old rules quietly expired, and no one handed you the new ones.";
+    case "R2":
+      return open + "You have been running hard, on your own, through a cycle that was rigged to get harder, blaming your willpower for a setup that was never your fault. You have more discipline than half the people you know. What you have never had is a way to do this that actually protects your body" + (supp ? ", and someone paying attention so it does not quietly fall apart around week three again." : ".");
+    case "R3":
+      return open + "You have got more drive than most people ever will, and you have been spending it in the wrong place, punishing your body in the gym for a problem that lives on the plate.";
+    case "R4":
+      return open + "Your discipline was never the problem. It has been real, and relentless, and pointed in exactly the wrong direction. You were told the answer was less, and you did less better than almost anyone. What your body needs now is to feel safe enough to let go, and that starts with being fed, not pushed harder.";
+    case "R5":
+      return open + "You are not inconsistent by nature. You are consistent until one bad day, and then the all-or-nothing takes the wheel." + (supp ? " You told me you start with people and it fizzles, which is the exact moment a slip becomes a spiral, right when the support disappears." : "");
+    case "R6":
+      return open + "You are the strong one. You have shown up for everyone for years, and no one has ever shown up just for you. You told me the part you have never had is someone in your corner. That was the missing piece the whole time.";
+    case "R7":
+      return open + "You cannot win a game whose rulebook was wrong." + (s.answers["D2"] === "dontknow" ? " Not knowing what to eat anymore is not on you, that is simply what years of contradictions do to a smart person." : "") + " What you have never had is the handful of things that are actually true, from someone with no reason to sell you the next myth.";
+    case "R8":
+      return open + "You are a strong woman carrying too much, running on empty, aimed at all the wrong levers. It was never about trying harder. It is about easing the load your body has been bracing under, so it can finally stop holding on.";
+    case "R9":
+      return open + "You are not undisciplined. You have been managing real stress the fastest way you knew how, then punishing yourself for it, alone, on repeat." + (supp ? " You told me the part you have never had is someone in your corner, and the hard nights are exactly where that matters most." : "");
+  }
+}
+
+// ── Beat 6: the Turn, tied to her "why" ───────────────────────────────────────
+const WHY_CLOSE: Record<string, string> = {
+  energy: "That is how you get your energy and your confidence back.",
+  myself: "That is how you get back to feeling like yourself, in the clothes you have been holding onto.",
+  health: "And you told me this is about your health, so hear me: that matters more than any number on the scale.",
+  family: "And you told me this is about being there, strong, for the people who lean on you. That is what this is for.",
+  moment: "And you have got that moment coming, so let's make sure you walk in feeling like you.",
+};
+
+function turnBeat(core: Core, s: State, res: Resolution, primary: ReasonKey): string {
+  const parts: string[] = [core.turn];
+  const supp = supportSignal(s);
+
+  // The corner: leads for R6, soft for R9, a light close for R2/R5/R7 only when
+  // her answers earned it, and absent for the food/midlife/plan reasons.
+  if (primary === "R6") {
+    parts.push("Not becoming a more disciplined person, you already are one. Just never having to do the hard part alone again, someone who checks in, who remembers what you said, and who notices when you go quiet.");
+  } else if (primary === "R9") {
+    parts.push("So when the craving comes, you are not standing there alone with only your willpower.");
+  } else if (supp && (primary === "R2" || primary === "R5")) {
+    parts.push("And someone to catch the slip before it becomes a lost week, so you are not doing the hard part alone this time.");
+  } else if (supp && primary === "R7") {
+    parts.push("From someone walking it with you, instead of selling you the next thing.");
+  }
+
+  // ED compassion: gentle, encourage real help (no numbers, no "eat less").
+  if (res.edMode) {
+    parts.push("You deserve to eat, and if the not-eating ever starts to feel bigger than a diet, please talk to someone you trust about it.");
+  }
+
+  // Grace-first, sourced shot handling. [clinician check: confirm figures]
+  if (s.flags.FLAG_GLP1) {
+    parts.push(res.edMode
+      ? "A shot can quiet your appetite, but it cannot build the habits or be in your corner on the hard days. That part is the work, and it is the part that lasts."
+      : "A shot can quiet your appetite, and for some women that helps. But up to about 40 percent of what it takes off is muscle, not fat, the muscle that keeps your metabolism up, and most women who stop regain about two thirds of the weight within a year, as fat. It works on your appetite. It cannot build the habits, protect your muscle, or be in your corner on the hard days. That part is the work, and it is the part that lasts.");
+  }
+  if (s.flags.FLAG_GLP1_cameoff) {
+    parts.push("Coming off it is exactly when protecting your muscle and your results matters most, that is the window it wants to come back.");
+  }
+
+  // Honest timeline for a large goal (no support push).
+  if (s.flags.FLAG_goalBig) {
+    parts.push("A goal like yours is likely more than one focused stretch, done in a way that lasts.");
+  }
+
+  // Tie the close to what she said matters (her "why").
+  const wc = s.why ? WHY_CLOSE[s.why] : undefined;
+  if (wc) parts.push(wc);
+
+  return parts.join(" ");
 }
 
 // ── The Pattern beat (confidence-aware, §6.1) ─────────────────────────────────
@@ -338,7 +391,7 @@ function buildPattern(core: Core, res: Resolution): string {
     return "Your pattern is really two things pulling together, which is why nothing aimed at just one of them has worked.";
   }
   if (res.confidence === "low_signal") {
-    return `Here is the thread I can see in what you told me. It points to ${core.patternShort}, and it is worth looking at honestly.`;
+    return `Here is the thread I can see in what you told me. It points to ${core.patternShort}, and it is worth looking at.`;
   }
   return `Here is the pattern underneath all of it. You are not failing at weight loss. You are caught in ${core.patternShort}.`;
 }
@@ -347,48 +400,10 @@ function buildPattern(core: Core, res: Resolution): string {
 const PERI_WEAVE =
   "And with the hot flashes you told me about, your body is also moving into a new season, which pulls in the very same direction: less of the muscle that keeps you burning, and more settling at your middle.";
 
-function turnAddenda(s: State, res: Resolution): string[] {
-  const add: string[] = [];
-  const age = s.answers["F1q"] as string | undefined;
-
-  // ED-watch compassion mode: soften, encourage real support (design §6.5).
-  if (res.edMode) {
-    add.push("This is gentler than what you have been doing to yourself, not harder. And it is not something you should have to figure out alone.");
-  }
-
-  // GLP-1 grace-first, now sourced (spec §6.5). [clinician check: confirm figures, keep hedges]
-  if (s.flags.FLAG_GLP1) {
-    add.push("A shot can quiet your appetite, and for some women that helps. But up to about 40 percent of what it takes off is muscle, not fat, the muscle that keeps your metabolism up, and most women who stop regain about two-thirds of the weight within a year, as fat. It works on your appetite. It cannot build the habits, protect your muscle, or be in your corner on the hard days. That part is the work, and it is the part that lasts.");
-  }
-  if (s.flags.FLAG_GLP1_cameoff) {
-    add.push("Coming off it is exactly when protecting your muscle and your results matters most, that is the window it wants to come back.");
-  }
-
-  // Health / family why.
-  if (s.flags.FLAG_health_why) {
-    add.push("And since you told me this is about your health and the people who need you, that matters more than any number. This is about your energy, and being here strong for them.");
-  }
-
-  // Goal-aware honest timeline (also seeds "hard to do alone").
-  if (s.flags.FLAG_goalBig) {
-    add.push("A goal like yours is likely more than one focused stretch, done in a way that lasts, and that part is genuinely hard to do alone, which is exactly why it kept slipping. It does not have to be alone this time.");
-  } else if (!res.edMode) {
-    add.push("This part is real, and it is genuinely hard to do on your own. It does not have to be alone this time.");
-  }
-
-  // Conditional hope (§6c): older, or "don't feel like me".
-  if (age === "50s" || age === "60plus" || s.goal === "not_sure") {
-    add.push("And your 40s and 50s can absolutely be your strongest chapter. The fact that nothing worked before was never proof that nothing will.");
-  }
-
-  return add;
-}
-
-// ── The public composition ────────────────────────────────────────────────────
-// Each beat carries a `kind` so the UI can give it a labeled header, an icon,
-// and the right emphasis (the pattern and the turn are the pivots). The text
-// itself is unchanged; only the structure around it is.
-export type SectionKind = "mirror" | "pattern" | "aha" | "reframe" | "weave" | "consequence" | "turn";
+// ── The public composition (the six beats, blueprint §1) ──────────────────────
+// Each beat carries a `kind` so the UI can give it a labeled header and the right
+// emphasis (pattern, through-line, and turn are the anchors).
+export type SectionKind = "mirror" | "pattern" | "aha" | "slider" | "diets" | "throughline" | "turn";
 export type DiagnosisSection = { kind: SectionKind; text: string; bullets?: string[] };
 
 export type ComposedDiagnosis = {
@@ -399,35 +414,38 @@ export type ComposedDiagnosis = {
 
 export function composeDiagnosis(s: State, res: Resolution): ComposedDiagnosis {
   const core = CORES[res.primary];
-  const name = s.name?.trim();
+  const name = s.name?.trim() || "";
 
   const sections: DiagnosisSection[] = [];
 
-  // 1. Mirror.
+  // 1. Mirror — 2 to 3 of her most telling answers, in her words.
   sections.push({ kind: "mirror", text: buildMirror(s, res.primary) });
 
-  // 2. Pattern.
+  // 2. Pattern, named (near-tie -> "two things pulling together").
   sections.push({ kind: "pattern", text: buildPattern(core, res) });
 
-  // 3. Aha (+ peri weave when peri and primary is not already midlife).
-  let aha = core.aha;
-  if (s.flags.FLAG_peri && res.primary !== "R1") aha = `${aha} ${PERI_WEAVE}`;
+  // 3. Aha — the honest mechanism + blame lift. For the midlife/peri woman the
+  //    after-40 mechanism weaves in; for a near-tie the contributing thread joins.
+  let aha = `${core.aha} ${core.reframe}`;
+  if (s.flags.FLAG_peri && res.primary !== "R1") aha += ` ${PERI_WEAVE}`;
+  if (res.confidence === "near_tie" && res.contributing) {
+    const weave = buildWeave(res.primary, res.contributing);
+    if (weave) aha += ` ${weave}`;
+  }
   sections.push({ kind: "aha", text: aha });
 
-  // 4. Reframe.
-  sections.push({ kind: "reframe", text: core.reframe });
+  // 3b. The slider payoff (always shown, delivered here not mid-quiz).
+  sections.push({ kind: "slider", text: sliderPayoff(s) });
 
-  // 5. Contributing weave (given more room on a near-tie by leading the paragraph).
-  const weave = buildWeave(res.primary, res.contributing);
-  if (weave) sections.push({ kind: "weave", text: weave });
+  // 4. Why what SHE tried did not last (one honest line per diet she selected).
+  const diets = dietsBeat(s);
+  if (diets) sections.push({ kind: "diets", text: diets });
 
-  // 6. Her Consequence (rendered as bullets so it reads as distinct points, not a wall).
-  const connectors = consequenceConnectors(res.primary, res.contributing, s);
-  if (connectors.length) sections.push({ kind: "consequence", text: "", bullets: connectors });
+  // 5. The through-line — her real missing piece (support only where it is hers).
+  sections.push({ kind: "throughline", text: throughline(res.primary, s, name) });
 
-  // 7. The Turn (+ addenda).
-  const addenda = turnAddenda(s, res);
-  sections.push({ kind: "turn", text: [core.turn, ...addenda].join(" ") });
+  // 6. The Turn — what works for her, tied to her "why".
+  sections.push({ kind: "turn", text: turnBeat(core, s, res, res.primary) });
 
   return {
     title: name ? `${name}, here is what is really going on.` : "Here is what is really going on.",

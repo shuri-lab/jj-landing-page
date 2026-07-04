@@ -39,6 +39,11 @@ import {
   CloudRain,
   Wind,
   Gauge,
+  Moon,
+  HelpCircle,
+  HeartCrack,
+  Smile,
+  User,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
@@ -99,7 +104,8 @@ const ICONS: Record<string, React.ComponentType<{ className?: string; strokeWidt
   anchor: Anchor, droplets: Droplets, cookie: Cookie, battery: Battery,
   cloudfog: CloudFog, flame: Flame, target: Target,
   zap: Zap, heart: Heart, heartpulse: HeartPulse, calendar: Calendar, users: Users,
-  cloudrain: CloudRain, wind: Wind, gauge: Gauge, utensilscrossed: UtensilsCrossed,
+  cloudrain: CloudRain, wind: Wind, gauge: Gauge, utensilscrossed: UtensilsCrossed, moon: Moon,
+  help: HelpCircle, heartcrack: HeartCrack, smile: Smile, user: User,
 };
 
 // Goal -> 12-week projection metadata.
@@ -306,7 +312,7 @@ function Screen({
       return <SliderScreen onContinue={onSlider} />;
     case "DISC_HISTORY": {
       const c2 = state.answers["C2"] as string;
-      return <DiscoveryScreen lines={discHistory(c2)} flip="history" visual={c2 === "regained" ? <TwoPathGraphic /> : undefined} onContinue={() => onAdvance("DISC_HISTORY")} />;
+      return <DiscoveryScreen lines={discHistory(c2)} flip="history" bgVisual={c2 === "regained" ? <TwoPathGraphic /> : undefined} bgCollage={c2 === "couldnt_stick" ? <PhotoCollageBg /> : undefined} onContinue={() => onAdvance("DISC_HISTORY")} />;
     }
     case "DISC_DAY": {
       const d1 = state.answers["D1"] as string;
@@ -392,10 +398,7 @@ function CoachHeader() {
   return (
     <div className="q-fadeline flex items-center gap-3">
       <img src={jjAvatar} alt="JJ Smith" className="h-12 w-12 rounded-full object-cover ring-2 ring-white shadow-[0_6px_16px_-6px_rgba(140,17,74,0.6)]" />
-      <div>
-        <p className="text-[15px] font-bold leading-none text-[#15102a]">JJ</p>
-        <p className="mt-1 text-[12px] font-semibold leading-none text-[#c41e6a]">your coach</p>
-      </div>
+      <p className="text-[16px] font-bold leading-none text-[#15102a]">JJ Smith</p>
     </div>
   );
 }
@@ -481,7 +484,7 @@ function MultiScreen({ q, onSubmit }: { q: QuestionDef; onSubmit: (v: string[]) 
 }
 
 // ── Discovery reveal ─────────────────────────────────────────────────────────
-function DiscoveryScreen({ lines, visual, flip, onContinue }: { lines: string[]; visual?: React.ReactNode; flip: string; onContinue: () => void }) {
+function DiscoveryScreen({ lines, visual, bgVisual, bgCollage, flip, onContinue }: { lines: string[]; visual?: React.ReactNode; bgVisual?: React.ReactNode; bgCollage?: React.ReactNode; flip: string; onContinue: () => void }) {
   const [done, setDone] = useState(false);
   useEffect(() => {
     track("belief_flip_shown", { flip });
@@ -491,11 +494,21 @@ function DiscoveryScreen({ lines, visual, flip, onContinue }: { lines: string[];
   }, []);
   return (
     <>
-      <Content align="center">
-        <CoachHeader />
-        <div className="mt-6"><FadeLines lines={lines} /></div>
-        {visual && <div className="q-fadeline mt-7" style={{ animationDelay: `${lines.length * STEP_DELAY}s` }}>{visual}</div>}
-      </Content>
+      <div className="relative flex flex-1 flex-col">
+        {bgCollage && <div className="pointer-events-none absolute inset-0 z-0" aria-hidden>{bgCollage}</div>}
+        {bgVisual && (
+          <div className="pointer-events-none absolute inset-0 z-0 flex items-center justify-center overflow-hidden" aria-hidden>
+            <div className="w-full max-w-[440px] opacity-25 blur-[6px]">{bgVisual}</div>
+          </div>
+        )}
+        <div className="relative z-10 flex flex-1 flex-col">
+          <Content align="center">
+            <CoachHeader />
+            <div className="mt-6"><FadeLines lines={lines} /></div>
+            {visual && <div className="q-fadeline mt-7" style={{ animationDelay: `${lines.length * STEP_DELAY}s` }}>{visual}</div>}
+          </Content>
+        </div>
+      </div>
       {done && (
         <StickyAction>
           <div className="q-fadeline"><PrimaryButton onClick={onContinue}>Continue</PrimaryButton></div>
@@ -622,6 +635,25 @@ function SliderScreen({ onContinue }: { onContinue: (guess: number) => void }) {
 }
 
 // ── Discovery visuals ────────────────────────────────────────────────────────
+// A washed-out masonry of transformation photos, used as a subtle background
+// behind a reveal (the "women who keep it off" moment).
+function PhotoCollageBg() {
+  const base = [t8, t10, t4, t12, t9, t7, t1, tTammi];
+  // Repeat enough times to overfill any viewport height (overflow is clipped).
+  const tiles = [...base, ...base, ...base, ...base];
+  return (
+    <div className="absolute inset-0 overflow-hidden">
+      <div className="columns-2 gap-2 p-2 sm:columns-3">
+        {tiles.map((src, i) => (
+          <img key={i} src={src} alt="" className="mb-2 w-full rounded-xl object-cover" loading="lazy" />
+        ))}
+      </div>
+      {/* Blush wash so the photos read as a soft texture, not the focus. */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#fdebeb]/90 via-[#fdebeb]/82 to-[#fdebeb]/94" />
+    </div>
+  );
+}
+
 function TwoPathGraphic() {
   return (
     <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
@@ -909,9 +941,9 @@ const DIAG_LABEL: Record<string, string> = {
   mirror: "What you told me",
   pattern: "Your pattern",
   aha: "What's really going on",
-  reframe: "So this was never on you",
-  weave: "The second thread",
-  consequence: "Why it's played out this way",
+  slider: "About that slider",
+  diets: "Why what you tried didn't last",
+  throughline: "The real picture",
   turn: "What changes it",
 };
 
@@ -925,7 +957,7 @@ function splitSentences(text: string): string[] {
 function DiagnosisSectionCard({ section, delay }: { section: DiagnosisSection; delay: number }) {
   const { kind, text, bullets } = section;
   const label = DIAG_LABEL[kind] ?? "";
-  const pivot = kind === "pattern" || kind === "turn"; // the naming + the fix: the anchors
+  const pivot = kind === "pattern" || kind === "throughline" || kind === "turn"; // the anchors
   const sentences = splitSentences(text);
   return (
     <div

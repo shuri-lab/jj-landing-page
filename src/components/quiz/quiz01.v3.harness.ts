@@ -1,7 +1,7 @@
 /**
- * Scoring regression harness (spec §9.4). Encodes 15 personas (the original 12,
- * re-scored with the three v4 questions, plus 3 that exercise the new questions
- * and the R6 rebalance rule) and asserts each resolves to the correct primary
+ * Scoring regression harness (spec §9.4). Encodes 16 personas (the original 12,
+ * re-scored with the v4 questions, plus 4 that exercise the new questions and the
+ * R6 rebalance rule / support gradient) and asserts each resolves to the correct primary
  * reason (and key flags). Run with Bun:  bun run src/components/quiz/quiz01.v3.harness.ts
  *
  * This is the guard the docs call for: re-run after any scoring or copy change
@@ -27,7 +27,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "30_50"], ["F1q", "40s"], ["B1", "45"],
       ["C1", ["keto", "calories", "everything"]], ["C2", "regained"], ["C3", "losesteam"],
-      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "white_knuckle"], ["D6", "fizzles"], ["D7", "myself"],
+      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "white_knuckle"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly", "lose_but_stomach"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
   },
@@ -46,7 +46,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "40s"], ["B1", "30"],
       ["C1", ["gym"]], ["C2", "stalled"], ["C3", "losesteam"],
-      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "cope"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "cope"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly"]], ["F3q", "not_for_me"], ["G1", "energy"],
     ],
   },
@@ -55,7 +55,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "under_15"], ["F1q", "40s"], ["B1", "60"],
       ["C1", ["calories", "fasting"]], ["C2", "stalled"], ["C3", "hungryrestricted"],
-      ["D1", "barely_eat"], ["D2", "dontknow"], ["D4", "white_knuckle"], ["D6", "always_alone"], ["D7", "ifkeptup"],
+      ["D1", "barely_eat"], ["D2", "boring"], ["D4", "white_knuckle"], ["D6", "always_alone"], ["D7", "ifkeptup"],
       ["E1", ["cravings", "exhausted"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
     flags: { FLAG_ED_watch: true },
@@ -84,7 +84,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "50s"], ["B1", "40"],
       ["C1", ["keto", "shakes", "ww", "everything"]], ["C2", "regained"], ["C3", "losesteam"],
-      ["D1", "clean_stuck"], ["D2", "dontknow"], ["D4", "cope"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "clean_stuck"], ["D2", "dontknow"], ["D4", "cope"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["bloated"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
   },
@@ -93,7 +93,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "50s"], ["B1", "70"],
       ["C1", ["calories"]], ["C2", "stalled"], ["C3", "putmelast"],
-      ["D1", "night_stress"], ["D2", "quick"], ["D4", "white_knuckle"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "night_stress"], ["D2", "quick"], ["D4", "white_knuckle"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly", "exhausted", "brain_fog", "lose_but_stomach", "hot_flashes"]], ["F3q", "not_for_me"], ["G1", "health"],
     ],
     flags: { FLAG_peri: true, FLAG_health_why: true },
@@ -103,7 +103,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "40s"], ["B1", "70"],
       ["C1", ["calories", "ww"]], ["C2", "couldnt_stick"], ["C3", "losesteam"],
-      ["D1", "night_stress"], ["D2", "comfort"], ["D4", "reach_food"], ["D6", "fizzles"], ["D7", "ifkeptup"],
+      ["D1", "night_stress"], ["D2", "quick"], ["D4", "reach_food"], ["D6", "fizzles"], ["D7", "ifkeptup"],
       ["E1", ["cravings"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
   },
@@ -112,7 +112,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "40s"], ["B1", "70"],
       ["C1", ["calories"]], ["C2", "regained"], ["C3", "losesteam"],
-      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "cope"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "clean_stuck"], ["D2", "quick"], ["D4", "cope"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly"]], ["F3q", "came_off"], ["G1", "myself"],
     ],
     flags: { FLAG_GLP1: true, FLAG_GLP1_cameoff: true },
@@ -122,7 +122,7 @@ const PERSONAS: Persona[] = [
     answers: [
       ["A1", "15_30"], ["F1q", "50s"], ["B1", "70"],
       ["C1", ["calories"]], ["C2", "stalled"], ["C3", "losesteam"],
-      ["D1", "clean_stuck"], ["D2", "dontknow"], ["D4", "cope"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "clean_stuck"], ["D2", "dontknow"], ["D4", "cope"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly", "hot_flashes", "lose_but_stomach"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
     flags: { FLAG_peri: true },
@@ -161,13 +161,24 @@ const PERSONAS: Persona[] = [
   },
   {
     // Rebalance guard: R6 is highest by accumulation but UNBACKED (had_group +
-    // "should do it myself"), so it must drop and the real pattern (R5) leads.
+    // a hedged "maybe"), so it must drop and the real pattern (R5) leads.
     name: "Deborah", expect: "R5",
     answers: [
       ["A1", "15_30"], ["F1q", "40s"], ["B1", "70"],
       ["C1", ["everything"]], ["C2", "couldnt_stick"], ["C3", "driftoff"],
-      ["D1", "weekend"], ["D2", "everyoneelse"], ["D4", "stop_caring"], ["D6", "had_group"], ["D7", "myself"],
+      ["D1", "weekend"], ["D2", "everyoneelse"], ["D4", "stop_caring"], ["D6", "had_group"], ["D7", "ifkeptup"],
       ["E1", ["belly"]], ["F3q", "not_for_me"], ["G1", "myself"],
+    ],
+  },
+  {
+    // "Had support, it just didn't stick": the new feltithelps option backs R6, so
+    // R6 leads legitimately (exercises the continuity middle option).
+    name: "Yvette", expect: "R6",
+    answers: [
+      ["A1", "15_30"], ["F1q", "50s"], ["B1", "70"],
+      ["C1", ["calories"]], ["C2", "couldnt_stick"], ["C3", "driftoff"],
+      ["D1", "clean_stuck"], ["D2", "everyoneelse"], ["D4", "stop_caring"], ["D6", "had_group"], ["D7", "feltithelps"],
+      ["E1", ["belly", "exhausted"]], ["F3q", "not_for_me"], ["G1", "myself"],
     ],
   },
 ];
