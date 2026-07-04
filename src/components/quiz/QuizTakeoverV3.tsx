@@ -8,7 +8,6 @@ import {
   Phone,
   MessageCircle,
   UtensilsCrossed,
-  UserCheck,
   Users,
   ChevronDown,
   ChevronLeft,
@@ -56,6 +55,13 @@ import t9 from "@/assets/landing/transformation-9.jpg";
 import t10 from "@/assets/landing/transformation-10.jpg";
 import t12 from "@/assets/landing/transformation-12.jpg";
 import tTammi from "@/assets/landing/transformation-tammi.jpg";
+import meal1 from "@/assets/landing/meals/meal-1.jpg";
+import meal2 from "@/assets/landing/meals/meal-2.jpg";
+import meal3 from "@/assets/landing/meals/meal-3.jpg";
+import meal4 from "@/assets/landing/meals/meal-4.jpg";
+import meal5 from "@/assets/landing/meals/meal-5.jpg";
+import meal6 from "@/assets/landing/meals/meal-6.jpg";
+import meal7 from "@/assets/landing/meals/meal-7.jpg";
 import {
   type State,
   type QuestionDef,
@@ -80,8 +86,8 @@ import {
   type VisualKind,
   gateMirror,
   GATE_REVEALS,
-  SOLUTION_LINES,
-  solutionFlagLines,
+  SOLUTION_HER_FIX,
+  solutionWhyClose,
   VALUE_STACK,
   VALUE_TOTAL,
   OFFER_COPY,
@@ -119,12 +125,6 @@ const GOAL_META: Record<string, { target: number; chapterOne: boolean }> = {
 };
 const goalMeta = (s: State) => GOAL_META[s.goal ?? "15_30"] ?? GOAL_META["15_30"];
 
-const AGE_DISPLAY: Record<string, string> = {
-  "30s": "your 30s",
-  "40s": "your 40s",
-  "50s": "your 50s",
-  "60plus": "60 and beyond",
-};
 
 
 const fillName = (t: string, s: State) => t.replace(/\{name\}/g, s.name?.trim() || "you");
@@ -262,7 +262,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
       </div>
 
       <div ref={scrollRef} onScroll={checkBottom} className="relative flex-1 overflow-y-auto">
-        <div className={`mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : "max-w-[540px]"}`}>
+        <div className={`mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
           <Screen
             key={stepKey}
             stepKey={stepKey}
@@ -345,10 +345,11 @@ function Content({ children, align = "center" }: { children: React.ReactNode; al
   return <div className={`flex flex-1 flex-col ${align === "center" ? "justify-center" : "justify-start pt-3"} pb-6`}>{children}</div>;
 }
 
-function StickyAction({ children }: { children: React.ReactNode }) {
+function StickyAction({ children, innerClassName = "max-w-[560px]" }: { children: React.ReactNode; innerClassName?: string }) {
   return (
     <div className="sticky bottom-0 z-20 -mx-6 mt-2 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent px-6 pt-6" style={{ paddingBottom: "calc(1.1rem + env(safe-area-inset-bottom, 0px))" }}>
-      {children}
+      {/* Inner width matches the screen's content column so the CTA aligns with it. */}
+      <div className={`mx-auto w-full ${innerClassName}`}>{children}</div>
     </div>
   );
 }
@@ -666,37 +667,6 @@ function TwoPathGraphic() {
         <text x="16" y="60" fontSize="10" fontWeight="800" fill="#8c114a">crash and regain</text>
       </svg>
       <p className="mt-1 text-center text-[14px] font-semibold text-[#15102a]">Each crash leaves you a little heavier than before.</p>
-    </div>
-  );
-}
-
-function AgeCurveGraphic({ age }: { age: string }) {
-  const decades = ["20s", "30s", "40s", "50s", "60+"];
-  const idxByAge: Record<string, number> = { "30s": 1, "40s": 2, "50s": 3, "60plus": 4 };
-  const active = idxByAge[age] ?? 2;
-  const ys = [40, 56, 78, 100, 116];
-  const W = 300;
-  const xAt = (i: number) => 30 + (i / (decades.length - 1)) * (W - 60);
-  const path = `M ${decades.map((_, i) => `${xAt(i)},${ys[i]}`).join(" L ")}`;
-  return (
-    <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-      <svg viewBox={`0 0 ${W} 150`} className="w-full" role="img" aria-label="Metabolism declining by decade">
-        <defs>
-          <linearGradient id="ageFill" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#d62a7a" stopOpacity="0.22" />
-            <stop offset="100%" stopColor="#d62a7a" stopOpacity="0.02" />
-          </linearGradient>
-        </defs>
-        <path d={`${path} L ${xAt(4)},135 L ${xAt(0)},135 Z`} fill="url(#ageFill)" />
-        <path d={path} fill="none" stroke="#d62a7a" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
-        {decades.map((d, i) => (
-          <g key={d}>
-            <circle cx={xAt(i)} cy={ys[i]} r={i === active ? 7 : 4} fill={i === active ? "#b81860" : "#e7b9cb"} stroke="#fff" strokeWidth="2" />
-            <text x={xAt(i)} y={146} fontSize="12" fontWeight={i === active ? 800 : 600} fill={i === active ? "#8c114a" : "#9a7f8a"} textAnchor="middle">{d}</text>
-          </g>
-        ))}
-      </svg>
-      <p className="mt-1 text-center text-[14px] font-semibold text-[#15102a]">Your plan is built for the body you have now.</p>
     </div>
   );
 }
@@ -1099,7 +1069,7 @@ function DiagnosisScreen({ state, atBottom, onNudge, onContinue }: { state: Stat
           </div>
         </div>
       </Content>
-      <StickyAction>
+      <StickyAction innerClassName="lg:max-w-[884px]">
         {atBottom
           ? <PrimaryButton onClick={onContinue}>I'm ready to fix this</PrimaryButton>
           : <ScrollHint label="Keep reading" onNudge={onNudge} />}
@@ -1108,91 +1078,112 @@ function DiagnosisScreen({ state, atBottom, onNudge, onContinue }: { state: Stat
   );
 }
 
-// ── Solution (the 12-week challenge, personalized to her diagnosis) ───────────
+// ── Meal photo marquee (auto-sliding) under the "meals" feeling-card ──────────
+const MEAL_IMAGES = [meal1, meal2, meal3, meal4, meal5, meal6, meal7];
+
+function MealStrip() {
+  const track = [...MEAL_IMAGES, ...MEAL_IMAGES]; // doubled for a seamless loop
+  return (
+    <div className="relative mt-2.5 overflow-hidden">
+      {/* Per-item margin (not flex gap) so translateX(-50%) lands on an exact seam. */}
+      <div className="flex w-max animate-marquee-slow">
+        {track.map((src, i) => (
+          <div key={i} className="mr-3 shrink-0 overflow-hidden rounded-[1.3rem] shadow-[0_16px_34px_-26px_rgba(140,17,74,0.8)] ring-1 ring-[#f6e0ea]">
+            <img
+              src={src}
+              alt="A meal from your plan"
+              loading="lazy"
+              className="h-[168px] w-[168px] object-cover sm:h-[186px] sm:w-[186px]"
+            />
+          </div>
+        ))}
+      </div>
+      {/* Fade the edges into the screen background so photos slide in and out softly. */}
+      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#fdebeb] to-transparent" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#fdebeb] to-transparent" />
+    </div>
+  );
+}
+
+// ── Solution (the emotional bridge: diagnosis -> price) ───────────────────────
+// Job: catch the hope the diagnosis ended on and answer one question, "what is it
+// like to do this with her?" It makes her WANT; the Offer makes her DECIDE, so no
+// value stack / guarantee / FAQ here, and no re-teaching (the diagnosis did that).
 function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State; atBottom: boolean; onNudge: () => void; onContinue: () => void }) {
   const res = useMemo(() => resolve(state), [state]);
   const meta = goalMeta(state);
   const dateLabel = useMemo(() => fmtDate(12), []);
-  const ageVal = (state.answers["F1q"] as string) ?? "40s";
-  const ageWord = AGE_DISPLAY[ageVal] ?? "your 40s";
-  const lines = SOLUTION_LINES[res.primary] ?? {};
-  const flagLines = solutionFlagLines(state);
 
-  const planDefault =
-    ageVal === "50s"
-      ? "Built for your body, your hormones, your real schedule. Made for life after menopause, not a generic template."
-      : "Built for your body, your hormones, your real schedule. Not a generic template, a plan that fits the life you actually live.";
-
-  const inclusions: { Icon: typeof Phone; label: string; sub: string }[] = [
-    { Icon: Phone, label: "A real call with me, every week", sub: lines.weeklyCall ?? "Every week it is just you and me. You always know exactly what to do next, and you never feel lost." },
-    { Icon: MessageCircle, label: "I'm in your phone every morning", sub: lines.dailyCheckin ?? "You start each day knowing someone has you. That is what makes you keep going." },
-    { Icon: UtensilsCrossed, label: "Meals built around the food you love", sub: lines.meals ?? "No guessing, no sad diet plates. Real food you actually enjoy, planned for you each week." },
-    { Icon: UserCheck, label: `A plan built for your body at ${ageWord}`, sub: (lines.plan ?? planDefault) + (flagLines.plan ? ` ${flagLines.plan}` : "") },
-    { Icon: Users, label: "The circle of sisters beside you", sub: lines.sisters ?? "You are surrounded by women on the exact same journey, so you never feel like the only one." },
+  // "What it's like" — the FEELING of the product, not its mechanism. Four fixed
+  // lines, then one composed from her primary reason (her specific fix).
+  const feelItems: { Icon: typeof Phone; text: string; her?: boolean; strip?: boolean }[] = [
+    { Icon: MessageCircle, text: "You wake up to a text from me, so you never start the day on your own." },
+    { Icon: UtensilsCrossed, text: "Your meal plan, built around food you love, simple to make and easy on your grocery bill.", strip: true },
+    { Icon: Phone, text: "Every week we talk, and I tell you exactly what to do next." },
+    { Icon: Heart, text: "The morning after a hard day, I catch you before it becomes a lost week." },
+    { Icon: Sparkles, text: SOLUTION_HER_FIX[res.primary], her: true },
   ];
 
   return (
     <>
       <Content align="top">
-        <h2 className="q-rise font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">
-          {fillName("{name}, here is exactly how we fix this together.", state)}
-        </h2>
-        <p className="q-rise mt-4 text-[20px] sm:text-[21px] leading-[1.6] text-[#241d2e]" style={{ fontFamily: READ_FONT }}>
-          Everything your breakdown just showed you, your pattern and what actually works for it, is what these next 12 weeks are built around. Not a generic program. Your pattern, handled, with me beside you the whole way.
-        </p>
-        {flagLines.header && <p className="mt-3 text-[18px] font-semibold leading-snug text-[#b81860]" style={{ fontFamily: READ_FONT }}>{flagLines.header}</p>}
+        <div className="lg:mx-auto lg:max-w-[640px]">
+          <CoachHeader />
 
-        <div className="q-rise mt-5 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-          <div className="px-5 py-4 text-white" style={{ background: PINK }}>
-            <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
-            <p className="text-[20px] font-bold leading-tight">{meta.chapterOne ? "A strong start" : `About ${meta.target} pounds`}, by {dateLabel}</p>
-          </div>
-          <div className="p-5">
-            <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
-          </div>
-        </div>
-        {flagLines.goalNote && <p className="mt-3 text-[16px] leading-snug text-[#6b5b6e]">{flagLines.goalNote}</p>}
-        {flagLines.progress && (
-          <div className="mt-3 flex items-start gap-2.5 rounded-2xl bg-[#fff0f5] p-4 text-[16px] font-medium leading-snug text-[#8c114a]">
-            <Gauge className="mt-0.5 h-5 w-5 shrink-0 text-[#c41e6a]" strokeWidth={2} />
-            <span>{flagLines.progress}</span>
-          </div>
-        )}
+          {/* 1. The catch (one breath). */}
+          <h2 className="q-rise mt-5 font-sans font-bold text-[27px] sm:text-[32px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">
+            {fillName("{name}, everything we just went through is exactly what the next 12 weeks finally fix.", state)}
+          </h2>
+          <p className="q-rise mt-3 text-[22px] sm:text-[24px] font-semibold leading-[1.4] text-[#b81860]" style={{ fontFamily: READ_FONT }}>
+            Me, with you, the whole way.
+          </p>
 
-        <div className={`mt-6 space-y-3 text-[22px] sm:text-[24px] leading-[1.6] text-[#241d2e] ${READ_CARD}`} style={{ fontFamily: READ_FONT }}>
-          <p className="font-semibold">We start fast.</p>
-          <p>Your jumpstart is built to fit your life, so you feel it in the first few days, not the first month. The cravings quiet down, the bloat comes off, your energy comes back, and you get that early win that makes you believe it is possible again. It is not the whole plan. It is the running start.</p>
-          <p>Then it is real food you already love, made simple, with your meals planned for you every single week, so you never have to wonder what to eat.</p>
-          <p>And the whole way through, I am right here with you. Texting you in the morning. Calling you every week. Catching you before a slip becomes a week.</p>
-          <p className="font-semibold text-[#b81860]">You are not doing this alone, not for one single day.</p>
-        </div>
-
-        <div className="mt-7 space-y-3">
-          {inclusions.map(({ Icon, label, sub }, idx) => (
-            <React.Fragment key={label}>
-              <div className="flex items-start gap-3.5 rounded-[1.5rem] bg-white p-5 shadow-[0_16px_34px_-26px_rgba(140,17,74,0.8)] ring-1 ring-[#f6e0ea]">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
-                  <Icon className="h-5 w-5" strokeWidth={2} />
-                </span>
-                <div className="min-w-0">
-                  <p className="text-[18px] sm:text-[19px] font-bold leading-snug text-[#15102a]">{label}</p>
-                  <p className="mt-1.5 text-[18px] sm:text-[19px] leading-[1.55] text-[#2f2740]" style={{ fontFamily: READ_FONT }}>{sub}</p>
+          {/* 2. What it's like — feeling cards (visual, breathing, one line each). */}
+          <p className="mt-7 text-[13px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">What it's like, starting day one</p>
+          <div className="mt-3 space-y-2.5">
+            {feelItems.map(({ Icon, text, her, strip }) => (
+              <React.Fragment key={text}>
+                <div
+                  className={`flex items-center gap-3.5 rounded-[1.5rem] p-4 sm:p-[18px] ring-1 ${
+                    her ? "bg-[#fff5f9] ring-[#f3b9d2]" : "bg-white ring-[#f6e0ea]"
+                  } shadow-[0_16px_34px_-28px_rgba(140,17,74,0.8)]`}
+                >
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
+                    <Icon className="h-5 w-5" strokeWidth={2} />
+                  </span>
+                  <p className={`text-[19px] sm:text-[20px] leading-[1.4] text-[#241d2e] ${her ? "font-semibold text-[#8c114a]" : ""}`} style={{ fontFamily: READ_FONT }}>{text}</p>
                 </div>
-              </div>
-              {/* The metabolism curve lives right under the "plan for your body" item. */}
-              {idx === 3 && <AgeCurveGraphic age={ageVal} />}
-            </React.Fragment>
-          ))}
-        </div>
+                {strip && <MealStrip />}
+              </React.Fragment>
+            ))}
+          </div>
 
-        <div className="mt-10">
-          <p className="text-[13px] font-bold uppercase tracking-[0.18em] text-[#c41e6a]">Real women, with me by their side</p>
-          <h3 className="mt-2 font-serif text-[26px] sm:text-[30px] leading-[1.12] text-[#15102a]">Here's what happens with me by your side.</h3>
-          <div className="mt-6"><ProofCarousel /></div>
+          {/* 3. The goal picture (chart moved here, after the feeling). */}
+          <div className="q-rise mt-7 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+            <div className="px-5 py-4 text-white" style={{ background: PINK }}>
+              <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
+              <p className="text-[20px] font-bold leading-tight">Where you could be by {dateLabel}</p>
+            </div>
+            <div className="p-5">
+              <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
+            </div>
+          </div>
+          {/* 5. The proof. */}
+          <div className="mt-10">
+            <h3 className="font-serif text-[26px] sm:text-[30px] leading-[1.12] text-[#15102a]">Here's what happens with me by your side.</h3>
+            <div className="mt-6"><ProofCarousel /></div>
+          </div>
+
+          {/* 6. The why-close: her own reason, the last note before she decides. */}
+          <div className="mt-10 rounded-[1.9rem] bg-[#fff5f9] p-6 sm:p-7 ring-1 ring-[#f3b9d2]">
+            <p className="text-[22px] sm:text-[24px] font-semibold leading-[1.45] text-[#8c114a]" style={{ fontFamily: READ_FONT }}>
+              {solutionWhyClose(state)}
+            </p>
+          </div>
         </div>
       </Content>
 
-      <StickyAction>
+      <StickyAction innerClassName="lg:max-w-[640px]">
         {atBottom
           ? <PrimaryButton onClick={onContinue}>Show Me How to Start</PrimaryButton>
           : <ScrollHint label="Keep reading" onNudge={onNudge} />}
@@ -1211,7 +1202,7 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
     <>
       <Content align="top">
         {/* Header (constrained + centered on desktop for readability). */}
-        <div className="lg:mx-auto lg:max-w-[760px] lg:text-center">
+        <div className="lg:mx-auto lg:max-w-[820px] lg:text-center">
           <div className="q-rise inline-flex self-start rounded-full bg-[#15102a] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white">
             {OFFER_COPY.eyebrow}
           </div>
@@ -1224,7 +1215,7 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
         </div>
 
         {/* Value stack + pricing side by side on desktop. Mobile keeps the stacked order. */}
-        <div className="mt-6 lg:mt-9 space-y-6 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-7 lg:space-y-0">
+        <div className="mt-6 lg:mx-auto lg:mt-9 lg:max-w-[820px] space-y-6 lg:grid lg:grid-cols-[1.2fr_1fr] lg:items-start lg:gap-7 lg:space-y-0">
           <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
             <p className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything you're getting</p>
             <ul className="mt-3 divide-y divide-dashed divide-[#f0c9d8]">
@@ -1270,7 +1261,7 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
         </div>
 
         {/* Reassurance: two balanced columns on desktop, stacked on mobile. */}
-        <div className="mt-6 space-y-5 lg:mt-11 lg:mx-auto lg:max-w-[860px] lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
+        <div className="mt-6 space-y-5 lg:mt-11 lg:mx-auto lg:max-w-[820px] lg:grid lg:grid-cols-2 lg:items-start lg:gap-6 lg:space-y-0">
           <div className="space-y-5">
             <div className="space-y-3 text-[17px] leading-[1.5] text-[#15102a]">
               <p className="font-semibold">{OFFER_COPY.startNow}</p>
@@ -1297,7 +1288,7 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
         </div>
 
         {/* FAQ + trust line, full width but readable. */}
-        <div className="lg:mx-auto lg:mt-6 lg:max-w-[760px]">
+        <div className="lg:mx-auto lg:mt-6 lg:max-w-[820px]">
           <p className="mt-8 text-[15px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">Questions women ask me</p>
           <Accordion type="single" collapsible className="mt-2 w-full">
             {FAQ_ITEMS.map((it, i) => (
@@ -1382,7 +1373,7 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
       {dateLabel && (
         <text x={chapterOne ? endX : right} y={top - 8} fontSize="12" fontWeight="700" fill="#c41e6a" textAnchor={chapterOne ? "middle" : "end"}>{chapterOne ? "Week 12" : `by ${dateLabel}`}</text>
       )}
-      <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">{target} lbs off</text>
+      <text x={endX} y={endY - 12} fontSize="13" fontWeight="800" fill="#8c114a" textAnchor="middle">up to {target} lbs</text>
       {chapterOne && <text x={right} y={y(maxLoss) - 8} fontSize="11" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
     </svg>
   );

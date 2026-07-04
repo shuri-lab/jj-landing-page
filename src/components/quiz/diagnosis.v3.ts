@@ -580,6 +580,37 @@ export const SOLUTION_LINES: Record<ReasonKey, Partial<Record<ComponentKey, stri
   },
 };
 
+// One desire-first line naming HER specific fix on the Solution screen, composed
+// from her PRIMARY reason (blueprint §5 / §7.1). Not a mechanism re-explanation
+// (the diagnosis already taught that): the feeling of the thing built for her. Each
+// is a full "And ..." sentence so it stands on its own as the last feeling-card.
+export const SOLUTION_HER_FIX: Record<ReasonKey, string> = {
+  R1: "And your plan is finally built for the body you have now, so your hormones and your muscle work with you instead of against you.",
+  R2: "And this time we go at a pace that actually protects your muscle, so what comes off finally stays off.",
+  R3: "And we put the work on your plate, where it actually moves, so you can stop punishing yourself.",
+  R4: "And you get to eat enough, real food, so your body finally stops fighting you.",
+  R5: "And you get a way to have a bad day and keep right on going, so your effort finally adds up instead of resetting.",
+  R6: "And this time you have someone in your corner, every single day, so you are never doing it alone again.",
+  R7: "And I hand you the handful of things that are actually true, from someone with nothing to sell you.",
+  R8: "And we make the whole load lighter, with a plan simple enough to be one less thing you carry.",
+  R9: "And you have real support on the hard nights, so food stops having to be the thing that gets you through.",
+};
+
+// The closing beat of the Solution screen (the last thing before the CTA): her own
+// stated reason reflected back (blueprint §4j), composed from her "why" answer. She
+// decides on her own words, her own stakes, not on testimonials.
+const SOLUTION_WHY_CLOSE: Record<string, string> = {
+  energy: "This was never really about a number. It is about getting your energy and your confidence back, and feeling like you again.",
+  myself: "This was never really about a number. It is about feeling like yourself again, back in the clothes you have been holding onto.",
+  health: "This was never really about a number. It is about your health, and being here strong for the people who need you.",
+  family: "This was never really about a number. It is about being here, strong, for the people who lean on you. That is what this is for.",
+  moment: "This was never really about a number. You have got that moment coming, so let's make sure you walk in feeling like the best version of you.",
+};
+
+export function solutionWhyClose(s: State): string {
+  return (s.why && SOLUTION_WHY_CLOSE[s.why]) || "This was never really about a number. It is about becoming the woman you know is still in there.";
+}
+
 export function solutionFlagLines(s: State): { plan?: string; header?: string; goalNote?: string; progress?: string } {
   const out: { plan?: string; header?: string; goalNote?: string; progress?: string } = {};
   if (s.flags.FLAG_GLP1) out.plan = "And if you are on the shot, this is the part it cannot do, the habits, the muscle, the person in your corner. That is what makes it last.";
