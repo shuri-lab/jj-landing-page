@@ -248,7 +248,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
 
   return (
     <div className="q-mesh fixed inset-0 z-[100] flex flex-col" role="dialog" aria-modal="true">
-      <div className="shrink-0">
+      <div className="q-zoom-desktop shrink-0">
         <div className="mx-4 mt-3 h-2 overflow-hidden rounded-full bg-[#f0cdd9]/70 shadow-[inset_0_1px_2px_rgba(140,17,74,0.25)]">
           {showProgress && (
             <div className="h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${progress}%`, background: PINK }} />
@@ -262,7 +262,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
       </div>
 
       <div ref={scrollRef} onScroll={checkBottom} className="relative flex-1 overflow-y-auto">
-        <div className={`mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
+        <div className={`q-zoom-desktop mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
           <Screen
             key={stepKey}
             stepKey={stepKey}

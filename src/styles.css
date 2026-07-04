@@ -196,6 +196,13 @@
   .animate-marquee, .animate-marquee-slow { animation: none; }
 }
 
+/* Quiz takeover only: on desktop, render everything ~10% larger, matching a
+   browser zoom of 110% (reflows like Cmd+, unlike transform: scale). Scoped to the
+   takeover so the landing page is untouched. */
+@media (min-width: 1024px) {
+  .q-zoom-desktop { zoom: 1.1; }
+}
+
 /* Quiz takeover: gentle fade-up used when each screen mounts. */
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(12px); }
