@@ -34,7 +34,6 @@ import {
   Calendar,
   Search,
   Sparkles,
-  RefreshCcw,
   CloudRain,
   Wind,
   Gauge,
@@ -84,7 +83,6 @@ import {
   composeDiagnosis,
   type DiagnosisSection,
   type VisualKind,
-  gateMirror,
   GATE_REVEALS,
   SOLUTION_HER_FIX,
   solutionWhyClose,
@@ -250,8 +248,8 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
     <div className="q-mesh fixed inset-0 z-[100] flex flex-col" role="dialog" aria-modal="true">
       <div className="q-zoom-desktop shrink-0">
         <div className="mx-4 mt-3 h-2 overflow-hidden rounded-full bg-[#f0cdd9]/70 shadow-[inset_0_1px_2px_rgba(140,17,74,0.25)]">
-          {showProgress && (
-            <div className="h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${progress}%`, background: PINK }} />
+          {(showProgress || stepKey === "GATE") && (
+            <div className="h-full rounded-full transition-[width] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)]" style={{ width: `${stepKey === "GATE" ? 100 : progress}%`, background: PINK }} />
           )}
         </div>
         <div className="flex justify-end px-4 pt-3">
@@ -262,7 +260,7 @@ export default function QuizTakeoverV3({ open, onClose }: { open: boolean; onClo
       </div>
 
       <div ref={scrollRef} onScroll={checkBottom} className="relative flex-1 overflow-y-auto">
-        <div className={`q-zoom-desktop mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
+        <div className={`q-zoom-desktop mx-auto flex min-h-full w-full flex-col px-6 pt-2 ${stepKey === "OFFER" ? "max-w-[980px]" : stepKey === "DIAGNOSIS" ? "max-w-[960px]" : stepKey === "GATE" ? "max-w-[960px]" : stepKey === "SOLUTION" ? "max-w-[720px]" : "max-w-[540px]"}`}>
           <Screen
             key={stepKey}
             stepKey={stepKey}
@@ -855,57 +853,105 @@ function TransitionScreen({ title, ticks, onDone }: { title: string; ticks: stri
 }
 
 // ── Result gate (pattern name free; email unlocks the full breakdown) ─────────
+function GoogleG({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 48 48" aria-hidden>
+      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
+      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
+      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
+      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
+    </svg>
+  );
+}
+
+// The blurred "full breakdown" card (the desire engine). Rendered on the right
+// column on desktop and inline on mobile.
+function GateTeaserCard({ meta }: { meta: { target: number; chapterOne: boolean } }) {
+  const revealIcons = [Search, Sparkles];
+  return (
+    <div className="relative overflow-hidden rounded-[1.9rem] bg-white shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
+      {/* Blurred projection chart, a soft background behind the reveals. */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 select-none opacity-90 blur-[7px]" aria-hidden>
+        <div className="p-4"><ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate={false} dateLabel="" detailed /></div>
+      </div>
+      {/* Glass + the two reveals define the (now shorter) height. */}
+      <div className="relative bg-white/72 px-6 py-6 backdrop-blur-[1px]">
+        <p className="text-[14px] font-bold uppercase tracking-[0.12em] text-[#8c114a]">Inside your breakdown</p>
+        <ul className="mt-3 space-y-2.5">
+          {GATE_REVEALS.map((r, i) => {
+            const RI = revealIcons[i] ?? Search;
+            return (
+              <li key={r} className="flex items-center gap-3 text-[17px] font-semibold leading-snug text-[#15102a]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}><RI className="h-4 w-4" strokeWidth={2.4} /></span>
+                {r}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    </div>
+  );
+}
+
 function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: string) => void }) {
   const res = useMemo(() => resolve(state), [state]);
-  const mirror = useMemo(() => gateMirror(state), [state]);
   const [val, setVal] = useState("");
+  const [googleBusy, setGoogleBusy] = useState(false);
   const valid = /.+@.+\..+/.test(val.trim());
   const submit = () => { if (valid) onSubmit(val.trim()); };
+  // Google is a MOCK for now: show "Signed in", then unlock. Wire real OAuth later;
+  // when she signs in with Google we already have her name, so the name step is skipped.
+  const google = () => {
+    if (googleBusy) return;
+    setGoogleBusy(true);
+    track("result_gate_google_mock", { primary: res.primary });
+    setTimeout(() => onSubmit("signed-in-with-google@gmail.com"), 750);
+  };
   useEffect(() => { track("result_gate_shown", { primary: res.primary }); }, [res.primary]);
   const meta = goalMeta(state);
-  const revealIcons = [Search, RefreshCcw, Sparkles];
   return (
-    <>
-      <Content align="top">
-        <div className="q-rise">
-          <p className="text-[14px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">I can see it now</p>
-          {/* No pattern name here (it lands in the paid breakdown). Reflect her own
-              words back: a short Mirror, distinct from the one that opens the diagnosis. */}
-          <h2 className="mt-2 font-serif text-[26px] sm:text-[32px] leading-[1.18] text-[#15102a]">{mirror}</h2>
-          <p className="mt-3 text-[18px] sm:text-[20px] leading-[1.45] font-medium text-[#6b5b6e]">It was never your willpower, and it was never just one thing.</p>
+    <Content align="center">
+      {/* Desktop: hero-style two columns (hook + breakdown card left, the two ways to
+          unlock right). Mobile: one stacked column, same source order. */}
+      <div className="q-rise mx-auto w-full max-w-[460px] lg:max-w-[960px] lg:grid lg:grid-cols-2 lg:items-center lg:gap-12">
+        {/* LEFT: the status headline, the intrigue, and the breakdown card. */}
+        <div className="lg:max-w-[460px]">
+          <h2 className="font-sans font-bold text-[27px] sm:text-[32px] lg:text-[38px] leading-[1.14] tracking-[-0.02em] text-[#15102a]">{fillName("{name}, your full breakdown is ready.", state)}</h2>
+          <p className="mt-3 text-[19px] sm:text-[21px] leading-[1.5] text-[#3a3147]" style={{ fontFamily: READ_FONT }}>It was never your willpower, and it was never just one thing.</p>
+          <div className="mt-5"><GateTeaserCard meta={meta} /></div>
+        </div>
 
-          {/* Full breakdown teaser: real chart blurred behind, reveals listed on top. */}
-          <div className="relative mt-6 overflow-hidden rounded-[1.9rem] shadow-[0_24px_50px_-30px_rgba(140,17,74,0.9)]">
-            <div className="select-none blur-[6px]" aria-hidden>
-              <div className="bg-white p-5">
-                <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate={false} dateLabel="" detailed />
-              </div>
-            </div>
-            <div className="absolute inset-0 flex flex-col justify-center bg-white/72 p-5 backdrop-blur-[1px]">
-              <p className="text-[14px] font-bold uppercase tracking-[0.12em] text-[#8c114a]">Your full breakdown</p>
-              <ul className="mt-3 space-y-2.5">
-                {GATE_REVEALS.map((r, i) => {
-                  const RI = revealIcons[i] ?? Search;
-                  return (
-                    <li key={r} className="flex items-start gap-3 text-[17px] font-semibold leading-snug text-[#15102a]">
-                      <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}><RI className="h-4 w-4" strokeWidth={2.4} /></span>
-                      {r}
-                    </li>
-                  );
-                })}
-              </ul>
-            </div>
+        {/* RIGHT: the two ways to unlock. */}
+        <div className="mt-7 lg:mt-0 lg:max-w-[440px]">
+          <p className="mb-3 text-[16px] font-medium text-[#6b5b6e]">Where should I send it?</p>
+          {/* Fast path on top: continue with Google (mock). */}
+          <button
+            onClick={google}
+            disabled={googleBusy}
+            className="flex w-full items-center justify-center gap-3 rounded-[1.35rem] border-2 border-[#e3d2da] bg-white px-5 py-4 text-[18px] font-bold text-[#15102a] shadow-[0_12px_28px_-20px_rgba(20,16,42,0.7)] transition-all hover:border-[#c9b3bf] active:scale-[0.99] disabled:opacity-70"
+          >
+            {googleBusy ? (
+              <><Check className="h-5 w-5 text-[#34A853]" strokeWidth={3} /> Signed in</>
+            ) : (
+              <><GoogleG className="h-5 w-5" /> Continue with Google</>
+            )}
+          </button>
+
+          {/* A real divider, so the two paths feel like a choice, not a stack. */}
+          <div className="my-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-[#e7c6d3]" />
+            <span className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#9a7f8a]">or use your email</span>
+            <span className="h-px flex-1 bg-[#e7c6d3]" />
           </div>
 
-          <p className="mt-6 text-[18px] sm:text-[20px] leading-snug text-[#6b5b6e]">Where should I send it? I'll also walk you through the whole thing in the next screen.</p>
-          <input type="email" inputMode="email" autoComplete="email" placeholder="you@email.com" value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} className="mt-4 w-full rounded-[1.35rem] border-2 border-[#f0c9d8] bg-white px-5 py-5 text-[20px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]" />
+          {/* Email path below. */}
+          <input type="email" inputMode="email" autoComplete="email" placeholder="you@email.com" value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} className="w-full rounded-[1.35rem] border-2 border-[#f0c9d8] bg-white px-5 py-4 text-[19px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]" />
+          <div className="mt-3">
+            <PrimaryButton onClick={submit} disabled={!valid}>Unlock my breakdown</PrimaryButton>
+          </div>
         </div>
-      </Content>
-      <StickyAction>
-        <PrimaryButton onClick={submit} disabled={!valid}>Unlock my breakdown</PrimaryButton>
-        <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[14px] text-[#6b5b6e]"><Lock className="h-4 w-4" /> Free. Your complete breakdown, and how to fix it.</p>
-      </StickyAction>
-    </>
+      </div>
+    </Content>
   );
 }
 

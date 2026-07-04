@@ -534,8 +534,7 @@ export function gateMirror(s: State): string {
 
 export const GATE_REVEALS = [
   "What's really driving it",
-  "Why nothing has stuck, for you",
-  "What actually works for your pattern",
+  "What actually works for you",
 ];
 
 // ── Solution personalization map (spec §7.1) ──────────────────────────────────
