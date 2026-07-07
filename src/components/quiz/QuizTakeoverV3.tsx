@@ -1251,10 +1251,14 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
 function PriceOptions({ monthly, full, loading, onCheckout }: { monthly: number; full: number; loading: boolean; onCheckout: (billing?: "MONTHLY" | "FULL_PROGRAM") => void }) {
   // Both options carry equal visual weight (solid buttons); the low-friction $monthly
   // start leads, so a hesitant buyer is not nudged toward the bigger number first.
+  // Two options of one choice: same card frame, only the emphasis differs. The
+  // low-friction $monthly start is the hero (solid button + one quiet badge); pay in
+  // full is the quieter secondary (outline button, no competing badge).
+  const cardCls = "relative rounded-[1.9rem] border-2 border-[#f0c9d8] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]";
   return (
     <div className="space-y-3">
-      <div className="relative rounded-[1.9rem] border-2 border-[#d62a7a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
-        <span className="absolute -top-3 left-5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white" style={{ background: PINK }}>Easiest start</span>
+      <div className={cardCls}>
+        <span className="absolute -top-3 left-5 rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white" style={{ background: PINK }}>Lowest to start</span>
         <p className="text-[19px] font-bold text-[#15102a]">Start today for ${monthly}.</p>
         <p className="text-[15px] text-[#6b5b6e]">Then two payments of ${monthly}.</p>
         <button onClick={() => onCheckout("MONTHLY")} disabled={loading} className="mt-4 block w-full rounded-2xl px-6 py-4 text-center text-[17px] font-bold text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50" style={{ background: PINK }}>
@@ -1268,11 +1272,10 @@ function PriceOptions({ monthly, full, loading, onCheckout }: { monthly: number;
         <span className="h-px flex-1 bg-[#e7c6d3]" />
       </div>
 
-      <div className="relative rounded-[1.9rem] border-2 border-[#15102a] bg-white p-5 shadow-[0_24px_50px_-32px_rgba(140,17,74,0.9)]">
-        <span className="absolute -top-3 left-5 rounded-full bg-[#15102a] px-3 py-1 text-[11px] font-bold uppercase tracking-wide text-white">Best value</span>
+      <div className={cardCls}>
         <p className="text-[19px] font-bold text-[#15102a]">Pay in full, ${full}.</p>
         <p className="text-[15px] text-[#6b5b6e]">One payment, you're done.</p>
-        <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={loading} className="mt-4 block w-full rounded-2xl border-2 border-[#15102a] px-6 py-4 text-center text-[17px] font-bold text-[#15102a] transition-all hover:-translate-y-0.5 active:scale-[0.99] disabled:opacity-50">
+        <button onClick={() => onCheckout("FULL_PROGRAM")} disabled={loading} className="mt-4 block w-full rounded-2xl border-2 border-[#d0b7c4] px-6 py-4 text-center text-[17px] font-bold text-[#15102a] transition-all hover:-translate-y-0.5 hover:border-[#15102a] active:scale-[0.99] disabled:opacity-50">
           {loading ? "Loading…" : `Pay in Full, $${full}`}
         </button>
       </div>
@@ -1288,16 +1291,13 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
   return (
     <>
       <Content align="top">
-        {/* Warm bridge from the Solution screen (no hard turn into a price list). */}
+        {/* Warm bridge from the Solution screen (header stands alone, no eyebrow). */}
         <div className="lg:mx-auto lg:max-w-[820px] lg:text-center">
-          <div className="q-rise inline-flex self-start rounded-full bg-[#15102a] px-3.5 py-1.5 text-[12px] font-bold uppercase tracking-[0.12em] text-white">
-            {OFFER_COPY.eyebrow}
-          </div>
-          <h2 className="mt-4 font-sans font-bold text-[26px] sm:text-[31px] lg:text-[36px] leading-[1.12] tracking-[-0.02em] text-[#15102a]">
+          <h2 className="q-rise font-sans font-bold text-[26px] sm:text-[30px] lg:text-[33px] leading-[1.1] tracking-[-0.02em] text-[#15102a]">
             {fillName("So let's go get her, {name}.", state)}
           </h2>
-          <p className="mt-3 text-[18px] sm:text-[20px] leading-[1.4] text-[#15102a] lg:mx-auto lg:max-w-[620px]">
-            You know your pattern now, and you know what fixes it. This is me doing it with you, one on one, every single day for the next 12 weeks.
+          <p className="mt-2 text-[18px] sm:text-[20px] leading-[1.35] text-[#15102a]">
+            You and me, every day, for the next 12 weeks.
           </p>
         </div>
 
@@ -1312,24 +1312,24 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
 
           {/* THE JUSTIFICATION + DE-RISK + CLOSER — left column on desktop. */}
           <div className="mt-6 space-y-6 lg:col-start-1 lg:row-start-1 lg:mt-0">
-            {/* Value stack, demoted to justification: the anchor lands first and bold. */}
+            {/* Value stack, demoted to justification: the anchor leads, list is compact. */}
             <div className="rounded-[1.9rem] bg-white p-5 shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
-              <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
-                <span className="text-[15px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">What you're getting</span>
-                <span className="text-[16px] font-semibold text-[#9a7f8a]"><span className="line-through">${VALUE_TOTAL.toLocaleString()}</span> value</span>
+              <div className="flex flex-wrap items-baseline justify-between gap-x-3">
+                <span className="text-[14px] font-bold uppercase tracking-[0.14em] text-[#c41e6a]">Everything included</span>
+                <span className="text-[15px] font-semibold text-[#9a7f8a]"><span className="line-through">${VALUE_TOTAL.toLocaleString()}</span> value</span>
               </div>
-              <p className="mt-1 text-[24px] sm:text-[26px] font-extrabold leading-tight text-[#15102a]">Yours today for ${full}.</p>
-              <ul className="mt-3 space-y-1.5">
+              <p className="text-[24px] sm:text-[26px] font-extrabold leading-tight text-[#15102a]">Yours today for ${full}.</p>
+              <ul className="mt-3 space-y-1 border-t border-dashed border-[#f0c9d8] pt-3">
                 {VALUE_STACK.map((it) => (
-                  <li key={it.label} className="flex items-center justify-between gap-3 text-[14px] leading-snug text-[#6b5b6e]">
-                    <span className="flex items-center gap-2"><Check className="h-3.5 w-3.5 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
+                  <li key={it.label} className="flex items-start justify-between gap-3 text-[13px] leading-snug text-[#6b5b6e]">
+                    <span className="flex items-start gap-1.5"><Check className="mt-0.5 h-3 w-3 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
                     <span className="shrink-0">${it.value.toLocaleString()}</span>
                   </li>
                 ))}
               </ul>
             </div>
 
-            {/* Trust cluster: the guarantee (prominent) grouped with the scarcity. */}
+            {/* Trust: the guarantee, prominent (the biggest objection-killer). */}
             <div className="rounded-[1.9rem] border border-[#f0c9d8] bg-white p-6 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)]">
               <div className="flex items-start gap-3.5">
                 <ShieldCheck className="h-9 w-9 shrink-0 text-[#c41e6a]" strokeWidth={1.8} />
@@ -1339,7 +1339,6 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
                   <p className="mt-1.5 text-[13px] font-semibold tracking-[0.16em] text-[#9a7f8a]">JJ</p>
                 </div>
               </div>
-              <p className="mt-4 rounded-2xl bg-[#fff0f5] p-4 text-[15px] font-semibold leading-snug text-[#8c114a]">{OFFER_COPY.scarcity}</p>
             </div>
 
             {/* Compact proof (not the full carousel): one before/after + a reassurance quote. */}

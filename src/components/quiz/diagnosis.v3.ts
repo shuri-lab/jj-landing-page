@@ -628,7 +628,7 @@ export const VALUE_STACK = [
   { label: "Daily check ins from JJ", value: 400 },
   { label: "Your done for you meal plan", value: 300 },
   { label: "A plan for your body and your life", value: 200 },
-  { label: "The eating out and family meals playbook", value: 150 },
+  { label: "Meals built around food you love + grocery lists that save up to $75/mo", value: 150 },
   { label: "Your jumpstart", value: 97 },
   { label: "The recipe vault", value: 97 },
   { label: "The circle of sisters", value: 200 },
@@ -649,5 +649,5 @@ export const FAQ_ITEMS = [
   { q: "I don't have much time, between work and everyone else.", a: "The plan is built around your real schedule. The meals are planned for you, and the daily check-ins keep it simple." },
   { q: "Do I have to drink green smoothies?", a: "No. You keep the food you love. The plan works around your life, not against it." },
   { q: "What makes this different from everything else?", a: "Everything else handed you a plan and left. Here, I am with you every day, one on one, for twelve weeks." },
-  { q: "What if I miss this start date?", a: "This is a founding group at a founding price. When the spots are gone, the price goes with them." },
+  { q: "What if I change my mind?", a: "You are covered by the 14 day money back guarantee. If it is not right for you, tell me within 14 days and I send your money back, no reason needed." },
 ];
