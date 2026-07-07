@@ -1159,7 +1159,7 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
   const feelItems: { Icon: typeof Phone; text: string; bold?: string; highlight?: string; strip?: boolean; chart?: boolean }[] = [
     // Jumpstart reset. "up to 15 lbs in 10 days" is JJ's published 10-Day Green
     // Smoothie Cleanse claim. [clinician: confirm safe framing before launch]
-    { Icon: Zap, text: "A quick reset to start, drop up to 15 pounds in your first 10 days. The bloat comes off, cravings quiet down, your energy comes back.", bold: "up to 15 pounds in your first 10 days", chart: true },
+    { Icon: Zap, text: "A quick reset to start, drop up to 15 pounds in your first 10 days. The bloat comes off, cravings quiet down, your energy comes back.", highlight: "drop up to 15 pounds in your first 10 days", chart: true },
     { Icon: MessageCircle, text: "You wake up to a text from me, so you never start the day alone.", bold: "a text from me" },
     { Icon: Phone, text: "Every week we hop on a 1 on 1 call and fix what's in your way, together.", bold: "Every week we hop on a 1 on 1 call" },
     // Saving is tied to the grocery-LIST behavior (USDA: a written list curbs impulse
