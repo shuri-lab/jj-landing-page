@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   X,
   Check,
@@ -84,7 +84,6 @@ import {
   type DiagnosisSection,
   type VisualKind,
   GATE_REVEALS,
-  SOLUTION_HER_FIX,
   solutionWhyClose,
   VALUE_STACK,
   VALUE_TOTAL,
@@ -674,13 +673,13 @@ type ProofSlide = { src: string; quote: string; name?: string };
 
 const PROOF_SLIDES: ProofSlide[] = [
   { src: t10, quote: "I feel like the woman I forgot I was." },
-  { src: t8, quote: "It keeps me accountable because I feel big sister is always watching.", name: "Keisha" },
+  { src: t8, quote: "I'm in family photos again, front and center." },
   { src: t12, quote: "I'm back to the size I never thought I'd see again." },
-  { src: t4, quote: "Actually hearing JJ's voice and speaking to her holds you accountable. There was no room for excuses.", name: "Monique" },
+  { src: t4, quote: "I'm dressing up again. I'm smiling in pictures again." },
   { src: t9, quote: "I'm not the one hiding behind the camera anymore." },
-  { src: t7, quote: "I don't have to figure out what to eat or look up recipes. It's all put together for me.", name: "Tasha" },
+  { src: t7, quote: "My doctor's visits sound completely different now." },
   { src: t1, quote: "I'm not hiding in baggy clothes anymore." },
-  { src: tTammi, quote: "Just hearing JJ's voice gets me out of bed even if I'm fatigued.", name: "Latoya" },
+  { src: tTammi, quote: "I lost the baby weight." },
 ];
 
 function ProofCarousel() {
@@ -853,17 +852,6 @@ function TransitionScreen({ title, ticks, onDone }: { title: string; ticks: stri
 }
 
 // ── Result gate (pattern name free; email unlocks the full breakdown) ─────────
-function GoogleG({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 48 48" aria-hidden>
-      <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z" />
-      <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z" />
-      <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z" />
-      <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z" />
-    </svg>
-  );
-}
-
 // The blurred "full breakdown" card (the desire engine). Rendered on the right
 // column on desktop and inline on mobile.
 function GateTeaserCard({ meta }: { meta: { target: number; chapterOne: boolean } }) {
@@ -896,17 +884,8 @@ function GateTeaserCard({ meta }: { meta: { target: number; chapterOne: boolean 
 function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: string) => void }) {
   const res = useMemo(() => resolve(state), [state]);
   const [val, setVal] = useState("");
-  const [googleBusy, setGoogleBusy] = useState(false);
   const valid = /.+@.+\..+/.test(val.trim());
   const submit = () => { if (valid) onSubmit(val.trim()); };
-  // Google is a MOCK for now: show "Signed in", then unlock. Wire real OAuth later;
-  // when she signs in with Google we already have her name, so the name step is skipped.
-  const google = () => {
-    if (googleBusy) return;
-    setGoogleBusy(true);
-    track("result_gate_google_mock", { primary: res.primary });
-    setTimeout(() => onSubmit("signed-in-with-google@gmail.com"), 750);
-  };
   useEffect(() => { track("result_gate_shown", { primary: res.primary }); }, [res.primary]);
   const meta = goalMeta(state);
   return (
@@ -921,30 +900,9 @@ function GateScreen({ state, onSubmit }: { state: State; onSubmit: (email: strin
           <div className="mt-5"><GateTeaserCard meta={meta} /></div>
         </div>
 
-        {/* RIGHT: the two ways to unlock. */}
+        {/* RIGHT: the email unlock. */}
         <div className="mt-7 lg:mt-0 lg:max-w-[440px]">
           <p className="mb-3 text-[16px] font-medium text-[#6b5b6e]">Where should I send it?</p>
-          {/* Fast path on top: continue with Google (mock). */}
-          <button
-            onClick={google}
-            disabled={googleBusy}
-            className="flex w-full items-center justify-center gap-3 rounded-[1.35rem] border-2 border-[#e3d2da] bg-white px-5 py-4 text-[18px] font-bold text-[#15102a] shadow-[0_12px_28px_-20px_rgba(20,16,42,0.7)] transition-all hover:border-[#c9b3bf] active:scale-[0.99] disabled:opacity-70"
-          >
-            {googleBusy ? (
-              <><Check className="h-5 w-5 text-[#34A853]" strokeWidth={3} /> Signed in</>
-            ) : (
-              <><GoogleG className="h-5 w-5" /> Continue with Google</>
-            )}
-          </button>
-
-          {/* A real divider, so the two paths feel like a choice, not a stack. */}
-          <div className="my-4 flex items-center gap-3">
-            <span className="h-px flex-1 bg-[#e7c6d3]" />
-            <span className="text-[13px] font-bold uppercase tracking-[0.12em] text-[#9a7f8a]">or use your email</span>
-            <span className="h-px flex-1 bg-[#e7c6d3]" />
-          </div>
-
-          {/* Email path below. */}
           <input type="email" inputMode="email" autoComplete="email" placeholder="you@email.com" value={val} onChange={(e) => setVal(e.target.value)} onKeyDown={(e) => e.key === "Enter" && submit()} className="w-full rounded-[1.35rem] border-2 border-[#f0c9d8] bg-white px-5 py-4 text-[19px] font-semibold text-[#15102a] outline-none transition-colors placeholder:font-normal placeholder:text-[#b79aa6] focus:border-[#d62a7a]" />
           <div className="mt-3">
             <PrimaryButton onClick={submit} disabled={!valid}>Unlock my breakdown</PrimaryButton>
@@ -1153,24 +1111,72 @@ function MealStrip() {
   );
 }
 
+// The one important phrase to bold in the why-close, keyed by her "why" answer
+// (each must be a substring of the composed solutionWhyClose text).
+const WHY_CLOSE_BOLD: Record<string, string> = {
+  energy: "your energy and your confidence back",
+  myself: "feeling like yourself again",
+  health: "being here strong for the people who need you",
+  family: "being here, strong, for the people who lean on you",
+  moment: "feeling like the best version of you",
+};
+
+const HIGHLIGHT_CLS = "rounded bg-[#fde3ee] px-1 font-bold text-[#a01254]";
+
+// Render a line with selective emphasis: each mark's phrase (if found) is wrapped
+// in its className. Non-overlapping phrases only; used for the scan-anchor bold and
+// the pink highlight.
+function emphasize(text: string, marks: { phrase?: string; className: string }[]): React.ReactNode {
+  const found = marks
+    .filter((m): m is { phrase: string; className: string } => !!m.phrase)
+    .map((m) => ({ ...m, i: text.indexOf(m.phrase) }))
+    .filter((m) => m.i >= 0)
+    .sort((a, b) => a.i - b.i);
+  if (!found.length) return text;
+  const nodes: React.ReactNode[] = [];
+  let cursor = 0;
+  found.forEach((m, k) => {
+    if (m.i < cursor) return; // overlap, skip
+    if (m.i > cursor) nodes.push(text.slice(cursor, m.i));
+    nodes.push(<span key={k} className={m.className}>{m.phrase}</span>);
+    cursor = m.i + m.phrase.length;
+  });
+  if (cursor < text.length) nodes.push(text.slice(cursor));
+  return <>{nodes}</>;
+}
+
 // ── Solution (the emotional bridge: diagnosis -> price) ───────────────────────
 // Job: catch the hope the diagnosis ended on and answer one question, "what is it
 // like to do this with her?" It makes her WANT; the Offer makes her DECIDE, so no
 // value stack / guarantee / FAQ here, and no re-teaching (the diagnosis did that).
 function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State; atBottom: boolean; onNudge: () => void; onContinue: () => void }) {
-  const res = useMemo(() => resolve(state), [state]);
   const meta = goalMeta(state);
   const dateLabel = useMemo(() => fmtDate(12), []);
 
-  // "What it's like" — the FEELING of the product, not its mechanism. Four fixed
-  // lines, then one composed from her primary reason (her specific fix).
-  const feelItems: { Icon: typeof Phone; text: string; her?: boolean; strip?: boolean }[] = [
-    { Icon: MessageCircle, text: "You wake up to a text from me, so you never start the day on your own." },
-    { Icon: UtensilsCrossed, text: "Your meal plan, built around food you love, simple to make and easy on your grocery bill.", strip: true },
-    { Icon: Phone, text: "Every week we talk, and I tell you exactly what to do next." },
-    { Icon: Heart, text: "The morning after a hard day, I catch you before it becomes a lost week." },
-    { Icon: Sparkles, text: SOLUTION_HER_FIX[res.primary], her: true },
+  // "What it's like" — the FEELING of the product, ordered fast-win first. Scannable:
+  // one bolded anchor phrase per card. `chart` marks where the goal graph slots in on
+  // mobile (right under the first card).
+  const feelItems: { Icon: typeof Phone; text: string; bold?: string; highlight?: string; strip?: boolean; chart?: boolean }[] = [
+    // Jumpstart reset. "up to 15 lbs in 10 days" is JJ's published 10-Day Green
+    // Smoothie Cleanse claim. [clinician: confirm safe framing before launch]
+    { Icon: Zap, text: "A quick reset to start, drop up to 15 pounds in your first 10 days. The bloat comes off, cravings quiet down, your energy comes back.", bold: "up to 15 pounds in your first 10 days", chart: true },
+    { Icon: MessageCircle, text: "You wake up to a text from me, so you never start the day alone.", bold: "a text from me" },
+    { Icon: Phone, text: "Every week we hop on a 1 on 1 call and fix what's in your way, together.", bold: "Every week we hop on a 1 on 1 call" },
+    // Saving is tied to the grocery-LIST behavior (USDA: a written list curbs impulse
+    // spend); "up to $75 a month" is a conservative estimate. [legal: confirm final ad wording]
+    { Icon: UtensilsCrossed, text: "Meals built around food you love, simple to make, and a grocery list that saves you up to $75 a month.", bold: "Meals built around food you love", highlight: "that saves you up to $75 a month", strip: true },
   ];
+
+  const goalCard = (
+    <div className="q-rise overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)]">
+      <div className="px-5 py-4 text-white" style={{ background: PINK }}>
+        <p className="text-[19px] sm:text-[20px] font-bold leading-tight">Up to {meta.target} pounds less by {dateLabel}</p>
+      </div>
+      <div className="p-5">
+        <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -1178,7 +1184,7 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
         <div className="lg:mx-auto lg:max-w-[960px]">
           {/* Desktop: two columns — JJ's voice on the left, the proof/visuals on the
               right, so she reads and sees in parallel and the page is half as tall.
-              Mobile: one stacked column (voice, then visuals, then the why-close). */}
+              Mobile: one stacked column (the goal graph slots under the first card). */}
           <div className="lg:grid lg:grid-cols-2 lg:items-stretch lg:gap-10">
             {/* LEFT: the voice. */}
             <div>
@@ -1191,21 +1197,18 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
                 Me, with you, the whole way.
               </p>
 
-              {/* What it's like — feeling cards. */}
-              <p className="mt-5 text-[13px] font-bold uppercase tracking-[0.16em] text-[#c41e6a]">What it's like, starting day one</p>
-              <div className="mt-2.5 space-y-2.5">
-                {feelItems.map(({ Icon, text, her, strip }) => (
+              {/* What it's like — feeling cards (start right after the header). */}
+              <div className="mt-6 space-y-2.5">
+                {feelItems.map(({ Icon, text, bold, highlight, strip, chart }) => (
                   <React.Fragment key={text}>
-                    <div
-                      className={`flex items-center gap-3.5 rounded-[1.5rem] p-4 sm:p-[18px] ring-1 ${
-                        her ? "bg-[#fff5f9] ring-[#f3b9d2]" : "bg-white ring-[#f6e0ea]"
-                      } shadow-[0_16px_34px_-28px_rgba(140,17,74,0.8)]`}
-                    >
+                    <div className="flex items-center gap-3.5 rounded-[1.5rem] bg-white p-4 sm:p-[18px] ring-1 ring-[#f6e0ea] shadow-[0_16px_34px_-28px_rgba(140,17,74,0.8)]">
                       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}>
                         <Icon className="h-5 w-5" strokeWidth={2} />
                       </span>
-                      <p className={`text-[19px] sm:text-[20px] leading-[1.4] text-[#241d2e] ${her ? "font-semibold text-[#8c114a]" : ""}`} style={{ fontFamily: READ_FONT }}>{text}</p>
+                      <p className="text-[19px] sm:text-[20px] leading-[1.4] text-[#241d2e]" style={{ fontFamily: READ_FONT }}>{emphasize(text, [{ phrase: bold, className: "font-bold" }, { phrase: highlight, className: HIGHLIGHT_CLS }])}</p>
                     </div>
+                    {/* Mobile only: the goal graph sits right under the first card. */}
+                    {chart && <div className="lg:hidden">{goalCard}</div>}
                     {/* Meal photos, right under the meal card. */}
                     {strip && <MealStrip />}
                   </React.Fragment>
@@ -1213,18 +1216,10 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
               </div>
             </div>
 
-            {/* RIGHT: the proof and visuals. Spread to track the taller left column. */}
+            {/* RIGHT: the proof and visuals (desktop). Spread to track the left column. */}
             <div className="mt-8 lg:mt-0 lg:flex lg:flex-col lg:justify-between lg:gap-8">
-              {/* The goal picture. */}
-              <div className="q-rise mt-7 overflow-hidden rounded-[1.9rem] bg-white shadow-[0_28px_60px_-32px_rgba(140,17,74,0.9),inset_0_1px_0_rgba(255,255,255,0.7)] lg:mt-0">
-                <div className="px-5 py-4 text-white" style={{ background: PINK }}>
-                  <p className="text-[12px] font-semibold uppercase tracking-wide opacity-90">Your goal</p>
-                  <p className="text-[20px] font-bold leading-tight">Where you could be by {dateLabel}</p>
-                </div>
-                <div className="p-5">
-                  <ProjectionChart target={meta.target} chapterOne={meta.chapterOne} animate dateLabel={dateLabel} detailed />
-                </div>
-              </div>
+              {/* The goal picture (desktop column; on mobile it renders under card 1). */}
+              <div className="hidden lg:block">{goalCard}</div>
 
               {/* The proof. */}
               <div className="mt-9 lg:mt-0">
@@ -1234,10 +1229,10 @@ function SolutionScreen({ state, atBottom, onNudge, onContinue }: { state: State
             </div>
           </div>
 
-          {/* The why-close: her own reason, full-width, the last note before she decides. */}
+          {/* The why-close: her own reason (normal weight, one phrase bolded). */}
           <div className="mt-10 rounded-[1.9rem] bg-[#fff5f9] p-6 sm:p-7 ring-1 ring-[#f3b9d2] lg:mx-auto lg:mt-12 lg:max-w-[760px] lg:text-center">
-            <p className="text-[22px] sm:text-[24px] font-semibold leading-[1.45] text-[#8c114a]" style={{ fontFamily: READ_FONT }}>
-              {solutionWhyClose(state)}
+            <p className="text-[22px] sm:text-[24px] leading-[1.45] text-[#8c114a]" style={{ fontFamily: READ_FONT }}>
+              {emphasize(solutionWhyClose(state), [{ phrase: WHY_CLOSE_BOLD[state.why ?? ""], className: "font-bold" }])}
             </p>
           </div>
         </div>
@@ -1349,10 +1344,9 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
 
             {/* Compact proof (not the full carousel): one before/after + a reassurance quote. */}
             <div className="flex items-center gap-4 rounded-[1.9rem] bg-white p-4 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.9)] ring-1 ring-[#f6e0ea]">
-              <img src={t4} alt="A woman who did the 12 weeks with JJ" loading="lazy" className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28" />
+              <img src={t7} alt="A woman who did the 12 weeks with JJ" loading="lazy" className="h-24 w-24 shrink-0 rounded-2xl object-cover sm:h-28 sm:w-28" />
               <div>
-                <p className="font-serif italic text-[16px] leading-[1.5] text-[#15102a]">"Hearing JJ's voice and speaking to her held me accountable. There was no room for excuses."</p>
-                <p className="mt-1.5 text-[13px] font-bold tracking-[0.14em] text-[#9a7f8a]">MONIQUE</p>
+                <p className="font-serif italic text-[17px] leading-[1.5] text-[#15102a]">"My doctor's visits sound completely different now."</p>
               </div>
             </div>
 
@@ -1393,6 +1387,12 @@ function OfferScreen({ state, pricing, onCheckout }: { state: State; pricing: Pr
 
 // ── Projection chart ─────────────────────────────────────────────────────────
 function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = false }: { target: number; chapterOne: boolean; animate: boolean; dateLabel: string; detailed?: boolean }) {
+  // Unique gradient ids per instance: the chart is rendered twice (mobile inline +
+  // desktop column), and duplicate ids would make the visible one reference a
+  // gradient inside a display:none copy, blanking the line.
+  const gid = useId().replace(/:/g, "");
+  const fillId = `projFill${gid}`;
+  const lineId = `projLine${gid}`;
   const W = 320;
   const H = detailed ? 216 : 180;
   const left = 16;
@@ -1404,11 +1404,14 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
 
   const maxLoss = chapterOne ? target * 1.5 : target;
   const solidSpan = chapterOne ? plotW * 0.62 : plotW;
+  // The steep jumpstart drop spans exactly the shaded band (weeks 0..jumpWeeks),
+  // then the line continues at a gentler slope to week 12.
+  const jumpWeeks = 2;
+  const jumpLoss = target * 0.3;
   const loss = (w: number) => {
     if (w <= 0) return 0;
-    const jump = target * 0.22;
-    if (w === 1) return jump;
-    return jump + (target - jump) * ((w - 1) / 11);
+    if (w <= jumpWeeks) return (jumpLoss * w) / jumpWeeks;
+    return jumpLoss + (target - jumpLoss) * ((w - jumpWeeks) / (12 - jumpWeeks));
   };
   const x = (w: number) => left + (w / 12) * solidSpan;
   const y = (l: number) => top + (l / maxLoss) * plotH;
@@ -1418,16 +1421,16 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
   const areaPath = `${linePath} L ${x(12)},${bottom} L ${left},${bottom} Z`;
   const endX = x(12);
   const endY = y(loss(12));
-  const jumpX = x(2);
+  const jumpX = x(jumpWeeks); // shaded band ends where the steep drop ends
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label="Projected weight trend over 12 weeks">
       <defs>
-        <linearGradient id="projFillV3" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id={fillId} x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stopColor="#d62a7a" stopOpacity="0.28" />
           <stop offset="100%" stopColor="#d62a7a" stopOpacity="0.02" />
         </linearGradient>
-        <linearGradient id="projLineV3" x1="0" y1="0" x2="1" y2="0">
+        <linearGradient id={lineId} x1="0" y1="0" x2="1" y2="0">
           <stop offset="0%" stopColor="#d62a7a" />
           <stop offset="100%" stopColor="#8c114a" />
         </linearGradient>
@@ -1441,20 +1444,21 @@ function ProjectionChart({ target, chapterOne, animate, dateLabel, detailed = fa
         </g>
       ))}
 
-      {/* jumpstart band, label along the bottom of the band so it never sits on the line */}
+      {/* jumpstart band, label at the top-left above the band (start-anchored so the
+          "Your" never clips on the narrow band) */}
       {detailed && (
         <>
           <rect x={left} y={top} width={jumpX - left} height={plotH} fill="#f7c9dd" opacity="0.35" />
-          <text x={(left + jumpX) / 2} y={bottom - 12} fontSize="10" fontWeight="800" fill="#8c114a" textAnchor="middle">Your jumpstart</text>
+          <text x={left} y={top - 14} fontSize="10.5" fontWeight="800" fill="#8c114a" textAnchor="start">Your jumpstart</text>
         </>
       )}
 
       <line x1={left} y1={bottom} x2={right} y2={bottom} stroke="#f0c9d8" strokeWidth="1" />
-      <path d={areaPath} fill="url(#projFillV3)" />
-      <path d={linePath} className={animate ? "q-draw" : undefined} fill="none" stroke="url(#projLineV3)" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d={areaPath} fill={`url(#${fillId})`} />
+      <path d={linePath} className={animate ? "q-draw" : undefined} fill="none" stroke={`url(#${lineId})`} strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" />
 
       {chapterOne && <path d={`M ${endX},${endY} L ${right},${y(maxLoss)}`} fill="none" stroke="#c41e6a" strokeWidth="2.5" strokeDasharray="2 6" strokeLinecap="round" />}
-      {chapterOne && detailed && <text x={right} y={y(maxLoss) - 7} fontSize="10.5" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
+      {chapterOne && detailed && <text x={right} y={y(maxLoss) - 11} fontSize="10.5" fontWeight="700" fill="#c41e6a" textAnchor="end">we keep going</text>}
       <circle cx={endX} cy={endY} r="6" fill="#b81860" stroke="#fff" strokeWidth="2.5" />
 
       {/* the projected number, in the clear top-right corner (never overlaps the line) */}
