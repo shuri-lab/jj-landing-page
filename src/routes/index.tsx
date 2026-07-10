@@ -97,10 +97,15 @@ function Eyebrow({ children }: { children: React.ReactNode }) {
 // One string to update everywhere if the price moves off $1.57/day.
 const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
 
-function CtaButton({ label, sub, href, position = "unknown", className = "", onDark = false }: { label: string; sub?: React.ReactNode; href?: string; position?: string; className?: string; onDark?: boolean }) {
+function CtaButton({ label, sub, href, position = "unknown", className = "", onDark = false, subInside = false }: { label: string; sub?: React.ReactNode; href?: string; position?: string; className?: string; onDark?: boolean; subInside?: boolean }) {
   const cls =
-    "block w-full rounded-2xl px-6 py-5 text-center text-[17px] sm:text-[19px] font-bold uppercase tracking-wide text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-transform hover:-translate-y-0.5 active:scale-[0.99]";
-  const inner = <span className="inline-flex items-center justify-center gap-2">{label} <span aria-hidden>→</span></span>;
+    "block w-full rounded-2xl px-6 py-4 text-center text-[17px] sm:text-[19px] font-bold uppercase tracking-wide text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-transform hover:-translate-y-0.5 active:scale-[0.99]";
+  const inner = (
+    <>
+      <span className="inline-flex items-center justify-center gap-2">{label} <span aria-hidden>→</span></span>
+      {subInside && sub && <span className="mt-1 block text-[12px] font-semibold normal-case tracking-normal" style={{ color: "#ffe1ef" }}>{sub}</span>}
+    </>
+  );
   return (
     <div className={`w-full ${className}`}>
       {href ? (
@@ -108,7 +113,7 @@ function CtaButton({ label, sub, href, position = "unknown", className = "", onD
       ) : (
         <button onClick={scrollToOffer} className={cls} style={{ background: PINK }} data-cta="yes-jj" data-position={position}>{inner}</button>
       )}
-      {sub && (
+      {sub && !subInside && (
         <p className={`mt-2.5 text-center text-[13.5px] font-semibold sm:text-[14px] ${onDark ? "text-white/70" : ""}`} style={onDark ? undefined : { color: "#8c114a" }}>{sub}</p>
       )}
     </div>
@@ -181,17 +186,17 @@ function HeroHeadline() {
         className="mt-2 text-left text-[20px] font-bold leading-[1.15] tracking-[-0.01em] text-[#15102a] sm:mt-3 sm:text-[26px] lg:text-[28px]"
         style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
       >
-        Lose up to 15 pounds in 30 days.
+        Lose up to 15 pounds in your first 30 days.
       </p>
-      <p className="mt-3 text-left text-[19px] font-bold leading-[1.25] sm:text-[21px]" style={{ fontFamily: "'DM Sans', sans-serif", color: BERRY }}>
-        Without starving, or doing it alone.
+      <p className="mt-3 text-left text-[19px] font-bold leading-[1.3] sm:text-[21px]" style={{ fontFamily: "'DM Sans', sans-serif", color: BERRY }}>
+        And JJ stays in your corner until every last pound is gone.
       </p>
     </>
   );
 }
 
 function HeroBullets({ className = "", textClass = "text-[18px] sm:text-[20px]" }: { className?: string; textClass?: string }) {
-  const points = ["A plan built around the food you love.", "JJ in your corner. Every day."];
+  const points = ["A plan built around the food you love. No starving.", "JJ with you, every single day."];
   return (
     <ul className={`max-w-[560px] space-y-3 ${className}`}>
       {points.map((p, i) => (
@@ -205,7 +210,7 @@ function HeroBullets({ className = "", textClass = "text-[18px] sm:text-[20px]" 
 }
 
 function HeroPrimaryCta() {
-  return <CtaButton label="Start today" sub={CTA_SUB} position="hero-top" />;
+  return <CtaButton label="Start today" sub={CTA_SUB} subInside position="hero-top" />;
 }
 
 function HeroTrustBar() {

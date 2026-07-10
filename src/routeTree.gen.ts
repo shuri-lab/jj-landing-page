@@ -14,6 +14,7 @@ import { Route as QuizV3RouteImport } from './routes/quiz-v3'
 import { Route as QuizV2RouteImport } from './routes/quiz-v2'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as NoVideoRouteImport } from './routes/no-video'
+import { Route as MonthlyV2RouteImport } from './routes/monthly-v2'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as CRouteImport } from './routes/c'
 import { Route as BRouteImport } from './routes/b'
@@ -44,6 +45,11 @@ const QuizRoute = QuizRouteImport.update({
 const NoVideoRoute = NoVideoRouteImport.update({
   id: '/no-video',
   path: '/no-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonthlyV2Route = MonthlyV2RouteImport.update({
+  id: '/monthly-v2',
+  path: '/monthly-v2',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -84,6 +90,7 @@ export interface FileRoutesByFullPath {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/monthly-v2': typeof MonthlyV2Route
   '/no-video': typeof NoVideoRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
@@ -97,6 +104,7 @@ export interface FileRoutesByTo {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/monthly-v2': typeof MonthlyV2Route
   '/no-video': typeof NoVideoRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
@@ -111,6 +119,7 @@ export interface FileRoutesById {
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/checkout': typeof CheckoutRoute
+  '/monthly-v2': typeof MonthlyV2Route
   '/no-video': typeof NoVideoRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
@@ -126,6 +135,7 @@ export interface FileRouteTypes {
     | '/b'
     | '/c'
     | '/checkout'
+    | '/monthly-v2'
     | '/no-video'
     | '/quiz'
     | '/quiz-v2'
@@ -139,6 +149,7 @@ export interface FileRouteTypes {
     | '/b'
     | '/c'
     | '/checkout'
+    | '/monthly-v2'
     | '/no-video'
     | '/quiz'
     | '/quiz-v2'
@@ -152,6 +163,7 @@ export interface FileRouteTypes {
     | '/b'
     | '/c'
     | '/checkout'
+    | '/monthly-v2'
     | '/no-video'
     | '/quiz'
     | '/quiz-v2'
@@ -166,6 +178,7 @@ export interface RootRouteChildren {
   BRoute: typeof BRoute
   CRoute: typeof CRoute
   CheckoutRoute: typeof CheckoutRoute
+  MonthlyV2Route: typeof MonthlyV2Route
   NoVideoRoute: typeof NoVideoRoute
   QuizRoute: typeof QuizRoute
   QuizV2Route: typeof QuizV2Route
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/no-video'
       fullPath: '/no-video'
       preLoaderRoute: typeof NoVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monthly-v2': {
+      id: '/monthly-v2'
+      path: '/monthly-v2'
+      fullPath: '/monthly-v2'
+      preLoaderRoute: typeof MonthlyV2RouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -262,6 +282,7 @@ const rootRouteChildren: RootRouteChildren = {
   BRoute: BRoute,
   CRoute: CRoute,
   CheckoutRoute: CheckoutRoute,
+  MonthlyV2Route: MonthlyV2Route,
   NoVideoRoute: NoVideoRoute,
   QuizRoute: QuizRoute,
   QuizV2Route: QuizV2Route,
