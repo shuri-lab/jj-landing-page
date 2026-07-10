@@ -194,20 +194,23 @@ function HeroHeadline() {
   return (
     <>
       <h1
-        className="text-left text-[30px] leading-[1.12] tracking-[-0.015em] text-[#15102a] sm:text-[38px] lg:text-[44px]"
+        className="text-left text-[34px] leading-[1.08] tracking-[-0.015em] text-[#15102a] sm:text-[46px] lg:text-[54px]"
         style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
       >
-        Losing weight after 40 feels <span style={{ color: BERRY }}>impossible.</span> Yet the women inside Yobody lose up to 15 pounds in their first 30 days.
+        Losing weight after 40 feels <span style={{ color: BERRY }}>impossible.</span>
       </h1>
-      <p className="mt-4 text-left text-[19px] font-bold leading-[1.3] sm:text-[21px]" style={{ fontFamily: "'DM Sans', sans-serif", color: BERRY }}>
-        JJ in your corner every day, until every last pound is gone.
+      <p
+        className="mt-2 text-left text-[20px] font-bold leading-[1.15] tracking-[-0.01em] text-[#15102a] sm:mt-3 sm:text-[26px] lg:text-[28px]"
+        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
+      >
+        Yet the women inside Yobody lose up to <span style={{ color: BERRY }}>15 pounds</span> in their first 30 days.
       </p>
     </>
   );
 }
 
 function HeroBullets({ className = "", textClass = "text-[18px] sm:text-[20px]" }: { className?: string; textClass?: string }) {
-  const points = ["No starving, no punishing workouts, and never alone.", "A plan built around the food you love."];
+  const points = ["A plan built around the food you love. No starving.", "Weekly 1-on-1 calls and daily texts from JJ."];
   return (
     <ul className={`max-w-[560px] space-y-3 ${className}`}>
       {points.map((p, i) => (
