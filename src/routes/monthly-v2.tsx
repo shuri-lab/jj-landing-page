@@ -66,6 +66,7 @@ function Landing() {
       className="overflow-x-hidden bg-background text-foreground"
       style={{ fontFamily: "'DM Sans', sans-serif", ["--font-serif" as string]: "'Lora', Georgia, serif" }}
     >
+      <AnnouncementBar />
       <Header />
       <main>
         <Hero />
@@ -116,6 +117,22 @@ function CtaButton({ label, sub, href, position = "unknown", className = "", onD
       {sub && !subInside && (
         <p className={`mt-2.5 text-center text-[13.5px] font-semibold sm:text-[14px] ${onDark ? "text-white/70" : ""}`} style={onDark ? undefined : { color: "#8c114a" }}>{sub}</p>
       )}
+    </div>
+  );
+}
+
+// ── Announcement bar ─────────────────────────────────────────────────────────
+function AnnouncementBar() {
+  return (
+    <div className="relative w-full overflow-hidden text-white" style={{ background: "linear-gradient(90deg, #2a1020 0%, #8c2a52 50%, #2a1020 100%)" }}>
+      <div className="mx-auto flex max-w-[1000px] flex-wrap items-center justify-center gap-x-2.5 gap-y-1 px-5 py-2.5 text-center text-[12px] font-semibold sm:text-[13px]">
+        <span className="inline-flex items-center gap-1.5 font-bold uppercase tracking-[0.12em]">
+          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#f39bc4]" />
+          🌸 14-Day Money Back Guarantee
+        </span>
+        <span className="text-white/30 max-sm:hidden">·</span>
+        <span className="text-white/85 max-sm:hidden">Join today with zero risk</span>
+      </div>
     </div>
   );
 }
