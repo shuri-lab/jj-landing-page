@@ -225,7 +225,7 @@ function HeroHeadline({ className = "" }: { className?: string }) {
 function HeroSubhead({ className = "" }: { className?: string }) {
   return (
     <p className={`max-w-[580px] text-left text-[18px] font-medium leading-[1.5] text-ink sm:text-[20px] ${className}`}>
-      Tired of starting over every Monday? Lose the weight with a plan built for a body over 40, weekly 1-on-1 calls and daily texts from JJ, and meals built around the food you already love. <B>No starving. Never alone.</B>
+      Tired of starting over every Monday? A plan built for a body over 40, food you actually love, and weekly 1-on-1 calls and daily texts from JJ. <B>No starving. Never alone.</B>
     </p>
   );
 }
@@ -415,15 +415,16 @@ function SocialWall() {
               <div className="relative">
                 <img src={c.src} alt="A woman's before and after transformation" className="block h-auto w-full object-cover" loading="lazy" />
                 {/* Before / after split labels. */}
-                <span className="absolute left-2.5 top-2.5 rounded-md bg-black/55 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white backdrop-blur-sm">Before</span>
-                <span className="absolute right-2.5 top-2.5 rounded-md px-2 py-0.5 text-[11px] font-bold uppercase tracking-wide text-white" style={{ background: BERRY }}>After</span>
+                <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide text-white backdrop-blur-sm sm:text-[11px]">Before</span>
+                <span className="absolute right-3 top-3 rounded-md px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide text-white sm:text-[11px]" style={{ background: BERRY }}>After</span>
                 {/* Pounds-lost badge. */}
-                <span className="absolute inset-x-0 bottom-2.5 mx-auto w-fit rounded-full bg-white/95 px-3.5 py-1 text-[14px] font-extrabold text-[#15102a] shadow-[0_4px_12px_-4px_rgba(0,0,0,0.45)]">
+                <span className="absolute inset-x-0 bottom-3 mx-auto w-fit rounded-full bg-white/95 px-4 py-1.5 text-[16px] font-extrabold text-[#15102a] shadow-[0_4px_12px_-4px_rgba(0,0,0,0.45)] sm:text-[14px]">
                   Down {c.lbs} lbs
                 </span>
               </div>
-              <figcaption className="p-5">
-                <p className="text-[16px] font-semibold leading-[1.5] text-ink sm:text-[17px]">"{c.quote}"</p>
+              <figcaption className="relative overflow-hidden p-6 sm:p-5">
+                <Quote className="pointer-events-none absolute -left-1 -top-2 h-16 w-16 opacity-[0.06]" style={{ color: BERRY }} fill="currentColor" aria-hidden />
+                <p className="relative text-[19px] font-semibold leading-[1.5] text-ink sm:text-[16px]">"{c.quote}"</p>
               </figcaption>
             </figure>
           ))}
@@ -586,29 +587,29 @@ function Guarantee() {
   return (
     <section className="px-5 py-16 lg:py-24">
       <div className="mx-auto max-w-[640px] lg:max-w-[820px]">
-        <div className="rounded-3xl bg-white p-8 text-center shadow-[0_30px_70px_-40px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0] sm:p-12">
+        <div className="rounded-3xl bg-white p-6 text-center shadow-[0_30px_70px_-40px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0] sm:p-12">
           {/* Circular 14-day badge with a soft glow. */}
-          <div className="relative mx-auto h-[100px] w-[100px]">
+          <div className="relative mx-auto h-[90px] w-[90px] sm:h-[100px] sm:w-[100px]">
             <div className="absolute inset-0 rounded-full opacity-45 blur-2xl" style={{ background: "radial-gradient(circle, #d9628f 0%, transparent 70%)" }} aria-hidden />
-            <div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center rounded-full text-white shadow-[0_16px_34px_-12px_rgba(140,17,74,0.7)]" style={{ background: "linear-gradient(160deg, #b8386a 0%, #8c2a52 100%)" }}>
-              <span className="font-[Montserrat] text-[32px] font-extrabold leading-none">14</span>
+            <div className="relative flex h-[90px] w-[90px] flex-col items-center justify-center rounded-full text-white shadow-[0_16px_34px_-12px_rgba(140,17,74,0.7)] sm:h-[100px] sm:w-[100px]" style={{ background: "linear-gradient(160deg, #b8386a 0%, #8c2a52 100%)" }}>
+              <span className="font-[Montserrat] text-[30px] font-extrabold leading-none sm:text-[32px]">14</span>
               <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em]">Day</span>
               <span className="text-[9px] font-bold uppercase tracking-[0.16em]">Guarantee</span>
             </div>
           </div>
-          <h2 className="mx-auto mt-6 max-w-[620px] font-[Montserrat] font-bold text-[30px] leading-[1.12] tracking-[-0.02em] text-ink sm:text-[42px]">
+          <h2 className="mx-auto mt-6 max-w-[620px] font-[Montserrat] font-bold text-[26px] leading-[1.14] tracking-[-0.02em] text-ink sm:text-[42px]">
             You Either See Results
             <br />
             <span className="italic" style={{ color: BERRY }}>or Your Money Back</span>
           </h2>
-          <p className="mx-auto mt-5 max-w-[620px] text-[18px] leading-[1.7] text-ink-soft sm:text-[19px]">
+          <p className="mx-auto mt-5 max-w-[620px] text-[17px] leading-[1.65] text-ink-soft sm:text-[19px] sm:leading-[1.7]">
             Give me 14 days. Do the work with me, and if you do not feel different, more hopeful, more in control, like this is finally the thing, just tell me. I send back every penny. No questions. No guilt. I only want your money if you are glad you are here. That is my promise to you.
           </p>
           <p className="mt-4 text-[14px] font-semibold tracking-[0.16em] text-ink-faint">JJ</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-2.5">
+          <div className="mt-7 grid grid-cols-2 gap-2.5 sm:flex sm:flex-wrap sm:justify-center">
             {pills.map((p) => (
-              <span key={p} className="inline-flex items-center gap-1.5 rounded-full border border-[#f0c9d8] bg-white px-3.5 py-1.5 text-[13px] font-semibold text-ink">
-                <Check className="h-3.5 w-3.5 text-[#1c7a3f]" strokeWidth={3} /> {p}
+              <span key={p} className="inline-flex items-center justify-center gap-1.5 rounded-full border border-[#f0c9d8] bg-white px-3 py-2 text-[13px] font-semibold text-ink sm:px-3.5 sm:py-1.5">
+                <Check className="h-3.5 w-3.5 shrink-0" style={{ color: BERRY }} strokeWidth={3} /> {p}
               </span>
             ))}
           </div>
