@@ -225,7 +225,7 @@ function HeroHeadline({ className = "" }: { className?: string }) {
 function HeroSubhead({ className = "" }: { className?: string }) {
   return (
     <p className={`max-w-[580px] text-left text-[18px] font-medium leading-[1.5] text-ink sm:text-[20px] ${className}`}>
-      Tired of starting over every Monday? A plan built for a body over 40, food you actually love, and weekly 1-on-1 calls and daily texts from JJ. <B>No starving. Never alone.</B>
+      A plan built for a body over 40, food you actually love, and weekly 1-on-1 calls and daily texts from JJ. <B>No starving. Never alone.</B>
     </p>
   );
 }
