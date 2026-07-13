@@ -11,6 +11,12 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import dailySmsImage from "@/assets/landing/daily-sms-image.png";
+import mealsCardImage from "@/assets/landing/meals-card-image.png";
+import jjBefore1 from "@/assets/landing/jj-before-1.png";
+import jjBefore2 from "@/assets/landing/jj-before-2.png";
+import jjAfter1 from "@/assets/landing/jj-after-1.png";
+import jjAfter2 from "@/assets/landing/jj-after-2.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -181,7 +187,10 @@ function Hero() {
           <div className="mt-6"><HeroHeadline /></div>
           <HeroBullets className="mt-6" textClass="text-[18px]" />
           <div className="mt-7"><HeroPrimaryCta /></div>
-          <img src={quizHeroMobile} alt="JJ Smith, your personal coach" className="mx-auto mt-8 block h-auto w-full max-w-[230px]" width={2000} height={2000} />
+          <div className="relative mx-auto mt-8 w-full max-w-[230px]">
+            <img src={quizHeroMobile} alt="JJ Smith, your personal coach" className="block h-auto w-full" width={2000} height={2000} />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent" aria-hidden />
+          </div>
         </div>
 
         <HeroTransformationsMarquee />
@@ -321,10 +330,21 @@ function JJStory() {
       <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
         <div className="lg:grid lg:grid-cols-[0.85fr_1fr] lg:items-start lg:gap-12">
           <div className="mb-8 min-w-0 lg:mb-0">
-            <div className="mx-auto max-w-[440px] overflow-hidden rounded-3xl shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10 lg:mx-0 lg:max-w-none">
-              <img src={jjOwnTransformation} alt="JJ Smith's own transformation" className="block h-auto w-full" width={2000} height={2000} loading="lazy" />
+            {/* Mobile/tablet: single before-and-after image + press logos. */}
+            <div className="lg:hidden">
+              <div className="mx-auto max-w-[440px] overflow-hidden rounded-3xl shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
+                <img src={jjOwnTransformation} alt="JJ Smith's own transformation" className="block h-auto w-full" width={2000} height={2000} loading="lazy" />
+              </div>
+              <PressLogos className="mt-8" dark />
             </div>
-            <PressLogos className="mt-8" dark />
+            {/* Desktop: four before-and-after images. */}
+            <div className="hidden grid-cols-2 gap-4 lg:grid">
+              {[jjBefore1, jjAfter1, jjBefore2, jjAfter2].map((src, i) => (
+                <div key={i} className="aspect-[4/5] overflow-hidden rounded-2xl shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
+                  <img src={src} alt="JJ Smith before and after" className="h-full w-full object-cover object-top" width={1200} height={1500} loading="lazy" />
+                </div>
+              ))}
+            </div>
           </div>
           <div className="min-w-0">
             <h2 className="font-[Montserrat] font-bold text-[30px] leading-[1.14] tracking-[-0.02em] text-white sm:text-[40px] lg:text-[46px]">My body turned on me, too.</h2>
@@ -422,9 +442,9 @@ function Method() {
 function WhatYouGet() {
   const items = [
     { Icon: Phone, title: "Weekly one-on-one calls with JJ.", text: "Every week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
-    { Icon: MessageCircle, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
+    { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
     { Icon: Zap, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
-    { Icon: UtensilsCrossed, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
+    { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
     { Icon: UserCheck, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
     { Icon: Users, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
   ];
@@ -436,13 +456,19 @@ function WhatYouGet() {
           <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">Here is everything you get</h2>
         </div>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
-          {items.map(({ Icon, title, text }) => (
+          {items.map(({ Icon, img, title, text }) => (
             <div key={title} className="overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-28px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
-              {/* Image placeholder: gradient + icon until real product shots are ready. */}
-              <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden" style={{ background: "linear-gradient(150deg, #fbe0ee 0%, #ef9cc4 55%, #c93f86 100%)" }}>
-                <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 30% 25%, #fff 0, transparent 40%)" }} aria-hidden />
-                <Icon className="relative h-11 w-11 text-white drop-shadow-[0_6px_16px_rgba(140,17,74,0.5)]" strokeWidth={1.7} />
-              </div>
+              {img ? (
+                <div className="aspect-[16/9] overflow-hidden">
+                  <img src={img} alt={title} className="h-full w-full object-cover object-center" loading="lazy" />
+                </div>
+              ) : (
+                /* Image placeholder: gradient + icon until real product shots are ready. */
+                <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden" style={{ background: "linear-gradient(150deg, #fbe0ee 0%, #ef9cc4 55%, #c93f86 100%)" }}>
+                  <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 30% 25%, #fff 0, transparent 40%)" }} aria-hidden />
+                  <Icon className="relative h-11 w-11 text-white drop-shadow-[0_6px_16px_rgba(140,17,74,0.5)]" strokeWidth={1.7} />
+                </div>
+              )}
               <div className="p-5">
                 <h3 className="text-[18px] font-bold tracking-tight text-ink sm:text-[19px]">{title}</h3>
                 <p className="mt-1.5 text-[15px] leading-[1.55] text-ink-soft sm:text-[16px]">{text}</p>

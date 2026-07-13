@@ -11,6 +11,12 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import dailySmsImage from "@/assets/landing/daily-sms-image.png";
+import mealsCardImage from "@/assets/landing/meals-card-image.png";
+import jjBefore1 from "@/assets/landing/jj-before-1.png";
+import jjBefore2 from "@/assets/landing/jj-before-2.png";
+import jjAfter1 from "@/assets/landing/jj-after-1.png";
+import jjAfter2 from "@/assets/landing/jj-after-2.png";
 import t1 from "@/assets/landing/transformation-1.jpg";
 import t4 from "@/assets/landing/transformation-4.jpg";
 import t7 from "@/assets/landing/transformation-7.jpg";
@@ -199,7 +205,10 @@ function Hero() {
           <HeroSubhead className="mt-5" />
           <div className="mt-7"><HeroPrimaryCta /></div>
           <div className="mt-4"><FudReducers /></div>
-          <img src={quizHeroMobile} alt="JJ Smith, your personal coach" className="mx-auto mt-8 block h-auto w-full max-w-[230px]" width={2000} height={2000} />
+          <div className="relative mx-auto mt-8 w-full max-w-[230px]">
+            <img src={quizHeroMobile} alt="JJ Smith, your personal coach" className="block h-auto w-full" width={2000} height={2000} />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent" aria-hidden />
+          </div>
         </div>
 
         <HeroTransformationsMarquee />
@@ -356,8 +365,17 @@ function JJStory() {
       <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
         <div className="lg:grid lg:grid-cols-[0.85fr_1fr] lg:items-start lg:gap-12">
           <div className="mb-8 min-w-0 lg:mb-0">
-            <div className="mx-auto max-w-[440px] overflow-hidden rounded-3xl shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10 lg:mx-0 lg:max-w-none">
+            {/* Mobile/tablet: single before-and-after image. */}
+            <div className="mx-auto max-w-[440px] overflow-hidden rounded-3xl shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10 lg:hidden">
               <img src={jjOwnTransformation} alt="JJ Smith's own transformation" className="block h-auto w-full" width={2000} height={2000} loading="lazy" />
+            </div>
+            {/* Desktop: four before-and-after images. */}
+            <div className="hidden grid-cols-2 gap-4 lg:grid">
+              {[jjBefore1, jjAfter1, jjBefore2, jjAfter2].map((src, i) => (
+                <div key={i} className="aspect-[4/5] overflow-hidden rounded-2xl shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
+                  <img src={src} alt="JJ Smith before and after" className="h-full w-full object-cover object-top" width={1200} height={1500} loading="lazy" />
+                </div>
+              ))}
             </div>
           </div>
           <div className="min-w-0">
@@ -392,14 +410,14 @@ function JJStory() {
 // NOTE: pounds-lost figures and quotes are directional placeholders pending verifiable data (Meka).
 function SocialWall() {
   const cards = [
-    { src: t12, quote: "My waist came back, and my belly fat finally let go.", lbs: 32 },
-    { src: t4, quote: "I got my curves back. Snatched, not skinny.", lbs: 41 },
-    { src: t10, quote: "My clothes fit again, and I look 10 years younger.", lbs: 27 },
-    { src: t8, quote: "My energy is back, and my confidence came with it.", lbs: 19 },
-    { src: t7, quote: "My health came back. Pre-diabetes reversed, blood pressure normal.", lbs: 54 },
-    { src: t1, quote: "Down a size I have not worn in a decade.", lbs: 23 },
-    { src: t9, quote: "I am smiling in pictures again. Dressing up again.", lbs: 16 },
-    { src: t11, quote: "I finally lost the baby weight.", lbs: 21 },
+    { src: t12, quote: "My waist came back, and my belly fat finally let go.", lbs: 32, weeks: 12 },
+    { src: t4, quote: "I got my curves back. Snatched, not skinny.", lbs: 38, weeks: 16 },
+    { src: t10, quote: "My clothes fit again, and I look 10 years younger.", lbs: 27, weeks: 10 },
+    { src: t8, quote: "My energy is back, and my confidence came with it.", lbs: 19, weeks: 8 },
+    { src: t7, quote: "My health came back. Pre-diabetes reversed, blood pressure normal.", lbs: 44, weeks: 18 },
+    { src: t1, quote: "Down a size I have not worn in a decade.", lbs: 23, weeks: 9 },
+    { src: t9, quote: "I am smiling in pictures again. Dressing up again.", lbs: 16, weeks: 6 },
+    { src: t11, quote: "I finally lost the baby weight.", lbs: 21, weeks: 8 },
   ];
   return (
     <section className="px-5 py-16 lg:py-24">
@@ -414,12 +432,9 @@ function SocialWall() {
             <figure key={i} className="overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-28px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
               <div className="relative">
                 <img src={c.src} alt="A woman's before and after transformation" className="block h-auto w-full object-cover" loading="lazy" />
-                {/* Before / after split labels. */}
-                <span className="absolute left-3 top-3 rounded-md bg-black/55 px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide text-white backdrop-blur-sm sm:text-[11px]">Before</span>
-                <span className="absolute right-3 top-3 rounded-md px-2.5 py-1 text-[12px] font-bold uppercase tracking-wide text-white sm:text-[11px]" style={{ background: BERRY }}>After</span>
-                {/* Pounds-lost badge. */}
+                {/* Result badge. */}
                 <span className="absolute inset-x-0 bottom-3 mx-auto w-fit rounded-full bg-white/95 px-4 py-1.5 text-[16px] font-extrabold text-[#15102a] shadow-[0_4px_12px_-4px_rgba(0,0,0,0.45)] sm:text-[14px]">
-                  Down {c.lbs} lbs
+                  -{c.lbs} pounds in {c.weeks} weeks
                 </span>
               </div>
               <figcaption className="relative overflow-hidden p-6 sm:p-5">
@@ -439,9 +454,9 @@ function SocialWall() {
 function ValueProps() {
   const items = [
     { Icon: Phone, title: "Weekly 1-on-1 calls with JJ", text: <>Get on a call with JJ every week and fix what got in your way, so <B>you never lose another month</B>.</> },
-    { Icon: MessageCircle, title: "Daily texts from JJ", text: <>Wake up to a text from JJ every morning and <B>never start another day alone</B> or wondering what to do.</> },
+    { Icon: MessageCircle, img: dailySmsImage, title: "Daily texts from JJ", text: <>Wake up to a text from JJ every morning and <B>never start another day alone</B> or wondering what to do.</> },
     { Icon: Zap, title: "Your reset", text: <>A reset that quiets your cravings and <B>drops up to 15 pounds</B>, so you feel it working in your first days.</> },
-    { Icon: UtensilsCrossed, title: "Meals built around the food you love", text: <>Eat the food you already love, planned for you and simple to make, with <B>grocery lists that save you up to $75 a month</B>.</> },
+    { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love", text: <>Eat the food you already love, planned for you and simple to make, with <B>grocery lists that save you up to $75 a month</B>.</> },
     { Icon: HeartPulse, title: "A plan built for a body over 40", text: <>Work with your hormones and blood sugar instead of against them, so <B>your effort finally shows on the scale</B>.</> },
     { Icon: Users, title: "The Circle", text: <>Walk in beside hundreds of women on the same journey, so <B>you never feel like the only one again</B>.</> },
   ];
@@ -454,13 +469,19 @@ function ValueProps() {
           </h2>
         </div>
         <div className="mt-10 grid gap-5 lg:mt-12 lg:grid-cols-3 sm:grid-cols-2">
-          {items.map(({ Icon, title, text }) => (
+          {items.map(({ Icon, img, title, text }) => (
             <div key={title} className="flex flex-col overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-28px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
-              {/* Image placeholder: gradient + icon until real product shots are ready. */}
-              <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden" style={{ background: "linear-gradient(150deg, #fbe0ee 0%, #ef9cc4 55%, #c93f86 100%)" }}>
-                <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 30% 25%, #fff 0, transparent 40%)" }} aria-hidden />
-                <Icon className="relative h-11 w-11 text-white drop-shadow-[0_6px_16px_rgba(140,17,74,0.5)]" strokeWidth={1.7} />
-              </div>
+              {img ? (
+                <div className="aspect-[16/9] overflow-hidden">
+                  <img src={img} alt={title} className="h-full w-full object-cover object-center" loading="lazy" />
+                </div>
+              ) : (
+                /* Image placeholder: gradient + icon until real product shots are ready. */
+                <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden" style={{ background: "linear-gradient(150deg, #fbe0ee 0%, #ef9cc4 55%, #c93f86 100%)" }}>
+                  <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 30% 25%, #fff 0, transparent 40%)" }} aria-hidden />
+                  <Icon className="relative h-11 w-11 text-white drop-shadow-[0_6px_16px_rgba(140,17,74,0.5)]" strokeWidth={1.7} />
+                </div>
+              )}
               <div className="flex flex-1 flex-col p-6">
                 <h3 className="font-[Montserrat] text-[20px] font-bold leading-[1.2] tracking-[-0.01em] text-ink sm:text-[22px]">{title}</h3>
                 <p className="mt-2.5 text-[15.5px] font-normal leading-[1.55] text-ink-soft sm:text-[16px]">{text}</p>
