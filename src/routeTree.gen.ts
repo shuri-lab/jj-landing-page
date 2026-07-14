@@ -16,6 +16,10 @@ import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as NoVideoRouteImport } from './routes/no-video'
 import { Route as MonthlyV3RouteImport } from './routes/monthly-v3'
 import { Route as MonthlyV2RouteImport } from './routes/monthly-v2'
+import { Route as LookYoungerImprovedV2RouteImport } from './routes/look-younger-improved-v2'
+import { Route as LookYoungerImprovedOb2RouteImport } from './routes/look-younger-improved-ob-2'
+import { Route as LookYoungerImprovedOb1RouteImport } from './routes/look-younger-improved-ob-1'
+import { Route as LookYoungerImprovedRouteImport } from './routes/look-younger-improved'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
 import { Route as CRouteImport } from './routes/c'
@@ -57,6 +61,26 @@ const MonthlyV3Route = MonthlyV3RouteImport.update({
 const MonthlyV2Route = MonthlyV2RouteImport.update({
   id: '/monthly-v2',
   path: '/monthly-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedV2Route = LookYoungerImprovedV2RouteImport.update({
+  id: '/look-younger-improved-v2',
+  path: '/look-younger-improved-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedOb2Route = LookYoungerImprovedOb2RouteImport.update({
+  id: '/look-younger-improved-ob-2',
+  path: '/look-younger-improved-ob-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedOb1Route = LookYoungerImprovedOb1RouteImport.update({
+  id: '/look-younger-improved-ob-1',
+  path: '/look-younger-improved-ob-1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedRoute = LookYoungerImprovedRouteImport.update({
+  id: '/look-younger-improved',
+  path: '/look-younger-improved',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CheckoutRoute = CheckoutRouteImport.update({
@@ -103,6 +127,10 @@ export interface FileRoutesByFullPath {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger-improved': typeof LookYoungerImprovedRoute
+  '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
+  '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
+  '/look-younger-improved-v2': typeof LookYoungerImprovedV2Route
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
@@ -119,6 +147,10 @@ export interface FileRoutesByTo {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger-improved': typeof LookYoungerImprovedRoute
+  '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
+  '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
+  '/look-younger-improved-v2': typeof LookYoungerImprovedV2Route
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
@@ -136,6 +168,10 @@ export interface FileRoutesById {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger-improved': typeof LookYoungerImprovedRoute
+  '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
+  '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
+  '/look-younger-improved-v2': typeof LookYoungerImprovedV2Route
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
@@ -154,6 +190,10 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger-improved'
+    | '/look-younger-improved-ob-1'
+    | '/look-younger-improved-ob-2'
+    | '/look-younger-improved-v2'
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
@@ -170,6 +210,10 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger-improved'
+    | '/look-younger-improved-ob-1'
+    | '/look-younger-improved-ob-2'
+    | '/look-younger-improved-v2'
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
@@ -186,6 +230,10 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger-improved'
+    | '/look-younger-improved-ob-1'
+    | '/look-younger-improved-ob-2'
+    | '/look-younger-improved-v2'
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
@@ -203,6 +251,10 @@ export interface RootRouteChildren {
   CRoute: typeof CRoute
   ChallengeV1Route: typeof ChallengeV1Route
   CheckoutRoute: typeof CheckoutRoute
+  LookYoungerImprovedRoute: typeof LookYoungerImprovedRoute
+  LookYoungerImprovedOb1Route: typeof LookYoungerImprovedOb1Route
+  LookYoungerImprovedOb2Route: typeof LookYoungerImprovedOb2Route
+  LookYoungerImprovedV2Route: typeof LookYoungerImprovedV2Route
   MonthlyV2Route: typeof MonthlyV2Route
   MonthlyV3Route: typeof MonthlyV3Route
   NoVideoRoute: typeof NoVideoRoute
@@ -261,6 +313,34 @@ declare module '@tanstack/react-router' {
       path: '/monthly-v2'
       fullPath: '/monthly-v2'
       preLoaderRoute: typeof MonthlyV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-v2': {
+      id: '/look-younger-improved-v2'
+      path: '/look-younger-improved-v2'
+      fullPath: '/look-younger-improved-v2'
+      preLoaderRoute: typeof LookYoungerImprovedV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-ob-2': {
+      id: '/look-younger-improved-ob-2'
+      path: '/look-younger-improved-ob-2'
+      fullPath: '/look-younger-improved-ob-2'
+      preLoaderRoute: typeof LookYoungerImprovedOb2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-ob-1': {
+      id: '/look-younger-improved-ob-1'
+      path: '/look-younger-improved-ob-1'
+      fullPath: '/look-younger-improved-ob-1'
+      preLoaderRoute: typeof LookYoungerImprovedOb1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved': {
+      id: '/look-younger-improved'
+      path: '/look-younger-improved'
+      fullPath: '/look-younger-improved'
+      preLoaderRoute: typeof LookYoungerImprovedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/checkout': {
@@ -323,6 +403,10 @@ const rootRouteChildren: RootRouteChildren = {
   CRoute: CRoute,
   ChallengeV1Route: ChallengeV1Route,
   CheckoutRoute: CheckoutRoute,
+  LookYoungerImprovedRoute: LookYoungerImprovedRoute,
+  LookYoungerImprovedOb1Route: LookYoungerImprovedOb1Route,
+  LookYoungerImprovedOb2Route: LookYoungerImprovedOb2Route,
+  LookYoungerImprovedV2Route: LookYoungerImprovedV2Route,
   MonthlyV2Route: MonthlyV2Route,
   MonthlyV3Route: MonthlyV3Route,
   NoVideoRoute: NoVideoRoute,
