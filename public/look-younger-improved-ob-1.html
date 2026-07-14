@@ -502,12 +502,7 @@ waitFor('.bp-container', (bp) => {
 </script>
 <!--OB-BUMP-->
 <style id="ob-bump-style">
-  a.add-bump, .add-bump.cbutton-N0nLIqjV4M{
-    background:#67286b !important; background-image:none !important; color:#fff !important;
-    border:0 !important; border-radius:999px !important; opacity:1 !important;
-    min-height:54px !important; box-shadow:0 12px 26px -12px rgba(103,40,107,.65) !important;
-    transition:transform .14s ease, filter .14s ease !important;
-  }
+  a.add-bump, .add-bump.cbutton-N0nLIqjV4M{ background:#67286b !important; background-image:none !important; color:#fff !important; border:0 !important; border-radius:999px !important; opacity:1 !important; min-height:54px !important; box-shadow:0 12px 26px -12px rgba(103,40,107,.65) !important; transition:transform .14s ease, filter .14s ease !important; }
   a.add-bump:hover{ transform:translateY(-1px); filter:brightness(1.06); }
   a.add-bump .main-heading-button, a.add-bump .main-heading-group, a.add-bump span{ color:#fff !important; font-weight:800 !important; font-size:17px !important; }
 </style>
@@ -522,25 +517,24 @@ waitFor('.bp-container', (bp) => {
   var EYE_TO="ADD FOR JUST "+ACTUAL;
   function apply(){
     document.querySelectorAll('.order-total .item-price').forEach(function(el){ if(/\$?0\.00/.test((el.textContent||'').trim())) el.textContent='$27.00'; });
-    document.querySelectorAll('h1').forEach(function(h){ if(h.textContent.trim()===ORIG_HEAD) h.textContent=HEADLINE; });
+    // Headline h1 vs price h1 (the price lives in its own <h1><span>$17</span></h1>).
+    document.querySelectorAll('h1').forEach(function(h){
+      var t=(h.textContent||'').trim();
+      if(t===ORIG_HEAD){ h.textContent=HEADLINE; }
+      else if(t==='$17' && ACTUAL!=='$17'){ var sp=h.querySelector('span'); if(sp && sp.textContent.trim()==='$17'){ sp.textContent=ACTUAL; } else { h.textContent=ACTUAL; } }
+    });
     document.querySelectorAll('h2 strong').forEach(function(s){ if(s.textContent.trim()===ORIG_SUB1) s.textContent=SUB1; });
     document.querySelectorAll('h2').forEach(function(e){ if(e.textContent.trim()===ORIG_DESC) e.textContent=DESC; });
     document.querySelectorAll('p').forEach(function(p){ var t=(p.textContent||'').trim(); if(BULLETS[t]) p.textContent=BULLETS[t]; });
     document.querySelectorAll('p').forEach(function(p){
       var t=(p.textContent||'').trim();
-      if(t==='$17' && ACTUAL!=='$17') p.textContent=ACTUAL;
-      else if(t.indexOf('ADD FOR JUST $17')!==-1) p.textContent=t.replace('ADD FOR JUST $17', EYE_TO);
+      if(t.indexOf('ADD FOR JUST $17')!==-1) p.textContent=t.replace('ADD FOR JUST $17', EYE_TO);
       else if(t==='Regular price: $47' && !p.querySelector('s')) p.innerHTML='<em>Regular price: <s>'+REGULAR+'</s></em>';
     });
     document.querySelectorAll('.add-bump .main-heading-button').forEach(function(el){ if(el.textContent.trim().toLowerCase()==='add to cart') el.textContent='Yes, Add This'; });
     document.querySelectorAll('a.add-bump').forEach(function(a){ if((a.getAttribute('aria-label')||'').toLowerCase().indexOf('add to cart')!==-1) a.setAttribute('aria-label','Yes, Add This'); });
     document.querySelectorAll('source[srcset]').forEach(function(s){ if((s.getAttribute('srcset')||'').indexOf(IMG_HASH)!==-1) s.parentNode.removeChild(s); });
-    document.querySelectorAll('img').forEach(function(img){
-      if((img.getAttribute('src')||'').indexOf(IMG_HASH)!==-1){
-        var pic=img.closest('picture'); if(pic) pic.querySelectorAll('source').forEach(function(s){ s.parentNode.removeChild(s); });
-        img.removeAttribute('srcset'); img.removeAttribute('sizes'); img.src=IMG;
-      }
-    });
+    document.querySelectorAll('img').forEach(function(img){ if((img.getAttribute('src')||'').indexOf(IMG_HASH)!==-1){ var pic=img.closest('picture'); if(pic) pic.querySelectorAll('source').forEach(function(s){ s.parentNode.removeChild(s); }); img.removeAttribute('srcset'); img.removeAttribute('sizes'); img.src=IMG; } });
     document.querySelectorAll('a.add-bump').forEach(function(a){ if(a.getAttribute('data-obt')) return; a.setAttribute('data-obt','1'); a.addEventListener('click',function(){ document.querySelectorAll('.order-total .item-price').forEach(function(el){el.textContent=ADDED_TOTAL;}); }); });
     document.querySelectorAll('a.remove-bump').forEach(function(a){ if(a.getAttribute('data-obt')) return; a.setAttribute('data-obt','1'); a.addEventListener('click',function(){ document.querySelectorAll('.order-total .item-price').forEach(function(el){el.textContent='$27.00';}); }); });
   }
