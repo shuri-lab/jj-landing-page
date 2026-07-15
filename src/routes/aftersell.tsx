@@ -22,8 +22,8 @@ const NOW = 47;
 const SAVE = WAS - NOW;
 
 const INCLUDED: { Icon: React.ComponentType<{ className?: string }>; text: React.ReactNode }[] = [
-  { Icon: Phone, text: <><strong>Two 1-on-1 calls with JJ every week</strong> — you and me, working through your week together so the weight keeps coming off.</> },
-  { Icon: MessageCircle, text: <><strong>Daily texts from JJ</strong> — so you never fall off, even on the hard days.</> },
+  { Icon: Phone, text: <><strong>Two 1-on-1 coaching calls every week</strong> — built on JJ&rsquo;s method. We work through your week together so the weight keeps coming off.</> },
+  { Icon: MessageCircle, text: <><strong>Daily texts to keep you on track</strong> — so you never fall off, even on the hard days.</> },
   { Icon: Zap, text: <><strong>Your reset plan</strong> — built to drop up to 15 lbs in your first 2 weeks.</> },
   { Icon: UtensilsCrossed, text: <><strong>A meal plan around the food you love</strong> — no starving, no bland &ldquo;diet food.&rdquo;</> },
   { Icon: Users, text: <><strong>The Circle of Women</strong> losing the weight right alongside you.</> },
@@ -58,7 +58,7 @@ function Aftersell() {
         <h1 className="ups-h1">{CUSTOMER_NAME}, here&rsquo;s the missing piece in your weight loss.</h1>
 
         <div className="ups-alert">
-          <span>Your order is confirmed — but you can still add this to it for the next few minutes.</span>
+          <span>Your order is confirmed, but you can still add this to it for the next few minutes.</span>
           <span className="ups-timer">{mm}:{ss}</span>
         </div>
 
@@ -68,7 +68,7 @@ function Aftersell() {
           </div>
 
           <div className="ups-info">
-            <h2 className="ups-title">Personal Coaching with JJ Smith</h2>
+            <h2 className="ups-title">Coaching with JJ Smith</h2>
 
             <div className="ups-rating">
               <span className="ups-stars" aria-hidden>
@@ -83,9 +83,9 @@ function Aftersell() {
               <span className="ups-per">/month</span>
               <span className="ups-save">Save ${SAVE}/mo</span>
             </div>
-            <div className="ups-perday">That&rsquo;s just <strong>$1.57 a day</strong> — less than your morning coffee ☕</div>
+            <div className="ups-perday">That&rsquo;s just <strong>$1.57 a day</strong>, less than your morning coffee ☕</div>
 
-            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 2 weeks</span> — and we keep going together until every last pound is gone.</p>
+            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 2 weeks</span>, and we keep going together until every last pound is gone.</p>
 
             <p className="ups-desc">Picture a few weeks from now: clothes fitting looser, the scale finally moving, and knowing that every step of the way, I&rsquo;m there with you.</p>
 
@@ -99,6 +99,8 @@ function Aftersell() {
               ))}
             </ul>
 
+            <p className="ups-desc">Real coaching in JJ&rsquo;s voice and method, with you every day.</p>
+
             <div className="ups-guar"><Check className="ups-ico-16" /> 14-day money-back guarantee · cancel anytime</div>
 
             <button className="ups-cta" type="button">
@@ -110,7 +112,7 @@ function Aftersell() {
           </div>
         </div>
 
-        <p className="ups-fine"><s>${WAS}</s> ${NOW}/month — this price is only available on this page. Cancel anytime.</p>
+        <p className="ups-fine"><s>${WAS}</s> ${NOW}/month, this price is only available on this page. Cancel anytime.</p>
       </main>
     </div>
   );

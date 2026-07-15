@@ -8,6 +8,7 @@ import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
 import designV2Hero from "@/assets/landing/design-v2-hero.png";
+import clarityImage from "@/assets/landing/clarity-image.png";
 import mobileHeroImage from "@/assets/landing/mobile-hero-image.png";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
@@ -117,6 +118,7 @@ function Landing() {
         <Method />
         <RealResults />
         <WhatYouGet />
+        <Clarity />
         <Pricing />
         <Guarantee />
         <Close />
@@ -155,7 +157,7 @@ function Header() {
 function Hero() {
   const bullets = [
     <>A plan built around the food you love.<span className="ly-bdesk"> No starving.</span></>,
-    <>Two 1-on-1 calls a week and daily texts from JJ.</>,
+    <>Two 1-on-1 calls a week, and daily texts.</>,
   ];
   return (
     <section className="ly-band ly-hero">
@@ -307,7 +309,7 @@ function Method() {
   const shifts = [
     { Icon: Zap, title: "First, we reset your body.", text: "We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and drops up to 15 pounds. You feel it fast, and it gives you your running start." },
     { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: "No starving. No punishing gym. Real food you actually love, simple to make, planned around your life. The grocery lists alone can save you up to $75 a month." },
-    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. A text every morning. Two calls every week. That is me, and that is what finally makes it stick." },
+    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. Two coaching calls a week, and a text every morning, so you are never doing this alone. That is what finally makes it stick." },
   ];
   return (
     <section className="ly-band ly-lav">
@@ -366,8 +368,8 @@ function RealResults() {
 // ── what you get ─────────────────────────────────────────────────────────────
 function WhatYouGet() {
   const items = [
-    { Icon: Phone, img: weeklyCallsImage, title: "Two one-on-one calls with JJ every week.", text: "Twice a week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
-    { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
+    { Icon: Phone, img: weeklyCallsImage, title: "Two 1-on-1 coaching calls every week.", text: "Two 1-on-1 coaching calls every week, built on JJ's method. Twice a week we look at your week and fix what got in the way." },
+    { Icon: MessageCircle, img: dailySmsImage, title: "A text every morning.", text: "A text every morning. You wake up with JJ in your corner, never starting the day alone." },
     { Icon: Zap, img: resetPlanImage, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
     { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
     { Icon: UserCheck, img: planForYourBodyImage, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
@@ -401,8 +403,8 @@ function WhatYouGet() {
 
 // ── pricing / value stack ────────────────────────────────────────────────────
 const VALUE_STACK = [
-  { label: "Two one-on-one calls with JJ every week", value: 1200 },
-  { label: "A text from JJ every morning", value: 400 },
+  { label: "Two 1-on-1 coaching calls every week (JJ's method)", value: 1200 },
+  { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },
   { label: "A plan made for your body and your life", value: 200 },
@@ -458,6 +460,28 @@ function Pricing() {
   );
 }
 
+// ── clarity (how she can be there every day) ─────────────────────────────────
+function Clarity() {
+  return (
+    <section className="ly-band ly-cream">
+      <div className="ly-wrap ly-clarity">
+        <div className="ly-clarity-media">
+          <img src={clarityImage} alt="JJ Smith" loading="lazy" />
+        </div>
+        <div>
+          <span className="ly-eyebrow">A word from me</span>
+          <h2 className="ly-h2">How I can finally be there for you <Hi>every day</Hi></h2>
+          <p className="ly-lead ly-soft ly-mt">For fifteen years, all I could do was write a book, hand you a plan, and then <strong>disappear, right when you needed me most.</strong> There was only one of me, and never enough hours to be there for every woman the way I wanted to.</p>
+          <p className="ly-lead ly-soft ly-mt">So I built my JJ Twin. <strong>It is my exact voice, my exact personality, my exact coaching,</strong> everything I know and everything I would tell you if we were sitting together.</p>
+          <p className="ly-clarity-quote">You can talk to me any time, day or night, and it feels like sitting down with me.</p>
+          <p className="ly-lead ly-soft ly-mt">This is how I finally keep the promise I could never keep before: to be there for you, personally, every single day. Not a book. Not a plan you follow alone. <strong>Me, in your corner, whenever you need me.</strong></p>
+          <p className="ly-guar-sig">JJ</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 // ── guarantee ────────────────────────────────────────────────────────────────
 function Guarantee() {
   const pills = ["14-Day Money Back", "No Questions Asked", "Cancel Anytime", "Zero Risk"];
@@ -498,6 +522,7 @@ function Close() {
 function Faq() {
   const items = [
     { q: "I'm in my 50s and nothing has worked.", a: "That is exactly who this is for. The plan is built for your season, and this time you are not on your own." },
+    { q: "How can it really be you, there for me every day?", a: "I built my JJ Twin, so I finally can. It is my exact voice, my personality, and my coaching, everything I would tell you if we were sitting together. Talk to me any time, day or night, and it feels like me, because it is me." },
     { q: "I don't have time.", a: "Your meals are planned for you and the check-ins keep it simple. This is one less thing to carry, not one more." },
     { q: "Do I have to drink green smoothies?", a: "No. The reset is a fast start. After it, you keep the food you love." },
     { q: "What makes this different?", a: "Everyone else hands you a plan and leaves. I stay, one on one, every single day." },
@@ -737,6 +762,11 @@ const CSS = `
 .ly-deal2-num{font-family:var(--head);font-weight:900;font-size:52px;line-height:1;color:var(--purple);letter-spacing:-.02em}
 .ly-deal2-per{font-family:var(--head);font-weight:800;font-size:17px;color:var(--ink-soft);white-space:nowrap;flex-basis:100%;text-align:center}
 
+/* clarity */
+.ly-clarity{display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
+.ly-clarity-media img{width:100%;border-radius:22px;box-shadow:var(--shadow)}
+.ly-clarity-quote{margin:22px 0 0;font-family:var(--head);font-style:italic;font-weight:700;font-size:clamp(21px,2.6vw,26px);line-height:1.32;color:var(--purple-deep);border-left:3px solid var(--purple);padding-left:20px}
+
 /* guarantee */
 .ly-guar-grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:center;justify-items:center;text-align:center}
 .ly-seal{width:150px;height:150px;flex:0 0 auto}
@@ -774,6 +804,7 @@ const CSS = `
 @media (min-width:860px){
   .ly-band{padding:92px 0}
   .ly-deal2-per{flex-basis:auto}
+  .ly-clarity{grid-template-columns:0.82fr 1.18fr;gap:54px}
   .ly-only-mob{display:none} .ly-only-desk{display:block}
   .ly-hero{padding:0}
   .ly-hero-stage{min-height:560px;padding:0}
