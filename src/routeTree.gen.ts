@@ -26,6 +26,7 @@ import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
 import { Route as CRouteImport } from './routes/c'
 import { Route as BRouteImport } from './routes/b'
+import { Route as AftersellRouteImport } from './routes/aftersell'
 import { Route as ARouteImport } from './routes/a'
 import { Route as R11labsDemoRouteImport } from './routes/11labs-demo'
 import { Route as IndexRouteImport } from './routes/index'
@@ -115,6 +116,11 @@ const BRoute = BRouteImport.update({
   path: '/b',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AftersellRoute = AftersellRouteImport.update({
+  id: '/aftersell',
+  path: '/aftersell',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ARoute = ARouteImport.update({
   id: '/a',
   path: '/a',
@@ -135,6 +141,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
+  '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
@@ -157,6 +164,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
+  '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
@@ -180,6 +188,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/11labs-demo': typeof R11labsDemoRoute
   '/a': typeof ARoute
+  '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
@@ -204,6 +213,7 @@ export interface FileRouteTypes {
     | '/'
     | '/11labs-demo'
     | '/a'
+    | '/aftersell'
     | '/b'
     | '/c'
     | '/challenge-v1'
@@ -226,6 +236,7 @@ export interface FileRouteTypes {
     | '/'
     | '/11labs-demo'
     | '/a'
+    | '/aftersell'
     | '/b'
     | '/c'
     | '/challenge-v1'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/'
     | '/11labs-demo'
     | '/a'
+    | '/aftersell'
     | '/b'
     | '/c'
     | '/challenge-v1'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   R11labsDemoRoute: typeof R11labsDemoRoute
   ARoute: typeof ARoute
+  AftersellRoute: typeof AftersellRoute
   BRoute: typeof BRoute
   CRoute: typeof CRoute
   ChallengeV1Route: typeof ChallengeV1Route
@@ -411,6 +424,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aftersell': {
+      id: '/aftersell'
+      path: '/aftersell'
+      fullPath: '/aftersell'
+      preLoaderRoute: typeof AftersellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/a': {
       id: '/a'
       path: '/a'
@@ -439,6 +459,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   R11labsDemoRoute: R11labsDemoRoute,
   ARoute: ARoute,
+  AftersellRoute: AftersellRoute,
   BRoute: BRoute,
   CRoute: CRoute,
   ChallengeV1Route: ChallengeV1Route,

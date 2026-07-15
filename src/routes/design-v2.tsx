@@ -148,7 +148,7 @@ function Header() {
 function Hero() {
   const bullets = [
     <>A plan built around the food you love.<span className="ly-bdesk"> No starving.</span></>,
-    <>Weekly 1-on-1 calls and daily texts from JJ.</>,
+    <>Two 1-on-1 calls a week and daily texts from JJ.</>,
   ];
   return (
     <section className="ly-band ly-hero">
@@ -300,7 +300,7 @@ function Method() {
   const shifts = [
     { Icon: Zap, title: "First, we reset your body.", text: "We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and drops up to 15 pounds. You feel it fast, and it gives you your running start." },
     { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: "No starving. No punishing gym. Real food you actually love, simple to make, planned around your life. The grocery lists alone can save you up to $75 a month." },
-    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. A text every morning. A call every week. That is me, and that is what finally makes it stick." },
+    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. A text every morning. Two calls every week. That is me, and that is what finally makes it stick." },
   ];
   return (
     <section className="ly-band ly-lav">
@@ -359,7 +359,7 @@ function RealResults() {
 // ── what you get ─────────────────────────────────────────────────────────────
 function WhatYouGet() {
   const items = [
-    { Icon: Phone, img: weeklyCallsImage, title: "Weekly one-on-one calls with JJ.", text: "Every week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
+    { Icon: Phone, img: weeklyCallsImage, title: "Two one-on-one calls with JJ every week.", text: "Twice a week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
     { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
     { Icon: Zap, img: resetPlanImage, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
     { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
@@ -394,7 +394,7 @@ function WhatYouGet() {
 
 // ── pricing / value stack ────────────────────────────────────────────────────
 const VALUE_STACK = [
-  { label: "Weekly one-on-one calls with JJ", value: 1200 },
+  { label: "Two one-on-one calls with JJ every week", value: 1200 },
   { label: "A text from JJ every morning", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },

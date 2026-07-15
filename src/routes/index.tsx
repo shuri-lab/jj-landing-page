@@ -1,17 +1,20 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import {
-  Check, Award, TrendingDown, ShieldCheck, Phone, MessageCircle, UtensilsCrossed,
-  UserCheck, Users, Zap, Sparkles,
-} from "lucide-react";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack } from "lucide-react";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import designV2Hero from "@/assets/landing/design-v2-hero.png";
+import mobileHeroImage from "@/assets/landing/mobile-hero-image.png";
+import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
+import weeklyCallsImage from "@/assets/landing/weekly-calls.png";
+import resetPlanImage from "@/assets/landing/reset-plan.png";
+import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
+import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
 import jjBefore1 from "@/assets/landing/jj-before-1.png";
 import jjBefore2 from "@/assets/landing/jj-before-2.png";
@@ -40,11 +43,7 @@ export const Route = createFileRoute("/")({
     meta: [
       { title: "Get Your Sexy Back After 40 — JJ Smith Personal Coaching" },
       { name: "robots", content: "noindex" },
-      {
-        name: "description",
-        content:
-          "Lose up to 30 pounds in 12 weeks with JJ Smith in your corner every day. A plan built for the body you have now, no starving, never alone.",
-      },
+      { name: "description", content: "Lose up to 15 pounds in your first 30 days with JJ Smith by your side every day. A plan built around the food you love, no starving, never alone." },
       { property: "og:title", content: "Get Your Sexy Back After 40 — JJ Smith" },
       { property: "og:description", content: "A plan built around the food you love, with JJ in your corner every single day." },
       { property: "og:type", content: "website" },
@@ -53,30 +52,63 @@ export const Route = createFileRoute("/")({
   component: Landing,
 });
 
-const PINK = "linear-gradient(180deg, #d62a7a 0%, #b81860 55%, #8c114a 100%)";
-const BLUSH = "#fdebeb";
-const BERRY = "#c41e6a";
-const PLUM = "#2a1020"; // dark plum for the pricing block
-
-// Ongoing-membership working numbers (TJ to confirm). Member count is a placeholder
-// pending a real figure from Meka / TJ.
 const MEMBER_PRICE = 47;
 const MEMBER_WAS = 67;
-const MEMBER_DAILY = "1.57";
-const MEMBERS_INSIDE = "10,000+";
-const GOLD = "#e3b84a";
+const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
 
+// ── highlight + icon helpers ─────────────────────────────────────────────────
+function Mark({ children }: { children: React.ReactNode }) { return <span className="ly-mark">{children}</span>; }
+function Hi({ children }: { children: React.ReactNode }) { return <span className="ly-hi">{children}</span>; }
+function Check({ className = "" }: { className?: string }) {
+  return <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden><path d="M4 12.5l5 5L20 6.5" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+function ShieldCheck({ className = "" }: { className?: string }) {
+  return <svg viewBox="0 0 24 24" className={className} fill="none" aria-hidden><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" /><path d="M9 12l2 2 4-4" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" /></svg>;
+}
+
+const scroll = () => scrollToOffer();
+
+function Cta({ label = "Start today", sub, href, full = false, onDark = false }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean }) {
+  const cls = `ly-cta ly-cta-lg ${full ? "ly-cta-full" : ""}`;
+  const inner = <>{label}<span className="ly-cta-arw" aria-hidden>→</span></>;
+  const btn = href
+    ? <a href={href} className={cls} data-cta="yes-jj">{inner}</a>
+    : <button className={cls} onClick={scroll} data-cta="yes-jj">{inner}</button>;
+  if (!sub) return btn;
+  return <div className="ly-cta-wrap">{btn}<p className={`ly-cta-sub ${onDark ? "on-dark" : ""}`}>{sub}</p></div>;
+}
+
+// ── page ─────────────────────────────────────────────────────────────────────
 function Landing() {
+  const [showSticky, setShowSticky] = useState(false);
+  const [offerVisible, setOfferVisible] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setShowSticky(window.scrollY > 700);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  useEffect(() => {
+    const el = document.getElementById("offer");
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setOfferVisible(e.isIntersecting), { threshold: 0, rootMargin: "0px 0px -20% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   return (
-    <div
-      className="overflow-x-hidden bg-background text-foreground"
-      style={{ fontFamily: "'DM Sans', sans-serif", ["--font-serif" as string]: "'Lora', Georgia, serif" }}
-    >
+    <div className="lyx">
+      <link rel="preconnect" href="https://fonts.googleapis.com" />
+      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" />
+      <style>{CSS}</style>
+
       <AnnouncementBar />
       <Header />
       <main>
         <Hero />
-        <JJStory />
+        <PressStrip />
+        <Story />
         <WhyNothing />
         <Method />
         <RealResults />
@@ -87,403 +119,215 @@ function Landing() {
         <Faq />
       </main>
       <Footer />
-      <StickyCta />
+      <StickyCta show={showSticky && !offerVisible} />
     </div>
   );
 }
 
-// ── Shared bits ──────────────────────────────────────────────────────────────
-function Berry({ children }: { children: React.ReactNode }) {
-  return <span style={{ color: BERRY }}>{children}</span>;
-}
-
-function Eyebrow({ children }: { children: React.ReactNode }) {
-  return <p className="text-[12px] font-bold uppercase tracking-[0.22em] mb-4" style={{ color: BERRY }}>{children}</p>;
-}
-
-// One string to update everywhere if the price moves off $1.57/day.
-const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
-
-function CtaButton({ label, sub, href, position = "unknown", className = "", onDark = false, subInside = false }: { label: string; sub?: React.ReactNode; href?: string; position?: string; className?: string; onDark?: boolean; subInside?: boolean }) {
-  const cls =
-    "block w-full rounded-2xl px-6 py-4 text-center text-[17px] sm:text-[19px] font-bold uppercase tracking-wide text-white shadow-[0_16px_34px_-12px_rgba(184,24,96,0.6)] transition-transform hover:-translate-y-0.5 active:scale-[0.99]";
-  const inner = (
-    <>
-      <span className="inline-flex items-center justify-center gap-2">{label} <span aria-hidden>→</span></span>
-      {subInside && sub && <span className="mt-1 block text-[12px] font-semibold normal-case tracking-normal" style={{ color: "#ffe1ef" }}>{sub}</span>}
-    </>
-  );
-  return (
-    <div className={`w-full ${className}`}>
-      {href ? (
-        <a href={href} className={cls} style={{ background: PINK }} data-cta="yes-jj" data-position={position}>{inner}</a>
-      ) : (
-        <button onClick={scrollToOffer} className={cls} style={{ background: PINK }} data-cta="yes-jj" data-position={position}>{inner}</button>
-      )}
-      {sub && !subInside && (
-        <p className={`mt-2.5 text-center text-[13.5px] font-semibold sm:text-[14px] ${onDark ? "text-white/70" : ""}`} style={onDark ? undefined : { color: "#8c114a" }}>{sub}</p>
-      )}
-    </div>
-  );
-}
-
-// ── Announcement bar ─────────────────────────────────────────────────────────
 function AnnouncementBar() {
   return (
-    <div className="relative w-full overflow-hidden text-white" style={{ background: "linear-gradient(90deg, #2a1020 0%, #8c2a52 50%, #2a1020 100%)" }}>
-      <div className="mx-auto flex max-w-[1000px] flex-wrap items-center justify-center gap-x-2.5 gap-y-1 px-5 py-2.5 text-center text-[12px] font-semibold sm:text-[13px]">
-        <span className="inline-flex items-center gap-1.5 font-bold uppercase tracking-[0.12em]">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#f39bc4]" />
-          🌸 14-Day Money Back Guarantee
-        </span>
-        <span className="text-white/30 max-sm:hidden">·</span>
-        <span className="text-white/85 max-sm:hidden">Join today with zero risk</span>
+    <div className="ly-announce">
+      <div className="ly-wrap ly-announce-in">
+        <span className="ly-announce-star" aria-hidden>✦</span>
+        <span>14-Day Money Back Guarantee</span>
+        <span className="ly-announce-x"><span className="ly-announce-dot" aria-hidden>·</span> Join today with zero risk</span>
       </div>
     </div>
   );
 }
 
-// ── Header ───────────────────────────────────────────────────────────────────
 function Header() {
   return (
-    <header style={{ backgroundColor: BLUSH }}>
-      <div className="mx-auto flex max-w-[1200px] items-center justify-center px-5 py-4 sm:justify-between">
-        <img src={jjSmithLogo} alt="JJ Smith" className="h-4 w-auto sm:h-7" width={132} height={25} />
-        <button
-          onClick={scrollToOffer}
-          data-cta="yes-jj"
-          data-position="nav"
-          className="hidden rounded-full border-2 border-[#d62a7a] px-5 py-2.5 text-[14px] font-bold uppercase tracking-wide text-[#b81860] transition-colors hover:bg-[#d62a7a] hover:text-white sm:inline-flex"
-        >
-          Join now →
-        </button>
+    <header className="ly-header">
+      <div className="ly-wrap ly-header-in">
+        <img src={jjSmithLogo} alt="JJ Smith" className="ly-logo" />
+        <button className="ly-header-cta" onClick={scroll}>Join now</button>
       </div>
     </header>
   );
 }
 
-// ── 1. Hero ──────────────────────────────────────────────────────────────────
+// ── hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
+  const bullets = [
+    <>A plan built around the food you love.<span className="ly-bdesk"> No starving.</span></>,
+    <>Two 1-on-1 calls a week and daily texts from JJ.</>,
+  ];
   return (
-    <section className="px-5 pt-4 pb-2 lg:pb-6" style={{ backgroundColor: BLUSH }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1200px]">
-        {/* Desktop */}
-        <div className="hidden lg:grid lg:grid-cols-[1.05fr_1fr] lg:items-center lg:gap-10">
-          <div className="lg:order-1">
-            <HeroHeadline />
-            <HeroBullets className="mt-6" />
-            <div className="mt-8 max-w-[440px]"><HeroPrimaryCta /></div>
-            <div className="mt-7"><HeroTrustBar /></div>
+    <section className="ly-band ly-hero">
+      <div className="ly-hero-stage">
+        <div className="ly-hero-bg" aria-hidden>
+          <img src={designV2Hero} alt="" fetchPriority="high" />
+          <span className="ly-hero-fade" />
+        </div>
+        <div className="ly-wrap ly-hero-inner">
+          <div className="ly-hero-copy">
+            <HeroTrust />
+            <h1 className="ly-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
+            <p className="ly-hero-sub">Lose up to <Hi>15 pounds</Hi> in your first 30 days, and <strong>keep going with JJ until it's all gone.</strong></p>
+            <ul className="ly-hero-bullets">
+              {bullets.map((b, i) => <li key={i}><span className="ly-hb-tick"><Check className="ly-ico-13" /></span> <span>{b}</span></li>)}
+            </ul>
           </div>
-          <div className="relative lg:order-2">
-            <img src={quizHeroDesktop} alt="JJ Smith, your personal coach" className="h-auto w-full" width={2000} height={2000} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent" aria-hidden />
+          <div className="ly-hero-action">
+            <Cta label="Start today" sub={CTA_SUB} full />
+          </div>
+          <div className="ly-hero-mob-img">
+            <img src={mobileHeroImage} alt="JJ Smith, your personal coach" loading="lazy" />
           </div>
         </div>
-
-        {/* Mobile */}
-        <div className="lg:hidden">
-          <div className="flex justify-center"><HeroTrustPill /></div>
-          <div className="mt-6"><HeroHeadline /></div>
-          <HeroBullets className="mt-6" textClass="text-[18px]" />
-          <div className="mt-7"><HeroPrimaryCta /></div>
-          <div className="relative mx-auto mt-8 w-full max-w-[230px]">
-            <img src={quizHeroMobile} alt="JJ Smith, your personal coach" className="block h-auto w-full" width={2000} height={2000} />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-[#fdebeb] via-[#fdebeb] to-transparent" aria-hidden />
-          </div>
-        </div>
-
-        <HeroTransformationsMarquee />
       </div>
+
+      <TransformationsMarquee />
     </section>
   );
 }
 
-function HeroHeadline() {
-  return (
-    <>
-      <h1
-        className="text-left text-[34px] leading-[1.08] tracking-[-0.015em] text-[#15102a] sm:text-[46px] lg:text-[54px]"
-        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
-      >
-        Get your <span style={{ color: BERRY }}>sexy back</span> after 40.
-      </h1>
-      <p
-        className="mt-2 text-left text-[20px] font-bold leading-[1.15] tracking-[-0.01em] text-[#15102a] sm:mt-3 sm:text-[26px] lg:text-[28px]"
-        style={{ fontFamily: "'Montserrat', sans-serif", fontWeight: 700 }}
-      >
-        Lose up to <span style={{ color: BERRY }}>15 pounds</span> in your first 30 days, and keep going with JJ until it's all gone.
-      </p>
-    </>
-  );
-}
-
-function HeroBullets({ className = "", textClass = "text-[18px] sm:text-[20px]" }: { className?: string; textClass?: string }) {
-  const points = ["A plan built around the food you love. No starving.", "Weekly 1-on-1 calls and daily texts from JJ."];
-  return (
-    <ul className={`max-w-[560px] space-y-3 ${className}`}>
-      {points.map((p, i) => (
-        <li key={i} className={`flex items-start gap-2.5 text-left font-medium leading-[1.4] text-ink ${textClass}`}>
-          <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white" style={{ background: PINK }}><Check className="h-4 w-4" strokeWidth={3} /></span>
-          <span>{p}</span>
-        </li>
-      ))}
-    </ul>
-  );
-}
-
-function HeroPrimaryCta() {
-  return <CtaButton label="Start today" sub={CTA_SUB} subInside position="hero-top" />;
-}
-
-function HeroTrustBar() {
+function HeroTrust() {
   const avatars = [t8, t10, t4];
-  const divider = <span className="h-3.5 w-px shrink-0 bg-[#e6b6cc]" aria-hidden />;
   return (
-    <div className="flex items-center gap-2.5 whitespace-nowrap text-[12px] font-semibold sm:gap-3.5 sm:text-[13px]" style={{ color: "#8c114a" }}>
-      <span className="inline-flex items-center gap-1.5"><Award className="h-4 w-4 shrink-0 text-[#c41e6a]" strokeWidth={2.2} /> NYT Bestseller</span>
-      {divider}
-      <span className="inline-flex items-center gap-1.5"><TrendingDown className="h-4 w-4 shrink-0 text-[#c41e6a]" strokeWidth={2.2} /> 5M+ lbs lost</span>
-      {divider}
-      <span className="inline-flex items-center gap-1.5">
-        <span className="flex -space-x-2 shrink-0">{avatars.map((src, i) => <img key={i} src={src} alt="" className="h-6 w-6 rounded-full object-cover object-top ring-2 ring-[#fdebeb]" loading="lazy" />)}</span>
+    <div className="ly-trust">
+      <span className="ly-trust-i ly-tdesk"><Award className="ly-ico-16" /> NYT Bestseller</span>
+      <span className="ly-trust-div ly-tdesk" aria-hidden />
+      <span className="ly-trust-i"><TrendingDown className="ly-ico-16" /> 5M+ lbs lost</span>
+      <span className="ly-trust-div" aria-hidden />
+      <span className="ly-trust-i">
+        <span className="ly-trust-av">{avatars.map((src, i) => <img key={i} src={src} alt="" loading="lazy" />)}</span>
         800K+ women helped
       </span>
     </div>
   );
 }
 
-function HeroTrustPill() {
-  const avatars = [t8, t10, t4];
-  return (
-    <div className="inline-flex items-center gap-2.5 rounded-full border border-[#f2cede] bg-white/85 px-4 py-2 text-[14px] font-semibold shadow-[0_10px_24px_-14px_rgba(184,24,96,0.5)]" style={{ color: "#8c114a" }}>
-      <span className="inline-flex shrink-0 items-center gap-1.5"><TrendingDown className="h-[18px] w-[18px] text-[#c41e6a]" strokeWidth={2.2} /> 5M+ lbs lost</span>
-      <span className="h-3.5 w-px shrink-0 bg-[#e6b6cc]" aria-hidden />
-      <span className="inline-flex shrink-0 items-center gap-1.5">
-        <span className="flex -space-x-1.5">{avatars.map((src, i) => <img key={i} src={src} alt="" className="h-5 w-5 rounded-full object-cover object-top ring-1 ring-white" loading="lazy" />)}</span>
-        800K+ women helped
-      </span>
-    </div>
-  );
-}
-
-// Before/after slider. NOTE: the lbs/weeks figures are placeholders pending real, verifiable results.
 const TRANSFORMATIONS = [
-  { src: t8, caption: "-19.8 lbs in 8 weeks" },
-  { src: t1, caption: "-16 lbs in 6 weeks" },
-  { src: t12, caption: "-22 lbs in 8 weeks" },
-  { src: t4, caption: "-12.2 lbs in 6 weeks" },
-  { src: t10, caption: "-11.6 lbs in 6 weeks" },
-  { src: t7, caption: "-24 lbs in 10 weeks" },
-  { src: t9, caption: "-15 lbs in 7 weeks" },
-  { src: t11, caption: "-18 lbs in 8 weeks" },
+  { src: t8, caption: "-19.8 lbs in 8 weeks" }, { src: t1, caption: "-16 lbs in 6 weeks" },
+  { src: t12, caption: "-22 lbs in 8 weeks" }, { src: t4, caption: "-12.2 lbs in 6 weeks" },
+  { src: t10, caption: "-11.6 lbs in 6 weeks" }, { src: t7, caption: "-24 lbs in 10 weeks" },
+  { src: t9, caption: "-15 lbs in 7 weeks" }, { src: t11, caption: "-18 lbs in 8 weeks" },
   { src: tTammi, caption: "-20 lbs in 8 weeks" },
 ];
 
-function HeroTransformationsMarquee() {
+function TransformationsMarquee() {
   const track = [...TRANSFORMATIONS, ...TRANSFORMATIONS];
   return (
-    <div className="relative -mx-5 mt-9 overflow-hidden lg:mt-12">
-      <div className="flex w-max animate-marquee-slow hover:[animation-play-state:paused]">
+    <div className="ly-tf">
+      <div className="ly-tf-track">
         {track.map((tr, i) => (
-          <figure key={i} className="relative ml-4 shrink-0 overflow-hidden rounded-2xl shadow-[0_18px_40px_-24px_rgba(140,17,74,0.5)]">
-            <img src={tr.src} alt="A woman's before and after transformation" loading="lazy" className="block h-[220px] w-[200px] object-cover object-top sm:h-[250px] sm:w-[230px]" />
-            <figcaption className="absolute inset-x-0 bottom-2.5 mx-auto w-fit rounded-lg bg-white/95 px-3 py-1 text-[13px] font-extrabold text-[#15102a] shadow-[0_4px_12px_-4px_rgba(0,0,0,0.45)] sm:text-[14px]">{tr.caption}</figcaption>
+          <figure className="ly-tf-card" key={i}>
+            <img src={tr.src} alt="A woman's before and after transformation" loading="lazy" />
+            <figcaption>{tr.caption}</figcaption>
           </figure>
         ))}
       </div>
-      <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-[#fdebeb] to-transparent" />
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-[#fdebeb] to-transparent" />
     </div>
   );
 }
 
-function PressLogos({ className = "", dark = false }: { className?: string; dark?: boolean }) {
-  const logos = [
-    { src: partnerNyTimes, alt: "The New York Times" }, { src: partnerDrOz, alt: "The Dr. Oz Show" },
-    { src: partnerSteveHarvey, alt: "Steve Harvey" }, { src: partnerTheView, alt: "The View" },
-    { src: partnerNbc, alt: "NBC" }, { src: partnerFox, alt: "FOX" },
-    { src: partnerEssence, alt: "Essence" }, { src: partnerWomansWorld, alt: "Woman's World" },
-  ];
-  const track = [...logos, ...logos];
-  return (
-    <div className={className}>
-      <p className={`text-center text-[11px] font-bold uppercase tracking-[0.22em] lg:text-left ${dark ? "text-white/50" : "text-ink-faint"}`}>As seen on</p>
-      {/* On the dark section, the logos keep their original colors on a white band. */}
-      <div className={`relative mt-4 overflow-hidden ${dark ? "rounded-2xl bg-white px-2 py-4" : ""}`}>
-        <div className="flex w-max items-center gap-10 animate-marquee sm:gap-12">
-          {track.map((l, i) => (
-            <img key={i} src={l.src} alt={l.alt} className="h-10 w-auto shrink-0 object-contain opacity-80 sm:h-12" loading="eager" />
-          ))}
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 left-0 w-10 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-white to-transparent" />
-      </div>
-    </div>
-  );
-}
+const ALL_LOGOS = [partnerNyTimes, partnerDrOz, partnerTheView, partnerSteveHarvey, partnerNbc, partnerFox, partnerEssence, partnerWomansWorld];
 
-// ── 2. JJ's story ────────────────────────────────────────────────────────────
-function JJStory() {
+function PressStrip({ dark = false, label = "As seen on" }: { dark?: boolean; label?: string }) {
   return (
-    <section className="px-5 py-16 lg:py-24" style={{ backgroundColor: PLUM }}>
-      <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
-        <div className="lg:grid lg:grid-cols-[0.85fr_1fr] lg:items-start lg:gap-12">
-          <div className="mb-8 min-w-0 lg:mb-0">
-            {/* Mobile/tablet: single before-and-after image + press logos. */}
-            <div className="lg:hidden">
-              <div className="mx-auto max-w-[440px] overflow-hidden rounded-3xl shadow-[0_30px_60px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-                <img src={jjOwnTransformation} alt="JJ Smith's own transformation" className="block h-auto w-full" width={2000} height={2000} loading="lazy" />
-              </div>
-              <PressLogos className="mt-8" dark />
-            </div>
-            {/* Desktop: four before-and-after images. */}
-            <div className="hidden grid-cols-2 gap-4 lg:grid">
-              {[jjBefore1, jjAfter1, jjBefore2, jjAfter2].map((src, i) => (
-                <div key={i} className="aspect-[4/5] overflow-hidden rounded-2xl shadow-[0_24px_50px_-24px_rgba(0,0,0,0.7)] ring-1 ring-white/10">
-                  <img src={src} alt="JJ Smith before and after" className="h-full w-full object-cover object-top" width={1200} height={1500} loading="lazy" />
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="min-w-0">
-            <h2 className="font-[Montserrat] font-bold text-[30px] leading-[1.14] tracking-[-0.02em] text-white sm:text-[40px] lg:text-[46px]">My body turned on me, too.</h2>
-            <div className="mt-6 space-y-5 text-[18px] leading-[1.7] text-white/80 sm:text-[19px]">
-              <p>In my late 30s, my body turned on me. The weight came out of nowhere, I was exhausted and foggy, and some mornings I did not recognize the woman in the mirror. So I did everything they tell you. Skipped meals. Cut carbs. Dragged myself to the gym. Nothing moved.</p>
-            </div>
-            <p className="mt-7 font-serif italic text-[24px] leading-snug sm:text-[30px]" style={{ color: "#f39bc4" }}>
-              "The advice was always eat less, move more. Nobody warned me my body had changed, and those old rules would never work for me again."
-            </p>
-            <div className="mt-6 space-y-5 text-[18px] leading-[1.7] text-white/80 sm:text-[19px]">
-              <p>So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. The weight came off, my energy came roaring back, and in my 40s I felt better than I had at 30.</p>
-              <p>The books I wrote became bestsellers, and hundreds of thousands of women have used them to get themselves back. But what I hold onto is simpler. It is the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. I got you.</p>
-            </div>
-            <div className="mt-8 max-w-[380px]"><CtaButton label="Start with me today" sub={CTA_SUB} position="story" onDark /></div>
-          </div>
+    <section className={`ly-press ${dark ? "is-dark" : ""}`}>
+      <p className="ly-press-lbl">{label}</p>
+      <div className="ly-marquee">
+        <div className="ly-marquee-track">
+          {[...ALL_LOGOS, ...ALL_LOGOS].map((l, i) => <img key={i} src={l} alt="" className="ly-marquee-img" loading="lazy" />)}
         </div>
       </div>
     </section>
   );
 }
 
-// ── 3. Why nothing has worked ────────────────────────────────────────────────
+// ── story (dark) ─────────────────────────────────────────────────────────────
+function Story() {
+  return (
+    <section className="ly-band ly-dark">
+      <div className="ly-wrap ly-story-grid">
+        <div className="ly-story-media">
+          <div className="ly-story-single">
+            <img src={jjOwnTransformation} alt="JJ Smith's own transformation" loading="lazy" />
+          </div>
+          <div className="ly-story-quad">
+            {[jjBefore1, jjAfter1, jjBefore2, jjAfter2].map((src, i) => (
+              <div className="ly-story-cell" key={i}><img src={src} alt="JJ Smith before and after" loading="lazy" /></div>
+            ))}
+          </div>
+        </div>
+        <div className="ly-story-copy">
+          <h2 className="ly-h2 on-dark">My body turned on me, <Hi>too.</Hi></h2>
+          <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. The weight came out of nowhere, I was exhausted and foggy, and some mornings I did not recognize the woman in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
+          <p className="ly-story-quote">"The advice was always eat less, move more. Nobody warned me my body had changed, and those old rules would never work for me again."</p>
+          <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy came roaring back,</strong> and in my 40s I felt better than I had at 30.</p>
+          <p className="ly-lead on-dark-soft ly-mt-s">The books I wrote became bestsellers, and hundreds of thousands of women have used them to get themselves back. But what I hold onto is simpler. It is the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
+          <div className="ly-mt-l"><Cta label="Start with me today" sub={CTA_SUB} onDark /></div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ── why nothing has worked ───────────────────────────────────────────────────
 function WhyNothing() {
   const cards = [
-    { title: "Eating less just backfires.", text: "You cut back and skip meals. Then you are starving by night, and it all comes back. Eating less was never the answer." },
-    { title: "You can't out-train your plate.", text: "All those workouts, and the scale barely moves. What you eat matters far more than what you burn, and grinding harder only leaves you hungrier." },
-    { title: "Every Monday is day one again.", text: "You start strong. By Wednesday, you are back. You have started over more times than you can count, and you are tired of it." },
-    { title: "On your own, it never lasts.", text: "You hold it together for a week or two, then life hits and nobody is there to catch you. Willpower runs out. Somebody in your corner does not." },
+    { Icon: UtensilsCrossed, title: "Eating less just backfires.", text: "You cut back and skip meals. Then you are starving by night, and it all comes back. Eating less was never the answer." },
+    { Icon: Dumbbell, title: "You can't out-train your plate.", text: "All those workouts, and the scale barely moves. What you eat matters far more than what you burn, and grinding harder only leaves you hungrier." },
+    { Icon: CalendarDays, title: "Every Monday is day one again.", text: "You start strong. By Wednesday, you are back. You have started over more times than you can count, and you are tired of it." },
+    { Icon: HeartCrack, title: "On your own, it never lasts.", text: "You hold it together for a week or two, then life hits and nobody is there to catch you. Willpower runs out. Somebody in your corner does not." },
   ];
   return (
-    <section className="px-5 py-16 bg-bg-soft lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
-        <div className="text-center">
-          <Eyebrow>Why nothing has worked</Eyebrow>
-          <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">Sound familiar?</h2>
-          <p className="mx-auto mt-5 max-w-[680px] text-[18px] leading-[1.6] text-ink-soft sm:text-[20px]">
-            You have tried everything. Here is why none of it stuck.
-          </p>
-        </div>
-        <div className="mt-10 grid gap-4 lg:mt-12 lg:grid-cols-2 lg:gap-6">
-          {cards.map((c) => (
-            <div key={c.title} className="rounded-2xl bg-white p-6 sm:p-7 shadow-[0_18px_40px_-30px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
-              <h3 className="font-sans text-[21px] font-bold tracking-tight text-ink sm:text-[23px]">{c.title}</h3>
-              <p className="mt-2 text-[17px] leading-[1.6] text-ink-soft sm:text-[18px]">{c.text}</p>
+    <section className="ly-band ly-white">
+      <div className="ly-wrap ly-center">
+        <span className="ly-eyebrow">Why nothing has worked</span>
+        <h2 className="ly-h2">Sound <Hi>familiar?</Hi></h2>
+        <p className="ly-lead ly-soft ly-mt ly-narrow">You have tried everything. Here is why none of it stuck.</p>
+        <div className="ly-rcards">
+          {cards.map(({ Icon, title, text }) => (
+            <div className="ly-rcard" key={title}>
+              <span className="ly-rcard-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
+              <h3 className="ly-h3">{title}</h3>
+              <p className="ly-rcard-t">{text}</p>
             </div>
           ))}
         </div>
-        <div className="mt-10 rounded-2xl p-7 text-center sm:p-9" style={{ backgroundColor: "#15102a" }}>
-          <p className="mx-auto max-w-[760px] font-[Montserrat] font-semibold text-[22px] leading-[1.35] tracking-[-0.01em] text-white sm:text-[26px]">
-            It was never your willpower. Your body changed after 40, and nobody gave you a plan built for it, or stayed with you through it. That is exactly what I do.
-          </p>
+        <div className="ly-callout">
+          <p><strong>It was never your willpower.</strong> Your body changed after 40, and nobody gave you a plan built for it, or stayed with you through it. That is exactly what I do.</p>
         </div>
-        <div className="mx-auto mt-10 max-w-[440px]"><CtaButton label="Start today" sub={CTA_SUB} position="why" /></div>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
       </div>
     </section>
   );
 }
 
-// ── 4. The method ────────────────────────────────────────────────────────────
+// ── method ───────────────────────────────────────────────────────────────────
 function Method() {
   const shifts = [
     { Icon: Zap, title: "First, we reset your body.", text: "We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and drops up to 15 pounds. You feel it fast, and it gives you your running start." },
     { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: "No starving. No punishing gym. Real food you actually love, simple to make, planned around your life. The grocery lists alone can save you up to $75 a month." },
-    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. A text every morning. A call every week. That is me, and that is what finally makes it stick." },
+    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. A text every morning. Two calls every week. That is me, and that is what finally makes it stick." },
   ];
   return (
-    <section className="px-5 py-16 lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
-        <div className="text-center">
-          <Eyebrow>The method</Eyebrow>
-          <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">The 3 shifts that change everything</h2>
-          <p className="mx-auto mt-5 max-w-[680px] text-[18px] leading-[1.6] text-ink-soft sm:text-[20px]">
-            The exact shifts that took me from stuck to feeling like myself again. Now they are yours.
-          </p>
-        </div>
-        <div className="mt-10 space-y-5 lg:mt-12 lg:grid lg:grid-cols-3 lg:gap-6 lg:space-y-0">
+    <section className="ly-band ly-lav">
+      <div className="ly-wrap ly-center">
+        <span className="ly-eyebrow">The method</span>
+        <h2 className="ly-h2">The <Hi>3 shifts</Hi> that change everything</h2>
+        <p className="ly-lead ly-soft ly-mt ly-narrow">The exact shifts that took me from stuck to feeling like myself again. Now they are yours.</p>
+        <div className="ly-method">
           {shifts.map(({ Icon, title, text }, i) => (
-            <div key={title} className="rounded-2xl bg-bg-soft p-7">
-              <div className="flex items-center gap-3">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl text-white" style={{ background: PINK }}><Icon className="h-6 w-6" strokeWidth={2} /></span>
-                <span className="text-[26px] font-bold" style={{ color: BERRY }}>{i + 1}</span>
-              </div>
-              <h3 className="mt-4 text-[20px] font-bold tracking-tight text-ink sm:text-[22px]">{title}</h3>
-              <p className="mt-2 text-[17px] leading-[1.6] text-ink-soft sm:text-[18px]">{text}</p>
+            <div className="ly-shift" key={title}>
+              <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
+              <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
+              <h3 className="ly-h3 ly-shift-h">{title}</h3>
+              <p className="ly-shift-t">{text}</p>
             </div>
           ))}
         </div>
-        <div className="mx-auto mt-10 max-w-[440px]"><CtaButton label="Start today" sub={CTA_SUB} position="method" /></div>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
       </div>
     </section>
   );
 }
 
-// ── 5. What you get ──────────────────────────────────────────────────────────
-function WhatYouGet() {
-  const items = [
-    { Icon: Phone, title: "Weekly one-on-one calls with JJ.", text: "Every week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
-    { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
-    { Icon: Zap, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
-    { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
-    { Icon: UserCheck, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
-    { Icon: Users, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
-  ];
-  return (
-    <section className="px-5 py-16 bg-bg-soft lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1050px]">
-        <div className="text-center">
-          <Eyebrow>What is inside</Eyebrow>
-          <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">Here is everything you get</h2>
-        </div>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
-          {items.map(({ Icon, img, title, text }) => (
-            <div key={title} className="overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-28px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
-              {img ? (
-                <div className="aspect-[16/9] overflow-hidden">
-                  <img src={img} alt={title} className="h-full w-full object-cover object-center" loading="lazy" />
-                </div>
-              ) : (
-                /* Image placeholder: gradient + icon until real product shots are ready. */
-                <div className="relative flex aspect-[16/9] items-center justify-center overflow-hidden" style={{ background: "linear-gradient(150deg, #fbe0ee 0%, #ef9cc4 55%, #c93f86 100%)" }}>
-                  <div className="absolute inset-0 opacity-[0.12]" style={{ backgroundImage: "radial-gradient(circle at 30% 25%, #fff 0, transparent 40%)" }} aria-hidden />
-                  <Icon className="relative h-11 w-11 text-white drop-shadow-[0_6px_16px_rgba(140,17,74,0.5)]" strokeWidth={1.7} />
-                </div>
-              )}
-              <div className="p-5">
-                <h3 className="text-[18px] font-bold tracking-tight text-ink sm:text-[19px]">{title}</h3>
-                <p className="mt-1.5 text-[15px] leading-[1.55] text-ink-soft sm:text-[16px]">{text}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-        <div className="mx-auto mt-10 max-w-[440px]"><CtaButton label="Start today" sub={CTA_SUB} position="what-you-get" /></div>
-      </div>
-    </section>
-  );
-}
-
-// ── 6. Real results ──────────────────────────────────────────────────────────
-// NOTE: result figures/quotes are directional placeholders pending verifiable data (Meka).
+// ── real results ─────────────────────────────────────────────────────────────
 function RealResults() {
   const results = [
     { src: t12, num: "Lost 74 lbs.", text: "Off 5 medications. Takes the stairs without stopping. \"I have myself back.\"" },
@@ -494,34 +338,68 @@ function RealResults() {
     { src: t1, num: "Lost 24 lbs.", text: "Not hiding in baggy clothes anymore. Smiling in pictures again." },
   ];
   return (
-    <section className="px-5 py-16 lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[1100px]">
-        <div className="text-center">
-          <Eyebrow>Real women, real results</Eyebrow>
-          <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">They got themselves back. So will you.</h2>
-        </div>
-        <div className="mt-10 grid gap-6 lg:mt-12 lg:grid-cols-3">
+    <section className="ly-band ly-white">
+      <div className="ly-wrap ly-center">
+        <span className="ly-eyebrow">Real women, real results</span>
+        <h2 className="ly-h2">They got themselves back. <Hi>So will you.</Hi></h2>
+        <div className="ly-results">
           {results.map((r, i) => (
-            <figure key={i} className="overflow-hidden rounded-2xl bg-white shadow-[0_20px_44px_-28px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0]">
-              <img src={r.src} alt="A woman's before and after transformation" className="block h-auto w-full object-cover" loading="lazy" />
-              <figcaption className="p-5">
-                <p className="text-[22px] font-extrabold tracking-tight text-ink">{r.num}</p>
-                <p className="mt-1.5 text-[16px] leading-[1.6] text-ink-soft">{r.text}</p>
+            <figure className="ly-result" key={i}>
+              <div className="ly-result-ph"><img src={r.src} alt="A woman's before and after transformation" loading="lazy" /></div>
+              <figcaption className="ly-result-in">
+                <p className="ly-result-num">{r.num}</p>
+                <p className="ly-result-t">{r.text}</p>
               </figcaption>
             </figure>
           ))}
         </div>
-        <div className="mx-auto mt-12 max-w-[440px]"><CtaButton label="Start today" sub={CTA_SUB} position="results" /></div>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
       </div>
     </section>
   );
 }
 
-// ── 7. Pricing and value stack ───────────────────────────────────────────────
+// ── what you get ─────────────────────────────────────────────────────────────
+function WhatYouGet() {
+  const items = [
+    { Icon: Phone, img: weeklyCallsImage, title: "Two one-on-one calls with JJ every week.", text: "Twice a week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
+    { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
+    { Icon: Zap, img: resetPlanImage, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
+    { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
+    { Icon: UserCheck, img: planForYourBodyImage, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
+    { Icon: Users, img: theCircleImage, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
+  ];
+  return (
+    <section className="ly-band ly-pink">
+      <div className="ly-wrap ly-center">
+        <span className="ly-eyebrow">What is inside</span>
+        <h2 className="ly-h2">Here is <Hi>everything you get</Hi></h2>
+        <div className="ly-get">
+          {items.map(({ Icon, img, title, text }) => (
+            <div className="ly-getcard" key={title}>
+              {img ? (
+                <div className="ly-getcard-img"><img src={img} alt={title} loading="lazy" /></div>
+              ) : (
+                <div className="ly-getcard-ph"><Icon className="ly-ico-28" strokeWidth={1.8} /></div>
+              )}
+              <div className="ly-getcard-in">
+                <h3 className="ly-getcard-h">{title}</h3>
+                <p className="ly-getcard-t">{text}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
+      </div>
+    </section>
+  );
+}
+
+// ── pricing / value stack ────────────────────────────────────────────────────
 const VALUE_STACK = [
-  { label: "Weekly one-on-one calls with JJ", value: 1200 },
+  { label: "Two one-on-one calls with JJ every week", value: 1200 },
   { label: "A text from JJ every morning", value: 400 },
-  { label: "Your reset", value: 97 },
+  { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },
   { label: "A plan made for your body and your life", value: 200 },
   { label: "Grocery lists that save you up to $75 a month", value: 150 },
@@ -533,116 +411,74 @@ function Pricing() {
   const { basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
   const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY", { durationWeeks: basic.durationWeeks }) : "/checkout";
-
   return (
-    <section id="offer" className="scroll-mt-16 px-5 py-16 lg:py-24" style={{ backgroundColor: PLUM }}>
-      <div className="mx-auto max-w-[600px]">
-        {/* Aspirational per-day header. */}
-        <div className="text-center">
-          <p className="text-[12px] font-bold uppercase tracking-[0.22em] text-white/50">Get started</p>
-          <h2 className="mt-4 font-[Montserrat] font-bold text-[30px] leading-[1.12] tracking-[-0.02em] text-white sm:text-[40px] lg:text-[44px]">
-            Your comeback starts at <span style={{ color: "#f39bc4" }}>${MEMBER_DAILY} a day</span>
-          </h2>
-          <p className="mx-auto mt-4 max-w-[500px] text-[17px] leading-[1.55] text-white/70 sm:text-[18px]">
-            Less than a coffee. A price with no excuse left in it, and a guarantee with no risk in it.
-          </p>
-        </div>
+    <section id="offer" className="ly-band ly-lav">
+      <div className="ly-wrap ly-center">
+        <span className="ly-eyebrow">Get started</span>
+        <h2 className="ly-h2">Your comeback starts at <Hi>$1.57 a day</Hi></h2>
+        <p className="ly-lead ly-soft ly-mt ly-narrow">Less than a coffee ☕. A price with no excuse left in it, and a guarantee with no risk in it.</p>
 
-        <div className="relative mt-9 rounded-[1.9rem] bg-white p-6 shadow-[0_40px_80px_-40px_rgba(0,0,0,0.6)] sm:p-8">
-          {/* Was / now price. */}
-          <div className="text-center">
-            <p className="text-[15px] font-semibold text-ink-faint">Was <span className="line-through">${MEMBER_WAS}</span> &nbsp; Now</p>
-            <div className="mt-1 flex items-end justify-center">
-              <span className="font-[Montserrat] text-[56px] font-extrabold leading-none tracking-[-0.02em] text-ink sm:text-[64px]">${MEMBER_PRICE}</span>
-              <span className="mb-1.5 ml-1 text-[20px] font-bold text-ink-soft">/month</span>
-            </div>
-            <p className="mt-2 text-[14px] font-semibold text-ink-soft">per month · billed monthly · cancel anytime</p>
-            <p className="mt-2 text-[16px] font-bold" style={{ color: BERRY }}>That's just ${MEMBER_DAILY} a day, less than a coffee.</p>
-          </div>
-
-          {/* Everything included. */}
-          <p className="mt-6 text-[13px] font-bold uppercase tracking-[0.14em]" style={{ color: BERRY }}>Everything included</p>
-          <ul className="mt-2 border-t border-dashed border-[#f0c9d8] pt-1">
+        <div className="ly-stack">
+          <p className="ly-stack-h">Everything included when you join:</p>
+          <ul className="ly-stack-list">
             {VALUE_STACK.map((it) => (
-              <li key={it.label} className="flex items-start justify-between gap-3 border-b border-dashed border-[#f0c9d8] py-2.5 text-[15px] text-ink last:border-b-0 sm:text-[16px]">
-                <span className="flex items-start gap-2"><Check className="mt-1 h-4 w-4 shrink-0 text-[#d62a7a]" strokeWidth={3} /> {it.label}</span>
-                <span className="shrink-0 text-ink-faint line-through">${it.value.toLocaleString()}</span>
+              <li key={it.label}>
+                <span className="ly-stack-name"><span className="ly-stack-tick"><Check className="ly-ico-12" /></span><span>{it.label}</span></span>
+                <span className="ly-stack-val">${it.value.toLocaleString()}</span>
               </li>
             ))}
           </ul>
-
-          <div className="mt-4 flex items-center justify-between rounded-2xl bg-bg-soft px-4 py-3">
-            <span className="text-[16px] font-bold text-ink">Total value</span>
-            <span className="text-[20px] font-bold text-ink-faint line-through">${totalValue.toLocaleString()}+</span>
+          <div className="ly-stack-total"><span>Total Value</span><span className="ly-stack-total-v">${totalValue.toLocaleString()}+</span></div>
+          <div className="ly-stack-deal">
+            <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
+            <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
+            <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
+            <div className="ly-mt-s"><Cta label="Join JJ today" href={monthlyHref} full /></div>
+            <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
           </div>
-          <p className="mt-3 text-center text-[16px] font-semibold text-[#1c7a3f]">You pay just <span className="text-ink">${MEMBER_PRICE}/month</span>. Cancel anytime.</p>
-
-          <div className="mt-6"><CtaButton label="Join JJ today" position="pricing" href={monthlyHref} /></div>
-          <p className="mt-3 flex items-center justify-center gap-1.5 text-center text-[13px] text-ink-soft">
-            <ShieldCheck className="h-4 w-4 text-[#c41e6a]" /> 14-day money-back guarantee · zero risk · cancel anytime
-          </p>
         </div>
       </div>
     </section>
   );
 }
 
-// ── 8. Guarantee ─────────────────────────────────────────────────────────────
+// ── guarantee ────────────────────────────────────────────────────────────────
 function Guarantee() {
   const pills = ["14-Day Money Back", "No Questions Asked", "Cancel Anytime", "Zero Risk"];
   return (
-    <section className="px-5 py-16 lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[820px]">
-        <div className="rounded-3xl bg-white p-8 text-center shadow-[0_30px_70px_-40px_rgba(140,17,74,0.5)] ring-1 ring-[#f3d3e0] sm:p-12">
-          {/* Circular 14-day badge with a soft glow. */}
-          <div className="relative mx-auto h-[100px] w-[100px]">
-            <div className="absolute inset-0 rounded-full opacity-45 blur-2xl" style={{ background: "radial-gradient(circle, #d9628f 0%, transparent 70%)" }} aria-hidden />
-            <div className="relative flex h-[100px] w-[100px] flex-col items-center justify-center rounded-full text-white shadow-[0_16px_34px_-12px_rgba(140,17,74,0.7)]" style={{ background: "linear-gradient(160deg, #b8386a 0%, #8c2a52 100%)" }}>
-              <span className="font-[Montserrat] text-[32px] font-extrabold leading-none">14</span>
-              <span className="mt-1 text-[9px] font-bold uppercase tracking-[0.16em]">Day</span>
-              <span className="text-[9px] font-bold uppercase tracking-[0.16em]">Guarantee</span>
-            </div>
+    <section className="ly-band ly-white">
+      <div className="ly-wrap ly-guar-grid">
+        <img src={guaranteeSeal} alt="100% money-back guarantee" className="ly-guar-img" loading="lazy" />
+        <div>
+          <span className="ly-eyebrow">My promise to you</span>
+          <h2 className="ly-h2">You Either See Results <Hi>or Your Money Back</Hi></h2>
+          <p className="ly-lead ly-mt">Give me 14 days. Do the work with me, and if you do not feel different, more hopeful, more in control, like this is finally the thing, just tell me. <strong>I send back every penny.</strong> No questions. No guilt. I only want your money if you are glad you are here. That is my promise to you.</p>
+          <p className="ly-guar-sig">JJ</p>
+          <div className="ly-pills">
+            {pills.map((p) => <span className="ly-pill" key={p}><Check className="ly-ico-12" /> {p}</span>)}
           </div>
-          <h2 className="mx-auto mt-6 max-w-[620px] font-[Montserrat] font-bold text-[30px] leading-[1.12] tracking-[-0.02em] text-ink sm:text-[42px]">
-            You Either See Results
-            <br />
-            <span className="italic" style={{ color: BERRY }}>or Your Money Back</span>
-          </h2>
-          <p className="mx-auto mt-5 max-w-[620px] text-[18px] leading-[1.7] text-ink-soft sm:text-[19px]">
-            Give me 14 days. Do the work with me, and if you do not feel different, more hopeful, more in control, like this is finally the thing, just tell me. I send back every penny. No questions. No guilt. I only want your money if you are glad you are here. That is my promise to you.
-          </p>
-          <p className="mt-4 text-[14px] font-semibold tracking-[0.16em] text-ink-faint">JJ</p>
-          <div className="mt-7 flex flex-wrap justify-center gap-2.5">
-            {pills.map((p) => (
-              <span key={p} className="inline-flex items-center gap-1.5 rounded-full border border-[#f0c9d8] bg-white px-3.5 py-1.5 text-[13px] font-semibold text-ink">
-                <Check className="h-3.5 w-3.5 text-[#1c7a3f]" strokeWidth={3} /> {p}
-              </span>
-            ))}
-          </div>
-          <div className="mx-auto mt-8 max-w-[400px]"><CtaButton label="Start today, risk-free" sub="Only $1.57/day · cancel anytime" position="guarantee" /></div>
+          <div className="ly-mt-l"><Cta label="Start today, risk-free" sub="Only $1.57/day · cancel anytime" /></div>
         </div>
       </div>
     </section>
   );
 }
 
-// ── 9. The close ─────────────────────────────────────────────────────────────
+// ── close (dark) ─────────────────────────────────────────────────────────────
 function Close() {
   return (
-    <section className="px-5 py-20 text-center lg:py-28" style={{ backgroundColor: "#15102a" }}>
-      <div className="mx-auto max-w-[760px]">
-        <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.08] tracking-[-0.02em] text-white sm:text-[44px] lg:text-[52px]">The months ahead are coming either way.</h2>
-        <div className="mx-auto mt-6 max-w-[600px] space-y-4 text-[18px] leading-[1.7] text-white/85 sm:text-[20px]">
-          <p>You can spend them like the last ones. Or you can spend them with me beside you, and come out the other side feeling like yourself again.</p>
-          <p>You do not need another book. You need somebody in your corner who stays. Let that be me.</p>
-        </div>
-        <div className="mx-auto mt-9 max-w-[440px]"><CtaButton label="Yes, I'm in" sub={CTA_SUB} position="close" onDark /></div>
+    <section className="ly-band ly-dark ly-center">
+      <div className="ly-wrap ly-narrow">
+        <h2 className="ly-h2 on-dark">The months ahead are <Hi>coming either way.</Hi></h2>
+        <p className="ly-lead on-dark-soft ly-mt">You can spend them like the last ones. Or you can spend them with me beside you, and come out the other side <strong className="on-dark">feeling like yourself again.</strong></p>
+        <p className="ly-lead on-dark-soft ly-mt-s">You do not need another book. You need somebody in your corner who stays. Let that be me.</p>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Yes, I'm in" sub={CTA_SUB} onDark /></div>
       </div>
     </section>
   );
 }
 
-// ── 10. FAQ ──────────────────────────────────────────────────────────────────
+// ── faq ──────────────────────────────────────────────────────────────────────
 function Faq() {
   const items = [
     { q: "I'm in my 50s and nothing has worked.", a: "That is exactly who this is for. The plan is built for your season, and this time you are not on your own." },
@@ -655,71 +491,290 @@ function Faq() {
     { q: "What if I change my mind?", a: "The 14-day promise has you covered. Money back, no reason needed." },
   ];
   return (
-    <section className="px-5 py-16 bg-bg-soft lg:py-24">
-      <div className="mx-auto max-w-[640px] lg:max-w-[860px]">
-        <div className="text-center">
-          <Eyebrow>Questions women ask me</Eyebrow>
-          <h2 className="font-[Montserrat] font-bold text-[32px] leading-[1.1] tracking-[-0.02em] text-ink sm:text-[42px] lg:text-[48px]">Let me answer <Berry>what's on your mind</Berry>.</h2>
-        </div>
-        <Accordion type="single" collapsible defaultValue="q-0" className="mt-8 w-full">
+    <section className="ly-band ly-cream ly-center">
+      <div className="ly-wrap">
+        <span className="ly-eyebrow">Questions women ask me</span>
+        <h2 className="ly-h2">Let me answer <Hi>what's on your mind</Hi>.</h2>
+        <div className="ly-faq">
           {items.map((it, i) => (
-            <AccordionItem key={i} value={`q-${i}`} className="border-line">
-              <AccordionTrigger className="py-5 text-left text-[18px] font-semibold text-ink hover:no-underline sm:text-[19px]">{it.q}</AccordionTrigger>
-              <AccordionContent className="text-[17px] leading-[1.75] text-ink-soft">{it.a}</AccordionContent>
-            </AccordionItem>
+            <details key={i} className="ly-faq-item">
+              <summary>{it.q}<span className="ly-faq-mark" aria-hidden /></summary>
+              <div className="ly-faq-a">{it.a}</div>
+            </details>
           ))}
-        </Accordion>
-        <div className="mx-auto mt-10 max-w-[440px]"><CtaButton label="Start today" sub={CTA_SUB} position="faq" /></div>
+        </div>
+        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
       </div>
     </section>
   );
 }
 
 function Footer() {
-  return (
-    <footer className="border-t border-line px-5 py-10">
-      <div className="mx-auto flex max-w-[1000px] flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
-        <img src={jjSmithLogo} alt="JJ Smith" className="h-5 w-auto" />
-        <p className="text-[13px] text-ink-faint">
-          © {new Date().getFullYear()} JJ Smith. All rights reserved. · <a href="#" className="underline">Privacy</a> · <a href="#" className="underline">Terms</a>
-        </p>
-      </div>
-    </footer>
-  );
+  return <footer className="ly-footer">© {new Date().getFullYear()} JJ Smith. All rights reserved. · <a href="#">Privacy</a> · <a href="#">Terms</a></footer>;
 }
 
-// ── Sticky CTA ───────────────────────────────────────────────────────────────
-function StickyCta() {
-  const [show, setShow] = useState(false);
-  const [offerVisible, setOfferVisible] = useState(false);
-  useEffect(() => {
-    const onScroll = () => setShow(window.scrollY > 600);
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-  useEffect(() => {
-    const el = document.getElementById("offer");
-    if (!el) return;
-    const io = new IntersectionObserver(([e]) => setOfferVisible(e.isIntersecting), { threshold: 0, rootMargin: "0px 0px -20% 0px" });
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-  const visible = show && !offerVisible;
+function StickyCta({ show }: { show: boolean }) {
   return (
-    <div
-      aria-hidden={!visible}
-      className={`fixed inset-x-0 bottom-0 z-40 border-t border-line bg-background shadow-[0_-8px_24px_-8px_rgba(0,0,0,0.18)] transition-opacity duration-200 sm:hidden ${visible ? "opacity-100" : "pointer-events-none opacity-0"}`}
-      style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom, 0px))" }}
-    >
-      <div className="flex items-center gap-3 px-4 pt-3">
-        <div className="flex-1 text-[14px] font-semibold leading-tight text-ink">
-          <span style={{ color: BERRY }}>${MEMBER_DAILY} a day</span> · cancel anytime
-        </div>
-        <button onClick={scrollToOffer} data-cta="yes-jj" data-position="sticky" className="rounded-xl px-5 py-3 text-[14px] font-bold uppercase tracking-wide text-white shadow-[0_10px_20px_-8px_rgba(184,24,96,0.6)]" style={{ background: PINK }}>
-          Start today →
-        </button>
+    <div className={`ly-sticky ${show ? "is-show" : ""}`} aria-hidden={!show}>
+      <div className="ly-sticky-in">
+        <span className="ly-sticky-lbl"><strong>$1.57 a day</strong> · cancel anytime<span className="ly-sticky-more"> · 14-day money-back guarantee</span></span>
+        <button className="ly-cta ly-sticky-btn" onClick={scroll}>Start today<span className="ly-cta-arw" aria-hidden>→</span></button>
       </div>
     </div>
   );
 }
+
+// ── styles (look-younger design language) ────────────────────────────────────
+const CSS = `
+.lyx{
+  --white:#FFFFFF; --cream:#FBF6F0; --lav:#F3ECFB; --pink:#FCEAF4; --dark-2:#2B1940;
+  --ink:#2A2036; --ink-soft:#6C6180; --hair:#EBE1F5;
+  --purple:#7C3AA6; --purple-deep:#5B2A80; --purple-soft:#F0E6FA;
+  --pink-accent:#C0468C; --mark:#F7D6EA; --gold:#E0A94F;
+  --grad:linear-gradient(135deg,#7E36A6 0%,#5B2A80 100%);
+  --shadow:0 34px 64px -36px rgba(74,35,90,.44);
+  --shadow-sm:0 18px 38px -26px rgba(74,35,90,.4);
+  --sans:'DM Sans',-apple-system,'Segoe UI',sans-serif;
+  --head:'Montserrat',var(--sans);
+  font-family:var(--sans); color:var(--ink); background:var(--white);
+  font-size:19px; line-height:1.6; font-weight:500; -webkit-font-smoothing:antialiased;
+  overflow-x:hidden; width:100%; max-width:100vw;
+}
+.lyx *{box-sizing:border-box}
+.lyx img{max-width:100%;display:block}
+.lyx button{font-family:inherit;cursor:pointer}
+.lyx a{color:inherit;text-decoration:none}
+.lyx em{font-style:normal;color:var(--purple);font-weight:800}
+.lyx strong{font-weight:700;color:var(--ink)}
+.lyx s{color:var(--ink-soft);text-decoration:line-through;font-weight:600}
+.lyx :focus-visible{outline:3px solid var(--purple);outline-offset:3px}
+.ly-mark{background:linear-gradient(180deg,transparent 58%, var(--mark) 58%);padding:0 .06em;border-radius:2px;color:var(--purple-deep)}
+.ly-hi{color:var(--purple)}
+.on-dark{color:#fff!important}
+.on-dark-soft{color:#DEC9EE}
+.ly-dark .ly-hi{color:#EEBBE0}
+.ly-dark .ly-mark{background:linear-gradient(180deg,transparent 58%,rgba(238,187,224,.28) 58%);color:#F6DCEF}
+
+.ly-wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+.lyx .ly-narrow{max-width:740px;margin-left:auto;margin-right:auto}
+.ly-band{padding:56px 0}
+.ly-center{text-align:center}
+.ly-white{background:var(--white)} .ly-lav{background:var(--lav)} .ly-pink{background:var(--pink)} .ly-cream{background:var(--cream)}
+.ly-dark{background:radial-gradient(130% 120% at 50% 0%,#4A2A66 0%,#2B1940 62%);color:#F3EAFB}
+.lyx .ly-mt{margin-top:20px}.lyx .ly-mt-s{margin-top:12px}.lyx .ly-mt-l{margin-top:32px}
+.ly-soft{color:var(--ink-soft)}
+.ly-cta-center{display:flex;justify-content:center}
+.ly-only-mob{display:block} .ly-only-desk{display:none}
+
+.ly-eyebrow{display:inline-block;font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px}
+.ly-h1{font-family:var(--head);font-weight:900;font-size:clamp(37px,7vw,57px);line-height:1.06;letter-spacing:-.02em;margin:0}
+.ly-h2{font-family:var(--head);font-weight:800;font-size:clamp(31px,5.4vw,48px);line-height:1.08;letter-spacing:-.02em;margin:0}
+.ly-h3{font-family:var(--head);font-weight:800;font-size:22px;line-height:1.2;letter-spacing:-.01em;margin:0}
+.ly-lead{font-size:clamp(19px,2.2vw,22px);line-height:1.55;font-weight:500;margin:0}
+
+.ly-ico-12{width:14px;height:14px;flex:0 0 auto}.ly-ico-13{width:15px;height:15px;flex:0 0 auto}.ly-ico-14{width:16px;height:16px;flex:0 0 auto}
+.ly-ico-16{width:18px;height:18px;flex:0 0 auto}.ly-ico-24{width:24px;height:24px}.ly-ico-28{width:30px;height:30px}
+
+/* CTA */
+.ly-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:18px;border:0;padding:17px 30px;border-radius:14px;box-shadow:0 16px 34px -12px rgba(91,42,128,.5);transition:transform .15s,box-shadow .15s,filter .15s;line-height:1.15}
+.lyx a.ly-cta{color:#fff}
+.ly-cta:hover{transform:translateY(-2px);box-shadow:0 22px 44px -14px rgba(91,42,128,.55);filter:brightness(1.05)}
+.ly-cta-lg{font-size:clamp(18px,2vw,21px);padding:19px 30px}
+.ly-cta-full{width:100%;padding-left:16px;padding-right:16px}
+.ly-cta-arw{font-size:1.2em;line-height:1;transform:translateY(-1px)}
+.ly-cta-wrap{width:100%}
+.ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft)}
+.ly-cta-sub.on-dark{color:#D8C4E8}
+
+/* announcement */
+.ly-announce{background:linear-gradient(90deg,#5B2A80 0%,#7E36A6 48%,#C0468C 100%);color:#fff}
+.ly-announce-in{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;padding:6px 18px;font-family:var(--head);font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center}
+.ly-announce-star{color:#F6C9E4} .ly-announce-dot{opacity:.55}
+
+/* header */
+.ly-header{background:var(--white);border-bottom:1px solid var(--hair)}
+.ly-header-in{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.ly-logo{height:24px;width:auto}
+.ly-header-cta{background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:14px;border:0;border-radius:12px;padding:11px 20px;box-shadow:0 10px 22px -10px rgba(91,42,128,.5)}
+@media (max-width:560px){ .ly-header-cta{display:none} .ly-header-in{justify-content:center} }
+
+/* hero */
+.ly-hero{background:linear-gradient(180deg,#FAF1FB 0%,#F4EBFB 100%);padding:0}
+.ly-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:30px 0 42px}
+.ly-hero-bg{display:none;position:absolute;inset:0;z-index:0}
+.ly-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
+.ly-hero-mob-img{margin:26px auto 0;max-width:400px;aspect-ratio:1/1;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.ly-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
+.ly-announce-x{display:inline-flex;align-items:center;gap:9px}
+@media (max-width:600px){ .ly-announce-x{display:none} }
+.ly-hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 54%,rgba(246,238,251,.9) 74%,rgba(246,238,251,.62) 100%),linear-gradient(180deg,rgba(246,238,251,.15) 0%,rgba(246,238,251,.68) 58%,#F4EBFB 100%)}
+.ly-hero-inner{position:relative;z-index:1;width:100%}
+.ly-hero-copy{max-width:560px}
+.ly-hero-sub{margin-top:18px;max-width:520px;font-size:clamp(18px,2.2vw,21px);line-height:1.5;font-weight:600;color:var(--ink)}
+.ly-hero-bullets{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:11px;max-width:520px}
+.ly-hero-bullets li{display:flex;align-items:flex-start;gap:11px;font-size:17px;font-weight:600}
+.ly-hb-tick{width:24px;height:24px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ly-hero-action{max-width:480px;margin-top:24px}
+
+/* hero trust (eyebrow / mobile pill) */
+.ly-trust .ly-tdesk{display:none} .ly-bdesk{display:none}
+.ly-trust{display:inline-flex;align-items:center;flex-wrap:nowrap;gap:5px 8px;margin:0 0 18px;max-width:100%;font-size:12.5px;font-weight:700;color:var(--purple-deep);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:7px 14px;box-shadow:var(--shadow-sm)}
+.ly-trust-i{display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+.ly-trust-i svg{color:var(--purple);width:14px;height:14px}
+.ly-trust-div{width:1px;height:12px;background:var(--hair);flex:0 0 auto}
+.ly-trust-av{display:inline-flex}
+.ly-trust-av img{width:18px;height:18px;border-radius:999px;object-fit:cover;object-position:top;margin-left:-6px;border:2px solid #fff}
+.ly-trust-av img:first-child{margin-left:0}
+
+/* transformations marquee */
+.ly-tf{padding:24px 0 4px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.ly-tf-track{display:flex;gap:16px;width:max-content;animation:ly-scroll 60s linear infinite}
+.ly-tf:hover .ly-tf-track{animation-play-state:paused}
+.ly-tf-card{position:relative;flex:0 0 auto;width:180px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);margin:0}
+.ly-tf-card img{width:100%;height:220px;object-fit:cover;object-position:top}
+.ly-tf-card figcaption{position:absolute;left:0;right:0;bottom:10px;margin:0 auto;width:fit-content;background:rgba(255,255,255,.96);border-radius:999px;padding:5px 12px;font-family:var(--head);font-size:13px;font-weight:800;color:var(--purple-deep);box-shadow:0 6px 14px -6px rgba(0,0,0,.3)}
+@keyframes ly-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* press */
+.ly-press{padding:30px 0;background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.ly-press.is-dark{background:transparent;border:0;padding:0}
+.ly-press-lbl{text-align:center;font-family:var(--head);font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 16px}
+.ly-press.is-dark .ly-press-lbl{color:#C7B2DE}
+.ly-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
+.ly-marquee-track{display:flex;align-items:center;gap:50px;width:max-content;animation:ly-scroll 32s linear infinite}
+.ly-marquee-img{height:46px;width:auto;object-fit:contain;opacity:1;filter:none}
+.ly-press.is-dark .ly-marquee{background:#fff;border-radius:14px;padding:14px 0}
+.ly-press.is-dark .ly-marquee-img{opacity:.8;filter:grayscale(1)}
+
+/* story (dark) */
+.ly-story-grid{display:grid;grid-template-columns:1fr;gap:30px}
+.ly-story-single{max-width:440px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.1)}
+.ly-story-single img{width:100%;height:auto}
+.ly-story-quad{display:none}
+.ly-story-press{margin-top:22px}
+.ly-story-quote{margin:22px 0 0;font-family:var(--head);font-style:italic;font-weight:700;font-size:clamp(21px,3vw,27px);line-height:1.3;color:#EBBEDD}
+.ly-story-quad img{width:100%;height:100%;object-fit:cover;object-position:top}
+
+/* why nothing (reason cards + callout) */
+.ly-rcards{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
+.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;padding:24px;box-shadow:var(--shadow-sm)}
+.ly-rcard-ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:15px;background:var(--purple-soft);color:var(--purple);margin-bottom:16px}
+.ly-rcard-ico svg{width:26px;height:26px}
+.ly-rcard-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-callout{margin-top:26px;background:var(--grad);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow)}
+.ly-callout p{margin:0;font-family:var(--head);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.35;color:#fff;max-width:780px;margin:0 auto}
+.ly-callout strong{color:#F6C9E4}
+
+/* method */
+.ly-method{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
+.ly-shift{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-sm)}
+.ly-shift::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
+.ly-shift-n{position:absolute;top:8px;right:20px;font-family:var(--head);font-weight:900;font-size:104px;line-height:1;color:var(--purple-soft);z-index:0;pointer-events:none;user-select:none}
+.ly-shift-ico{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:17px;background:var(--grad);color:#fff;box-shadow:0 16px 28px -14px rgba(91,42,128,.7)}
+.ly-shift-h{position:relative;z-index:1;margin-top:18px}
+.ly-shift-t{position:relative;z-index:1;margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+
+/* results */
+.ly-results{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
+.ly-result{background:var(--white);border:1px solid var(--hair);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);margin:0}
+.ly-result-ph img{width:100%;height:auto;object-fit:cover}
+.ly-result-in{padding:20px 22px 24px}
+.ly-result-num{font-family:var(--head);font-weight:900;font-size:24px;color:var(--purple);margin:0}
+.ly-result-t{margin:8px 0 0;font-size:16px;line-height:1.55;color:var(--ink-soft)}
+
+/* what you get */
+.ly-get{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
+.ly-getcard{background:var(--white);border:1px solid var(--hair);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.ly-getcard-img{aspect-ratio:16/9;overflow:hidden}
+.ly-getcard-img img{width:100%;height:100%;object-fit:cover;object-position:center}
+.ly-getcard-ph{aspect-ratio:16/9;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,#EFE0FA,#FBE0EE);color:#fff}
+.ly-getcard-ph svg{color:var(--purple);opacity:.9}
+.ly-getcard-in{padding:20px 22px 24px}
+.ly-getcard-h{font-family:var(--head);font-weight:800;font-size:19px;margin:0}
+.ly-getcard-t{margin:8px 0 0;font-size:16px;line-height:1.55;color:var(--ink-soft)}
+
+/* value stack */
+.ly-stack{background:#fff;border:1px solid var(--hair);border-radius:24px;box-shadow:var(--shadow);padding:24px;max-width:560px;margin:34px auto 0;text-align:left}
+.ly-stack-h{font-family:var(--head);font-weight:800;font-size:17px;margin:0 0 6px;color:var(--ink)}
+.ly-stack-list{list-style:none;padding:0;margin:0}
+.ly-stack-list li{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--hair);font-size:15.5px;font-weight:500}
+.ly-stack-name{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.ly-stack-tick{width:22px;height:22px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ly-stack-val{flex:0 0 auto;color:var(--ink-soft);text-decoration:line-through;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-total{display:flex;justify-content:space-between;align-items:center;background:var(--lav);border-radius:12px;padding:13px 16px;margin-top:14px;font-family:var(--head);font-weight:800;font-size:16px}
+.ly-stack-total-v{color:var(--ink-soft);text-decoration:line-through;font-size:20px}
+.ly-stack-deal{position:relative;margin-top:18px;border:2px solid var(--purple);border-radius:16px;background:linear-gradient(165deg,#FFF,#F7ECFB);padding:26px 18px 20px;text-align:center}
+.ly-stack-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;padding:8px 20px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 22px -10px rgba(91,42,128,.6)}
+.ly-stack-badge s{color:#fff;text-decoration:line-through;opacity:.75}
+.ly-stack-now{display:flex;align-items:baseline;justify-content:center;gap:6px;margin:2px 0}
+.ly-stack-num{font-family:var(--head);font-weight:900;font-size:74px;line-height:1;color:var(--purple);letter-spacing:-.03em}
+.ly-stack-per{font-family:var(--head);font-weight:800;font-size:22px;color:var(--ink-soft)}
+.ly-stack-note{font-size:13.5px;font-weight:700;color:var(--ink-soft);margin:0}
+.ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:14px 0 0;flex-wrap:wrap}
+.ly-stack-trust svg{color:var(--purple)}
+
+/* guarantee */
+.ly-guar-grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:center;justify-items:center;text-align:center}
+.ly-seal{width:150px;height:150px;flex:0 0 auto}
+.ly-guar-img{width:172px;height:auto;flex:0 0 auto}
+.ly-seal-num{font-family:var(--head);font-weight:800;font-size:38px;fill:var(--purple)}
+.ly-seal-lbl{font-family:var(--head);font-weight:800;font-size:11px;letter-spacing:.1em;fill:var(--purple)}
+.ly-guar-sig{font-family:var(--head);font-weight:800;letter-spacing:.16em;color:var(--ink-soft);margin:14px 0 0;font-size:15px}
+.ly-pills{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;justify-content:center}
+.ly-pill{display:inline-flex;align-items:center;gap:7px;background:var(--lav);border:1px solid var(--hair);border-radius:999px;padding:9px 15px;font-size:14px;font-weight:700}
+.ly-pill svg{color:var(--purple)}
+
+/* faq */
+.ly-faq{max-width:760px;margin:34px auto 0;text-align:left}
+.ly-faq-item{background:#fff;border:1px solid var(--hair);border-radius:16px;box-shadow:var(--shadow-sm);margin-bottom:13px;overflow:hidden}
+.ly-faq-item summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 22px;font-family:var(--head);font-weight:700;font-size:18px}
+.ly-faq-item summary::-webkit-details-marker{display:none}
+.ly-faq-mark{position:relative;width:18px;height:18px;flex:0 0 auto}
+.ly-faq-mark::before,.ly-faq-mark::after{content:"";position:absolute;background:var(--purple);border-radius:2px}
+.ly-faq-mark::before{left:0;top:8px;width:18px;height:2.4px}
+.ly-faq-mark::after{left:8px;top:0;width:2.4px;height:18px;transition:opacity .18s}
+.ly-faq-item[open] .ly-faq-mark::after{opacity:0}
+.ly-faq-a{padding:0 22px 22px;font-size:17px;line-height:1.65;color:var(--ink-soft);font-weight:500}
+
+/* footer / sticky */
+.ly-footer{padding:28px 20px;text-align:center;color:var(--ink-soft);font-size:14px;background:var(--white);border-top:1px solid var(--hair)}
+.ly-footer a{text-decoration:underline}
+.ly-sticky{position:fixed;left:0;right:0;bottom:0;z-index:50;background:rgba(255,255,255,.96);backdrop-filter:blur(10px);border-top:1px solid var(--hair);box-shadow:0 -10px 30px -12px rgba(74,35,90,.2);transform:translateY(130%);transition:transform .28s cubic-bezier(.32,.72,0,1);padding:11px 16px calc(11px + env(safe-area-inset-bottom,0px))}
+.ly-sticky.is-show{transform:translateY(0)}
+.ly-sticky-in{display:flex;align-items:center;gap:14px;max-width:1120px;margin:0 auto}
+.ly-sticky-lbl{flex:0 0 auto;font-weight:600;font-size:14px}
+.ly-sticky-lbl strong{color:var(--purple);font-weight:800}
+.ly-sticky-more{display:none}
+.ly-sticky-btn{flex:1;font-size:15px;padding:14px 16px;min-height:52px;border-radius:12px}
+
+@media (min-width:860px){
+  .ly-band{padding:92px 0}
+  .ly-only-mob{display:none} .ly-only-desk{display:block}
+  .ly-hero{padding:0}
+  .ly-hero-stage{min-height:560px;padding:0}
+  .ly-hero-mob-img{display:none}
+  .ly-hero-bg{display:block;left:auto;right:0;width:56%}
+  .ly-hero-bg img{object-position:center 42%}
+  .ly-hero-fade{background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 10%,rgba(246,238,251,.5) 26%,transparent 46%)}
+  .ly-hero-copy{max-width:500px}
+  .ly-hero-action{max-width:480px;margin-top:28px}
+  .ly-trust{display:flex;background:transparent;border:0;padding:0;box-shadow:none;font-size:13px}
+  .ly-trust .ly-tdesk{display:inline-flex}
+  .ly-bdesk{display:inline}
+  .ly-tf{padding-top:44px}
+  .ly-marquee-img{height:58px}
+  .ly-marquee-track{gap:72px}
+  .ly-rcards{grid-template-columns:1fr 1fr;gap:20px}
+  .ly-method{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-results{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-get{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-story-grid{grid-template-columns:.85fr 1fr;gap:48px;align-items:start}
+  .ly-story-single{display:none}
+  .ly-story-quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .ly-story-cell{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
+  .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
+  .ly-sticky{display:none}
+  .lyx .ly-nowrap{white-space:nowrap}
+}
+@media (prefers-reduced-motion:reduce){ .lyx *,.ly-tf-track,.ly-marquee-track{transition:none!important;animation:none!important} }
+`;
