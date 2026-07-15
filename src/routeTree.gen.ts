@@ -21,6 +21,7 @@ import { Route as LookYoungerImprovedOb2RouteImport } from './routes/look-younge
 import { Route as LookYoungerImprovedOb1RouteImport } from './routes/look-younger-improved-ob-1'
 import { Route as LookYoungerImprovedRouteImport } from './routes/look-younger-improved'
 import { Route as LookYoungerRouteImport } from './routes/look-younger'
+import { Route as DesignV2RouteImport } from './routes/design-v2'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
 import { Route as CRouteImport } from './routes/c'
@@ -89,6 +90,11 @@ const LookYoungerRoute = LookYoungerRouteImport.update({
   path: '/look-younger',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DesignV2Route = DesignV2RouteImport.update({
+  id: '/design-v2',
+  path: '/design-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -133,6 +139,7 @@ export interface FileRoutesByFullPath {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/design-v2': typeof DesignV2Route
   '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
@@ -154,6 +161,7 @@ export interface FileRoutesByTo {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/design-v2': typeof DesignV2Route
   '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
@@ -176,6 +184,7 @@ export interface FileRoutesById {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/design-v2': typeof DesignV2Route
   '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/design-v2'
     | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
@@ -220,6 +230,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/design-v2'
     | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
@@ -241,6 +252,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/design-v2'
     | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
@@ -263,6 +275,7 @@ export interface RootRouteChildren {
   CRoute: typeof CRoute
   ChallengeV1Route: typeof ChallengeV1Route
   CheckoutRoute: typeof CheckoutRoute
+  DesignV2Route: typeof DesignV2Route
   LookYoungerRoute: typeof LookYoungerRoute
   LookYoungerImprovedRoute: typeof LookYoungerImprovedRoute
   LookYoungerImprovedOb1Route: typeof LookYoungerImprovedOb1Route
@@ -363,6 +376,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LookYoungerRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/design-v2': {
+      id: '/design-v2'
+      path: '/design-v2'
+      fullPath: '/design-v2'
+      preLoaderRoute: typeof DesignV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -423,6 +443,7 @@ const rootRouteChildren: RootRouteChildren = {
   CRoute: CRoute,
   ChallengeV1Route: ChallengeV1Route,
   CheckoutRoute: CheckoutRoute,
+  DesignV2Route: DesignV2Route,
   LookYoungerRoute: LookYoungerRoute,
   LookYoungerImprovedRoute: LookYoungerImprovedRoute,
   LookYoungerImprovedOb1Route: LookYoungerImprovedOb1Route,
