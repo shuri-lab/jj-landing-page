@@ -641,7 +641,7 @@ const CSS = `
 .ly-reveal-line{font-family:var(--head);font-weight:900;font-size:clamp(30px,5.6vw,46px);line-height:1.12;letter-spacing:-.01em;margin:0 auto;max-width:760px}
 .ly-reveal-line em{color:#EBBE8E}
 .ly-dark-soft{color:#DEC9EE}
-.ly-dark-strong{color:#fff;font-weight:800}
+.lyx .ly-dark-strong{color:#fff;font-weight:800}
 .ly-reveal-tile{max-width:330px;margin:32px auto 0;background:#fff;border-radius:22px;padding:20px;box-shadow:0 40px 70px -30px rgba(0,0,0,.55)}
 .ly-reveal-tile img{width:100%;height:auto;border-radius:10px}
 
