@@ -9,7 +9,7 @@ type PlanId = "essential" | "plus";
 
 const PLANS: Record<PlanId, { name: string; price: string; perMonth: string }> = {
   essential: { name: "Essential", price: "$197", perMonth: "$77/month" },
-  plus: { name: "Plus", price: "$347", perMonth: "$147/month" },
+  plus: { name: "Plus", price: "$141", perMonth: "$47/month" },
 };
 
 export const Route = createFileRoute("/checkout")({
