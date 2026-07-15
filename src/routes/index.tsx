@@ -54,6 +54,10 @@ export const Route = createFileRoute("/")({
 
 const MEMBER_PRICE = 47;
 const MEMBER_WAS = 67;
+// 3-month prepay option: $127 up front vs $47/mo (= $141 over 3 months) → save $14, ~$1.41/day
+const QUARTER_PRICE = 127;
+const QUARTER_MONTHLY_EQUIV = MEMBER_PRICE * 3; // 141
+const QUARTER_SAVE = QUARTER_MONTHLY_EQUIV - QUARTER_PRICE; // 14
 const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
 
 // ── highlight + icon helpers ─────────────────────────────────────────────────
@@ -411,6 +415,8 @@ function Pricing() {
   const { basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
   const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY", { durationWeeks: basic.durationWeeks }) : "/checkout";
+  // 3-month prepay maps to the full-program (pay-up-front) billing interval
+  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM", { durationWeeks: basic.durationWeeks }) : "/checkout";
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
@@ -433,9 +439,19 @@ function Pricing() {
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
             <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
-            <div className="ly-mt-s"><Cta label="Join JJ today" href={monthlyHref} full /></div>
-            <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
+            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} href={monthlyHref} full /></div>
           </div>
+
+          <div className="ly-or"><span>or</span></div>
+
+          <div className="ly-deal2">
+            <span className="ly-deal2-badge">Best value · save ${QUARTER_SAVE}</span>
+            <div className="ly-deal2-now"><s>${QUARTER_MONTHLY_EQUIV}</s><span className="ly-deal2-num">${QUARTER_PRICE}</span><span className="ly-deal2-per">for 3 months</span></div>
+            <p className="ly-stack-note">Pay once · that's just $1.41 a day</p>
+            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} href={quarterHref} full /></div>
+          </div>
+
+          <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
         </div>
       </div>
     </section>
@@ -710,8 +726,16 @@ const CSS = `
 .ly-stack-num{font-family:var(--head);font-weight:900;font-size:74px;line-height:1;color:var(--purple);letter-spacing:-.03em}
 .ly-stack-per{font-family:var(--head);font-weight:800;font-size:22px;color:var(--ink-soft)}
 .ly-stack-note{font-size:13.5px;font-weight:700;color:var(--ink-soft);margin:0}
-.ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:14px 0 0;flex-wrap:wrap}
+.ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:16px 0 0;flex-wrap:wrap}
 .ly-stack-trust svg{color:var(--purple)}
+.ly-or{display:flex;align-items:center;gap:14px;margin:16px 2px 0;color:var(--ink-soft);font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.ly-or::before,.ly-or::after{content:"";flex:1;height:1px;background:var(--hair)}
+.ly-deal2{position:relative;margin-top:14px;border:1.5px solid var(--hair);border-radius:16px;background:var(--white);padding:22px 18px 20px;text-align:center}
+.ly-deal2-badge{display:inline-block;background:var(--purple-soft);color:var(--purple-deep);font-family:var(--head);font-weight:800;font-size:12.5px;letter-spacing:.05em;text-transform:uppercase;padding:6px 15px;border-radius:999px;margin-bottom:12px}
+.ly-deal2-now{display:flex;align-items:baseline;justify-content:center;flex-wrap:wrap;gap:4px 9px;margin:2px 0}
+.ly-deal2-now s{font-family:var(--head);font-weight:700;font-size:24px;color:var(--ink-soft)}
+.ly-deal2-num{font-family:var(--head);font-weight:900;font-size:52px;line-height:1;color:var(--purple);letter-spacing:-.02em}
+.ly-deal2-per{font-family:var(--head);font-weight:800;font-size:17px;color:var(--ink-soft);white-space:nowrap;flex-basis:100%;text-align:center}
 
 /* guarantee */
 .ly-guar-grid{display:grid;grid-template-columns:1fr;gap:26px;align-items:center;justify-items:center;text-align:center}
@@ -749,6 +773,7 @@ const CSS = `
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
+  .ly-deal2-per{flex-basis:auto}
   .ly-only-mob{display:none} .ly-only-desk{display:block}
   .ly-hero{padding:0}
   .ly-hero-stage{min-height:560px;padding:0}
