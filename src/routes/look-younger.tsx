@@ -10,6 +10,8 @@ import partnerDrOz from "@/assets/landing/partners/droz.png";
 import partnerNbc from "@/assets/landing/partners/nbc.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
+import partnerEssence from "@/assets/landing/partners/essence.png";
+import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 
 export const Route = createFileRoute("/look-younger")({
   head: () => ({
@@ -23,7 +25,7 @@ export const Route = createFileRoute("/look-younger")({
 });
 
 const ORDER_ID = "order";
-const scrollToOrder = () => document.getElementById(ORDER_ID)?.scrollIntoView({ behavior: "smooth", block: "start" });
+const scrollToOrder = () => document.getElementById(ORDER_ID)?.scrollIntoView({ block: "start" });
 
 // ── highlight helpers ───────────────────────────────────────────────────────
 function Mark({ children }: { children: React.ReactNode }) { return <span className="ly-mark">{children}</span>; }
@@ -57,12 +59,21 @@ function LookYounger() {
   const [total, setTotal] = useState(27);
   const [bump, setBump] = useState(false);
   const [showSticky, setShowSticky] = useState(false);
+  const [orderVisible, setOrderVisible] = useState(false);
 
   useEffect(() => {
     const onScroll = () => setShowSticky(window.scrollY > 680);
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const el = document.getElementById(ORDER_ID);
+    if (!el || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setOrderVisible(e.isIntersecting), { threshold: 0, rootMargin: "0px 0px -25% 0px" });
+    io.observe(el);
+    return () => io.disconnect();
   }, []);
   const toggleBump = () => setBump((b) => { const nb = !b; setTotal(nb ? 36 : 27); return nb; });
 
@@ -91,7 +102,7 @@ function LookYounger() {
         <Close />
       </main>
       <Footer />
-      <StickyCta show={showSticky} />
+      <StickyCta show={showSticky && !orderVisible} />
     </div>
   );
 }
@@ -146,14 +157,15 @@ function Hero() {
   );
 }
 
+const ALL_LOGOS = [partnerNyTimes, partnerDrOz, partnerTheView, partnerSteveHarvey, partnerNbc, partnerFox, partnerEssence, partnerWomansWorld];
+
 function PressStrip() {
-  const logos = [partnerTheView, partnerSteveHarvey, partnerDrOz, partnerNbc, partnerFox];
   return (
     <section className="ly-press">
-      <div className="ly-wrap">
-        <p className="ly-press-lbl">As seen on</p>
-        <div className="ly-press-row">
-          {logos.map((l, i) => <img key={i} src={l} alt="" className="ly-press-img" loading="lazy" />)}
+      <p className="ly-press-lbl">JJ Smith Has Been Featured In</p>
+      <div className="ly-marquee">
+        <div className="ly-marquee-track">
+          {[...ALL_LOGOS, ...ALL_LOGOS].map((l, i) => <img key={i} src={l} alt="" className="ly-marquee-img" loading="lazy" />)}
         </div>
       </div>
     </section>
@@ -299,12 +311,12 @@ function MeetJJ() {
 // ── 7 · offer ────────────────────────────────────────────────────────────────
 function Offer() {
   const items = [
-    <><strong>Exact morning & evening routines</strong> that actually work for women over 40</>,
-    <><strong>Overnight repair strategies</strong> to help you wake up looking younger</>,
-    <>Simple habits that <strong>reduce puffiness and wrinkles</strong></>,
-    <>The <strong>foods that nourish your skin</strong>, making it look younger</>,
-    <>Sleep strategies that help you <strong>wake up with brighter, younger</strong> skin</>,
-    <>Everything organized into an <strong>easy-to-follow plan</strong></>,
+    { t: <><strong>Exact morning & evening routines</strong> that actually work for women over 40</>, v: 47 },
+    { t: <><strong>Overnight repair strategies</strong> to help you wake up looking younger</>, v: 37 },
+    { t: <>Simple habits that <strong>reduce puffiness and wrinkles</strong></>, v: 27 },
+    { t: <>The <strong>foods that nourish your skin</strong>, making it look younger</>, v: 37 },
+    { t: <>Sleep strategies that help you <strong>wake up with brighter, younger</strong> skin</>, v: 27 },
+    { t: <>Everything organized into an <strong>easy-to-follow plan</strong></>, v: 22 },
   ];
   return (
     <section className="ly-band ly-lav">
@@ -316,26 +328,27 @@ function Offer() {
           <div className="ly-pkg-media">
             <img src={productEverything} alt="Look Younger After 40 program" loading="lazy" />
           </div>
-          <div className="ly-pkg-body">
-            <p className="ly-pkg-h">The Complete Look Younger After 40 Program includes:</p>
-            <ul className="ly-ticks">
-              {items.map((it, i) => <li key={i}><span className="ly-tick-badge"><Check className="ly-ico-14" /></span><span>{it}</span></li>)}
+          <div className="ly-stack">
+            <p className="ly-stack-h">The Complete Look Younger After 40 Program includes:</p>
+            <ul className="ly-stack-list">
+              {items.map((it, i) => (
+                <li key={i}>
+                  <span className="ly-stack-name"><span className="ly-stack-tick"><Check className="ly-ico-12" /></span><span>{it.t}</span></span>
+                  <span className="ly-stack-val">${it.v}</span>
+                </li>
+              ))}
             </ul>
+            <div className="ly-stack-total"><span>Total Value</span><span className="ly-stack-total-v">$197+</span></div>
+            <div className="ly-stack-deal">
+              <span className="ly-stack-badge">Today Only · Save 86%</span>
+              <p className="ly-stack-was">Normal price <s>$97</s></p>
+              <div className="ly-stack-now"><span className="ly-stack-just">Today just</span><span className="ly-stack-num">$27</span></div>
+              <p className="ly-stack-note">One-time payment · instant digital access</p>
+              <div className="ly-mt-s"><Cta big full /></div>
+            </div>
           </div>
         </div>
-
-        <div className="ly-price">
-          <span className="ly-price-badge">Today Only · Save $170</span>
-          <div className="ly-price-anchors">
-            <span>Total Value <s>$197+</s></span>
-            <span className="ly-price-dot" aria-hidden>•</span>
-            <span>Normal Price <s>$97</s></span>
-          </div>
-          <div className="ly-price-big"><span className="ly-price-just">Today just</span><span className="ly-price-num">$27</span></div>
-          <p className="ly-price-note">One-time payment · instant digital access</p>
-          <div className="ly-price-cta"><Cta big full /></div>
-          <p className="ly-lead ly-soft ly-price-just2">Less than one expensive face cream or a single anti-aging facial — yet this could change how your body looks and feels.</p>
-        </div>
+        <p className="ly-lead ly-soft ly-narrow ly-mt">Less than one expensive face cream or a single anti-aging facial — yet this could change how your body looks and feels.</p>
       </div>
     </section>
   );
@@ -361,7 +374,6 @@ function OrderForm({ total, bump, toggleBump }: { total: number; bump: boolean; 
 
           <p className="ly-co-step"><span className="ly-co-num">2</span> Your order</p>
           <div className="ly-sum-row"><span>Look Younger After 40</span><span>$27.00</span></div>
-          {bump && <div className="ly-sum-row"><span>The Look Younger Success Kit</span><span>$9.00</span></div>}
 
           <label className={`ly-bump ${bump ? "is-on" : ""}`}>
             <input type="checkbox" checked={bump} onChange={toggleBump} className="ly-bump-input" />
@@ -385,6 +397,7 @@ function OrderForm({ total, bump, toggleBump }: { total: number; bump: boolean; 
             </div>
           </label>
 
+          {bump && <div className="ly-sum-row"><span>The Look Younger Success Kit</span><span>$9.00</span></div>}
           <div className="ly-sum-total"><span>Order Total</span><span className="ly-sum-amt">${total}.00</span></div>
 
           <div className="ly-co-div" />
@@ -572,10 +585,10 @@ const CSS = `
 /* CTA */
 .ly-cta{display:inline-flex;align-items:center;justify-content:center;gap:9px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:18px;letter-spacing:.005em;border:0;padding:16px 28px;border-radius:14px;box-shadow:0 16px 30px -12px rgba(91,42,128,.55);transition:transform .15s ease,box-shadow .15s ease,filter .15s ease;line-height:1.15}
 .ly-cta:hover{transform:translateY(-2px);box-shadow:0 22px 40px -14px rgba(91,42,128,.6);filter:brightness(1.05)}
-.ly-cta-lg{font-size:clamp(19px,2.1vw,21px);padding:19px 34px}
-.ly-cta-full{width:100%}
-.ly-cta-price{font-weight:700;opacity:.92}
-.ly-cta-arw{font-size:1.25em;line-height:1;transform:translateY(-1px)}
+.ly-cta-lg{font-size:clamp(18px,2vw,21px);padding:19px 30px}
+.ly-cta-full{width:100%;padding-left:16px;padding-right:16px}
+.ly-cta-price{font-weight:700;opacity:.92;white-space:nowrap}
+.ly-cta-arw{font-size:1.2em;line-height:1;transform:translateY(-1px)}
 
 /* announcement bar */
 .ly-announce{background:linear-gradient(90deg,#5B2A80 0%,#7E36A6 48%,#C0468C 100%);color:#fff}
@@ -661,23 +674,27 @@ const CSS = `
 .ly-marquee-img{height:28px;width:auto;object-fit:contain;opacity:.55;filter:grayscale(1)}
 @keyframes ly-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
-/* offer / package */
-.ly-pkg{display:grid;grid-template-columns:1fr;gap:26px;align-items:center;text-align:left;background:var(--white);border:1px solid var(--hair);border-radius:26px;box-shadow:var(--shadow);padding:26px;margin:36px auto 0;max-width:920px}
-.ly-pkg-media{background:linear-gradient(160deg,#F6EDFC,#FBE9F3);border-radius:18px;padding:22px;display:flex;align-items:center;justify-content:center}
-.ly-pkg-media img{width:100%;height:auto;max-height:320px;object-fit:contain}
-.ly-pkg-h{font-family:var(--head);font-weight:800;font-size:19px;margin:0 0 14px}
-.ly-ticks{list-style:none;padding:0;margin:0;display:grid;gap:13px}
-.ly-ticks li{display:flex;gap:13px;align-items:flex-start;font-size:18px;font-weight:500}
-.ly-tick-badge{width:28px;height:28px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
-.ly-price{position:relative;background:linear-gradient(165deg,#FFFFFF, #F7ECFB);border:1.5px solid var(--purple-soft);border-radius:26px;box-shadow:var(--shadow);padding:36px 28px 30px;text-align:center;max-width:460px;margin:26px auto 0}
-.ly-price-badge{position:absolute;top:-15px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.08em;text-transform:uppercase;padding:8px 18px;border-radius:999px;box-shadow:0 12px 24px -10px rgba(91,42,128,.6);white-space:nowrap}
-.ly-price-anchors{display:flex;align-items:center;justify-content:center;gap:12px;font-size:15px;font-weight:600;color:var(--ink-soft)}
-.ly-price-dot{color:var(--hair)}
-.ly-price-big{display:flex;align-items:baseline;justify-content:center;gap:10px;margin:6px 0 2px}
-.ly-price-just{font-family:var(--head);font-size:20px;font-weight:800;color:var(--ink)}
-.ly-price-num{font-family:var(--head);font-weight:900;font-size:84px;line-height:1;color:var(--purple);letter-spacing:-.03em}
-.ly-price-note{font-size:14px;font-weight:700;letter-spacing:.02em;color:var(--ink-soft);margin:0 0 20px}
-.ly-price-just2{font-size:15px;margin:16px auto 0;max-width:380px}
+/* offer / value stack */
+.ly-pkg{display:grid;grid-template-columns:1fr;gap:22px;align-items:start;text-align:left;margin:34px auto 0;max-width:940px}
+.ly-pkg-media{background:linear-gradient(160deg,#F6EDFC,#FBE9F3);border:1px solid var(--hair);border-radius:22px;padding:22px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.ly-pkg-media img{width:100%;height:auto;max-height:340px;object-fit:contain}
+.ly-stack{background:#fff;border:1px solid var(--hair);border-radius:22px;box-shadow:var(--shadow);padding:22px 22px 24px}
+.ly-stack-h{font-family:var(--head);font-weight:800;font-size:17px;line-height:1.3;margin:0 0 6px;color:var(--ink)}
+.ly-stack-list{list-style:none;padding:0;margin:0}
+.ly-stack-list li{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--hair);font-size:15.5px;font-weight:500}
+.ly-stack-name{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
+.ly-stack-name strong{font-weight:700}
+.ly-stack-tick{width:22px;height:22px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ly-stack-val{flex:0 0 auto;color:var(--ink-soft);text-decoration:line-through;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-total{display:flex;justify-content:space-between;align-items:center;background:var(--lav);border-radius:12px;padding:13px 16px;margin-top:14px;font-family:var(--head);font-weight:800;font-size:16px}
+.ly-stack-total-v{color:var(--ink-soft);text-decoration:line-through;font-size:20px}
+.ly-stack-deal{position:relative;margin-top:18px;border:2px solid var(--purple);border-radius:16px;background:linear-gradient(165deg,#FFF,#F7ECFB);padding:26px 18px 20px;text-align:center}
+.ly-stack-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;padding:7px 15px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 22px -10px rgba(91,42,128,.6)}
+.ly-stack-was{font-size:15px;font-weight:700;color:var(--ink-soft);margin:0}
+.ly-stack-now{display:flex;align-items:baseline;justify-content:center;gap:9px;margin:2px 0}
+.ly-stack-just{font-family:var(--head);font-weight:800;font-size:18px;color:var(--ink)}
+.ly-stack-num{font-family:var(--head);font-weight:900;font-size:74px;line-height:1;color:var(--purple);letter-spacing:-.03em}
+.ly-stack-note{font-size:13px;font-weight:700;color:var(--ink-soft);margin:0 0 4px}
 
 /* checkout */
 .ly-checkout{max-width:600px}
@@ -782,7 +799,7 @@ const CSS = `
   .ly-wrong{grid-template-columns:1fr 1fr;gap:18px}
   .ly-secrets{grid-template-columns:1fr 1fr 1fr;gap:24px}
   .ly-jj-grid{grid-template-columns:.9fr 1.1fr;gap:52px}
-  .ly-pkg{grid-template-columns:.85fr 1.15fr;gap:40px;padding:34px}
+  .ly-pkg{grid-template-columns:.85fr 1.15fr;gap:34px}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
   .ly-whynow-grid{grid-template-columns:1fr 1.1fr;gap:40px;text-align:left}
   .ly-bump-body{flex-direction:row;align-items:flex-start}
