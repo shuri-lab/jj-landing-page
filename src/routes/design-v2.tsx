@@ -8,6 +8,7 @@ import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
 import designV2Hero from "@/assets/landing/design-v2-hero.png";
+import mobileHeroImage from "@/assets/landing/mobile-hero-image.png";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
 import weeklyCallsImage from "@/assets/landing/weekly-calls.png";
@@ -169,7 +170,7 @@ function Hero() {
             <Cta label="Start today" sub={CTA_SUB} full />
           </div>
           <div className="ly-hero-mob-img">
-            <img src={designV2Hero} alt="JJ Smith, your personal coach" loading="lazy" />
+            <img src={mobileHeroImage} alt="JJ Smith, your personal coach" loading="lazy" />
           </div>
         </div>
       </div>
@@ -601,8 +602,8 @@ const CSS = `
 .ly-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:30px 0 42px}
 .ly-hero-bg{display:none;position:absolute;inset:0;z-index:0}
 .ly-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
-.ly-hero-mob-img{margin:26px auto 0;max-width:400px;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-.ly-hero-mob-img img{width:100%;height:auto}
+.ly-hero-mob-img{margin:26px auto 0;max-width:400px;aspect-ratio:1/1;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.ly-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
 .ly-announce-x{display:inline-flex;align-items:center;gap:9px}
 @media (max-width:600px){ .ly-announce-x{display:none} }
 .ly-hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 54%,rgba(246,238,251,.9) 74%,rgba(246,238,251,.62) 100%),linear-gradient(180deg,rgba(246,238,251,.15) 0%,rgba(246,238,251,.68) 58%,#F4EBFB 100%)}
