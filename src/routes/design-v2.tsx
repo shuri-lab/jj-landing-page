@@ -311,11 +311,9 @@ function Method() {
         <div className="ly-method">
           {shifts.map(({ Icon, title, text }, i) => (
             <div className="ly-shift" key={title}>
-              <div className="ly-shift-top">
-                <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
-                <span className="ly-shift-n">{i + 1}</span>
-              </div>
-              <h3 className="ly-h3 ly-mt-s">{title}</h3>
+              <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
+              <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
+              <h3 className="ly-h3 ly-shift-h">{title}</h3>
               <p className="ly-shift-t">{text}</p>
             </div>
           ))}
@@ -555,7 +553,7 @@ const CSS = `
 .ly-dark .ly-mark{background:linear-gradient(180deg,transparent 58%,rgba(238,187,224,.28) 58%);color:#F6DCEF}
 
 .ly-wrap{max-width:1120px;margin:0 auto;padding:0 20px}
-.ly-narrow{max-width:740px;margin-left:auto;margin-right:auto}
+.lyx .ly-narrow{max-width:740px;margin-left:auto;margin-right:auto}
 .ly-band{padding:56px 0}
 .ly-center{text-align:center}
 .ly-white{background:var(--white)} .ly-lav{background:var(--lav)} .ly-pink{background:var(--pink)} .ly-cream{background:var(--cream)}
@@ -582,7 +580,7 @@ const CSS = `
 .ly-cta-full{width:100%;padding-left:16px;padding-right:16px}
 .ly-cta-arw{font-size:1.2em;line-height:1;transform:translateY(-1px)}
 .ly-cta-wrap{width:100%}
-.ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft);text-align:center}
+.ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft)}
 .ly-cta-sub.on-dark{color:#D8C4E8}
 
 /* announcement */
@@ -665,12 +663,13 @@ const CSS = `
 .ly-callout strong{color:#F6C9E4}
 
 /* method */
-.ly-method{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
-.ly-shift{background:var(--white);border:1px solid var(--hair);border-radius:20px;padding:26px;box-shadow:var(--shadow-sm)}
-.ly-shift-top{display:flex;align-items:center;gap:14px}
-.ly-shift-ico{width:52px;height:52px;flex:0 0 auto;border-radius:15px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center}
-.ly-shift-n{font-family:var(--head);font-weight:900;font-size:30px;color:var(--purple);letter-spacing:-.02em}
-.ly-shift-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-method{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
+.ly-shift{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-sm)}
+.ly-shift::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
+.ly-shift-n{position:absolute;top:8px;right:20px;font-family:var(--head);font-weight:900;font-size:104px;line-height:1;color:var(--purple-soft);z-index:0;pointer-events:none;user-select:none}
+.ly-shift-ico{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:17px;background:var(--grad);color:#fff;box-shadow:0 16px 28px -14px rgba(91,42,128,.7)}
+.ly-shift-h{position:relative;z-index:1;margin-top:18px}
+.ly-shift-t{position:relative;z-index:1;margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
 
 /* results */
 .ly-results{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
@@ -771,7 +770,7 @@ const CSS = `
   .ly-story-quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ly-story-cell{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
-  .ly-sticky-lbl{margin-right:auto;font-size:15px} .ly-sticky-more{display:inline} .ly-sticky-btn{flex:0 0 auto;padding:14px 28px;font-size:16px}
+  .ly-sticky{display:none}
 }
 @media (prefers-reduced-motion:reduce){ .lyx *,.ly-tf-track,.ly-marquee-track{transition:none!important;animation:none!important} }
 `;
