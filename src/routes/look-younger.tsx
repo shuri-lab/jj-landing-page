@@ -181,8 +181,8 @@ function Problem() {
         <div className="ly-narrow ly-center">
           <span className="ly-eyebrow">Let's Be Real…</span>
           <h2 className="ly-h2">After 40, Your Body Plays by <Hi>Different Rules</Hi> — and Nobody Tells You What They Are</h2>
-          <p className="ly-lead ly-mt"><strong>Skin looks duller. Energy crashes.</strong> Stubborn belly fat appears and nothing seems to work anymore.</p>
-          <p className="ly-lead ly-soft ly-mt-s">So most women do what they've always been told…</p>
+          <p className="ly-lead ly-mt-l"><strong>Skin looks duller. Energy crashes.</strong> Stubborn belly fat appears and nothing seems to work anymore.</p>
+          <p className="ly-lead ly-soft ly-mt-l">So most women do what they've always been told…</p>
         </div>
         <div className="ly-wrong">
           {wrong.map((w) => (
@@ -230,7 +230,7 @@ function Reveal() {
         </div>
       </section>
       <section className="ly-band ly-white ly-center">
-        <div className="ly-narrow">
+        <div className="ly-narrow ly-wrap">
           <h2 className="ly-h2">Ready to Look <Hi>Younger Naturally?</Hi></h2>
           <p className="ly-lead ly-mt">Everything you need is inside <em>Look Younger After 40</em> — the <strong>exact step-by-step system</strong> created specifically for women over 40.</p>
           <div className="ly-mt-l ly-cta-center"><Cta big /></div>
@@ -561,7 +561,7 @@ const CSS = `
 .ly-center{text-align:center}
 .ly-white{background:var(--white)} .ly-lav{background:var(--lav)} .ly-pink{background:var(--pink)}
 .ly-dark{background:radial-gradient(130% 120% at 50% 0%,#4A2A66 0%,#2B1940 62%);color:#F3EAFB}
-.ly-mt{margin-top:20px}.ly-mt-s{margin-top:12px}.ly-mt-l{margin-top:32px}
+.lyx .ly-mt{margin-top:20px}.lyx .ly-mt-s{margin-top:12px}.lyx .ly-mt-l{margin-top:32px}
 .ly-soft{color:var(--ink-soft)} .ly-emph{color:var(--pink-accent);font-weight:800}
 .ly-cta-center{display:flex;justify-content:center}
 
@@ -621,11 +621,11 @@ const CSS = `
 .ly-stars{color:var(--gold);letter-spacing:2px;font-size:20px}
 
 /* press */
-.ly-press{background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:22px 0}
-.ly-press-lbl{text-align:center;font-family:var(--head);font-size:11px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 14px}
-.ly-press-row{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:24px}
-.ly-press-img{height:22px;width:auto;object-fit:contain;opacity:.5;filter:grayscale(1)}
-@media (min-width:700px){ .ly-press-img{height:26px} .ly-press-row{gap:44px} }
+.ly-press{background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair);padding:32px 0}
+.ly-press-lbl{text-align:center;font-family:var(--head);font-size:15px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 20px}
+.ly-press .ly-marquee-track{gap:56px}
+.ly-press .ly-marquee-img{height:42px}
+@media (min-width:700px){ .ly-press .ly-marquee-img{height:50px} .ly-press .ly-marquee-track{gap:70px} }
 
 /* problem */
 .ly-wrong{display:grid;grid-template-columns:1fr;gap:14px;max-width:820px;margin:34px auto 0}
@@ -791,11 +791,12 @@ const CSS = `
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
-  .ly-hero{padding-top:52px}
+  .ly-hero{padding-top:28px;padding-bottom:26px}
   .ly-hero-grid{grid-template-columns:1.06fr .94fr;gap:48px;align-items:center}
   .ly-hero-copy{order:1}
   .ly-hero-action{order:1;grid-column:1;margin-top:6px}
-  .ly-hero-media{order:2;grid-row:1 / span 2;grid-column:2;max-width:440px}
+  .ly-hero-media{order:2;grid-row:1 / span 2;grid-column:2;max-width:380px}
+  .ly-press{padding:22px 0}
   .ly-wrong{grid-template-columns:1fr 1fr;gap:18px}
   .ly-secrets{grid-template-columns:1fr 1fr 1fr;gap:24px}
   .ly-jj-grid{grid-template-columns:.9fr 1.1fr;gap:52px}
