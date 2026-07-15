@@ -82,5 +82,5 @@ export function signupUrl(
   params.set("coachProgramConfigId", programId);
   params.set("billingInterval", billingInterval);
   if (opts?.durationWeeks) params.set("durationWeeks", String(opts.durationWeeks));
-  return `https://yoplatform.ai/signup?${params.toString()}`;
+  return `https://yobody.ai/signup?${params.toString()}`;
 }
