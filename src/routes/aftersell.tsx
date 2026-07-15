@@ -22,7 +22,7 @@ const NOW = 47;
 const SAVE = WAS - NOW;
 
 const INCLUDED: { Icon: React.ComponentType<{ className?: string }>; text: React.ReactNode }[] = [
-  { Icon: Phone, text: <><strong>Two 1-on-1 calls with JJ every week</strong> — she adjusts your plan so the scale keeps moving.</> },
+  { Icon: Phone, text: <><strong>Two 1-on-1 calls with JJ every week</strong> — you and me, working through your week together so the weight keeps coming off.</> },
   { Icon: MessageCircle, text: <><strong>Daily texts from JJ</strong> — so you never fall off, even on the hard days.</> },
   { Icon: Zap, text: <><strong>Your reset plan</strong> — built to drop up to 15 lbs in your first 2 weeks.</> },
   { Icon: UtensilsCrossed, text: <><strong>A meal plan around the food you love</strong> — no starving, no bland &ldquo;diet food.&rdquo;</> },
