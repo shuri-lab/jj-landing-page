@@ -687,7 +687,7 @@ function Offer() {
   };
 
   const basicPricing = planFromProgram(basic, { fullPrice: 197, monthlyPrice: 77, monthlyMonths: 3 });
-  const premiumPricing = planFromProgram(premium, { fullPrice: 347, monthlyPrice: 147, monthlyMonths: 3 });
+  const premiumPricing = planFromProgram(premium, { fullPrice: 141, monthlyPrice: 47, monthlyMonths: 3 });
 
   const plans: OfferPlan[] = [
     {
