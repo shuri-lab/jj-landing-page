@@ -74,7 +74,7 @@ function Aftersell() {
               <span className="ups-stars" aria-hidden>
                 {[0, 1, 2, 3, 4].map((i) => <Star key={i} className="ups-star" />)}
               </span>
-              <span className="ups-rating-txt">4.9 · loved by 800K+ women</span>
+              <span className="ups-rating-txt">Rated 4.9 by women just like you</span>
             </div>
 
             <div className="ups-price">
@@ -87,7 +87,7 @@ function Aftersell() {
 
             <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 2 weeks</span> — and we keep going together until every last pound is gone.</p>
 
-            <p className="ups-desc">You already know what to do — you&rsquo;ve just never had someone doing it with you. With JJ as your personal coach, you stop starting over every Monday and finally take it off for good.</p>
+            <p className="ups-desc">Picture a few weeks from now: clothes fitting looser, the scale finally moving, and knowing that every step of the way, I&rsquo;m there with you.</p>
 
             <div className="ups-incl-h">Here&rsquo;s everything you get:</div>
             <ul className="ups-incl">
