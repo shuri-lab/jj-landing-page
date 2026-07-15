@@ -45,7 +45,7 @@ function Apple({ className = "" }: { className?: string }) {
 function Cta({ label = "Get Instant Access", price = true, big = false, full = false }: { label?: string; price?: boolean; big?: boolean; full?: boolean }) {
   return (
     <button className={`ly-cta ${big ? "ly-cta-lg" : ""} ${full ? "ly-cta-full" : ""}`} onClick={scrollToOrder}>
-      {label}{price && <span className="ly-cta-price">— $27</span>}<span className="ly-cta-arw" aria-hidden>→</span>
+      {label}{price && <span className="ly-cta-price">· $27</span>}<span className="ly-cta-arw" aria-hidden>→</span>
     </button>
   );
 }
@@ -221,11 +221,13 @@ function Mechanism() {
 function Reveal() {
   return (
     <>
-      <section className="ly-band ly-dark ly-center">
-        <div className="ly-wrap">
-          <span className="ly-eyebrow ly-eyebrow-light">The Truth?</span>
-          <p className="ly-reveal-line">Looking younger starts <em>from the inside out.</em></p>
-          <p className="ly-lead ly-dark-soft ly-mt">That's exactly why I created <strong className="ly-dark-strong">Look Younger After 40</strong></p>
+      <section className="ly-band ly-dark">
+        <div className="ly-wrap ly-reveal-grid">
+          <div className="ly-reveal-copy">
+            <span className="ly-eyebrow ly-eyebrow-light">The Truth?</span>
+            <p className="ly-reveal-line">Looking younger starts <em>from the inside out.</em></p>
+            <p className="ly-lead ly-dark-soft ly-mt">That's exactly why I created <strong className="ly-dark-strong">Look Younger After 40</strong></p>
+          </div>
           <div className="ly-reveal-tile"><img src={productTruth} alt="Look Younger After 40" loading="lazy" /></div>
         </div>
       </section>
@@ -260,9 +262,10 @@ function Secrets() {
             <article className="ly-secret" key={s.n}>
               <div className="ly-secret-ph"><img src={secrets[i]} alt="" loading="lazy" /><span className="ly-secret-n">{s.n}</span></div>
               <div className="ly-secret-in">
+                <span className="ly-secret-n-txt">{s.n}</span>
                 <h3 className="ly-h3">{s.t}</h3>
                 <p className="ly-secret-p">{s.p}</p>
-                <p className="ly-secret-b">{s.b}</p>
+                <p className="ly-secret-b"><span className="ly-secret-ck" aria-hidden><Check className="ly-ico-12" /></span><span>{s.b}</span></p>
               </div>
             </article>
           ))}
@@ -414,7 +417,7 @@ function OrderForm({ total, bump, toggleBump }: { total: number; bump: boolean; 
             <div className="ly-field"><label>CVC</label><input inputMode="numeric" placeholder="CVC" autoComplete="cc-csc" /></div>
           </div>
 
-          <button className="ly-cta ly-cta-lg ly-cta-full ly-co-submit" onClick={() => {}}>Complete My Order<span className="ly-cta-price">— ${total}</span><span className="ly-cta-arw" aria-hidden>→</span></button>
+          <button className="ly-cta ly-cta-lg ly-cta-full ly-co-submit" onClick={() => {}}>Complete My Order<span className="ly-cta-price">· ${total}</span><span className="ly-cta-arw" aria-hidden>→</span></button>
           <p className="ly-order-trust"><Lock className="ly-ico-14" /> 100% Secure & Safe Payments · 14-day money-back guarantee</p>
         </div>
       </div>
@@ -521,7 +524,7 @@ function StickyCta({ show }: { show: boolean }) {
   return (
     <div className={`ly-sticky ${show ? "is-show" : ""}`} aria-hidden={!show}>
       <div className="ly-sticky-in">
-        <span className="ly-sticky-lbl">Instant access · <strong>$27</strong></span>
+        <span className="ly-sticky-lbl">Instant access · <strong>$27</strong><span className="ly-sticky-more"> · 14-day money-back guarantee</span></span>
         <button className="ly-cta ly-sticky-btn" onClick={scrollToOrder}>Get Instant Access<span className="ly-cta-arw" aria-hidden>→</span></button>
       </div>
     </div>
@@ -638,11 +641,12 @@ const CSS = `
 .ly-chip-dot{width:11px;height:11px;border-radius:999px;background:var(--purple);flex:0 0 auto}
 
 /* reveal */
-.ly-reveal-line{font-family:var(--head);font-weight:900;font-size:clamp(30px,5.6vw,46px);line-height:1.12;letter-spacing:-.01em;margin:0 auto;max-width:760px}
+.ly-reveal-grid{display:grid;grid-template-columns:1fr;gap:12px;text-align:center;align-items:center}
+.ly-reveal-line{font-family:var(--head);font-weight:900;font-size:clamp(30px,5.6vw,46px);line-height:1.12;letter-spacing:-.01em;margin:0 auto;max-width:640px}
 .ly-reveal-line em{color:#EBBE8E}
 .ly-dark-soft{color:#DEC9EE}
 .lyx .ly-dark-strong{color:#fff;font-weight:800}
-.ly-reveal-tile{max-width:330px;margin:32px auto 0;background:#fff;border-radius:22px;padding:20px;box-shadow:0 40px 70px -30px rgba(0,0,0,.55)}
+.ly-reveal-tile{max-width:320px;margin:26px auto 0;background:#fff;border-radius:22px;padding:20px;box-shadow:0 40px 70px -30px rgba(0,0,0,.55)}
 .ly-reveal-tile img{width:100%;height:auto;border-radius:10px}
 
 /* secrets */
@@ -651,6 +655,8 @@ const CSS = `
 .ly-secret-ph{position:relative;aspect-ratio:4/3;background:linear-gradient(160deg,#F6EDFC,#FBE9F3);display:flex;align-items:center;justify-content:center;padding:16px}
 .ly-secret-ph img{width:100%;height:100%;object-fit:contain}
 .ly-secret-n{position:absolute;top:12px;left:12px;font-family:var(--head);font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#fff;background:var(--grad);border-radius:999px;padding:6px 13px;box-shadow:0 8px 18px -8px rgba(91,42,128,.6)}
+.ly-secret-n-txt{display:none}
+.ly-secret-ck{display:none}
 .ly-secret-in{padding:22px 24px 26px}
 .ly-secret-p{font-weight:700;margin:0;font-size:17px;color:var(--ink)}
 .ly-secret-b{color:var(--ink-soft);margin:9px 0 0;font-size:16px;line-height:1.55}
@@ -787,6 +793,7 @@ const CSS = `
 .ly-sticky-in{display:flex;align-items:center;gap:14px;max-width:1120px;margin:0 auto}
 .ly-sticky-lbl{flex:0 0 auto;font-weight:700;font-size:14px}
 .ly-sticky-lbl strong{color:var(--purple);font-weight:800}
+.ly-sticky-more{display:none}
 .ly-sticky-btn{flex:1;font-size:15px;padding:14px 16px;min-height:52px;border-radius:12px}
 
 @media (min-width:860px){
@@ -798,14 +805,28 @@ const CSS = `
   .ly-hero-media{order:2;grid-row:1 / span 2;grid-column:2;max-width:380px}
   .ly-press{padding:22px 0}
   .ly-wrong{grid-template-columns:1fr 1fr;gap:18px}
-  .ly-secrets{grid-template-columns:1fr 1fr 1fr;gap:24px}
+  .ly-secrets{grid-template-columns:1fr;gap:24px;max-width:1000px;margin-left:auto;margin-right:auto}
+  .ly-secret{flex-direction:row;align-items:center}
+  .ly-secret-ph{flex:0 0 42%;aspect-ratio:1/1;padding:20px}
+  .ly-secret-n{display:none}
+  .ly-secret-in{flex:1;padding:32px 44px;text-align:left}
+  .ly-secret-n-txt{display:inline-block;font-family:var(--head);font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:10px}
+  .ly-secret h3{font-size:27px}
+  .ly-secret-p{font-size:18px;font-weight:600;color:var(--ink-soft)}
+  .ly-secret-b{display:flex;gap:11px;align-items:flex-start;font-size:17px;margin-top:14px}
+  .ly-secret-ck{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);margin-top:2px}
+  .ly-reveal-grid{grid-template-columns:1.05fr .95fr;gap:46px;text-align:left}
+  .ly-reveal-grid .ly-reveal-line{margin:0;max-width:none}
+  .ly-reveal-tile{margin:0;max-width:340px}
   .ly-jj-grid{grid-template-columns:.9fr 1.1fr;gap:52px}
   .ly-pkg{grid-template-columns:.85fr 1.15fr;gap:34px}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
   .ly-whynow-grid{grid-template-columns:1fr 1.1fr;gap:40px;text-align:left}
   .ly-bump-body{flex-direction:row;align-items:flex-start}
   .ly-bump-img{width:130px;margin:0}
-  .ly-sticky-btn{flex:0 0 auto;padding:13px 24px}
+  .ly-sticky-lbl{margin-right:auto;font-size:15.5px}
+  .ly-sticky-more{display:inline}
+  .ly-sticky-btn{flex:0 0 auto;padding:14px 28px;font-size:16px}
 }
 @media (prefers-reduced-motion:reduce){ .lyx *,.ly-marquee-track{transition:none!important;animation:none!important} }
 `;
