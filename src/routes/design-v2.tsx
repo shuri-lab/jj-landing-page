@@ -160,7 +160,7 @@ function Hero() {
         <div className="ly-wrap ly-hero-inner">
           <div className="ly-hero-copy">
             <HeroTrust />
-            <h1 className="ly-h1">Get your <Mark>sexy back</Mark> after 40.</h1>
+            <h1 className="ly-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
             <p className="ly-hero-sub">Lose up to <Hi>15 pounds</Hi> in your first 30 days, and <strong>keep going with JJ until it's all gone.</strong></p>
             <ul className="ly-hero-bullets">
               {bullets.map((b, i) => <li key={i}><span className="ly-hb-tick"><Check className="ly-ico-13" /></span> <span>{b}</span></li>)}
@@ -564,7 +564,7 @@ const CSS = `
 .ly-only-mob{display:block} .ly-only-desk{display:none}
 
 .ly-eyebrow{display:inline-block;font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);margin-bottom:16px}
-.ly-h1{font-family:var(--head);font-weight:900;font-size:clamp(40px,7.8vw,64px);line-height:1.04;letter-spacing:-.02em;margin:0}
+.ly-h1{font-family:var(--head);font-weight:900;font-size:clamp(37px,7vw,57px);line-height:1.06;letter-spacing:-.02em;margin:0}
 .ly-h2{font-family:var(--head);font-weight:800;font-size:clamp(31px,5.4vw,48px);line-height:1.08;letter-spacing:-.02em;margin:0}
 .ly-h3{font-family:var(--head);font-weight:800;font-size:22px;line-height:1.2;letter-spacing:-.01em;margin:0}
 .ly-lead{font-size:clamp(19px,2.2vw,22px);line-height:1.55;font-weight:500;margin:0}
@@ -771,6 +771,7 @@ const CSS = `
   .ly-story-cell{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
   .ly-sticky{display:none}
+  .lyx .ly-nowrap{white-space:nowrap}
 }
 @media (prefers-reduced-motion:reduce){ .lyx *,.ly-tf-track,.ly-marquee-track{transition:none!important;animation:none!important} }
 `;
