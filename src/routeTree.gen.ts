@@ -20,6 +20,7 @@ import { Route as LookYoungerImprovedV2RouteImport } from './routes/look-younger
 import { Route as LookYoungerImprovedOb2RouteImport } from './routes/look-younger-improved-ob-2'
 import { Route as LookYoungerImprovedOb1RouteImport } from './routes/look-younger-improved-ob-1'
 import { Route as LookYoungerImprovedRouteImport } from './routes/look-younger-improved'
+import { Route as LookYoungerRouteImport } from './routes/look-younger'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
 import { Route as CRouteImport } from './routes/c'
@@ -83,6 +84,11 @@ const LookYoungerImprovedRoute = LookYoungerImprovedRouteImport.update({
   path: '/look-younger-improved',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LookYoungerRoute = LookYoungerRouteImport.update({
+  id: '/look-younger',
+  path: '/look-younger',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CheckoutRoute = CheckoutRouteImport.update({
   id: '/checkout',
   path: '/checkout',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
   '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
@@ -147,6 +154,7 @@ export interface FileRoutesByTo {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
   '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/c': typeof CRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
+  '/look-younger': typeof LookYoungerRoute
   '/look-younger-improved': typeof LookYoungerImprovedRoute
   '/look-younger-improved-ob-1': typeof LookYoungerImprovedOb1Route
   '/look-younger-improved-ob-2': typeof LookYoungerImprovedOb2Route
@@ -190,6 +199,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
     | '/look-younger-improved-ob-2'
@@ -210,6 +220,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
     | '/look-younger-improved-ob-2'
@@ -230,6 +241,7 @@ export interface FileRouteTypes {
     | '/c'
     | '/challenge-v1'
     | '/checkout'
+    | '/look-younger'
     | '/look-younger-improved'
     | '/look-younger-improved-ob-1'
     | '/look-younger-improved-ob-2'
@@ -251,6 +263,7 @@ export interface RootRouteChildren {
   CRoute: typeof CRoute
   ChallengeV1Route: typeof ChallengeV1Route
   CheckoutRoute: typeof CheckoutRoute
+  LookYoungerRoute: typeof LookYoungerRoute
   LookYoungerImprovedRoute: typeof LookYoungerImprovedRoute
   LookYoungerImprovedOb1Route: typeof LookYoungerImprovedOb1Route
   LookYoungerImprovedOb2Route: typeof LookYoungerImprovedOb2Route
@@ -343,6 +356,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LookYoungerImprovedRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/look-younger': {
+      id: '/look-younger'
+      path: '/look-younger'
+      fullPath: '/look-younger'
+      preLoaderRoute: typeof LookYoungerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/checkout': {
       id: '/checkout'
       path: '/checkout'
@@ -403,6 +423,7 @@ const rootRouteChildren: RootRouteChildren = {
   CRoute: CRoute,
   ChallengeV1Route: ChallengeV1Route,
   CheckoutRoute: CheckoutRoute,
+  LookYoungerRoute: LookYoungerRoute,
   LookYoungerImprovedRoute: LookYoungerImprovedRoute,
   LookYoungerImprovedOb1Route: LookYoungerImprovedOb1Route,
   LookYoungerImprovedOb2Route: LookYoungerImprovedOb2Route,
