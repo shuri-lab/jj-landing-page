@@ -10,6 +10,10 @@ import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
 import designV2Hero from "@/assets/landing/design-v2-hero.png";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
+import weeklyCallsImage from "@/assets/landing/weekly-calls.png";
+import resetPlanImage from "@/assets/landing/reset-plan.png";
+import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
+import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
 import jjBefore1 from "@/assets/landing/jj-before-1.png";
 import jjBefore2 from "@/assets/landing/jj-before-2.png";
@@ -356,12 +360,12 @@ function RealResults() {
 // ── what you get ─────────────────────────────────────────────────────────────
 function WhatYouGet() {
   const items = [
-    { Icon: Phone, title: "Weekly one-on-one calls with JJ.", text: "Every week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
+    { Icon: Phone, img: weeklyCallsImage, title: "Weekly one-on-one calls with JJ.", text: "Every week, you and me on a call. We look at your week, fix what got in the way, and set the next one up to win." },
     { Icon: MessageCircle, img: dailySmsImage, title: "A text from JJ every morning.", text: "You wake up to me checking in on you. You never start the day alone again." },
-    { Icon: Zap, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
+    { Icon: Zap, img: resetPlanImage, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
     { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
-    { Icon: UserCheck, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
-    { Icon: Users, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
+    { Icon: UserCheck, img: planForYourBodyImage, title: "A plan made for your body.", text: "Built around your life, your schedule, and the season you are in, so it finally fits." },
+    { Icon: Users, img: theCircleImage, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
   ];
   return (
     <section className="ly-band ly-pink">
