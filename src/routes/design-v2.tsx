@@ -407,7 +407,7 @@ const VALUE_STACK = [
 function Pricing() {
   const { basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY", { durationWeeks: basic.durationWeeks }) : "/checkout";
+  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">

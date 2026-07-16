@@ -581,8 +581,8 @@ const VALUE_STACK = [
 function Pricing() {
   const { basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY", { durationWeeks: basic.durationWeeks }) : "/checkout";
-  const fullHref = basic ? signupUrl(basic.id, "FULL_PROGRAM", { durationWeeks: basic.durationWeeks }) : "/checkout";
+  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
+  const fullHref = basic ? signupUrl(basic.id, "FULL_PROGRAM") : "/checkout";
   const [plan, setPlan] = useState<"full" | "monthly">("full");
   const selectedHref = plan === "full" ? fullHref : monthlyHref;
 

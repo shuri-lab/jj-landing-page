@@ -640,8 +640,8 @@ function Offer() {
       ? Math.max(1, Math.round(program.durationWeeks / 4))
       : fallback.monthlyMonths;
     const hasFull = typeof program?.fullProgramPriceAmount === "number" && program.fullProgramPriceAmount > 0;
-    const fullHref = program ? signupUrl(program.id, "FULL_PROGRAM", { durationWeeks: program.durationWeeks }) : "/checkout";
-    const monthlyHref = program ? signupUrl(program.id, "MONTHLY", { durationWeeks: program.durationWeeks }) : "/checkout";
+    const fullHref = program ? signupUrl(program.id, "FULL_PROGRAM") : "/checkout";
+    const monthlyHref = program ? signupUrl(program.id, "MONTHLY") : "/checkout";
     return { fullPrice, monthlyPrice, monthlyMonths, hasFull, fullHref, monthlyHref };
   };
 
