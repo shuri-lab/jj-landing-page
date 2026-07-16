@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack } from "lucide-react";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
 import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
@@ -307,9 +307,9 @@ function WhyNothing() {
 // ── method ───────────────────────────────────────────────────────────────────
 function Method() {
   const shifts = [
-    { title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
-    { title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
-    { title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
+    { Icon: Zap, title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
+    { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
+    { Icon: HeartHandshake, title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
   ];
   return (
     <section className="ly-band ly-lav">
@@ -317,14 +317,13 @@ function Method() {
         <span className="ly-eyebrow">The method</span>
         <h2 className="ly-h2">The <Hi>3 shifts</Hi> that change everything</h2>
         <p className="ly-lead ly-soft ly-mt ly-narrow">The exact shifts that took me from stuck to feeling like myself again. Now they are yours.</p>
-        <div className="ly-steps">
-          {shifts.map(({ title, text }, i) => (
-            <div className="ly-step" key={i}>
-              <span className="ly-step-num" aria-hidden="true">{i + 1}</span>
-              <div className="ly-step-card">
-                <h3 className="ly-h3">{title}</h3>
-                <p className="ly-step-t">{text}</p>
-              </div>
+        <div className="ly-method">
+          {shifts.map(({ Icon, title, text }, i) => (
+            <div className="ly-shift" key={title}>
+              <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
+              <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={1.75} /></span>
+              <h3 className="ly-h3 ly-shift-h">{title}</h3>
+              <p className="ly-shift-t">{text}</p>
             </div>
           ))}
         </div>
@@ -709,13 +708,14 @@ const CSS = `
 .ly-callout strong{color:#F6C9E4}
 
 /* method */
-.ly-steps{position:relative;display:flex;flex-direction:column;gap:22px;margin-top:40px;text-align:left}
-.ly-step{position:relative;display:flex;gap:18px;align-items:flex-start}
-.ly-step-num{position:relative;flex:0 0 auto;width:46px;height:46px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:900;font-size:21px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px -10px rgba(91,42,128,.7);z-index:1}
-.ly-step-card{flex:1;min-width:0;background:var(--white);border:1px solid var(--hair);border-radius:20px;padding:22px 24px;box-shadow:var(--shadow-sm)}
-.ly-step-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
-.ly-step-t .ly-hi,.ly-rcard-t .ly-hi{font-weight:800}
-.ly-step:not(:last-child)::before{content:"";position:absolute;left:22px;top:46px;bottom:-22px;width:2px;background:var(--purple);z-index:0}
+.ly-method{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
+.ly-shift{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-sm)}
+.ly-shift::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
+.ly-shift-n{position:absolute;top:8px;right:20px;font-family:var(--head);font-weight:900;font-size:104px;line-height:1;color:var(--purple-soft);z-index:0;pointer-events:none;user-select:none}
+.ly-shift-ico{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:17px;background:var(--grad);color:#fff;box-shadow:0 16px 28px -14px rgba(91,42,128,.7)}
+.ly-shift-h{position:relative;z-index:1;margin-top:18px}
+.ly-shift-t{position:relative;z-index:1;margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-shift-t .ly-hi,.ly-rcard-t .ly-hi{font-weight:800}
 
 /* results */
 .ly-results{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
@@ -824,11 +824,7 @@ const CSS = `
   .ly-marquee-img{height:58px}
   .ly-marquee-track{gap:72px}
   .ly-rcards{grid-template-columns:1fr 1fr;gap:20px}
-  .ly-steps{flex-direction:row;gap:28px}
-  .ly-step{flex:1;flex-direction:column;gap:24px;align-items:stretch}
-  .ly-step-num{align-self:center;width:52px;height:52px;font-size:23px}
-  .ly-step-card{flex:1;text-align:left;padding:26px 26px 28px}
-  .ly-step:not(:last-child)::before{left:50%;top:26px;bottom:auto;height:2px;width:calc(100% + 28px);background:var(--purple)}
+  .ly-method{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-results{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-get{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-story-grid{grid-template-columns:.85fr 1fr;gap:48px;align-items:start}
