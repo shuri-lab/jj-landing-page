@@ -54,7 +54,7 @@ export const Route = createFileRoute("/")({
 });
 
 const MEMBER_PRICE = 47;
-const MEMBER_WAS = 67;
+const MEMBER_WAS = 77;
 // 3-month prepay option: $127 up front vs $47/mo (= $141 over 3 months) → save $14, ~$1.41/day
 const QUARTER_PRICE = 127;
 const QUARTER_MONTHLY_EQUIV = MEMBER_PRICE * 3; // 141

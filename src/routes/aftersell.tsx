@@ -17,7 +17,7 @@ export const Route = createFileRoute("/aftersell")({
 // CUSTOMER_NAME → Aftersell merge tag {{ customer.first_name }}
 // WAS / NOW → the reduced price ($47/mo) is permanent, not a first-month teaser.
 const CUSTOMER_NAME = "Jane";
-const WAS = 67;
+const WAS = 77;
 const NOW = 47;
 const SAVE = WAS - NOW;
 
