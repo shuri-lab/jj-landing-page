@@ -6,13 +6,17 @@ export interface CoachProgram {
   id: string;
   name: string;
   slug: string;
-  description: string;
+  description: string | null;
   pricingTier: PricingTier;
-  priceAmount: number;
+  priceAmount: number | null;
   priceCurrency: string;
   durationWeeks?: number;
-  monthlyPriceAmount?: number;
-  fullProgramPriceAmount?: number;
+  monthlyPriceAmount?: number | null;
+  multiMonthPriceAmount?: number | null;
+  multiMonthIntervalCount?: number | null;
+  fullProgramPriceAmount?: number | null;
+  supportedBillingIntervals?: SignupBillingInterval[];
+  programLabel?: string | null;
 }
 
 const ENDPOINT = "https://api.yoplatform.ai/helpers/public/coach-programs";
@@ -71,16 +75,66 @@ export function formatPrice(amount: number, currency: string) {
   }
 }
 
-export type SignupBillingInterval = "MONTHLY" | "FULL_PROGRAM";
+export type SignupBillingInterval = "MONTHLY" | "MULTI_MONTH" | "FULL_PROGRAM";
+
+const SIGNUP_BASE = "https://yobody.ai/signup";
 
 export function signupUrl(
   programId: string,
-  billingInterval: SignupBillingInterval,
-  opts?: { durationWeeks?: number },
+  billingInterval: SignupBillingInterval = "MONTHLY",
 ) {
   const params = new URLSearchParams();
   params.set("coachProgramConfigId", programId);
-  params.set("billingInterval", billingInterval);
-  if (opts?.durationWeeks) params.set("durationWeeks", String(opts.durationWeeks));
-  return `https://yobody.ai/signup?${params.toString()}`;
+  if (billingInterval !== "MONTHLY") {
+    params.set("billingInterval", billingInterval);
+  }
+  return `${SIGNUP_BASE}?${params.toString()}`;
+}
+
+export function monthlyAmount(program: CoachProgram): number | null {
+  return program.monthlyPriceAmount ?? program.priceAmount ?? null;
+}
+
+export function supportedIntervals(program: CoachProgram): SignupBillingInterval[] {
+  if (program.supportedBillingIntervals?.length) {
+    return program.supportedBillingIntervals;
+  }
+  const intervals: SignupBillingInterval[] = [];
+  const monthly = monthlyAmount(program);
+  if (monthly != null && monthly > 0) intervals.push("MONTHLY");
+  if (program.multiMonthPriceAmount != null && program.multiMonthPriceAmount > 0) {
+    intervals.push("MULTI_MONTH");
+  }
+  if (program.fullProgramPriceAmount != null && program.fullProgramPriceAmount > 0) {
+    intervals.push("FULL_PROGRAM");
+  }
+  return intervals.length ? intervals : ["MONTHLY"];
+}
+
+export function billingLabel(
+  program: CoachProgram,
+  interval: SignupBillingInterval,
+): string {
+  if (interval === "MULTI_MONTH") {
+    const months =
+      program.multiMonthIntervalCount && program.multiMonthIntervalCount >= 2
+        ? program.multiMonthIntervalCount
+        : 3;
+    return `every ${months} months`;
+  }
+  if (interval === "FULL_PROGRAM") {
+    const weeks = program.durationWeeks && program.durationWeeks > 0 ? program.durationWeeks : 12;
+    const months = Math.max(1, Math.round(weeks / 4));
+    return `for ${months} month${months === 1 ? "" : "s"} (paid in full)`;
+  }
+  return "billed monthly";
+}
+
+export function amountForInterval(
+  program: CoachProgram,
+  interval: SignupBillingInterval,
+): number | null {
+  if (interval === "MULTI_MONTH") return program.multiMonthPriceAmount ?? null;
+  if (interval === "FULL_PROGRAM") return program.fullProgramPriceAmount ?? null;
+  return monthlyAmount(program);
 }
