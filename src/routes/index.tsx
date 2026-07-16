@@ -416,9 +416,9 @@ const VALUE_STACK = [
 function Pricing() {
   const { basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY", { durationWeeks: basic.durationWeeks }) : "/checkout";
+  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
   // 3-month prepay maps to the full-program (pay-up-front) billing interval
-  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM", { durationWeeks: basic.durationWeeks }) : "/checkout";
+  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM") : "/checkout";
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">

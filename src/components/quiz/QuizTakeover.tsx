@@ -196,7 +196,7 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
     params.set("utm_source", "quiz-belly-after-40");
     params.set("version", "quiz01");
     const url = basic
-      ? `${signupUrl(basic.id, billing, { durationWeeks: basic.durationWeeks })}&${params.toString()}`
+      ? `${signupUrl(basic.id, billing)}&${params.toString()}`
       : `/checkout?${params.toString()}`;
     if (typeof window !== "undefined") window.location.href = url;
   };
