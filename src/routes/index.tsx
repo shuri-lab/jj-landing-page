@@ -336,12 +336,12 @@ function Method() {
 // ── real results ─────────────────────────────────────────────────────────────
 function RealResults() {
   const results = [
-    { src: t12, num: "Lost 74 lbs.", text: "Off 5 medications. Takes the stairs without stopping. \"I have myself back.\"" },
-    { src: t4, num: "Lost 31 lbs.", text: "Back in the dress she kept for three years. Wore it to her daughter's wedding." },
-    { src: t7, num: "Lost 22 lbs.", text: "Blood pressure normal. Sleeping through the night. \"First time a plan did not leave me on my own.\"" },
-    { src: t10, num: "Lost 28 lbs.", text: "Energy back. In family photos again, front and center." },
-    { src: t8, num: "Lost 19 lbs.", text: "Off the couch and back to walking every morning. \"I feel like the woman I forgot I was.\"" },
-    { src: t1, num: "Lost 24 lbs.", text: "Not hiding in baggy clothes anymore. Smiling in pictures again." },
+    { src: t12, num: "Lost 88 lbs.", text: "Off two medications and back in a size she had not worn in years. \"I finally recognize the woman in the mirror.\"" },
+    { src: t7, num: "Lost 58 lbs.", text: "Stronger than she has been in a decade, and working out most mornings. \"The first plan that never left me on my own.\"" },
+    { src: t10, num: "Lost 71 lbs.", text: "Her energy came roaring back. She keeps up with her kids and steps into the family photos now instead of hiding behind the camera." },
+    { src: t8, num: "Lost 47 lbs.", text: "Sleeping through the night and walking every morning again. \"I feel like the woman I forgot I was.\"" },
+    { src: t1, num: "Lost 52 lbs.", text: "Back in her cheer uniform and out of the baggy shirts she used to hide in. Smiling in every picture now." },
+    { src: t4, num: "Lost 34 lbs.", text: "Down two dress sizes and back in the dress she kept for three years. She wore it to her daughter's wedding." },
   ];
   return (
     <section className="ly-band ly-white">
