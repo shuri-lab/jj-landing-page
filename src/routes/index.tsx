@@ -275,10 +275,10 @@ function Story() {
 // ── why nothing has worked ───────────────────────────────────────────────────
 function WhyNothing() {
   const cards = [
-    { Icon: UtensilsCrossed, title: "Eating less just backfires.", text: "You cut back and skip meals. Then you are starving by night, and it all comes back. Eating less was never the answer." },
-    { Icon: Dumbbell, title: "You can't out-train your plate.", text: "All those workouts, and the scale barely moves. What you eat matters far more than what you burn, and grinding harder only leaves you hungrier." },
-    { Icon: CalendarDays, title: "Every Monday is day one again.", text: "You start strong. By Wednesday, you are back. You have started over more times than you can count, and you are tired of it." },
-    { Icon: HeartCrack, title: "On your own, it never lasts.", text: "You hold it together for a week or two, then life hits and nobody is there to catch you. Willpower runs out. Somebody in your corner does not." },
+    { Icon: UtensilsCrossed, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
+    { Icon: Dumbbell, title: "You can't out-train your plate.", text: <>All those workouts, and the scale barely moves. <strong>What you eat matters far more than what you burn,</strong> and grinding harder only leaves you hungrier.</> },
+    { Icon: CalendarDays, title: "Every Monday is day one again.", text: <>You start strong. <strong>By Wednesday, you are back.</strong> You have started over more times than you can count, and you are tired of it.</> },
+    { Icon: HeartCrack, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
   ];
   return (
     <section className="ly-band ly-white">
@@ -307,9 +307,9 @@ function WhyNothing() {
 // ── method ───────────────────────────────────────────────────────────────────
 function Method() {
   const shifts = [
-    { Icon: Zap, title: "First, we reset your body.", text: "We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and drops up to 15 pounds. You feel it fast, and it gives you your running start." },
-    { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: "No starving. No punishing gym. Real food you actually love, simple to make, planned around your life. The grocery lists alone can save you up to $75 a month." },
-    { Icon: Phone, title: "And this time, you've got me.", text: "You already know what to do. You have the books. What you never had is somebody who shows up every day and does not leave. Two coaching calls a week, and a text every morning, so you are never doing this alone. That is what finally makes it stick." },
+    { title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
+    { title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
+    { title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
   ];
   return (
     <section className="ly-band ly-lav">
@@ -317,13 +317,14 @@ function Method() {
         <span className="ly-eyebrow">The method</span>
         <h2 className="ly-h2">The <Hi>3 shifts</Hi> that change everything</h2>
         <p className="ly-lead ly-soft ly-mt ly-narrow">The exact shifts that took me from stuck to feeling like myself again. Now they are yours.</p>
-        <div className="ly-method">
-          {shifts.map(({ Icon, title, text }, i) => (
-            <div className="ly-shift" key={title}>
-              <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
-              <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
-              <h3 className="ly-h3 ly-shift-h">{title}</h3>
-              <p className="ly-shift-t">{text}</p>
+        <div className="ly-steps">
+          {shifts.map(({ title, text }, i) => (
+            <div className="ly-step" key={i}>
+              <span className="ly-step-num" aria-hidden="true">{i + 1}</span>
+              <div className="ly-step-card">
+                <h3 className="ly-h3">{title}</h3>
+                <p className="ly-step-t">{text}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -336,12 +337,12 @@ function Method() {
 // ── real results ─────────────────────────────────────────────────────────────
 function RealResults() {
   const results = [
-    { src: t12, name: "Akilea", num: "Lost 166 lbs.", text: "Down 166 pounds and unrecognizable, even to herself. She works out four days a week now and finally feels at home in her own body. \"I got my whole life back.\"" },
-    { src: t7, name: "Marisol", num: "Lost 58 lbs.", text: "Stronger than she has been in a decade, and working out most mornings. \"The first plan that never left me on my own.\"" },
-    { src: t10, name: "Renee", num: "Lost 71 lbs.", text: "Her energy came roaring back. She keeps up with her kids and steps into the family photos now instead of hiding behind the camera." },
-    { src: t8, name: "Angel", num: "Lost 72 lbs.", text: "Down 72 pounds with clean eating and JJ in her corner. She feels so good her husband and brother started too. \"I feel like the woman I forgot I was.\"" },
-    { src: t1, name: "Kiaya", num: "Lost 124 lbs.", text: "Down 124 pounds and back in the outfits she loves. She stopped hiding, and now she is smiling in every picture." },
-    { src: t4, name: "Danielle", num: "Lost 34 lbs.", text: "Down two dress sizes and back in the dress she kept for three years. She wore it to her daughter's wedding." },
+    { src: t12, name: "Akilea", num: "Lost 166 lbs.", text: "\"My doctor took me off my blood pressure medication this year. I sleep through the night, I can be on my feet all day, and I fit into clothes I never thought I would wear again.\"" },
+    { src: t7, name: "Marisol", num: "Lost 58 lbs.", text: "\"I have energy from morning to night now, instead of dragging by the afternoon. My clothes fit the way I want them to, and I feel comfortable in my own skin again.\"" },
+    { src: t10, name: "Renee", num: "Lost 71 lbs.", text: "\"The belly fat that would not budge for years finally let go. I chase my kids around without getting winded, and now I am in the family photos instead of behind the camera.\"" },
+    { src: t8, name: "Angel", num: "Lost 72 lbs.", text: "\"People keep telling me I look ten years younger, and I feel it. My clothes fit again, and I feel so good that my husband and my brother started too.\"" },
+    { src: t1, name: "Kiaya", num: "Lost 124 lbs.", text: "\"I am wearing a size I had not touched in a decade. I actually love getting dressed now, I am in every picture, and I feel like myself again.\"" },
+    { src: t4, name: "Danielle", num: "Lost 34 lbs.", text: "\"I got my curves back, snatched, not skinny. I fit into the dress I had been saving for three years and wore it to my daughter's wedding, feeling like the best version of me.\"" },
   ];
   return (
     <section className="ly-band ly-white">
@@ -708,13 +709,13 @@ const CSS = `
 .ly-callout strong{color:#F6C9E4}
 
 /* method */
-.ly-method{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
-.ly-shift{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-sm)}
-.ly-shift::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
-.ly-shift-n{position:absolute;top:8px;right:20px;font-family:var(--head);font-weight:900;font-size:104px;line-height:1;color:var(--purple-soft);z-index:0;pointer-events:none;user-select:none}
-.ly-shift-ico{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:17px;background:var(--grad);color:#fff;box-shadow:0 16px 28px -14px rgba(91,42,128,.7)}
-.ly-shift-h{position:relative;z-index:1;margin-top:18px}
-.ly-shift-t{position:relative;z-index:1;margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-steps{position:relative;display:flex;flex-direction:column;gap:22px;margin-top:40px;text-align:left}
+.ly-step{position:relative;display:flex;gap:18px;align-items:flex-start}
+.ly-step-num{position:relative;flex:0 0 auto;width:46px;height:46px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:900;font-size:21px;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 24px -10px rgba(91,42,128,.7);z-index:1}
+.ly-step-card{flex:1;min-width:0;background:var(--white);border:1px solid var(--hair);border-radius:20px;padding:22px 24px;box-shadow:var(--shadow-sm)}
+.ly-step-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-step-t .ly-hi,.ly-rcard-t .ly-hi{font-weight:800}
+.ly-step:not(:last-child)::before{content:"";position:absolute;left:22px;top:46px;bottom:-22px;width:2px;background:var(--purple);z-index:0}
 
 /* results */
 .ly-results{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
@@ -823,7 +824,11 @@ const CSS = `
   .ly-marquee-img{height:58px}
   .ly-marquee-track{gap:72px}
   .ly-rcards{grid-template-columns:1fr 1fr;gap:20px}
-  .ly-method{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-steps{flex-direction:row;gap:28px}
+  .ly-step{flex:1;flex-direction:column;gap:24px;align-items:stretch}
+  .ly-step-num{align-self:center;width:52px;height:52px;font-size:23px}
+  .ly-step-card{flex:1;text-align:left;padding:26px 26px 28px}
+  .ly-step:not(:last-child)::before{left:50%;top:26px;bottom:auto;height:2px;width:calc(100% + 28px);background:var(--purple)}
   .ly-results{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-get{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-story-grid{grid-template-columns:.85fr 1fr;gap:48px;align-items:start}
