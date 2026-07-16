@@ -85,7 +85,7 @@ function Aftersell() {
             </div>
             <div className="ups-perday">That&rsquo;s just <strong>$1.57 a day</strong>, less than your morning coffee ☕</div>
 
-            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 2 weeks</span>, and we keep going together until every last pound is gone.</p>
+            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 30 days</span>, and we keep going together until every last pound is gone.</p>
 
             <p className="ups-desc">Picture a few weeks from now: clothes fitting looser, the scale finally moving, and knowing that every step of the way, I&rsquo;m there with you.</p>
 

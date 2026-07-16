@@ -336,12 +336,12 @@ function Method() {
 // ── real results ─────────────────────────────────────────────────────────────
 function RealResults() {
   const results = [
-    { src: t12, num: "Lost 88 lbs.", text: "Off two medications and back in a size she had not worn in years. \"I finally recognize the woman in the mirror.\"" },
-    { src: t7, num: "Lost 58 lbs.", text: "Stronger than she has been in a decade, and working out most mornings. \"The first plan that never left me on my own.\"" },
-    { src: t10, num: "Lost 71 lbs.", text: "Her energy came roaring back. She keeps up with her kids and steps into the family photos now instead of hiding behind the camera." },
-    { src: t8, num: "Lost 47 lbs.", text: "Sleeping through the night and walking every morning again. \"I feel like the woman I forgot I was.\"" },
-    { src: t1, num: "Lost 52 lbs.", text: "Back in her cheer uniform and out of the baggy shirts she used to hide in. Smiling in every picture now." },
-    { src: t4, num: "Lost 34 lbs.", text: "Down two dress sizes and back in the dress she kept for three years. She wore it to her daughter's wedding." },
+    { src: t12, name: "Akilea", num: "Lost 166 lbs.", text: "Down 166 pounds and unrecognizable, even to herself. She works out four days a week now and finally feels at home in her own body. \"I got my whole life back.\"" },
+    { src: t7, name: "Marisol", num: "Lost 58 lbs.", text: "Stronger than she has been in a decade, and working out most mornings. \"The first plan that never left me on my own.\"" },
+    { src: t10, name: "Renee", num: "Lost 71 lbs.", text: "Her energy came roaring back. She keeps up with her kids and steps into the family photos now instead of hiding behind the camera." },
+    { src: t8, name: "Angel", num: "Lost 72 lbs.", text: "Down 72 pounds with clean eating and JJ in her corner. She feels so good her husband and brother started too. \"I feel like the woman I forgot I was.\"" },
+    { src: t1, name: "Kiaya", num: "Lost 124 lbs.", text: "Down 124 pounds and back in the outfits she loves. She stopped hiding, and now she is smiling in every picture." },
+    { src: t4, name: "Danielle", num: "Lost 34 lbs.", text: "Down two dress sizes and back in the dress she kept for three years. She wore it to her daughter's wedding." },
   ];
   return (
     <section className="ly-band ly-white">
@@ -353,6 +353,7 @@ function RealResults() {
             <figure className="ly-result" key={i}>
               <div className="ly-result-ph"><img src={r.src} alt="A woman's before and after transformation" loading="lazy" /></div>
               <figcaption className="ly-result-in">
+                {r.name && <p className="ly-result-name">{r.name}</p>}
                 <p className="ly-result-num">{r.num}</p>
                 <p className="ly-result-t">{r.text}</p>
               </figcaption>
@@ -720,6 +721,7 @@ const CSS = `
 .ly-result{background:var(--white);border:1px solid var(--hair);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);margin:0}
 .ly-result-ph img{width:100%;height:auto;object-fit:cover}
 .ly-result-in{padding:20px 22px 24px}
+.ly-result-name{font-family:var(--head);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 6px}
 .ly-result-num{font-family:var(--head);font-weight:900;font-size:24px;color:var(--purple);margin:0}
 .ly-result-t{margin:8px 0 0;font-size:16px;line-height:1.55;color:var(--ink-soft)}
 
