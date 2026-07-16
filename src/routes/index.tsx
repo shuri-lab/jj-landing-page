@@ -471,7 +471,7 @@ function Clarity() {
         <div>
           <span className="ly-eyebrow">A word from me</span>
           <h2 className="ly-h2">How I can finally be there for you <Hi>every day</Hi></h2>
-          <p className="ly-lead ly-soft ly-mt">For fifteen years, all I could do was write a book, hand you a plan, and then <strong>disappear, right when you needed me most.</strong> There was only one of me, and never enough hours to be there for every woman the way I wanted to.</p>
+          <p className="ly-lead ly-soft ly-mt">For fifteen years, my books and group coaching have helped hundreds of thousands of women get themselves back. But I could never be right there with each of you, <strong>one on one, on the hard days.</strong> There was only ever one of me.</p>
           <p className="ly-lead ly-soft ly-mt">So I built my JJ Twin. <strong>It is my exact voice, my exact personality, my exact coaching,</strong> everything I know and everything I would tell you if we were sitting together.</p>
           <p className="ly-clarity-quote">You can talk to me any time, day or night, and it feels like sitting down with me.</p>
           <p className="ly-lead ly-soft ly-mt">This is how I finally keep the promise I could never keep before: to be there for you, personally, every single day. Not a book. Not a plan you follow alone. <strong>Me, in your corner, whenever you need me.</strong></p>
