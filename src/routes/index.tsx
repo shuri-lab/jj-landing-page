@@ -414,7 +414,7 @@ const VALUE_STACK = [
 ];
 
 function Pricing() {
-  const { basic } = useCoachPrograms();
+  const { premium: basic } = useCoachPrograms();
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
   const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
   // 3-month prepay maps to the full-program (pay-up-front) billing interval
