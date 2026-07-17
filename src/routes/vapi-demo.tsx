@@ -412,16 +412,25 @@ function Header() {
 function Hero() {
   return (
     <section className="ly-band ly-hero-voice">
-      <div className="ly-wrap ly-center">
-        <div className="ly-voice-eyebrow"><span className="ly-voice-dot" aria-hidden /> Live · Talk to the JJ Twin</div>
-        <h1 className="ly-h1 ly-voice-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
-        <p className="ly-voice-sub">Talk it through with JJ right now. Tap below, ask her anything about losing the weight, and hear exactly how she would coach you through it.</p>
-        <div className="ly-voice-wrap"><EmbeddedVoiceAgent /></div>
-        <p className="ly-voice-note">This is JJ's real voice and method, with you any time, day or night. The same coach who is in your corner every day once you join.</p>
-        <div className="ly-voice-trust"><HeroTrust /></div>
+      <div className="ly-wrap ly-vhero">
+        <div className="ly-vhero-copy">
+          <div className="ly-voice-eyebrow"><span className="ly-voice-dot" aria-hidden /> Live · Talk to the JJ Twin</div>
+          <h1 className="ly-h1 ly-vhero-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
+          <p className="ly-voice-sub">Talk it through with JJ right now. Ask her anything about losing the weight, and hear exactly how she would coach you through it.</p>
+          <div className="ly-vhero-trust"><HeroTrust /></div>
+        </div>
+
+        <div className="ly-vhero-panel">
+          <div className="ly-voice-wrap"><EmbeddedVoiceAgent /></div>
+          <div className="ly-vhero-join">
+            <p className="ly-vhero-join-lead">Ready for JJ in your corner <em>every day?</em></p>
+            <Cta label="Join today" sub={CTA_SUB} full />
+          </div>
+        </div>
       </div>
 
       <TransformationsMarquee />
+      <div className="ly-vhero-trust-mob"><HeroTrust /></div>
     </section>
   );
 }
@@ -897,11 +906,17 @@ const CSS = `
 .ly-voice-eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--head);font-weight:800;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:8px 16px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
 .ly-voice-dot{width:8px;height:8px;border-radius:999px;background:#E0398F;animation:ly-pulse 1.6s infinite}
 @keyframes ly-pulse{0%{box-shadow:0 0 0 0 rgba(224,57,143,.55)}70%{box-shadow:0 0 0 8px rgba(224,57,143,0)}100%{box-shadow:0 0 0 0 rgba(224,57,143,0)}}
-.ly-voice-h1{max-width:780px;margin:0 auto}
-.ly-voice-sub{max-width:600px;margin:16px auto 0;font-size:clamp(18px,2.2vw,21px);line-height:1.5;font-weight:600;color:var(--ink)}
-.ly-voice-wrap{display:flex;justify-content:center;margin-top:32px}
-.ly-voice-note{max-width:460px;margin:20px auto 0;font-size:14px;line-height:1.55;color:var(--ink-soft)}
-.ly-voice-trust{display:flex;justify-content:center;margin-top:28px}
+.ly-vhero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:34px}
+.ly-vhero-copy{display:flex;flex-direction:column;align-items:center}
+.ly-vhero-h1{margin:0}
+.ly-voice-sub{max-width:560px;margin:16px auto 0;font-size:clamp(17px,2.2vw,20px);line-height:1.5;font-weight:600;color:var(--ink)}
+.ly-vhero-trust{display:none;justify-content:center;margin-top:24px}
+.ly-vhero-trust-mob{display:flex;justify-content:center;padding:24px 20px 0}
+.ly-vhero-panel{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
+.ly-voice-wrap{display:flex;justify-content:center;width:100%}
+.ly-vhero-join{width:100%;max-width:400px;text-align:center}
+.ly-vhero-join-lead{font-family:var(--head);font-weight:800;font-size:17px;color:var(--ink);margin:0 0 12px}
+.ly-vhero-join-lead em{font-style:normal;color:var(--purple)}
 .ly-voice{width:100%;max-width:400px;background:#fff;border:1px solid var(--hair);border-radius:24px;box-shadow:var(--shadow);padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .ly-voice-mic-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:18px;height:128px;width:128px}
 .ly-voice-ring{position:absolute;width:128px;height:128px;border-radius:999px;background:rgba(124,58,166,.14)}
@@ -1068,6 +1083,14 @@ const CSS = `
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
+  .ly-hero-voice{padding:60px 0 64px}
+  .ly-vhero{flex-direction:row;align-items:center;text-align:left;gap:60px}
+  .ly-vhero-copy{flex:1;align-items:flex-start}
+  .ly-vhero-h1{font-size:clamp(34px,4.2vw,52px)}
+  .ly-hero-voice .ly-voice-sub{margin-left:0;margin-right:0;max-width:520px}
+  .ly-vhero-trust{display:flex;justify-content:flex-start}
+  .ly-vhero-trust-mob{display:none}
+  .ly-vhero-panel{flex:0 0 auto;width:420px}
   .ly-deal2-per{flex-basis:auto}
   .ly-clarity{grid-template-columns:0.82fr 1.18fr;gap:54px}
   .ly-only-mob{display:none} .ly-only-desk{display:block}
