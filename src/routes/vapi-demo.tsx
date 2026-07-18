@@ -82,7 +82,7 @@ function Cta({ label = "Start today", sub, href, full = false, onDark = false }:
 }
 
 // ── voice agent (Vapi) ───────────────────────────────────────────────────────
-const VAPI_ASSISTANT_ID = "eab79507-ec75-4288-88fa-514953832c48";
+const VAPI_ASSISTANT_ID = "e5d3b63a-0c2b-4fac-b37d-dcc00ede102d";
 
 type VoiceStatus = "idle" | "initializing" | "ready" | "requesting-permission" | "connecting" | "connected" | "error";
 
