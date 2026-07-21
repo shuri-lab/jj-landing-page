@@ -7,6 +7,8 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import designV2Hero from "@/assets/landing/design-v2-hero.png";
+import mobileHeroImage from "@/assets/landing/mobile-hero-image.png";
 import clarityImage from "@/assets/landing/clarity-image.png";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
@@ -131,6 +133,9 @@ function EmbeddedVoiceAgentInner() {
   const mountedRef = useRef(true);
   const statusRef = useRef<VoiceStatus>("idle");
   const micStreamRef = useRef<MediaStream | null>(null);
+  const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
+  const gainRef = useRef(0);
+  const isSpeakingRef = useRef(false);
 
   const [status, setStatusState] = useState<VoiceStatus>("idle");
   const [error, setError] = useState("");
@@ -195,15 +200,17 @@ function EmbeddedVoiceAgentInner() {
         });
         vapi.on("call-end", () => {
           clearConnectionTimeout();
+          isSpeakingRef.current = false;
           setIsSpeaking(false);
           releaseMic();
           setStatus("ready");
         });
-        vapi.on("speech-start", () => setIsSpeaking(true));
-        vapi.on("speech-end", () => setIsSpeaking(false));
+        vapi.on("speech-start", () => { isSpeakingRef.current = true; setIsSpeaking(true); });
+        vapi.on("speech-end", () => { isSpeakingRef.current = false; setIsSpeaking(false); });
         vapi.on("error", (err: unknown) => {
           console.error("Vapi error", err);
           clearConnectionTimeout();
+          isSpeakingRef.current = false;
           setIsSpeaking(false);
           releaseMic();
           setError("Could not connect to the voice agent. Please try again.");
@@ -235,6 +242,32 @@ function EmbeddedVoiceAgentInner() {
       }
     };
   }, [publicKey, assistantId]);
+
+  // Flowing circular sound-wave: bar heights follow a coherent traveling waveform.
+  useEffect(() => {
+    let raf = 0;
+    const N = 48;
+    const loop = (t: number) => {
+      const connected = statusRef.current === "connected";
+      const target = !connected || isSpeakingRef.current ? 1 : 0;
+      gainRef.current += (target - gainRef.current) * 0.05;
+      const g = gainRef.current;
+      const time = t / 1000;
+      const bars = barsRef.current;
+      for (let i = 0; i < N; i++) {
+        const el = bars[i];
+        if (!el) continue;
+        const a = (i / N) * Math.PI * 2;
+        const w = 0.55 * Math.sin(a * 3 + time * 1.1) + 0.45 * Math.sin(a * 2 - time * 0.7 + 1.3);
+        const norm = (w + 1) / 2;
+        const h = 0.28 + g * (0.14 + norm * 1.5);
+        el.style.transform = `scaleY(${h.toFixed(3)})`;
+      }
+      raf = requestAnimationFrame(loop);
+    };
+    raf = requestAnimationFrame(loop);
+    return () => cancelAnimationFrame(raf);
+  }, []);
 
   async function startCall() {
     if (statusRef.current === "connecting" || statusRef.current === "connected") return;
@@ -308,6 +341,13 @@ function EmbeddedVoiceAgentInner() {
     <div className="ly-voice">
       <div className="ly-voice-mic-wrap">
         <span className={`ly-voice-ring ${isConnected ? "is-live" : ""}`} aria-hidden />
+        <div className="ly-vwring" aria-hidden>
+          {Array.from({ length: 48 }).map((_, i) => (
+            <span key={i} className="ly-vwbar" style={{ transform: `rotate(${(i * 7.5).toFixed(1)}deg)` }}>
+              <span className="ly-vwtick" ref={(el) => { barsRef.current[i] = el; }} />
+            </span>
+          ))}
+        </div>
         <button
           type="button"
           onClick={isConnected ? endCall : startCall}
@@ -411,21 +451,25 @@ function Header() {
 // ── hero (voice demo) ────────────────────────────────────────────────────────
 function Hero() {
   return (
-    <section className="ly-band ly-hero-voice">
-      <div className="ly-wrap ly-vhero">
-        <div className="ly-vhero-copy">
-          <div className="ly-voice-eyebrow"><span className="ly-voice-dot" aria-hidden /> Live · Talk to the JJ Twin</div>
-          <h1 className="ly-h1 ly-vhero-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
-          <p className="ly-voice-sub">Talk it through with JJ right now. Ask her anything about losing the weight, and hear exactly how she would coach you through it.</p>
-          <div className="ly-vhero-trust"><HeroTrust /></div>
+    <section className="ly-band ly-hero">
+      <div className="ly-hero-stage">
+        <div className="ly-hero-bg" aria-hidden>
+          <img src={designV2Hero} alt="" fetchPriority="high" />
+          <span className="ly-hero-fade" />
         </div>
-
-        <div className="ly-vhero-panel">
-          <div className="ly-voice-wrap"><EmbeddedVoiceAgent /></div>
-          <div className="ly-vhero-join">
-            <p className="ly-vhero-join-lead">Ready for JJ in your corner <em>every day?</em></p>
-            <Cta label="Join today" sub={CTA_SUB} full />
+        <div className="ly-wrap ly-hero-inner">
+          <div className="ly-hero-copy">
+            <HeroTrust />
+            <h1 className="ly-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
+            <p className="ly-hero-sub">Talk it through with JJ right now, and find out what you&rsquo;ve been missing.</p>
           </div>
+          <div className="ly-hero-mobstage ly-only-mob">
+            <img className="ly-hero-mobstage-img" src={mobileHeroImage} alt="JJ Smith, your personal coach" loading="lazy" />
+            <span className="ly-hero-mobstage-scrim" aria-hidden />
+            <div className="ly-voice-mobwidget"><EmbeddedVoiceAgent /></div>
+          </div>
+          <div className="ly-hero-action"><Cta label="Start today" sub={CTA_SUB} full /></div>
+          <div className="ly-voice-overlay"><EmbeddedVoiceAgent /></div>
         </div>
       </div>
 
@@ -891,8 +935,16 @@ const CSS = `
 .ly-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:30px 0 42px}
 .ly-hero-bg{display:none;position:absolute;inset:0;z-index:0}
 .ly-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
-.ly-hero-mob-img{margin:26px auto 0;max-width:400px;aspect-ratio:1/1;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-.ly-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
+.ly-hero-mobstage{position:relative;max-width:400px;margin:20px auto 0;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
+.ly-hero-mobstage-img{display:block;width:100%;aspect-ratio:4/5;object-fit:cover;object-position:center 50%}
+.ly-hero-mobstage-scrim{position:absolute;left:0;right:0;bottom:0;height:52%;background:linear-gradient(180deg,rgba(246,238,251,0) 0%,rgba(246,238,251,.1) 44%,rgba(246,238,251,.5) 100%);pointer-events:none;z-index:1}
+.ly-voice-mobwidget{position:absolute;left:14px;right:14px;bottom:14px;z-index:2}
+.ly-voice-mobwidget .ly-voice{max-width:none;width:100%;border-radius:20px;background:linear-gradient(160deg,rgba(255,255,255,.34) 0%,rgba(247,240,252,.16) 100%);backdrop-filter:blur(24px) saturate(1.3);-webkit-backdrop-filter:blur(24px) saturate(1.3);border:1px solid rgba(255,255,255,.5);box-shadow:0 16px 40px -18px rgba(30,15,50,.5);padding:16px 16px 15px}
+.ly-voice-mobwidget .ly-voice-mic-wrap{height:104px;width:104px;margin-bottom:10px}
+.ly-voice-mobwidget .ly-voice-mic{width:78px;height:78px}
+.ly-voice-mobwidget .ly-voice-mic svg{width:30px;height:30px}
+.ly-voice-mobwidget .ly-voice-status{font-size:15px}
+.ly-voice-mobwidget .ly-voice-hint{font-size:12px}
 .ly-announce-x{display:inline-flex;align-items:center;gap:9px}
 @media (max-width:600px){ .ly-announce-x{display:none} }
 .ly-hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 54%,rgba(246,238,251,.9) 74%,rgba(246,238,251,.62) 100%),linear-gradient(180deg,rgba(246,238,251,.15) 0%,rgba(246,238,251,.68) 58%,#F4EBFB 100%)}
@@ -902,27 +954,18 @@ const CSS = `
 .ly-hero-bullets{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:11px;max-width:520px}
 
 /* voice demo hero */
-.ly-hero-voice{background:radial-gradient(120% 90% at 50% 0%,#F3ECFB 0%,#FBF6F0 72%);padding:40px 0 56px}
-.ly-voice-eyebrow{display:inline-flex;align-items:center;gap:9px;font-family:var(--head);font-weight:800;font-size:12.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--purple);background:#fff;border:1px solid var(--hair);border-radius:999px;padding:8px 16px;margin-bottom:20px;box-shadow:var(--shadow-sm)}
-.ly-voice-dot{width:8px;height:8px;border-radius:999px;background:#E0398F;animation:ly-pulse 1.6s infinite}
-@keyframes ly-pulse{0%{box-shadow:0 0 0 0 rgba(224,57,143,.55)}70%{box-shadow:0 0 0 8px rgba(224,57,143,0)}100%{box-shadow:0 0 0 0 rgba(224,57,143,0)}}
-.ly-vhero{display:flex;flex-direction:column;align-items:center;text-align:center;gap:34px}
-.ly-vhero-copy{display:flex;flex-direction:column;align-items:center}
-.ly-vhero-h1{margin:0}
-.ly-voice-sub{max-width:560px;margin:16px auto 0;font-size:clamp(17px,2.2vw,20px);line-height:1.5;font-weight:600;color:var(--ink)}
-.ly-vhero-trust{display:none;justify-content:center;margin-top:24px}
 .ly-vhero-trust-mob{display:flex;justify-content:center;padding:24px 20px 0}
-.ly-vhero-panel{display:flex;flex-direction:column;align-items:center;gap:20px;width:100%}
-.ly-voice-wrap{display:flex;justify-content:center;width:100%}
-.ly-vhero-join{width:100%;max-width:400px;text-align:center}
-.ly-vhero-join-lead{font-family:var(--head);font-weight:800;font-size:17px;color:var(--ink);margin:0 0 12px}
-.ly-vhero-join-lead em{font-style:normal;color:var(--purple)}
-.ly-voice{width:100%;max-width:400px;background:#fff;border:1px solid var(--hair);border-radius:24px;box-shadow:var(--shadow);padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ly-hero-copy .ly-trust{display:none}
+.ly-voice-overlay{display:none}
+.ly-voice{width:100%;max-width:400px;background:linear-gradient(155deg,rgba(255,255,255,.66) 0%,rgba(247,240,252,.44) 100%);backdrop-filter:blur(20px) saturate(1.35);-webkit-backdrop-filter:blur(20px) saturate(1.35);border:1px solid rgba(255,255,255,.6);border-radius:26px;box-shadow:0 30px 64px -26px rgba(74,35,90,.55),inset 0 1px 0 rgba(255,255,255,.65);padding:34px 26px;display:flex;flex-direction:column;align-items:center;text-align:center}
 .ly-voice-mic-wrap{position:relative;display:flex;align-items:center;justify-content:center;margin-bottom:18px;height:128px;width:128px}
-.ly-voice-ring{position:absolute;width:128px;height:128px;border-radius:999px;background:rgba(124,58,166,.14)}
-.ly-voice-ring.is-live{animation:ly-ping 1.5s cubic-bezier(0,0,.2,1) infinite}
-@keyframes ly-ping{75%,100%{transform:scale(1.55);opacity:0}}
-.ly-voice-mic{position:relative;width:96px;height:96px;border-radius:999px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;box-shadow:0 18px 36px -12px rgba(91,42,128,.55);transition:transform .15s,filter .15s}
+/* soft static glow behind the mic */
+.ly-voice-ring{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:999px;background:radial-gradient(circle,rgba(124,58,166,.20) 0%,rgba(124,58,166,0) 68%);pointer-events:none}
+/* circular sound-wave equalizer — JS-driven flowing waveform */
+.ly-vwring{position:absolute;left:50%;top:50%;width:0;height:0;z-index:1}
+.ly-vwbar{position:absolute;left:0;top:0;width:0;height:0}
+.ly-vwtick{position:absolute;left:-1.5px;top:-56px;width:3px;height:13px;border-radius:3px;background:linear-gradient(180deg,#9B54C6,#C0468C);transform-origin:center;transform:scaleY(.28);will-change:transform}
+.ly-voice-mic{position:relative;z-index:2;width:96px;height:96px;border-radius:999px;background:var(--grad);color:#fff;display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;box-shadow:0 18px 36px -12px rgba(91,42,128,.6),0 0 0 7px rgba(255,255,255,.4);transition:transform .15s,filter .15s}
 .ly-voice-mic:hover{filter:brightness(1.05)}
 .ly-voice-mic:active{transform:scale(.95)}
 .ly-voice-mic:disabled{opacity:.7;cursor:default}
@@ -934,6 +977,7 @@ const CSS = `
 .ly-hero-bullets li{display:flex;align-items:flex-start;gap:11px;font-size:17px;font-weight:600}
 .ly-hb-tick{width:24px;height:24px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
 .ly-hero-action{max-width:480px;margin-top:24px}
+.ly-hero-action .ly-cta-sub{text-align:center}
 
 /* hero trust (eyebrow / mobile pill) */
 .ly-trust .ly-tdesk{display:none} .ly-bdesk{display:none}
@@ -1083,14 +1127,14 @@ const CSS = `
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
-  .ly-hero-voice{padding:60px 0 64px}
-  .ly-vhero{flex-direction:row;align-items:center;text-align:left;gap:60px}
-  .ly-vhero-copy{flex:1;align-items:flex-start}
-  .ly-vhero-h1{font-size:clamp(34px,4.2vw,52px)}
-  .ly-hero-voice .ly-voice-sub{margin-left:0;margin-right:0;max-width:520px}
-  .ly-vhero-trust{display:flex;justify-content:flex-start}
+  .ly-hero-copy .ly-trust{display:flex}
   .ly-vhero-trust-mob{display:none}
-  .ly-vhero-panel{flex:0 0 auto;width:420px}
+  .ly-voice-overlay{position:absolute;right:4%;bottom:9%;margin:0;z-index:3;display:block;width:320px}
+  .ly-voice-overlay .ly-voice{max-width:320px;padding:26px 22px}
+  .ly-voice-overlay .ly-voice-mic-wrap{height:108px;width:108px;margin-bottom:14px}
+  .ly-voice-overlay .ly-voice-ring{width:108px;height:108px}
+  .ly-voice-overlay .ly-voice-mic{width:82px;height:82px}
+  .ly-voice-overlay .ly-voice-mic svg{width:32px;height:32px}
   .ly-deal2-per{flex-basis:auto}
   .ly-clarity{grid-template-columns:0.82fr 1.18fr;gap:54px}
   .ly-only-mob{display:none} .ly-only-desk{display:block}
