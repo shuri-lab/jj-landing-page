@@ -24,6 +24,7 @@ import { Route as LookYoungerRouteImport } from './routes/look-younger'
 import { Route as DesignV2RouteImport } from './routes/design-v2'
 import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
+import { Route as CallsTestRouteImport } from './routes/calls-test'
 import { Route as CRouteImport } from './routes/c'
 import { Route as BRouteImport } from './routes/b'
 import { Route as AftersellRouteImport } from './routes/aftersell'
@@ -106,6 +107,11 @@ const ChallengeV1Route = ChallengeV1RouteImport.update({
   path: '/challenge-v1',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CallsTestRoute = CallsTestRouteImport.update({
+  id: '/calls-test',
+  path: '/calls-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CRoute = CRouteImport.update({
   id: '/c',
   path: '/c',
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
+  '/calls-test': typeof CallsTestRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
   '/design-v2': typeof DesignV2Route
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
+  '/calls-test': typeof CallsTestRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
   '/design-v2': typeof DesignV2Route
@@ -191,6 +199,7 @@ export interface FileRoutesById {
   '/aftersell': typeof AftersellRoute
   '/b': typeof BRoute
   '/c': typeof CRoute
+  '/calls-test': typeof CallsTestRoute
   '/challenge-v1': typeof ChallengeV1Route
   '/checkout': typeof CheckoutRoute
   '/design-v2': typeof DesignV2Route
@@ -216,6 +225,7 @@ export interface FileRouteTypes {
     | '/aftersell'
     | '/b'
     | '/c'
+    | '/calls-test'
     | '/challenge-v1'
     | '/checkout'
     | '/design-v2'
@@ -239,6 +249,7 @@ export interface FileRouteTypes {
     | '/aftersell'
     | '/b'
     | '/c'
+    | '/calls-test'
     | '/challenge-v1'
     | '/checkout'
     | '/design-v2'
@@ -262,6 +273,7 @@ export interface FileRouteTypes {
     | '/aftersell'
     | '/b'
     | '/c'
+    | '/calls-test'
     | '/challenge-v1'
     | '/checkout'
     | '/design-v2'
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   AftersellRoute: typeof AftersellRoute
   BRoute: typeof BRoute
   CRoute: typeof CRoute
+  CallsTestRoute: typeof CallsTestRoute
   ChallengeV1Route: typeof ChallengeV1Route
   CheckoutRoute: typeof CheckoutRoute
   DesignV2Route: typeof DesignV2Route
@@ -410,6 +423,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ChallengeV1RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/calls-test': {
+      id: '/calls-test'
+      path: '/calls-test'
+      fullPath: '/calls-test'
+      preLoaderRoute: typeof CallsTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/c': {
       id: '/c'
       path: '/c'
@@ -462,6 +482,7 @@ const rootRouteChildren: RootRouteChildren = {
   AftersellRoute: AftersellRoute,
   BRoute: BRoute,
   CRoute: CRoute,
+  CallsTestRoute: CallsTestRoute,
   ChallengeV1Route: ChallengeV1Route,
   CheckoutRoute: CheckoutRoute,
   DesignV2Route: DesignV2Route,
@@ -481,3 +502,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
