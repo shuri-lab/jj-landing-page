@@ -13,6 +13,8 @@ import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
 import { Route as QuizV3RouteImport } from './routes/quiz-v3'
 import { Route as QuizV2RouteImport } from './routes/quiz-v2'
 import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as QrBRouteImport } from './routes/qr-b'
+import { Route as QrARouteImport } from './routes/qr-a'
 import { Route as NoVideoRouteImport } from './routes/no-video'
 import { Route as MonthlyV3RouteImport } from './routes/monthly-v3'
 import { Route as MonthlyV2RouteImport } from './routes/monthly-v2'
@@ -50,6 +52,16 @@ const QuizV2Route = QuizV2RouteImport.update({
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrBRoute = QrBRouteImport.update({
+  id: '/qr-b',
+  path: '/qr-b',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrARoute = QrARouteImport.update({
+  id: '/qr-a',
+  path: '/qr-a',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NoVideoRoute = NoVideoRouteImport.update({
@@ -162,6 +174,8 @@ export interface FileRoutesByFullPath {
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
+  '/qr-a': typeof QrARoute
+  '/qr-b': typeof QrBRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -186,6 +200,8 @@ export interface FileRoutesByTo {
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
+  '/qr-a': typeof QrARoute
+  '/qr-b': typeof QrBRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -211,6 +227,8 @@ export interface FileRoutesById {
   '/monthly-v2': typeof MonthlyV2Route
   '/monthly-v3': typeof MonthlyV3Route
   '/no-video': typeof NoVideoRoute
+  '/qr-a': typeof QrARoute
+  '/qr-b': typeof QrBRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -237,6 +255,8 @@ export interface FileRouteTypes {
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
+    | '/qr-a'
+    | '/qr-b'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -261,6 +281,8 @@ export interface FileRouteTypes {
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
+    | '/qr-a'
+    | '/qr-b'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -285,6 +307,8 @@ export interface FileRouteTypes {
     | '/monthly-v2'
     | '/monthly-v3'
     | '/no-video'
+    | '/qr-a'
+    | '/qr-b'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -310,6 +334,8 @@ export interface RootRouteChildren {
   MonthlyV2Route: typeof MonthlyV2Route
   MonthlyV3Route: typeof MonthlyV3Route
   NoVideoRoute: typeof NoVideoRoute
+  QrARoute: typeof QrARoute
+  QrBRoute: typeof QrBRoute
   QuizRoute: typeof QuizRoute
   QuizV2Route: typeof QuizV2Route
   QuizV3Route: typeof QuizV3Route
@@ -344,6 +370,20 @@ declare module '@tanstack/react-router' {
       path: '/quiz'
       fullPath: '/quiz'
       preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-b': {
+      id: '/qr-b'
+      path: '/qr-b'
+      fullPath: '/qr-b'
+      preLoaderRoute: typeof QrBRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-a': {
+      id: '/qr-a'
+      path: '/qr-a'
+      fullPath: '/qr-a'
+      preLoaderRoute: typeof QrARouteImport
       parentRoute: typeof rootRouteImport
     }
     '/no-video': {
@@ -494,6 +534,8 @@ const rootRouteChildren: RootRouteChildren = {
   MonthlyV2Route: MonthlyV2Route,
   MonthlyV3Route: MonthlyV3Route,
   NoVideoRoute: NoVideoRoute,
+  QrARoute: QrARoute,
+  QrBRoute: QrBRoute,
   QuizRoute: QuizRoute,
   QuizV2Route: QuizV2Route,
   QuizV3Route: QuizV3Route,
