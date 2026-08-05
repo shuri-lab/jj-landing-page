@@ -22,7 +22,7 @@ const NOW = 47;
 const SAVE = WAS - NOW;
 
 const INCLUDED: { Icon: React.ComponentType<{ className?: string }>; text: React.ReactNode }[] = [
-  { Icon: Phone, text: <><strong>Two 1-on-1 coaching calls a week with Little JJ<sup className="ups-ref">*</sup></strong> — she works through your week with you, built on JJ&rsquo;s method, so the weight keeps coming off.</> },
+  { Icon: Phone, text: <><strong>Two 1-on-1 coaching calls a week with JJ&rsquo;s AI Twin</strong> — my exact voice, personality, and coaching.</> },
   { Icon: MessageCircle, text: <><strong>Daily texts to keep you on track</strong> — so you never fall off, even on the hard days.</> },
   { Icon: Zap, text: <><strong>Your reset plan</strong> — built to drop up to 15 lbs in your first 2 weeks.</> },
   { Icon: UtensilsCrossed, text: <><strong>A meal plan around the food you love</strong> — no starving, no bland &ldquo;diet food.&rdquo;</> },
@@ -99,8 +99,6 @@ function Aftersell() {
               ))}
             </ul>
 
-            <p className="ups-desc ups-fn"><span className="ups-ref">*</span> Little JJ is my AI twin &mdash; my exact voice, personality, and coaching, with you every day.</p>
-
             <div className="ups-guar"><Check className="ups-ico-16" /> 14-day money-back guarantee · cancel anytime</div>
 
             <button className="ups-cta" type="button">
@@ -142,8 +140,6 @@ const CSS = `
 .ups :focus-visible{outline:3px solid var(--purple);outline-offset:3px}
 .ups-mark{background:linear-gradient(180deg,transparent 58%,var(--mark) 58%);padding:0 .06em;border-radius:2px;color:var(--purple-deep)}
 .ups-hi{color:var(--purple)}
-.ups-ref{color:var(--purple);font-weight:800}
-.ups-fn{font-size:13.5px;color:var(--ink-soft)}
 .ups-ico-22{width:22px;height:22px} .ups-ico-20{width:20px;height:20px} .ups-ico-18{width:18px;height:18px} .ups-ico-16{width:16px;height:16px}
 
 /* Aftersell chrome */
