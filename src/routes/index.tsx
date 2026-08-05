@@ -369,7 +369,7 @@ function RealResults() {
 // ── what you get ─────────────────────────────────────────────────────────────
 function WhatYouGet() {
   const items = [
-    { Icon: Phone, img: weeklyCallsImage, title: "Two 1-on-1 coaching calls every week.", text: "Two 1-on-1 coaching calls every week, built on JJ's method. Twice a week we look at your week and fix what got in the way." },
+    { Icon: Phone, img: weeklyCallsImage, title: "Two 1-on-1 coaching calls a week with JJ's AI Twin.", text: "Two 1-on-1 coaching calls a week with JJ's AI Twin — my exact voice, personality, and coaching. Twice a week we look back at your week together and fix what got in the way." },
     { Icon: MessageCircle, img: dailySmsImage, title: "A text every morning.", text: "A text every morning. You wake up with JJ in your corner, never starting the day alone." },
     { Icon: Zap, img: resetPlanImage, title: "Your reset.", text: "We start here. It quiets your cravings, kills the bloat, and drops up to 15 pounds, so you feel it working right away." },
     { Icon: UtensilsCrossed, img: mealsCardImage, title: "Meals built around the food you love.", text: "Planned for you, simple to make. No guessing, no wondering what to eat, and food you actually want to eat." },
@@ -403,8 +403,8 @@ function WhatYouGet() {
 }
 
 // ── pricing / value stack ────────────────────────────────────────────────────
-const VALUE_STACK = [
-  { label: "Two 1-on-1 coaching calls every week (JJ's method)", value: 1200 },
+const VALUE_STACK: { label: string; value: number; note?: string }[] = [
+  { label: "Two 1-on-1 coaching calls every week with JJ's AI Twin", value: 1200, note: "my exact voice, personality, and coaching" },
   { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },
@@ -432,7 +432,7 @@ function Pricing() {
           <ul className="ly-stack-list">
             {VALUE_STACK.map((it) => (
               <li key={it.label}>
-                <span className="ly-stack-name"><span className="ly-stack-tick"><Check className="ly-ico-12" /></span><span>{it.label}</span></span>
+                <span className="ly-stack-name"><span className="ly-stack-tick"><Check className="ly-ico-12" /></span><span>{it.label}{it.note ? <span className="ly-stack-sub">{it.note}</span> : null}</span></span>
                 <span className="ly-stack-val">${it.value.toLocaleString()}</span>
               </li>
             ))}
@@ -754,6 +754,7 @@ const CSS = `
 .ly-stack-num{font-family:var(--head);font-weight:900;font-size:74px;line-height:1;color:var(--purple);letter-spacing:-.03em}
 .ly-stack-per{font-family:var(--head);font-weight:800;font-size:22px;color:var(--ink-soft)}
 .ly-stack-note{font-size:13.5px;font-weight:700;color:var(--ink-soft);margin:0}
+.ly-stack-sub{display:block;font-size:13px;color:var(--ink-soft);font-weight:500;margin-top:3px}
 .ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:16px 0 0;flex-wrap:wrap}
 .ly-stack-trust svg{color:var(--purple)}
 .ly-or{display:flex;align-items:center;gap:14px;margin:16px 2px 0;color:var(--ink-soft);font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
