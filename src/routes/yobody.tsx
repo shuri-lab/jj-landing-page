@@ -194,7 +194,7 @@ function JJVoiceDemoInner() {
             : status === "requesting-permission" ? "Requesting microphone…"
             : status === "connecting" ? "Connecting with JJ…"
             : isConnected ? (speaking ? "JJ is speaking…" : "Listening…")
-            : "Talk to JJ Smith Twin"}
+            : "Talk to JJ Smith’s Twin"}
         </p>
         <p className="yb-voice-hint">{error || (isConnected ? "Tap the mic again to end the call." : "Tap the mic and allow access")}</p>
       </div>
@@ -336,20 +336,44 @@ function PartnerForm() {
   );
 }
 
-// Smooth-scroll into the JJ section content, correcting for lazy-load layout
-// shifts so it always lands past the section's top padding.
-function scrollToLive(e: React.MouseEvent) {
-  e.preventDefault();
-  // Land on the "JJ Smith Twin coaches…" headline (past the section's top padding),
-  // re-running after a beat so lazy-loaded content below can't leave it short.
-  const el = document.getElementById("try-live");
-  if (!el) { window.location.hash = "try-live"; return; }
+// Smooth-scroll to a target, re-running a few times so lazy-loaded images above
+// the target (which grow the page mid-scroll) can't leave the anchor short — the
+// classic "click jumps to the wrong section" bug. Cancels on manual scroll so it
+// never hijacks the user.
+function smoothScrollTo(el: HTMLElement) {
   const go = () => el.scrollIntoView({ behavior: "smooth", block: "start" });
   go();
-  window.setTimeout(go, 520);
+  let cancelled = false;
+  const cancel = () => { cancelled = true; off(); };
+  const off = () => {
+    window.removeEventListener("wheel", cancel);
+    window.removeEventListener("touchmove", cancel);
+    window.removeEventListener("keydown", cancel);
+    window.removeEventListener("pointerdown", cancel);
+  };
+  window.addEventListener("wheel", cancel, { passive: true });
+  window.addEventListener("touchmove", cancel, { passive: true });
+  window.addEventListener("keydown", cancel);
+  window.addEventListener("pointerdown", cancel);
+  [300, 650, 1050, 1600].forEach((d) => window.setTimeout(() => { if (!cancelled) go(); }, d));
+  window.setTimeout(off, 1700);
 }
 
 function Yobody() {
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      const a = (e.target as HTMLElement)?.closest?.('a[href^="#"]') as HTMLAnchorElement | null;
+      if (!a) return;
+      const href = a.getAttribute("href") || "";
+      if (href.length < 2 || href === "#top") return;
+      const el = document.getElementById(href.slice(1));
+      if (!el) return;
+      e.preventDefault();
+      smoothScrollTo(el);
+    };
+    document.addEventListener("click", onClick);
+    return () => document.removeEventListener("click", onClick);
+  }, []);
   return (
     <div className="yb">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -385,7 +409,7 @@ function Yobody() {
                 <p className="yb-hero-sub">Yobody clones coaches and runs their entire business as them. Your voice, personality, <span className="yb-hero-nw">method, with every client at once.</span></p>
                 <div className="yb-hero-cta">
                   <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
-                  <a href="#try-live" onClick={scrollToLive} className="yb-btn yb-btn-ghost yb-btn-lg">Try it live</a>
+                  <a href="#try-live" className="yb-btn yb-btn-ghost yb-btn-lg">Try it live</a>
                 </div>
               </div>
               <div className="yb-hero-mob-img">
@@ -447,7 +471,7 @@ function Yobody() {
             <div className="yb-live-r">
               <div className="yb-live-head" id="try-live">
                 <span className="yb-eyebrow">See it live</span>
-                <h2 className="yb-h2">JJ Smith Twin <span className="yb-h2-mut">coaches thousands of women every week</span></h2>
+                <h2 className="yb-h2">JJ Smith&rsquo;s Twin <span className="yb-h2-mut">coaches thousands of women every week</span></h2>
               </div>
               <div className="yb-live-body">
                 <p className="yb-lead yb-soft">Her twin runs every one of those calls in her voice, with her personality and her method. Her coaching, at infinite scale.</p>
@@ -897,10 +921,10 @@ body{padding-bottom:0}
   .yb-hiw-intro .yb-h2{font-size:clamp(38px,4.4vw,58px);line-height:1.06}
   .yb-path-svg{display:block;width:100%;height:auto;margin-top:clamp(18px,2.2vw,32px)}
   .yb-path-vert{display:none}
-  .yb-about{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);grid-template-areas:"media copy" "logos logos";column-gap:clamp(40px,5vw,66px);align-items:center}
+  .yb-about{display:grid;grid-template-columns:minmax(0,0.9fr) minmax(0,1.1fr);grid-template-areas:"media copy" "logos logos";column-gap:clamp(40px,5vw,66px);row-gap:0;align-items:center}
   .yb-about-media{grid-area:media}
   .yb-about-copy{grid-area:copy}
-  .yb-logos{grid-area:logos;margin-top:clamp(48px,5.5vw,72px);padding-top:clamp(40px,5vw,60px);border-top:1px solid rgba(255,255,255,.11)}
+  .yb-logos{grid-area:logos;margin-top:clamp(28px,3vw,40px);padding-top:clamp(26px,2.8vw,36px);border-top:1px solid rgba(255,255,255,.11)}
   .yb-partner{display:grid;grid-template-columns:1.05fr 0.95fr;gap:clamp(40px,5vw,68px);align-items:center;padding:clamp(40px,4vw,60px)}
   .yb-partner-copy{text-align:left}
   .yb-partner-h{font-size:clamp(34px,3.4vw,48px);white-space:nowrap}
