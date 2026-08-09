@@ -931,8 +931,8 @@ body{padding-bottom:0}
   .yb-strip-item{width:150px}
   .yb-strip-item:nth-child(n+5){display:flex}
   .yb-btn-lg{padding:17px 22px;font-size:17px}
-  .yb-hero-cta{flex-direction:column;gap:12px;width:100%;max-width:340px;margin-left:0;margin-right:auto}
-  .yb-hero-cta .yb-btn{width:100%}
+  .yb-hero-cta{flex-direction:column;align-items:flex-start;gap:12px}
+  .yb-hero-cta .yb-btn{width:auto}
   .yb-voice{flex-direction:column;text-align:center;gap:14px}
   .yb-claim-copy .yb-h2{font-size:clamp(38px,9vw,44px)}
   .yb-claim-copy .yb-lead{font-size:20px}
