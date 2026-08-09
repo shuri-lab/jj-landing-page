@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as YobodyRouteImport } from './routes/yobody'
 import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
 import { Route as QuizV3RouteImport } from './routes/quiz-v3'
 import { Route as QuizV2RouteImport } from './routes/quiz-v2'
@@ -35,6 +36,11 @@ import { Route as ARouteImport } from './routes/a'
 import { Route as R11labsDemoRouteImport } from './routes/11labs-demo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const YobodyRoute = YobodyRouteImport.update({
+  id: '/yobody',
+  path: '/yobody',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VapiDemoRoute = VapiDemoRouteImport.update({
   id: '/vapi-demo',
   path: '/vapi-demo',
@@ -187,6 +193,7 @@ export interface FileRoutesByFullPath {
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
   '/vapi-demo': typeof VapiDemoRoute
+  '/yobody': typeof YobodyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -214,6 +221,7 @@ export interface FileRoutesByTo {
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
   '/vapi-demo': typeof VapiDemoRoute
+  '/yobody': typeof YobodyRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -242,6 +250,7 @@ export interface FileRoutesById {
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
   '/vapi-demo': typeof VapiDemoRoute
+  '/yobody': typeof YobodyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -271,6 +280,7 @@ export interface FileRouteTypes {
     | '/quiz-v2'
     | '/quiz-v3'
     | '/vapi-demo'
+    | '/yobody'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -298,6 +308,7 @@ export interface FileRouteTypes {
     | '/quiz-v2'
     | '/quiz-v3'
     | '/vapi-demo'
+    | '/yobody'
   id:
     | '__root__'
     | '/'
@@ -325,6 +336,7 @@ export interface FileRouteTypes {
     | '/quiz-v2'
     | '/quiz-v3'
     | '/vapi-demo'
+    | '/yobody'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -353,10 +365,18 @@ export interface RootRouteChildren {
   QuizV2Route: typeof QuizV2Route
   QuizV3Route: typeof QuizV3Route
   VapiDemoRoute: typeof VapiDemoRoute
+  YobodyRoute: typeof YobodyRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/yobody': {
+      id: '/yobody'
+      path: '/yobody'
+      fullPath: '/yobody'
+      preLoaderRoute: typeof YobodyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vapi-demo': {
       id: '/vapi-demo'
       path: '/vapi-demo'
@@ -561,6 +581,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuizV2Route: QuizV2Route,
   QuizV3Route: QuizV3Route,
   VapiDemoRoute: VapiDemoRoute,
+  YobodyRoute: YobodyRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
