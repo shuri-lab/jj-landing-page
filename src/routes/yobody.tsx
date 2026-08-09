@@ -340,12 +340,11 @@ function PartnerForm() {
 // shifts so it always lands past the section's top padding.
 function scrollToLive(e: React.MouseEvent) {
   e.preventDefault();
-  // mobile stacks the section (headline → card → demo), so scroll deeper to the
-  // live voice widget; desktop shows the demo alongside the headline already.
-  const mobile = window.matchMedia("(max-width: 820px)").matches;
-  const el = (mobile && document.querySelector<HTMLElement>(".yb-voice")) || document.getElementById("try-live");
+  // Land on the "JJ Smith Twin coaches…" headline (past the section's top padding),
+  // re-running after a beat so lazy-loaded content below can't leave it short.
+  const el = document.getElementById("try-live");
   if (!el) { window.location.hash = "try-live"; return; }
-  const go = () => el.scrollIntoView({ behavior: "smooth", block: mobile ? "center" : "start" });
+  const go = () => el.scrollIntoView({ behavior: "smooth", block: "start" });
   go();
   window.setTimeout(go, 520);
 }
@@ -676,10 +675,10 @@ body{padding-bottom:0}
 .yb-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
 .yb-hero-fade{position:absolute;inset:0}
 .yb-hero-inner{position:relative;z-index:1;width:100%}
-.yb-hero-copy{text-align:center;min-width:0}
-.yb-hero-sub{font-size:clamp(18px,2.1vw,23px);line-height:1.5;color:var(--ink-soft);margin:24px auto 0;max-width:min(560px,100%)}
+.yb-hero-copy{text-align:left;min-width:0}
+.yb-hero-sub{font-size:clamp(18px,2.1vw,23px);line-height:1.5;color:var(--ink-soft);margin:24px 0 0;max-width:min(560px,100%)}
 .yb-hero-nw{white-space:normal}
-.yb-hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:34px}
+.yb-hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-start;margin-top:34px}
 .yb-hero-mob-img{margin:clamp(24px,5vw,36px) -24px 0;width:auto;max-width:none;border-radius:0;box-shadow:none;aspect-ratio:1.12;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 4%,#000 94%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 4%,#000 94%,transparent 100%)}
 .yb-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
 .yb-mark{background:linear-gradient(180deg,transparent 58%, rgba(233,121,91,.30) 58%);padding:0 .04em;border-radius:2px}
@@ -932,7 +931,7 @@ body{padding-bottom:0}
   .yb-strip-item{width:150px}
   .yb-strip-item:nth-child(n+5){display:flex}
   .yb-btn-lg{padding:17px 22px;font-size:17px}
-  .yb-hero-cta{flex-direction:column;gap:12px;width:100%;max-width:360px;margin-left:auto;margin-right:auto}
+  .yb-hero-cta{flex-direction:column;gap:12px;width:100%;max-width:340px;margin-left:0;margin-right:auto}
   .yb-hero-cta .yb-btn{width:100%}
   .yb-voice{flex-direction:column;text-align:center;gap:14px}
   .yb-claim-copy .yb-h2{font-size:clamp(38px,9vw,44px)}
