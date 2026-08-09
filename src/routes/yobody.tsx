@@ -498,12 +498,12 @@ function Yobody() {
               <svg className="yb-path-svg" viewBox="0 0 1040 320" role="img" aria-label="Your path to launch, in four steps">
                 <defs>
                   <marker id="ybPathArrow" markerUnits="userSpaceOnUse" markerWidth="24" markerHeight="24" refX="15" refY="11" orient="auto">
-                    <path d="M4 4 L17 11 L4 18 Z" fill="#E9795B" />
+                    <path d="M4 4 L17 11 L4 18 Z" fill="#E16D4D" />
                   </marker>
                 </defs>
                 <path
                   d="M60 72 C 88 152 122 205 160 205 C 250 205 330 100 410 100 C 500 100 570 205 650 205 C 740 205 812 100 890 100 C 935 100 965 152 985 180"
-                  fill="none" stroke="#E9795B" strokeWidth="3.5" strokeLinecap="round"
+                  fill="none" stroke="#E16D4D" strokeWidth="3.5" strokeLinecap="round"
                   strokeDasharray="9 12" markerStart="url(#ybPathArrow)" markerEnd="url(#ybPathArrow)"
                 />
                 {LAUNCH.map((s) => (
@@ -608,7 +608,7 @@ const CSS = `
 html,body{overflow-x:hidden;max-width:100%;scroll-behavior:smooth}
 body{padding-bottom:0}
 .yb{
-  --orange:#E9795B; --orange-deep:#D65F3C; --orange-soft:#FBE7DE;
+  --orange:#E16D4D; --orange-deep:#D65F3C; --orange-soft:#FBE7DE;
   --sage:#8FA596; --terra:#A9604A;
   --cream:#FAF5F0; --cream-2:#F4ECE4; --white:#FFFFFF;
   --ink:#211D1A; --ink-2:#3A342F; --ink-soft:#7A716A; --hair:#ECE2D8;
@@ -644,7 +644,7 @@ body{padding-bottom:0}
 .yb-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--head);font-weight:700;border:2px solid transparent;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s,color .15s;white-space:nowrap;cursor:pointer}
 .yb-btn-sm{font-size:15px;padding:11px 20px}
 .yb-btn-lg{font-size:18px;padding:18px 30px}
-.yb-btn-primary{background:var(--orange);color:#fff;box-shadow:0 18px 34px -14px rgba(233,121,91,.6)}
+.yb-btn-primary{background:var(--orange);color:#fff;box-shadow:0 18px 34px -14px rgba(225,109,77,.6)}
 .yb a.yb-btn-primary{color:#fff}
 .yb-btn-primary:hover{background:var(--orange-deep);transform:translateY(-2px)}
 .yb-btn-ghost{background:transparent;color:var(--ink);border-color:var(--ink);}
@@ -681,7 +681,7 @@ body{padding-bottom:0}
 .yb-hero-cta{display:flex;gap:14px;flex-wrap:wrap;justify-content:flex-start;margin-top:34px}
 .yb-hero-mob-img{margin:clamp(24px,5vw,36px) -24px 0;width:auto;max-width:none;border-radius:0;box-shadow:none;aspect-ratio:1.12;overflow:hidden;-webkit-mask-image:linear-gradient(180deg,transparent 0,#000 4%,#000 94%,transparent 100%);mask-image:linear-gradient(180deg,transparent 0,#000 4%,#000 94%,transparent 100%)}
 .yb-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block}
-.yb-mark{background:linear-gradient(180deg,transparent 58%, rgba(233,121,91,.30) 58%);padding:0 .04em;border-radius:2px}
+.yb-mark{background:linear-gradient(180deg,transparent 58%, rgba(225,109,77,.30) 58%);padding:0 .04em;border-radius:2px}
 
 /* tiles */
 .yb-strip{background:var(--white);padding:clamp(30px,3.6vw,50px) 0}
@@ -723,12 +723,12 @@ body{padding-bottom:0}
 .yb-h2-mut{color:var(--ink-soft)}
 
 /* in-page JJ voice demo */
-.yb-voice{display:flex;align-items:center;gap:20px;margin-top:30px;background:linear-gradient(135deg,#FCEBE1 0%,#FADFCE 100%);border:1.5px solid rgba(233,121,91,.42);border-radius:24px;padding:18px 22px;box-shadow:0 24px 46px -26px rgba(213,98,60,.5);min-width:0}
+.yb-voice{display:flex;align-items:center;gap:20px;margin-top:30px;background:linear-gradient(135deg,#FCEBE1 0%,#FADFCE 100%);border:1.5px solid rgba(225,109,77,.42);border-radius:24px;padding:18px 22px;box-shadow:0 24px 46px -26px rgba(213,98,60,.5);min-width:0}
 .yb-voice-orb{position:relative;width:120px;height:120px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.yb-voice-ring{position:absolute;left:50%;top:50%;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:999px;background:radial-gradient(circle,rgba(233,121,91,.22) 0%,rgba(233,121,91,0) 68%);pointer-events:none;animation:yb-vpulse-idle 2.8s ease-out infinite}
+.yb-voice-ring{position:absolute;left:50%;top:50%;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:999px;background:radial-gradient(circle,rgba(225,109,77,.22) 0%,rgba(225,109,77,0) 68%);pointer-events:none;animation:yb-vpulse-idle 2.8s ease-out infinite}
 .yb-voice-ring.is-live{animation:yb-vpulse 1.7s ease-out infinite}
-@keyframes yb-vpulse{0%{box-shadow:0 0 0 0 rgba(233,121,91,.42)}100%{box-shadow:0 0 0 22px rgba(233,121,91,0)}}
-@keyframes yb-vpulse-idle{0%{box-shadow:0 0 0 0 rgba(233,121,91,.32)}70%,100%{box-shadow:0 0 0 15px rgba(233,121,91,0)}}
+@keyframes yb-vpulse{0%{box-shadow:0 0 0 0 rgba(225,109,77,.42)}100%{box-shadow:0 0 0 22px rgba(225,109,77,0)}}
+@keyframes yb-vpulse-idle{0%{box-shadow:0 0 0 0 rgba(225,109,77,.32)}70%,100%{box-shadow:0 0 0 15px rgba(225,109,77,0)}}
 .yb-vwring{position:absolute;left:50%;top:50%;width:0;height:0;z-index:1}
 .yb-vwbar{position:absolute;left:0;top:0;width:0;height:0}
 .yb-vwtick{position:absolute;left:-1.5px;top:-48px;width:3px;height:12px;border-radius:3px;background:linear-gradient(180deg,#EE8A6C,#D5623C);transform-origin:center;transform:scaleY(.28);will-change:transform}
@@ -756,7 +756,7 @@ body{padding-bottom:0}
 .yb-hiw-l{display:flex;flex-direction:column;gap:clamp(28px,3vw,40px)}
 .yb-hiw-acc{display:flex;flex-direction:column;gap:13px}
 .yb-hiw-card{width:100%;text-align:left;font:inherit;color:var(--ink);background:var(--white);border:1px solid var(--hair);border-radius:20px;padding:0 clamp(18px,2vw,24px);cursor:pointer;overflow:hidden;-webkit-tap-highlight-color:transparent;transition:background .34s cubic-bezier(.4,0,.2,1),border-color .34s ease,box-shadow .34s ease}
-.yb-hiw-card:hover{border-color:rgba(233,121,91,.55)}
+.yb-hiw-card:hover{border-color:rgba(225,109,77,.55)}
 .yb-hiw-card.is-active{background:var(--dark);border-color:var(--dark);box-shadow:0 32px 60px -34px rgba(28,24,21,.68)}
 .yb-hiw-head{display:flex;align-items:center;gap:clamp(13px,1.4vw,18px);padding:clamp(19px,2vw,23px) 0}
 .yb-hiw-num{flex:0 0 auto;font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.08em;color:var(--orange)}
@@ -856,7 +856,7 @@ body{padding-bottom:0}
 .yb-form{margin-top:0;width:100%;max-width:none;display:flex;flex-direction:column;gap:14px;text-align:left}
 .yb-input{width:100%;background:var(--cream-2);border:1.6px solid var(--hair);border-radius:16px;padding:19px 20px;font-family:var(--sans);font-size:17px;color:var(--ink);transition:border-color .18s,box-shadow .18s,background .18s}
 .yb-input::placeholder{color:var(--ink-soft)}
-.yb-input:focus{outline:none;background:var(--white);border-color:var(--orange);box-shadow:0 0 0 4px rgba(233,121,91,.16)}
+.yb-input:focus{outline:none;background:var(--white);border-color:var(--orange);box-shadow:0 0 0 4px rgba(225,109,77,.16)}
 .yb-form .yb-btn{margin-top:6px;width:100%}
 .yb-form-note{font-size:14px;color:var(--ink-soft);margin:4px 0 0;text-align:center}
 .yb-form-done{margin:0;display:inline-flex;align-items:center;gap:10px;background:var(--orange);color:#fff;font-family:var(--head);font-weight:700;font-size:18px;padding:20px 30px;border-radius:16px}
