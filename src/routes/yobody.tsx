@@ -357,7 +357,7 @@ const TILES = [
 const TJ_LOGOS = [
   { src: logoPfizer, alt: "Pfizer", s: 1.03 },
   { src: logoExxon, alt: "Exxon", s: 1 },
-  { src: logoCaterpillar, alt: "Caterpillar", s: 1.32 },
+  { src: logoCaterpillar, alt: "Caterpillar", s: 0.62 },
   { src: logoBofa, alt: "Bank of America", s: 0.95 },
   { src: logoIbm, alt: "IBM", s: 1 },
   { src: logoEy, alt: "EY", s: 1.22 },
