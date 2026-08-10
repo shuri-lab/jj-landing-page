@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from "react";
 import {
   Timer, TrendingUp, Users, ShieldCheck,
   ArrowRight, Check, Mic, MicOff, Loader2, ChevronDown,
+  Smartphone, UserPlus, LineChart, Wallet,
 } from "lucide-react";
 import ybLogoDark from "@/assets/yobody/yobody-logo-dark.png";
 import ybLogoWhite from "@/assets/yobody/yobody-logo-white.png";
@@ -214,7 +215,7 @@ const HIW_FEATURES = [
 function HowItWorks() {
   const [active, setActive] = useState(0);
   return (
-    <section id="how" className="yb-band yb-cream">
+    <section id="how" className="yb-band">
       <div className="yb-wrap">
         {/* desktop — interactive accordion + phone that updates */}
         <div className="yb-hiw">
@@ -289,6 +290,68 @@ function HowItWorks() {
   );
 }
 
+// ── "You grow the brand" — auto-advancing value slider (placeholder images) ──
+const GROW_SLIDES = [
+  { label: "1 on 1 coaching", caption: "Your twin runs every client, in your voice, on your method.", Icon: Users },
+  { label: "More sales", caption: "Funnels, pages and creative, built and run for you.", Icon: TrendingUp },
+  { label: "Your own app", caption: "Where your clients live, stay and get results.", Icon: Smartphone },
+  { label: "More clients", caption: "Every enquiry answered, every lead followed up.", Icon: UserPlus },
+  { label: "Better results", caption: "Every client checked on daily, not just the ones who ask.", Icon: LineChart },
+  { label: "Paid on time", caption: "Sign-ups, payments and renewals, all handled.", Icon: Wallet },
+  { label: "Still yours", caption: "Your brand, your clients, your list. Always.", Icon: ShieldCheck },
+];
+
+function GrowSlider() {
+  const n = GROW_SLIDES.length;
+  const slides = [...GROW_SLIDES, GROW_SLIDES[0], GROW_SLIDES[1]]; // clones for a seamless loop
+  const [i, setI] = useState(0);
+  const [noAnim, setNoAnim] = useState(false);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setI((v) => v + 1), 4200);
+    return () => window.clearInterval(id);
+  }, []);
+  // once we've slid onto a clone, snap back to the matching real slide (no transition)
+  useEffect(() => {
+    if (i < n) return;
+    const t = window.setTimeout(() => { setNoAnim(true); setI((v) => v % n); }, 660);
+    return () => window.clearTimeout(t);
+  }, [i, n]);
+  useEffect(() => {
+    if (!noAnim) return;
+    const r = requestAnimationFrame(() => setNoAnim(false));
+    return () => cancelAnimationFrame(r);
+  }, [noAnim]);
+
+  const active = i % n;
+  return (
+    <div className="yb-grow-slider">
+      <div className="yb-grow-viewport">
+        <div
+          className="yb-grow-track"
+          style={{ transform: `translateX(-${(i * 100) / slides.length}%)`, transition: noAnim ? "none" : undefined }}
+        >
+          {slides.map((s, idx) => (
+            <div className="yb-grow-slide" key={idx} aria-hidden={idx >= n ? true : undefined}>
+              <div className="yb-grow-card">
+                <div className="yb-grow-ph"><s.Icon className="yb-grow-ico" strokeWidth={1.5} /></div>
+                <span className="yb-grow-scrim" aria-hidden />
+                <span className="yb-grow-badge">{s.label}</span>
+                <p className="yb-grow-cap">{s.caption}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="yb-grow-dots">
+        {GROW_SLIDES.map((s, idx) => (
+          <button key={idx} type="button" className={`yb-grow-dot ${active === idx ? "is-on" : ""}`} onClick={() => setI(idx)} aria-label={`Show ${s.label}`} />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const TILES = [
   { Icon: Timer, t: "Spend your time growing the brand" },
   { Icon: TrendingUp, t: <>Get paid without<br />adding an hour</> },
@@ -296,12 +359,6 @@ const TILES = [
   { Icon: ShieldCheck, t: "Your brand and your clients, yours to keep, forever" },
 ];
 
-const COACHING = ["Every coaching call", "Daily check-ins", "Plans that adapt", "Follow-up that never misses", "Onboarding", "Billing and support", "The community"];
-const MARKETING = ["The offer and the price", "Sales pages and checkout", "Creative in your voice", "Follow-up on every lead"];
-const RUN = [
-  { key: "coaching", title: "The coaching", sub: "Everything a client needs, every week.", tag: "Always included", items: COACHING },
-  { key: "marketing", title: "The marketing", sub: "Everything that fills your calendar.", tag: "Optional", items: MARKETING },
-];
 // s = optical scale so compact/square marks aren't dwarfed by wide wordmarks
 const TJ_LOGOS = [
   { src: logoPfizer, alt: "Pfizer", s: 1.03 },
@@ -404,9 +461,8 @@ function Yobody() {
             </div>
             <div className="yb-wrap yb-hero-inner">
               <div className="yb-hero-copy">
-                <span className="yb-eyebrow">For coaches</span>
-                <h1 className="yb-h1">1 on 1 coaching<br />at scale. <span className="yb-hl">As you.</span></h1>
-                <p className="yb-hero-sub">Yobody clones coaches and runs their entire business as them. Your voice, personality, <span className="yb-hero-nw">method, with every client at once.</span></p>
+                <h1 className="yb-h1">The new era of<br /><span className="yb-hl">online coaching</span></h1>
+                <p className="yb-hero-sub">Yobody is the first <span className="yb-hero-nw">1 on 1</span> coaching at scale platform, built for coaches and creators. We launch, run and grow your coaching business.</p>
                 <div className="yb-hero-cta">
                   <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
                   <a href="#try-live" className="yb-btn yb-btn-ghost yb-btn-lg">Try it live</a>
@@ -470,7 +526,6 @@ function Yobody() {
             </div>
             <div className="yb-live-r">
               <div className="yb-live-head" id="try-live">
-                <span className="yb-eyebrow">See it live</span>
                 <h2 className="yb-h2">JJ Smith&rsquo;s Twin <span className="yb-h2-mut">coaches thousands of women every week</span></h2>
               </div>
               <div className="yb-live-body">
@@ -481,34 +536,24 @@ function Yobody() {
           </div>
         </section>
 
-        {/* 05 · HOW IT WORKS */}
-        <HowItWorks />
-
-        {/* 06 · WE RUN THE BUSINESS */}
-        <section className="yb-band">
-          <div className="yb-wrap">
-            <div className="yb-center">
+        {/* 05 · YOU GROW THE BRAND, WE RUN THE BUSINESS */}
+        <section className="yb-band yb-cream">
+          <div className="yb-wrap yb-grow">
+            <div className="yb-grow-copy">
               <h2 className="yb-h2">You grow the brand, we run the business, <span className="yb-h2-mut">as you</span></h2>
+              <p className="yb-grow-body">You got into this to coach people. Now you are writing meal plans late at night, teaching yourself how to build a funnel, chasing clients for payments, answering the same question in your DMs for the hundredth time, and paying for five different tools that still do not do what you need.</p>
+              <p className="yb-grow-body">Yobody takes all of it. Every part of it, run as you. So you go back to what you got into this for.</p>
+              <div className="yb-grow-cta">
+                <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
+                <a href="#try-live" className="yb-btn yb-btn-ghost yb-btn-lg">Try it live</a>
+              </div>
             </div>
-            <div className="yb-run">
-              {RUN.map(({ key, title, sub, tag, items }) => (
-                <div className={`yb-run-card yb-run-${key}`} key={key}>
-                  <div className="yb-run-top">
-                    <h3 className="yb-run-title">{title}</h3>
-                    <span className="yb-run-tag">{tag}</span>
-                  </div>
-                  <p className="yb-run-sub">{sub}</p>
-                  <ul className="yb-run-list">
-                    {items.map((it) => (
-                      <li key={it}><span className="yb-run-check"><Check className="yb-ico-14" /></span>{it}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-            <p className="yb-runline"><span>Take both</span>, or start with the coaching alone.</p>
+            <GrowSlider />
           </div>
         </section>
+
+        {/* 06 · HOW IT WORKS */}
+        <HowItWorks />
 
         {/* 07 · THE LAUNCH */}
         <section className="yb-band yb-cream">
@@ -740,7 +785,7 @@ body{padding-bottom:0}
 .yb-jjcard-plate{position:absolute;left:14px;right:14px;bottom:14px;z-index:2;background:#141110;border-radius:20px;padding:15px 18px 17px;text-align:center}
 .yb-jjcard-cred{margin:0 0 4px;font-family:var(--head);font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:rgba(255,255,255,.66)}
 .yb-jjcard-name{margin:0;font-family:'Dancing Script',cursive;font-weight:700;font-size:34px;line-height:1;color:#fff}
-.yb-live-l,.yb-live-r,.yb-live-head,.yb-live-body,.yb-jjcard,.yb-press,.yb-about-copy,.yb-about-media,.yb-hiw-l,.yb-run-card{min-width:0}
+.yb-live-l,.yb-live-r,.yb-live-head,.yb-live-body,.yb-jjcard,.yb-press,.yb-about-copy,.yb-about-media,.yb-hiw-l,.yb-grow-copy,.yb-grow-slider{min-width:0}
 .yb-live-head .yb-eyebrow{margin-bottom:14px;display:inline-block}
 .yb-live-body .yb-lead{margin:0}
 .yb-live-head .yb-h2{font-size:clamp(35px,4.6vw,56px);line-height:1.08}
@@ -810,28 +855,25 @@ body{padding-bottom:0}
 .yb-hiw-item-phone img{display:block;width:100%;max-width:288px;margin:0 auto;filter:drop-shadow(0 40px 56px rgba(28,24,21,.17))}
 
 /* business columns */
-/* we run the business — dual capability cards */
-.yb-run{display:grid;grid-template-columns:1fr 1fr;gap:clamp(20px,2.2vw,28px);margin-top:clamp(42px,5vw,60px);align-items:start}
-.yb-run-card{border-radius:28px;padding:clamp(28px,3vw,42px)}
-.yb-run-coaching{background:linear-gradient(158deg,#FDF1EA 0%,#FBE1D2 100%);border:1px solid #F5D4C4}
-.yb-run-marketing{background:var(--white);border:1px solid var(--hair);box-shadow:var(--shadow-sm)}
-.yb-run-top{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:10px}
-.yb-run-tag{flex:0 0 auto;font-family:var(--head);font-weight:700;font-size:11px;letter-spacing:.08em;text-transform:uppercase;padding:7px 13px;border-radius:999px;white-space:nowrap}
-.yb-run-coaching .yb-run-tag{background:var(--orange);color:#fff}
-.yb-run-marketing .yb-run-tag{background:transparent;border:1.5px solid var(--hair);color:var(--ink-soft)}
-.yb-run-title{font-family:var(--head);font-weight:700;font-size:clamp(23px,2.5vw,32px);letter-spacing:-.02em;margin:0;color:var(--ink)}
-.yb-run-sub{font-size:clamp(15px,1.35vw,17.5px);line-height:1.45;margin:0;color:var(--ink-soft)}
-.yb-run-coaching .yb-run-sub{color:var(--terra)}
-.yb-run-list{list-style:none;margin:clamp(22px,2.6vw,30px) 0 0;padding:clamp(20px,2.2vw,26px) 0 0;border-top:1px solid var(--hair)}
-.yb-run-coaching .yb-run-list{border-top-color:rgba(169,96,74,.22)}
-.yb-run-list li{display:flex;align-items:center;gap:13px;font-family:var(--head);font-weight:600;font-size:clamp(15px,1.25vw,17px);color:var(--ink-2);padding:clamp(10px,1.3vw,13px) 0;border-bottom:1px solid var(--hair)}
-.yb-run-coaching .yb-run-list li{border-bottom-color:rgba(169,96,74,.14)}
-.yb-run-list li:last-child{border-bottom:none;padding-bottom:0}
-.yb-run-check{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:0 0 auto;color:var(--orange-deep)}
-.yb-run-coaching .yb-run-check{background:rgba(214,95,60,.16)}
-.yb-run-marketing .yb-run-check{background:var(--orange-soft)}
-.yb-runline{margin:clamp(30px,3.6vw,44px) auto 0;text-align:center;font-family:var(--head);font-weight:600;font-size:clamp(16px,1.7vw,21px);color:var(--ink-soft)}
-.yb-runline span{color:var(--ink);font-weight:700}
+/* you grow the brand — copy + auto-advancing value slider */
+.yb-grow{display:flex;flex-direction:column;gap:clamp(34px,8vw,48px)}
+.yb-grow-copy{min-width:0}
+.yb-grow-copy .yb-h2{max-width:16ch}
+.yb-grow-body{font-size:clamp(16.5px,1.5vw,18.5px);line-height:1.62;color:var(--ink-soft);margin:clamp(18px,2.4vw,26px) 0 0;max-width:54ch}
+.yb-grow-cta{display:flex;flex-wrap:wrap;gap:14px;margin-top:clamp(26px,3vw,34px)}
+.yb-grow-slider{min-width:0}
+.yb-grow-viewport{overflow:hidden}
+.yb-grow-track{display:flex;transition:transform .62s cubic-bezier(.5,0,.18,1);will-change:transform}
+.yb-grow-slide{flex:0 0 88%;box-sizing:border-box;padding-right:clamp(12px,1.6vw,18px)}
+.yb-grow-card{position:relative;border-radius:24px;overflow:hidden;aspect-ratio:4/5;box-shadow:0 34px 62px -36px rgba(60,35,20,.55)}
+.yb-grow-ph{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(150deg,#F3B79C 0%,#E16D4D 52%,#BF4A30 100%)}
+.yb-grow-ico{width:clamp(54px,7vw,74px);height:clamp(54px,7vw,74px);color:rgba(255,255,255,.9)}
+.yb-grow-scrim{position:absolute;left:0;right:0;bottom:0;height:64%;background:linear-gradient(to top,rgba(22,15,12,.84),rgba(22,15,12,.36) 46%,transparent);pointer-events:none}
+.yb-grow-badge{position:absolute;top:16px;left:16px;font-family:var(--head);font-weight:700;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink);background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);padding:8px 13px;border-radius:999px}
+.yb-grow-cap{position:absolute;left:22px;right:22px;bottom:20px;margin:0;font-family:var(--head);font-weight:600;font-size:clamp(16px,1.35vw,19px);line-height:1.34;color:#fff;text-shadow:0 1px 12px rgba(0,0,0,.35)}
+.yb-grow-dots{display:flex;gap:9px;justify-content:center;margin-top:clamp(18px,2vw,24px)}
+.yb-grow-dot{width:9px;height:9px;border-radius:999px;border:none;padding:0;cursor:pointer;background:rgba(28,24,21,.2);transition:background .25s,width .25s}
+.yb-grow-dot.is-on{width:26px;background:var(--orange)}
 
 /* launch — path-to-launch diagram */
 .yb-path{background:var(--dark);border-radius:clamp(24px,3vw,38px);padding:clamp(48px,4.8vw,62px) clamp(28px,4vw,56px) clamp(46px,4.4vw,56px);overflow:hidden}
@@ -929,6 +971,9 @@ body{padding-bottom:0}
   .yb-partner-copy{text-align:left}
   .yb-partner-h{font-size:clamp(34px,3.4vw,48px);white-space:nowrap}
   .yb-partner-copy .yb-lead{margin-top:18px}
+  .yb-grow{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,0.95fr);gap:clamp(48px,5vw,80px);align-items:center}
+  .yb-grow-copy .yb-h2{font-size:clamp(36px,4vw,54px);line-height:1.07}
+  .yb-grow-slider{width:100%;max-width:470px;margin:0 auto}
 }
 @media (max-width:820px){
   .yb-wrap{padding:0 24px}
@@ -941,7 +986,6 @@ body{padding-bottom:0}
   .yb-press{order:3}
   .yb-live-body{order:4}
   .yb-about-media{max-width:520px;width:100%;margin:0 auto;aspect-ratio:5/4}
-  .yb-run{grid-template-columns:1fr;gap:18px}
 }
 @media (max-width:560px){
   .yb-nav-in{padding:9px 18px}
