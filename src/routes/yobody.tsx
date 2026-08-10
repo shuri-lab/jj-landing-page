@@ -488,9 +488,9 @@ function Yobody() {
 
         {/* 03 · THE CLAIM */}
         <section className="yb-band yb-dark yb-claimsec">
+          <div className="yb-claim-bg" aria-hidden><img src={ybLogoWhite} alt="" /></div>
           <div className="yb-claim-stage">
             <div className="yb-claim-copy">
-              <img src={ybLogoWhite} alt="Yobody" className="yb-claim-logo" />
               <h2 className="yb-h2">We are the first <span className="yb-accent">done-as-you</span> coaching company</h2>
               <p className="yb-lead">We clone your voice, your personality, your method and everything you know about coaching. Then we run the entire business as you.</p>
               <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
@@ -763,11 +763,12 @@ body{padding-bottom:0}
 
 /* claim */
 .yb-claimsec{padding:0;background:#000}
-.yb-claim-stage{display:flex;flex-direction:column;align-items:center;text-align:center;gap:34px;padding:clamp(74px,12vw,92px) 24px clamp(64px,10vw,84px)}
+.yb-claim-bg{position:absolute;z-index:0;pointer-events:none;left:clamp(-160px,-9vw,-70px);bottom:clamp(-120px,-7vw,-56px);top:auto;transform:none;width:min(1160px,98%);opacity:.09}
+.yb-claim-bg img{display:block;width:100%;height:auto}
+.yb-claim-stage{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;text-align:center;gap:34px;padding:clamp(74px,12vw,92px) 24px clamp(64px,10vw,84px)}
 .yb-claim-copy{max-width:560px}
 .yb-claim-copy .yb-h2{line-height:1.16}
 .yb-claim-copy .yb-accent{white-space:nowrap}
-.yb-claim-logo{display:block;height:42px;width:auto;margin:0 auto 18px}
 .yb-claim-copy .yb-lead{margin:22px auto 0}
 .yb-claim-copy .yb-btn{margin-top:28px}
 .yb-claim-media{width:100%;max-width:440px}
@@ -967,7 +968,6 @@ body{padding-bottom:0}
   .yb-live-r{margin-top:-78px}
   .yb-claim-stage{flex-direction:row;align-items:center;justify-content:space-between;text-align:left;max-width:none;margin:0;gap:clamp(28px,4vw,72px);padding:clamp(20px,2vw,30px) 0}
   .yb-claim-copy{flex:0 1 auto;max-width:500px;text-align:left;margin-left:max(40px, calc((100% - 1200px) / 2 + 40px))}
-  .yb-claim-copy .yb-claim-logo{margin:0 0 22px;height:48px}
   .yb-claim-copy .yb-h2{font-size:clamp(34px,4.6vw,56px)}
   .yb-claim-copy .yb-lead{margin:22px 0 0;max-width:440px}
   .yb-claim-media{flex:0 0 auto;width:clamp(360px,44vw,620px);max-width:none;margin-right:clamp(24px,2.6vw,44px)}
@@ -992,6 +992,7 @@ body{padding-bottom:0}
 }
 @media (max-width:820px){
   .yb-wrap{padding:0 24px}
+  .yb-claim-bg{left:50%;right:auto;top:clamp(-34px,-6vw,-16px);bottom:auto;transform:translateX(-50%);width:min(520px,140%);opacity:.075}
   .yb-nav-links{gap:18px}
   .yb-strip-track{grid-template-columns:1fr 1fr;gap:32px 20px}
   .yb-live{display:flex;flex-direction:column;gap:28px}
