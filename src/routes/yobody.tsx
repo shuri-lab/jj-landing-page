@@ -998,7 +998,8 @@ body{padding-bottom:0}
   .yb-live-l,.yb-live-r{display:contents}
   .yb-live-head{order:1}
   .yb-jjcard{order:2}
-  .yb-press{order:3}
+  .yb-press{order:3;max-width:100%;overflow:hidden}
+  .yb-marquee-track img{height:54px}
   .yb-live-body{order:4}
   .yb-about-media{max-width:520px;width:100%;margin:0 auto;aspect-ratio:5/4}
 }
