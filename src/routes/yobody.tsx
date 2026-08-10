@@ -651,16 +651,22 @@ function Yobody() {
       </main>
 
       <footer className="yb-footer">
+        <div className="yb-footer-mark" aria-hidden><img src={ybLogoWhite} alt="" /></div>
         <div className="yb-wrap yb-footer-in">
-          <img src={ybLogoWhite} alt="Yobody" className="yb-footer-logo" />
-          <nav className="yb-footer-links">
-            <a href="#how">How it works</a>
-            <a href="#about">About</a>
-            <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
-            <a href="#partner">Privacy</a>
-            <a href="#partner">Terms</a>
-          </nav>
-          <p className="yb-footer-note">Yobody is a Next8i company.</p>
+          <div className="yb-footer-main">
+            <a href="#top" className="yb-footer-brand"><img src={ybLogoWhite} alt="Yobody" /></a>
+            <nav className="yb-footer-links">
+              <a href="#how">How it works</a>
+              <a href="#about">About</a>
+              <a href="https://instagram.com" target="_blank" rel="noreferrer">Instagram</a>
+              <a href="#partner">Privacy</a>
+              <a href="#partner">Terms</a>
+            </nav>
+          </div>
+          <div className="yb-footer-base">
+            <p className="yb-footer-note">Yobody is a Next8i company.</p>
+            <p className="yb-footer-note">&copy; 2026 Yobody</p>
+          </div>
         </div>
       </footer>
     </div>
@@ -930,12 +936,17 @@ body{padding-bottom:0}
 .yb-form-done{margin:0;display:inline-flex;align-items:center;gap:10px;background:var(--orange);color:#fff;font-family:var(--head);font-weight:700;font-size:18px;padding:20px 30px;border-radius:16px}
 
 /* footer */
-.yb-footer{background:#141110;color:rgba(255,255,255,.7);padding:52px 0}
-.yb-footer-in{display:flex;flex-direction:column;align-items:center;gap:22px;text-align:center}
-.yb-footer-logo{height:28px;width:auto;opacity:.95}
-.yb-footer-links{display:flex;flex-wrap:wrap;gap:24px;justify-content:center}
-.yb-footer-links a{font-family:var(--head);font-weight:600;font-size:15px;color:rgba(255,255,255,.7)}
-.yb-footer-links a:hover{color:#fff}
+.yb-footer{position:relative;overflow:hidden;background:#141110;color:rgba(255,255,255,.7);padding:clamp(56px,7vw,90px) 0 clamp(30px,3.5vw,42px)}
+.yb-footer-mark{position:absolute;left:50%;bottom:clamp(-46px,-3.5vw,-22px);transform:translateX(-50%);width:min(1500px,126%);opacity:.05;pointer-events:none;z-index:0}
+.yb-footer-mark img{display:block;width:100%;height:auto}
+.yb-footer-in{position:relative;z-index:1;display:flex;flex-direction:column;gap:clamp(30px,4vw,46px)}
+.yb-footer-main{display:flex;align-items:center;justify-content:space-between;gap:clamp(26px,4vw,48px);flex-wrap:wrap}
+.yb-footer-brand{display:inline-flex}
+.yb-footer-brand img{display:block;height:clamp(50px,5vw,64px);width:auto}
+.yb-footer-links{display:flex;flex-wrap:wrap;gap:clamp(18px,2.4vw,34px)}
+.yb-footer-links a{font-family:var(--head);font-weight:600;font-size:16px;color:rgba(255,255,255,.72)}
+.yb-footer-links a:hover{color:var(--orange)}
+.yb-footer-base{display:flex;align-items:center;justify-content:space-between;gap:12px 24px;flex-wrap:wrap;padding-top:clamp(22px,3vw,30px);border-top:1px solid rgba(255,255,255,.1)}
 .yb-footer-note{font-size:14px;color:rgba(255,255,255,.45);margin:0}
 
 /* responsive */
