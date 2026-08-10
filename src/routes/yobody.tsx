@@ -535,8 +535,8 @@ function Yobody() {
           <div className="yb-wrap yb-grow">
             <div className="yb-grow-copy">
               <h2 className="yb-h2 yb-grow-h2"><span className="yb-nw">You grow the brand,</span><br /><span className="yb-nw">we run the business,</span><br /><span className="yb-nw yb-h2-mut">as you</span></h2>
-              <p className="yb-grow-body">Yobody runs your entire coaching business as you. The coaching, the marketing, the app, the payments, the follow-up.</p>
-              <p className="yb-grow-body">All of it in your voice, personality and method, everything as you.</p>
+              <p className="yb-grow-body">Yobody runs your entire coaching business. The coaching, the marketing, the app, the payments, the follow-up.</p>
+              <p className="yb-grow-body">Every part of it in your voice, your personality and your method.</p>
               <div className="yb-grow-cta">
                 <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
                 <a href="#try-live" className="yb-btn yb-btn-ghost yb-btn-lg">Try it live</a>
