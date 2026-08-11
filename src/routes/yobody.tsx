@@ -668,6 +668,18 @@ function Yobody() {
         {/* 06 · HOW IT WORKS */}
         <HowItWorks />
 
+        {/* ticker divider */}
+        <a href="#partner" className="yb-ticker yb-ticker-alt" aria-label="Become a partner — the new era of online coaching">
+          <div className="yb-ticker-track" aria-hidden="true">
+            {[...TICKER_SEQ, ...TICKER_SEQ].map((p, i) => (
+              <span className="yb-ticker-item" key={i}>
+                <span className="yb-ticker-txt">{p}</span>
+                <ArrowRight className="yb-ticker-arrow" />
+              </span>
+            ))}
+          </div>
+        </a>
+
         {/* 07 · THE LAUNCH */}
         <section className="yb-band yb-cream">
           <div className="yb-wrap">
@@ -912,6 +924,7 @@ body{padding-bottom:0}
 .yb-ticker{display:block;width:100%;overflow:hidden;background:var(--orange);text-decoration:none;padding:clamp(17px,2.4vw,26px) 0;transition:background .25s ease}
 .yb-ticker:hover{background:#d5613f}
 .yb-ticker-track{display:flex;align-items:center;width:max-content;animation:yb-scroll 88s linear infinite}
+.yb-ticker-alt .yb-ticker-track{animation-direction:reverse}
 .yb-ticker-item{display:inline-flex;align-items:center;gap:clamp(24px,3vw,46px);padding-right:clamp(24px,3vw,46px)}
 .yb-ticker-txt{font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(14px,1.45vw,18px);letter-spacing:.09em;text-transform:uppercase;color:#fff;white-space:nowrap;line-height:1}
 .yb-ticker-arrow{width:clamp(17px,1.7vw,21px);height:auto;color:rgba(255,255,255,.82);flex:none}
@@ -940,11 +953,11 @@ body{padding-bottom:0}
 .yb-jjcard-demo{position:absolute;left:14px;right:14px;bottom:14px;z-index:2}
 .yb-jjcard-demo .yb-voice{margin:0;max-width:none;min-height:clamp(150px,19vw,172px);padding:clamp(13px,1.5vw,16px);border-radius:20px;border-color:rgba(255,255,255,.08);box-shadow:0 26px 44px -22px rgba(0,0,0,.62)}
 .yb-jjcard-demo .yb-voice-wave{height:clamp(40px,7vw,52px)}
-.yb-jjcard-demo .yb-voice-cap{font-size:clamp(12.5px,1.25vw,14px);max-width:96%}
-.yb-jjcard-demo .yb-voice-mic{width:58px;height:58px}
-.yb-jjcard-demo .yb-voice-mic svg{width:23px;height:23px}
+.yb-jjcard-demo .yb-voice-cap{font-size:clamp(13.5px,1.4vw,15.5px);max-width:96%}
+.yb-jjcard-demo .yb-voice-mic{width:clamp(62px,7vw,72px);height:clamp(62px,7vw,72px)}
+.yb-jjcard-demo .yb-voice-mic svg{width:clamp(25px,2.9vw,29px);height:clamp(25px,2.9vw,29px)}
 .yb-jjcard-demo .yb-voice-lock{gap:10px}
-.yb-jjcard-demo .yb-voice-lock-hint{font-size:clamp(12.5px,1.3vw,14px)}
+.yb-jjcard-demo .yb-voice-lock-hint{font-size:clamp(14.5px,1.6vw,16.5px)}
 .yb-jjcard-demo .yb-voice-stop{width:42px;height:42px;right:13px;bottom:13px}
 .yb-jjcard-demo .yb-voice-stop-ico{width:13px;height:13px}
 .yb-live-r .yb-press{text-align:left}
