@@ -18,7 +18,7 @@ import logoShell from "@/assets/yobody/logo-shell.png";
 import logoPwc from "@/assets/yobody/logo-pwc.png";
 import logoJhancock from "@/assets/yobody/logo-jhancock.png";
 import logoLiberty from "@/assets/yobody/logo-liberty.png";
-import ybHero from "@/assets/yobody/yobody-web-hero-image-v2.png";
+import ybHero from "@/assets/yobody/desktop-hero-v3.webp";
 import jjCoach from "@/assets/yobody/jj-smith-coach-v2.png";
 import coachAdvanceStrength from "@/assets/yobody/coach-advance-strength.webp";
 import coachClassicBodybuilding from "@/assets/yobody/coach-classic-bodybuilding.webp";
@@ -1034,7 +1034,7 @@ body{padding-bottom:0}
   .yb-fold .yb-strip{flex:0 0 auto}
   .yb-hero-stage{min-height:480px;padding:0}
   .yb-hero-mob-img{display:none}
-  .yb-hero-bg{display:block;left:auto;right:0;width:58%}
+  .yb-hero-bg{display:block;left:auto;right:0;width:64%}
   .yb-hero-bg img{object-position:center 30%}
   .yb-hero-nw{white-space:nowrap}
   .yb-hero-fade{background:linear-gradient(90deg,#FBF6F1 0%,#FBF6F1 13%,rgba(251,246,241,.55) 30%,transparent 52%)}
