@@ -19,8 +19,14 @@ import logoPwc from "@/assets/yobody/logo-pwc.png";
 import logoJhancock from "@/assets/yobody/logo-jhancock.png";
 import logoLiberty from "@/assets/yobody/logo-liberty.png";
 import ybHero from "@/assets/yobody/yobody-web-hero-image-v2.png";
-import typesOfCoaches from "@/assets/yobody/types-of-coaches-v2.png";
 import jjCoach from "@/assets/yobody/jj-smith-coach-v2.png";
+import coachAdvanceStrength from "@/assets/yobody/coach-advance-strength.webp";
+import coachClassicBodybuilding from "@/assets/yobody/coach-classic-bodybuilding.webp";
+import coachFunctionalBodybuilding from "@/assets/yobody/coach-functional-bodybuilding.webp";
+import coachKettlebell from "@/assets/yobody/coach-kettlebell.webp";
+import coachPilatesStrength from "@/assets/yobody/coach-pilates-strength.webp";
+import coachStrengthRunning from "@/assets/yobody/coach-strength-running.webp";
+import coachYoga from "@/assets/yobody/coach-yoga.webp";
 import ybHeroMobile from "@/assets/yobody/yobody-web-hero-image-mobile.png";
 import screenOnboarding from "@/assets/yobody/screens-onboarding-call.png";
 import screenPlans from "@/assets/yobody/screens-plans.png";
@@ -55,6 +61,13 @@ export const Route = createFileRoute("/yobody")({
 });
 
 const PRESS_LOGOS = [partnerNyTimes, partnerDrOz, partnerTheView, partnerSteveHarvey, partnerNbc, partnerFox, partnerEssence, partnerWomansWorld];
+
+// two-column coach-card scroller in the "done-as-you" claim section (7 cards, split 4 / 3)
+const COACH_COL_A = [coachYoga, coachClassicBodybuilding, coachKettlebell, coachStrengthRunning];
+const COACH_COL_B = [coachAdvanceStrength, coachFunctionalBodybuilding, coachPilatesStrength];
+
+// slow horizontal ticker dividing the claim and "see it live" sections
+const TICKER_SEQ = Array.from({ length: 10 }, (_, i) => (i % 2 === 0 ? "The new era of online coaching" : "Become a partner"));
 
 // ── JJ voice agent (Vapi) — talk to her twin live, in-page ────────────────────
 const VAPI_ASSISTANT_ID = "e5d3b63a-0c2b-4fac-b37d-dcc00ede102d";
@@ -495,11 +508,36 @@ function Yobody() {
               <p className="yb-lead">We clone your voice, your personality, your method and everything you know about coaching. Then we run the entire business as you.</p>
               <a href="#partner" className="yb-btn yb-btn-primary yb-btn-lg">Become a partner <ArrowRight className="yb-ico-20" /></a>
             </div>
-            <div className="yb-claim-media">
-              <img src={typesOfCoaches} alt="The many kinds of coaches Yobody runs, as them" loading="lazy" />
+            <div className="yb-claim-media yb-coach-cols" aria-hidden="true">
+              <div className="yb-coach-col yb-coach-up">
+                <div className="yb-coach-track">
+                  {[...COACH_COL_A, ...COACH_COL_A].map((src, i) => (
+                    <img key={i} src={src} alt="" />
+                  ))}
+                </div>
+              </div>
+              <div className="yb-coach-col yb-coach-down">
+                <div className="yb-coach-track">
+                  {[...COACH_COL_B, ...COACH_COL_B].map((src, i) => (
+                    <img key={i} src={src} alt="" />
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </section>
+
+        {/* ticker divider */}
+        <a href="#partner" className="yb-ticker" aria-label="Become a partner — the new era of online coaching">
+          <div className="yb-ticker-track" aria-hidden="true">
+            {[...TICKER_SEQ, ...TICKER_SEQ].map((p, i) => (
+              <span className="yb-ticker-item" key={i}>
+                <span className="yb-ticker-txt">{p}</span>
+                <ArrowRight className="yb-ticker-arrow" />
+              </span>
+            ))}
+          </div>
+        </a>
 
         {/* 04 · SEE IT LIVE */}
         <section id="live" className="yb-band">
@@ -771,8 +809,24 @@ body{padding-bottom:0}
 .yb-claim-copy .yb-accent{white-space:nowrap}
 .yb-claim-copy .yb-lead{margin:22px auto 0}
 .yb-claim-copy .yb-btn{margin-top:28px}
-.yb-claim-media{width:100%;max-width:440px}
-.yb-claim-media img{display:block;width:100%;height:auto;border-radius:22px}
+.yb-claim-media{width:100%;max-width:460px}
+.yb-coach-cols{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.5vw,16px);height:clamp(500px,132vw,600px);-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 10%,#000 90%,transparent 100%)}
+.yb-coach-col{position:relative;overflow:hidden}
+.yb-coach-track{display:block;will-change:transform}
+.yb-coach-up .yb-coach-track{animation:ybCoachScroll 78s linear infinite}
+.yb-coach-down .yb-coach-track{animation:ybCoachScroll 58s linear infinite reverse}
+.yb-coach-track img{display:block;width:100%;height:auto;margin-bottom:clamp(12px,1.5vw,16px)}
+@keyframes ybCoachScroll{from{transform:translateY(0)}to{transform:translateY(-50%)}}
+@media (prefers-reduced-motion:reduce){.yb-coach-up .yb-coach-track,.yb-coach-down .yb-coach-track{animation:none}}
+
+/* ticker divider */
+.yb-ticker{display:block;width:100%;overflow:hidden;background:var(--orange);text-decoration:none;padding:clamp(17px,2.4vw,26px) 0;transition:background .25s ease}
+.yb-ticker:hover{background:#d5613f}
+.yb-ticker-track{display:flex;align-items:center;width:max-content;animation:yb-scroll 88s linear infinite}
+.yb-ticker-item{display:inline-flex;align-items:center;gap:clamp(24px,3vw,46px);padding-right:clamp(24px,3vw,46px)}
+.yb-ticker-txt{font-family:'Poppins',sans-serif;font-weight:600;font-size:clamp(14px,1.45vw,18px);letter-spacing:.09em;text-transform:uppercase;color:#fff;white-space:nowrap;line-height:1}
+.yb-ticker-arrow{width:clamp(17px,1.7vw,21px);height:auto;color:rgba(255,255,255,.82);flex:none}
+@media (prefers-reduced-motion:reduce){.yb-ticker-track{animation:none}}
 
 /* see it live */
 #live{padding-top:clamp(72px,10vw,112px)}
@@ -970,7 +1024,8 @@ body{padding-bottom:0}
   .yb-claim-copy{flex:0 1 auto;max-width:500px;text-align:left;margin-left:max(40px, calc((100% - 1200px) / 2 + 40px))}
   .yb-claim-copy .yb-h2{font-size:clamp(34px,4.6vw,56px)}
   .yb-claim-copy .yb-lead{margin:22px 0 0;max-width:440px}
-  .yb-claim-media{flex:0 0 auto;width:clamp(360px,44vw,620px);max-width:none;margin-right:clamp(24px,2.6vw,44px)}
+  .yb-claim-media{flex:0 0 auto;width:clamp(380px,42vw,580px);max-width:none;margin-right:clamp(24px,2.6vw,44px)}
+  .yb-coach-cols{height:clamp(740px,84vh,860px)}
   .yb-hiw{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,0.95fr);gap:clamp(48px,5.5vw,88px);align-items:center}
   .yb-hiw-stack{display:none}
   .yb-hiw-intro .yb-h2{font-size:clamp(38px,4.4vw,58px);line-height:1.06}
@@ -1021,8 +1076,8 @@ body{padding-bottom:0}
   .yb-voice{flex-direction:column;text-align:center;gap:14px}
   .yb-claim-copy .yb-h2{font-size:clamp(38px,9vw,44px)}
   .yb-claim-copy .yb-lead{font-size:20px}
-  .yb-claim-stage{padding-left:14px;padding-right:14px}
-  .yb-claim-media{max-width:none}
+  .yb-claim-stage{padding-left:14px;padding-right:14px;padding-top:clamp(104px,26vw,132px);padding-bottom:clamp(96px,24vw,120px)}
+  .yb-claim-media{max-width:400px;margin-left:auto;margin-right:auto}
   .yb-live-body .yb-lead{font-size:19.5px}
   .yb-grow-body{font-size:19.5px;line-height:1.55}
   .yb-about-x{font-size:18px;line-height:1.64;margin-bottom:22px}
