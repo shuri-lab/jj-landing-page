@@ -424,6 +424,18 @@ function smoothScrollTo(el: HTMLElement) {
 }
 
 function Yobody() {
+  const [navScrolled, setNavScrolled] = useState(false);
+  const topSentinel = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = topSentinel.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      ([entry]) => setNavScrolled(!entry.isIntersecting),
+      { threshold: 0 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
       const a = (e.target as HTMLElement)?.closest?.('a[href^="#"]') as HTMLAnchorElement | null;
@@ -444,9 +456,10 @@ function Yobody() {
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
       <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Poppins:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" />
       <style>{CSS}</style>
+      <div ref={topSentinel} className="yb-top-sentinel" aria-hidden="true" />
 
       {/* NAV */}
-      <header className="yb-nav">
+      <header className={navScrolled ? "yb-nav is-scrolled" : "yb-nav"}>
         <div className="yb-nav-in">
           <a href="#top" className="yb-brand"><img src={ybLogoDark} alt="Yobody" /></a>
           <nav className="yb-nav-links">
@@ -460,7 +473,7 @@ function Yobody() {
       <main id="top">
         <div className="yb-fold">
         {/* 01 · HERO */}
-        <section className="yb-hero">
+        <section className="yb-hero yb-round-bottom">
           <div className="yb-hero-stage">
             <div className="yb-hero-bg" aria-hidden>
               <img src={ybHero} alt="" fetchPriority="high" />
@@ -569,10 +582,10 @@ function Yobody() {
         </section>
 
         {/* 05 · YOU GROW THE BRAND, WE RUN THE BUSINESS */}
-        <section className="yb-band yb-cream">
+        <section className="yb-band yb-cream yb-round-top">
           <div className="yb-wrap yb-grow">
             <div className="yb-grow-copy">
-              <h2 className="yb-h2 yb-grow-h2"><span className="yb-nw">You grow the brand,</span><br /><span className="yb-nw">we run the business,</span><br /><span className="yb-nw yb-h2-mut">as you</span></h2>
+              <h2 className="yb-h2 yb-grow-h2"><span className="yb-nw">You grow the brand,</span><br /><span className="yb-nw yb-hl">we run the business,</span><br /><span className="yb-nw yb-h2-mut">as you</span></h2>
               <p className="yb-grow-body">Yobody runs your entire coaching business. The coaching, the marketing, the app, the payments, the follow-up.</p>
               <p className="yb-grow-body">Every part of it in your voice, your personality and your method.</p>
               <div className="yb-grow-cta">
@@ -634,7 +647,7 @@ function Yobody() {
         </section>
 
         {/* 08 · ABOUT */}
-        <section id="about" className="yb-band yb-dark yb-aboutsec">
+        <section id="about" className="yb-band yb-dark yb-aboutsec yb-round-top">
           <div className="yb-wrap">
             <div className="yb-center">
               <h2 className="yb-h2">About us</h2>
@@ -688,7 +701,7 @@ function Yobody() {
         </section>
       </main>
 
-      <footer className="yb-footer">
+      <footer className="yb-footer yb-round-top">
         <div className="yb-footer-mark" aria-hidden><img src={ybLogoWhite} alt="" /></div>
         <div className="yb-wrap yb-footer-in">
           <div className="yb-footer-main">
@@ -720,6 +733,8 @@ body{padding-bottom:0}
   --cream:#FAF5F0; --cream-2:#F4ECE4; --white:#FFFFFF;
   --ink:#211D1A; --ink-2:#3A342F; --ink-soft:#7A716A; --hair:#ECE2D8;
   --dark:#1C1815;
+  --rr:clamp(36px,4.5vw,68px);
+  --nav-h:clamp(76px,11vw,100px);
   --sans:'Inter',-apple-system,'Segoe UI',sans-serif;
   --head:'Poppins',var(--sans);
   --shadow:0 40px 80px -48px rgba(60,35,20,.4);
@@ -762,9 +777,13 @@ body{padding-bottom:0}
 .yb a.yb-btn-outline:hover{color:#fff}
 
 /* nav */
-.yb-nav{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.82);backdrop-filter:blur(14px);border-bottom:1px solid var(--hair)}
-.yb-nav-in{max-width:1200px;margin:0 auto;padding:3px 40px;display:flex;align-items:center;justify-content:space-between}
-.yb-brand img{height:54px;width:auto;display:block}
+.yb-top-sentinel{position:absolute;top:24px;left:0;width:1px;height:1px;pointer-events:none;opacity:0}
+.yb-nav{position:fixed;top:0;left:0;right:0;z-index:50;background:transparent;border-bottom:1px solid transparent;transition:background .35s ease,border-color .35s ease,box-shadow .35s ease}
+.yb-nav.is-scrolled{background:rgba(250,245,240,.7);-webkit-backdrop-filter:blur(16px) saturate(1.4);backdrop-filter:blur(16px) saturate(1.4);border-bottom-color:rgba(40,25,15,.07);box-shadow:0 10px 32px -22px rgba(60,35,20,.4)}
+.yb-nav-in{max-width:1200px;margin:0 auto;padding:clamp(14px,1.5vw,20px) 40px;display:flex;align-items:center;justify-content:space-between;transition:padding .35s ease}
+.yb-nav.is-scrolled .yb-nav-in{padding-top:9px;padding-bottom:9px}
+.yb-brand img{height:60px;width:auto;display:block;transition:height .35s ease}
+.yb-nav.is-scrolled .yb-brand img{height:46px}
 .yb-nav-links{display:flex;align-items:center;gap:30px}
 .yb-nav-links>a:not(.yb-btn){font-family:var(--head);font-weight:600;font-size:15.5px;color:var(--ink-2)}
 .yb-nav-links>a:not(.yb-btn):hover{color:var(--orange)}
@@ -773,11 +792,14 @@ body{padding-bottom:0}
 .yb-band{position:relative;padding:clamp(86px,10vw,140px) 0;overflow:hidden}
 .yb-cream{background:var(--cream)}
 .yb-dark{background:var(--dark);color:#fff}
+/* rounded-corner section transitions — the curve reveals the neighbouring section's colour */
+.yb-round-bottom{border-bottom-left-radius:var(--rr);border-bottom-right-radius:var(--rr)}
+.yb-round-top{border-top-left-radius:var(--rr);border-top-right-radius:var(--rr);position:relative;z-index:1;margin-top:calc(-1 * var(--rr))}
 .yb-dark .yb-lead{color:rgba(255,255,255,.72)}
 
 /* hero */
 .yb-hero{position:relative;background:linear-gradient(180deg,#FDF9F5 0%,var(--cream) 100%);padding:0;overflow:hidden}
-.yb-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:clamp(34px,6vw,54px) 0 clamp(40px,7vw,64px)}
+.yb-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:calc(var(--nav-h) + clamp(16px,2.6vw,38px)) 0 clamp(40px,7vw,64px)}
 .yb-hero-bg{display:none;position:absolute;inset:0;z-index:0}
 .yb-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
 .yb-hero-fade{position:absolute;inset:0}
@@ -1006,7 +1028,7 @@ body{padding-bottom:0}
 
 /* responsive */
 @media (min-width:820px){
-  .yb-fold{min-height:calc(100vh - 61px);display:flex;flex-direction:column}
+  .yb-fold{min-height:100vh;display:flex;flex-direction:column}
   .yb-fold .yb-hero{flex:1 1 auto;display:flex;flex-direction:column}
   .yb-fold .yb-hero-stage{flex:1 1 auto}
   .yb-fold .yb-strip{flex:0 0 auto}
@@ -1047,6 +1069,7 @@ body{padding-bottom:0}
 }
 @media (max-width:820px){
   .yb-wrap{padding:0 24px}
+  .yb-hero.yb-round-bottom{border-bottom-left-radius:0;border-bottom-right-radius:0}
   .yb-claim-bg{left:50%;right:auto;top:clamp(-34px,-6vw,-16px);bottom:auto;transform:translateX(-50%);width:min(520px,140%);opacity:.075}
   .yb-nav-links{gap:18px}
   .yb-strip-track{grid-template-columns:1fr 1fr;gap:32px 20px}
