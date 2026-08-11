@@ -2,8 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import React, { useEffect, useRef, useState } from "react";
 import {
   Timer, TrendingUp, Users, ShieldCheck,
-  ArrowRight, Check, Mic, MicOff, Loader2, ChevronDown, ChevronLeft, ChevronRight,
+  ArrowRight, Check, Mic, Loader2, ChevronDown, ChevronLeft, ChevronRight,
   Smartphone, UserPlus, LineChart, Wallet,
+  PhoneCall, ClipboardList, MessageCircle, CalendarCheck,
 } from "lucide-react";
 import ybLogoDark from "@/assets/yobody/yobody-logo-dark.png";
 import ybLogoWhite from "@/assets/yobody/yobody-logo-white.png";
@@ -53,14 +54,37 @@ import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 export const Route = createFileRoute("/yobody")({
   head: () => ({
     meta: [
-      { title: "Yobody — 1 on 1 coaching at scale" },
-      { name: "description", content: "Yobody clones coaches and runs their entire coaching business as them. Every client gets 1 on 1 coaching from the coach they came for." },
+      { title: "Yobody | 1 on 1 Coaching at Scale for Online Coaches" },
+      { name: "description", content: "Yobody launches, runs and grows your coaching business, as you. 1 on 1 coaching at scale, built for online coaches and creators." },
+      { name: "robots", content: "index, follow" },
+      { property: "og:title", content: "Yobody | 1 on 1 Coaching at Scale" },
+      { property: "og:description", content: "Yobody launches, runs and grows your coaching business, as you. Built for online coaches and creators." },
+      { property: "og:image", content: "https://yobody.ai/og-image.jpg" },
+      { property: "og:url", content: "https://yobody.ai/" },
+      { property: "og:type", content: "website" },
+      { property: "og:site_name", content: "Yobody" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Yobody | 1 on 1 Coaching at Scale" },
+      { name: "twitter:description", content: "Yobody launches, runs and grows your coaching business, as you. Built for online coaches and creators." },
+      { name: "twitter:image", content: "https://yobody.ai/og-image.jpg" },
+    ],
+    links: [
+      { rel: "canonical", href: "https://yobody.ai/" },
     ],
   }),
   component: Yobody,
 });
 
-const PRESS_LOGOS = [partnerNyTimes, partnerDrOz, partnerTheView, partnerSteveHarvey, partnerNbc, partnerFox, partnerEssence, partnerWomansWorld];
+const PRESS_LOGOS = [
+  { src: partnerNyTimes, alt: "Featured in The New York Times" },
+  { src: partnerDrOz, alt: "Featured on The Dr. Oz Show" },
+  { src: partnerTheView, alt: "Featured on The View" },
+  { src: partnerSteveHarvey, alt: "Featured on Steve Harvey" },
+  { src: partnerNbc, alt: "Featured on NBC" },
+  { src: partnerFox, alt: "Featured on Fox" },
+  { src: partnerEssence, alt: "Featured in Essence" },
+  { src: partnerWomansWorld, alt: "Featured in Woman's World" },
+];
 
 // two-column coach-card scroller in the "done-as-you" claim section (7 cards, split 4 / 3)
 const COACH_COL_A = [coachYoga, coachClassicBodybuilding, coachKettlebell, coachStrengthRunning];
@@ -71,6 +95,7 @@ const TICKER_SEQ = Array.from({ length: 10 }, (_, i) => (i % 2 === 0 ? "The new 
 
 // ── JJ voice agent (Vapi) — talk to her twin live, in-page ────────────────────
 const VAPI_ASSISTANT_ID = "e5d3b63a-0c2b-4fac-b37d-dcc00ede102d";
+const WAVE_BARS = 11;
 type VoiceStatus = "idle" | "initializing" | "ready" | "requesting-permission" | "connecting" | "connected" | "error";
 type VapiClient = {
   on: (event: string, listener: (...args: unknown[]) => void) => void;
@@ -100,18 +125,30 @@ function JJVoiceDemoInner() {
   const statusRef = useRef<VoiceStatus>("idle");
   const micStreamRef = useRef<MediaStream | null>(null);
   const barsRef = useRef<Array<HTMLSpanElement | null>>([]);
-  const gainRef = useRef(0);
+  const glowRef = useRef<HTMLDivElement | null>(null);
   const isSpeakingRef = useRef(false);
+  const assistantVolRef = useRef(0);
+  const userVolRef = useRef(0);
+  const energyRef = useRef(0);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
+  const analyserBufRef = useRef<Uint8Array<ArrayBuffer> | null>(null);
 
   const [status, setStatusState] = useState<VoiceStatus>("idle");
   const [error, setError] = useState("");
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [caption, setCaption] = useState("");
 
   const publicKey = import.meta.env.VITE_VAPI_PUBLIC_KEY;
   const assistantId = VAPI_ASSISTANT_ID;
 
   function setStatus(next: VoiceStatus) { statusRef.current = next; if (mountedRef.current) setStatusState(next); }
   function clearConnectionTimeout() { if (timeoutRef.current !== null && typeof window !== "undefined") { window.clearTimeout(timeoutRef.current); timeoutRef.current = null; } }
+  function stopAudioAnalysis() {
+    analyserRef.current = null; analyserBufRef.current = null;
+    try { audioCtxRef.current?.close(); } catch (err) { console.error(err); }
+    audioCtxRef.current = null; assistantVolRef.current = 0; userVolRef.current = 0;
+  }
   function releaseMic() { micStreamRef.current?.getTracks().forEach((t) => t.stop()); micStreamRef.current = null; }
 
   useEffect(() => {
@@ -130,11 +167,16 @@ function JJVoiceDemoInner() {
         if (!mountedRef.current) return;
         const vapi = new Vapi(publicKey) as VapiClient;
         vapiRef.current = vapi;
-        vapi.on("call-start", () => { clearConnectionTimeout(); setError(""); setStatus("connected"); });
-        vapi.on("call-end", () => { clearConnectionTimeout(); isSpeakingRef.current = false; setIsSpeaking(false); releaseMic(); setStatus("ready"); });
+        vapi.on("call-start", () => { clearConnectionTimeout(); setError(""); setCaption(""); setStatus("connected"); });
+        vapi.on("call-end", () => { clearConnectionTimeout(); isSpeakingRef.current = false; setIsSpeaking(false); stopAudioAnalysis(); releaseMic(); setCaption(""); setStatus("ready"); });
         vapi.on("speech-start", () => { isSpeakingRef.current = true; setIsSpeaking(true); });
         vapi.on("speech-end", () => { isSpeakingRef.current = false; setIsSpeaking(false); });
-        vapi.on("error", (err: unknown) => { console.error("Vapi error", err); clearConnectionTimeout(); isSpeakingRef.current = false; setIsSpeaking(false); releaseMic(); setError("Could not connect. Please try again."); setStatus("ready"); });
+        vapi.on("volume-level", (v: unknown) => { const n = typeof v === "number" ? v : (v as { volume?: number })?.volume ?? 0; assistantVolRef.current = Math.max(0, Math.min(1, n)); });
+        vapi.on("message", (m: unknown) => {
+          const msg = m as { type?: string; transcript?: string };
+          if (msg?.type === "transcript" && typeof msg.transcript === "string" && msg.transcript.trim() && mountedRef.current) setCaption(msg.transcript);
+        });
+        vapi.on("error", (err: unknown) => { console.error("Vapi error", err); clearConnectionTimeout(); isSpeakingRef.current = false; setIsSpeaking(false); stopAudioAnalysis(); releaseMic(); setError("Could not connect. Please try again."); setStatus("ready"); });
         setStatus("ready");
       } catch (err) {
         console.error("Vapi init failed:", err);
@@ -145,26 +187,36 @@ function JJVoiceDemoInner() {
     init();
     return () => {
       mountedRef.current = false;
-      clearConnectionTimeout(); releaseMic();
+      clearConnectionTimeout(); stopAudioAnalysis(); releaseMic();
       try { vapiRef.current?.removeAllListeners?.(); vapiRef.current?.stop?.(); } catch (err) { console.error(err); } finally { vapiRef.current = null; }
     };
   }, [publicKey, assistantId]);
 
+  // audio-reactive horizontal waveform — reacts to JJ (assistant volume) and the user (mic analyser)
   useEffect(() => {
-    let raf = 0; const N = 48;
+    let raf = 0; const N = WAVE_BARS;
     const loop = (t: number) => {
       const connected = statusRef.current === "connected";
-      const target = !connected || isSpeakingRef.current ? 1 : 0;
-      gainRef.current += (target - gainRef.current) * 0.05;
-      const g = gainRef.current; const time = t / 1000; const bars = barsRef.current;
+      const analyser = analyserRef.current; const buf = analyserBufRef.current;
+      if (connected && analyser && buf) {
+        analyser.getByteTimeDomainData(buf);
+        let sum = 0; for (let i = 0; i < buf.length; i++) { const d = (buf[i] - 128) / 128; sum += d * d; }
+        userVolRef.current = Math.min(1, Math.sqrt(sum / buf.length) * 3.6);
+      }
+      const speakingFallback = isSpeakingRef.current ? 0.5 : 0;
+      const target = connected ? Math.max(assistantVolRef.current, userVolRef.current, speakingFallback, 0.05) : 0.12;
+      energyRef.current += (target - energyRef.current) * 0.16;
+      const e = energyRef.current; const time = t / 1000; const bars = barsRef.current;
       for (let i = 0; i < N; i++) {
         const el = bars[i]; if (!el) continue;
-        const a = (i / N) * Math.PI * 2;
-        const w = 0.55 * Math.sin(a * 3 + time * 1.1) + 0.45 * Math.sin(a * 2 - time * 0.7 + 1.3);
-        const norm = (w + 1) / 2;
-        const h = 0.28 + g * (0.14 + norm * 1.5);
-        el.style.transform = `scaleY(${h.toFixed(3)})`;
+        const x = (i - (N - 1) / 2) / ((N - 1) / 2);
+        const bell = Math.pow(Math.cos((x * Math.PI) / 2), 1.5);
+        const wave = 0.6 * (0.5 + 0.5 * Math.sin(time * 3.2 + i * 0.9)) + 0.4 * (0.5 + 0.5 * Math.sin(time * 2.1 - i * 0.6 + 1.7));
+        const h = 0.12 + bell * 0.14 + e * (0.22 + bell * 1.15) * (0.45 + 0.55 * wave);
+        el.style.transform = `scaleY(${Math.min(1, h).toFixed(3)})`;
+        el.style.opacity = (0.42 + 0.5 * bell + e * 0.22).toFixed(3);
       }
+      if (glowRef.current) glowRef.current.style.opacity = (0.16 + e * 0.72).toFixed(3);
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
@@ -180,56 +232,75 @@ function JJVoiceDemoInner() {
       setStatus("requesting-permission");
       try { releaseMic(); micStreamRef.current = await navigator.mediaDevices.getUserMedia({ audio: true }); }
       catch (micErr) { console.error("Mic denied", micErr); setError("Microphone permission is required."); setStatus("ready"); return; }
+      try {
+        const AC = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+        if (AC && micStreamRef.current) {
+          const ctx = new AC(); audioCtxRef.current = ctx;
+          const src = ctx.createMediaStreamSource(micStreamRef.current);
+          const analyser = ctx.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = 0.72;
+          src.connect(analyser); analyserRef.current = analyser; analyserBufRef.current = new Uint8Array(analyser.fftSize);
+        }
+      } catch (err) { console.error("Mic analyser setup failed", err); }
       setStatus("connecting");
-      timeoutRef.current = window.setTimeout(() => { try { vapiRef.current?.stop?.(); } catch (err) { console.error(err); } clearConnectionTimeout(); releaseMic(); setIsSpeaking(false); setError("Connection timed out. Please try again."); setStatus("ready"); }, 15000);
+      timeoutRef.current = window.setTimeout(() => { try { vapiRef.current?.stop?.(); } catch (err) { console.error(err); } clearConnectionTimeout(); stopAudioAnalysis(); releaseMic(); setIsSpeaking(false); setError("Connection timed out. Please try again."); setStatus("ready"); }, 15000);
       await vapiRef.current.start(assistantId);
-    } catch (err) { console.error("startCall failed:", err); clearConnectionTimeout(); releaseMic(); setIsSpeaking(false); setError("Could not start. Please try again."); setStatus("ready"); }
+    } catch (err) { console.error("startCall failed:", err); clearConnectionTimeout(); stopAudioAnalysis(); releaseMic(); setIsSpeaking(false); setError("Could not start. Please try again."); setStatus("ready"); }
   }
   function endCall() {
-    try { clearConnectionTimeout(); releaseMic(); vapiRef.current?.stop?.(); setIsSpeaking(false); setStatus("ready"); }
+    try { clearConnectionTimeout(); stopAudioAnalysis(); releaseMic(); vapiRef.current?.stop?.(); setIsSpeaking(false); setStatus("ready"); }
     catch (err) { console.error("endCall failed:", err); setStatus("ready"); }
   }
 
   const isConnected = status === "connected";
   const isBusy = status === "initializing" || status === "requesting-permission" || status === "connecting";
   const speaking = isConnected && isSpeaking;
+  const rawCaption = isConnected ? (caption || (speaking ? "JJ is speaking…" : "Listening…")) : "Hey JJ, can you help me stay on track?";
+  const captionText = rawCaption.length > 48 ? "…" + rawCaption.slice(-46) : rawCaption;
+  const lockHint = error ? error
+    : status === "requesting-permission" ? "Allow microphone access…"
+    : status === "connecting" ? "Connecting to JJ…"
+    : status === "initializing" ? "Loading…"
+    : "Tap to talk to JJ’s twin";
 
   return (
-    <div className="yb-voice">
-      <div className="yb-voice-orb">
-        <span className={`yb-voice-ring ${isConnected ? "is-live" : ""}`} aria-hidden />
-        <div className="yb-vwring" aria-hidden>
-          {Array.from({ length: 48 }).map((_, i) => (
-            <span key={i} className="yb-vwbar" style={{ transform: `rotate(${(i * 7.5).toFixed(1)}deg)` }}>
-              <span className="yb-vwtick" ref={(el) => { barsRef.current[i] = el; }} />
-            </span>
-          ))}
+    <div className={`yb-voice${isConnected ? " is-live" : ""}${isBusy ? " is-busy" : ""}`}>
+      <div className="yb-voice-glow" ref={glowRef} aria-hidden />
+      <div className="yb-voice-inner">
+        <div className="yb-voice-stage">
+          <div className="yb-voice-wave" aria-hidden>
+            {Array.from({ length: WAVE_BARS }).map((_, i) => (
+              <span key={i} className="yb-voice-bar" ref={(el) => { barsRef.current[i] = el; }} />
+            ))}
+          </div>
+          <p className="yb-voice-cap">{captionText}</p>
         </div>
-        <button type="button" onClick={isConnected ? endCall : startCall} disabled={isBusy} className="yb-voice-mic" aria-label={isConnected ? "End conversation" : "Talk to JJ's twin"}>
-          {isBusy ? <Loader2 className="yb-spin" /> : isConnected ? <MicOff /> : <Mic />}
+      </div>
+
+      {isConnected && (
+        <button type="button" className="yb-voice-stop" onClick={endCall} aria-label="End conversation">
+          <span className="yb-voice-stop-ico" aria-hidden />
         </button>
-      </div>
-      <div className="yb-voice-text">
-        <p className="yb-voice-status">
-          {status === "initializing" ? "Loading…"
-            : status === "requesting-permission" ? "Requesting microphone…"
-            : status === "connecting" ? "Connecting with JJ…"
-            : isConnected ? (speaking ? "JJ is speaking…" : "Listening…")
-            : "Talk to JJ Smith’s Twin"}
-        </p>
-        <p className="yb-voice-hint">{error || (isConnected ? "Tap the mic again to end the call." : "Tap the mic and allow access")}</p>
-      </div>
+      )}
+
+      {!isConnected && (
+        <div className="yb-voice-lock">
+          <button type="button" className="yb-voice-mic" onClick={startCall} disabled={isBusy} aria-label="Talk to JJ Smith’s twin">
+            {isBusy ? <Loader2 className="yb-spin" /> : <Mic />}
+          </button>
+          <p className="yb-voice-lock-hint">{lockHint}</p>
+        </div>
+      )}
     </div>
   );
 }
 
 // ── "How Yobody works" — accordion + phone screenshots ───────────────────────
 const HIW_FEATURES = [
-  { n: "01", title: "Onboarding call", screen: screenOnboarding, text: "Every client starts with a 1 on 1 call with your twin. Goals, history, food, and what gets in the way." },
-  { n: "02", title: "Personalized plans", screen: screenPlans, text: "Meals and training built from your programs, around their body and their week." },
-  { n: "03", title: "Daily check-ins", screen: screenCheckins, text: "A text every morning in your voice. Weight, food, training, sleep, energy." },
-  { n: "04", title: "Weekly calls", screen: screenWeekly, text: "Your twin knows their week before they pick up. Reviews it, finds the blocker, gets a commitment. Travel, injury, plateau: the plan changes on the call, the way you would change it." },
-  { n: "05", title: "The app", screen: screenApp, text: "Progress, photo journal, community and leaderboard, under your brand." },
+  { n: "01", title: "Onboarding call", Icon: PhoneCall, screen: screenOnboarding, alt: "App screen showing a client's onboarding call", text: "Every client starts with a 1 on 1 call with your twin. Goals, history, food, and what gets in the way." },
+  { n: "02", title: "Personalized plans", Icon: ClipboardList, screen: screenPlans, alt: "App screen showing a client's personalized meal and training plan", text: "Meals and training built from your programs, around their body and their week." },
+  { n: "03", title: "Daily check-ins", Icon: MessageCircle, screen: screenCheckins, alt: "App screen showing a daily check-in message", text: "A text every morning in your voice. Weight, food, training, sleep, energy." },
+  { n: "04", title: "Weekly calls", Icon: CalendarCheck, screen: screenWeekly, alt: "App screen showing a weekly coaching call in progress", text: "Your twin knows their week before they pick up. Reviews it, finds the blocker, gets a commitment. Travel, injury, plateau: the plan changes on the call, the way you would change it." },
+  { n: "05", title: "The app", Icon: Smartphone, screen: screenApp, alt: "App screen showing client progress, photo journal and leaderboard", text: "Progress, photo journal, community and leaderboard, under your brand." },
 ];
 
 function HowItWorks() {
@@ -255,7 +326,7 @@ function HowItWorks() {
                     aria-expanded={on}
                   >
                     <span className="yb-hiw-head">
-                      <span className="yb-hiw-num">{f.n}</span>
+                      <span className="yb-hiw-ico"><f.Icon strokeWidth={1.8} /></span>
                       <span className="yb-hiw-title">{f.title}</span>
                       <span className="yb-hiw-chev"><ChevronDown className="yb-ico-18" /></span>
                     </span>
@@ -275,7 +346,7 @@ function HowItWorks() {
                 <img
                   key={f.n}
                   src={f.screen}
-                  alt={`${f.title} — Yobody app screen`}
+                  alt={f.alt}
                   className={`yb-hiw-screen ${active === i ? "is-on" : ""}`}
                   loading="lazy"
                   draggable={false}
@@ -294,13 +365,13 @@ function HowItWorks() {
             <article className="yb-hiw-item" key={f.n}>
               <div className="yb-hiw-item-card">
                 <div className="yb-hiw-item-head">
-                  <span className="yb-hiw-item-num">{f.n}</span>
+                  <span className="yb-hiw-item-ico"><f.Icon strokeWidth={1.8} /></span>
                   <h3 className="yb-hiw-item-title">{f.title}</h3>
                 </div>
                 <p className="yb-hiw-item-text">{f.text}</p>
               </div>
               <div className="yb-hiw-item-phone">
-                <img src={f.screen} alt={`${f.title} — Yobody app screen`} loading="lazy" draggable={false} />
+                <img src={f.screen} alt={f.alt} loading="lazy" draggable={false} />
               </div>
             </article>
           ))}
@@ -312,14 +383,15 @@ function HowItWorks() {
 
 // ── "You grow the brand" — auto-advancing value slider ──
 // img: final photo (else a branded placeholder). pos: object-position focal point.
-const GROW_SLIDES: { label: string; caption: string; Icon: typeof Users; img?: string; pos?: string }[] = [
-  { label: "1 on 1 coaching", caption: "Your twin runs every client, in your voice, on your method.", Icon: Users, img: growCoaching, pos: "34% 50%" },
-  { label: "More sales", caption: "Funnels, pages and creative, built and run for you.", Icon: TrendingUp, img: growSales },
-  { label: "Your own app", caption: "Where your clients live, stay and get results.", Icon: Smartphone, img: growApp },
-  { label: "More clients", caption: "Every enquiry answered, every lead followed up.", Icon: UserPlus, img: growClients },
-  { label: "Better results", caption: "Every client checked on daily, not just the ones who ask.", Icon: LineChart, img: growResults },
-  { label: "Paid on time", caption: "Sign-ups, payments and renewals, all handled.", Icon: Wallet, img: growPaid },
-  { label: "Still yours", caption: "Your brand, your clients, your list. Always.", Icon: ShieldCheck, img: growYours },
+const GROW_SLIDES: { label: string; caption: string; Icon: typeof Users; img?: string; pos?: string; alt?: string }[] = [
+  { label: "1 on 1 coaching", caption: "Your twin runs every client, in your voice, on your method.", Icon: Users, img: growCoaching, pos: "34% 50%", alt: "An online coach on a call with a client from his home studio" },
+  // alt to be written once the "More sales" image is finalized
+  { label: "More sales", caption: "Funnels, pages and creative, built and run for you.", Icon: TrendingUp, img: growSales, alt: "" },
+  { label: "Your own app", caption: "Where your clients live, stay and get results.", Icon: Smartphone, img: growApp, alt: "An online coach checking his phone between filming sessions" },
+  { label: "More clients", caption: "Every enquiry answered, every lead followed up.", Icon: UserPlus, img: growClients, alt: "A man in his kitchen reading a reply on his phone" },
+  { label: "Better results", caption: "Every client checked on daily, not just the ones who ask.", Icon: LineChart, img: growResults, alt: "A woman taking a progress photo in her bedroom mirror" },
+  { label: "Paid on time", caption: "Sign-ups, payments and renewals, all handled.", Icon: Wallet, img: growPaid, alt: "A coach sitting on her porch with her phone face down beside her" },
+  { label: "Still yours", caption: "Your brand, your clients, your list. Always.", Icon: ShieldCheck, img: growYours, alt: "A coach standing on a city street, looking at camera" },
 ];
 
 function GrowSlider() {
@@ -337,7 +409,7 @@ function GrowSlider() {
           {GROW_SLIDES.map((s, idx) => (
             <div className={`yb-grow-slide ${i === idx ? "is-on" : ""}`} key={idx} aria-hidden={i !== idx || undefined}>
               <div className="yb-grow-ph">
-                {s.img ? <img src={s.img} alt="" style={{ objectPosition: s.pos }} /> : <s.Icon className="yb-grow-ico" strokeWidth={1.5} />}
+                {s.img ? <img src={s.img} alt={s.alt || ""} style={{ objectPosition: s.pos }} /> : <s.Icon className="yb-grow-ico" strokeWidth={1.5} />}
               </div>
               <span className="yb-grow-scrim" aria-hidden />
               <div className="yb-grow-meta">
@@ -489,7 +561,7 @@ function Yobody() {
                 </div>
               </div>
               <div className="yb-hero-mob-img">
-                <img src={ybHeroMobile} alt="A Yobody coach" loading="lazy" />
+                <img src={ybHeroMobile} alt="" loading="lazy" />
               </div>
             </div>
           </div>
@@ -554,28 +626,24 @@ function Yobody() {
 
         {/* 04 · SEE IT LIVE */}
         <section id="live" className="yb-band">
-          <div className="yb-wrap yb-live">
+          <div className="yb-wrap yb-live" id="try-live">
             <div className="yb-live-l">
               <div className="yb-jjcard">
                 <div className="yb-jjcard-bg" aria-hidden />
-                <div className="yb-jjcard-fig"><img src={jjCoach} alt="JJ Smith, your coach's twin" /></div>
-                <div className="yb-jjcard-plate">
-                  <p className="yb-jjcard-cred">New York Times bestselling author</p>
-                  <p className="yb-jjcard-name">JJ Smith</p>
-                </div>
-              </div>
-              <div className="yb-press">
-                <p className="yb-press-lbl">Featured on</p>
-                <div className="yb-marquee"><div className="yb-marquee-track">{[...PRESS_LOGOS, ...PRESS_LOGOS].map((l, i) => <img key={i} src={l} alt="" loading="lazy" />)}</div></div>
+                <div className="yb-jjcard-fig"><img src={jjCoach} alt="JJ Smith, New York Times bestselling author and the first coach on Yobody" /></div>
+                <div className="yb-jjcard-demo"><JJVoiceDemo /></div>
               </div>
             </div>
             <div className="yb-live-r">
-              <div className="yb-live-head" id="try-live">
+              <div className="yb-live-head">
                 <h2 className="yb-h2">JJ Smith&rsquo;s Twin <span className="yb-h2-mut">coaches thousands of women every week</span></h2>
               </div>
               <div className="yb-live-body">
                 <p className="yb-lead yb-soft">Her twin runs every one of those calls in her voice, with her personality and her method. Her coaching, at infinite scale.</p>
-                <JJVoiceDemo />
+              </div>
+              <div className="yb-press">
+                <p className="yb-press-lbl">JJ Smith Has Been Featured In</p>
+                <div className="yb-marquee"><div className="yb-marquee-track">{[...PRESS_LOGOS, ...PRESS_LOGOS].map((l, i) => <img key={i} src={l.src} alt={i < PRESS_LOGOS.length ? l.alt : ""} loading="lazy" />)}</div></div>
               </div>
             </div>
           </div>
@@ -756,11 +824,10 @@ body{padding-bottom:0}
 /* type */
 .yb-eyebrow{display:inline-block;font-family:var(--head);font-weight:700;font-size:13px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange)}
 .yb-h1{font-family:var(--head);font-weight:800;font-size:clamp(42px,5.4vw,66px);line-height:1.04;letter-spacing:-.03em;margin:16px 0 0}
-.yb-hl{color:var(--orange)}
+.yb-hl,.yb-accent{background-image:linear-gradient(100deg,#E9825B 0%,var(--orange) 50%,#D25E38 100%);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 .yb-h2{font-family:var(--head);font-weight:700;font-size:clamp(34px,5.2vw,66px);line-height:1.03;letter-spacing:-.03em;margin:0}
 .yb-lead{font-size:clamp(18px,2vw,23px);line-height:1.5;font-weight:400;margin:22px auto 0;max-width:min(720px,100%)}
 .yb-soft{color:var(--ink-soft)}
-.yb-accent{color:var(--orange)}
 
 /* buttons */
 .yb-btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;font-family:var(--head);font-weight:700;border:2px solid transparent;border-radius:999px;transition:transform .15s,box-shadow .15s,background .15s,color .15s;white-space:nowrap;cursor:pointer}
@@ -869,24 +936,49 @@ body{padding-bottom:0}
 .yb-h2-mut{color:var(--ink-soft)}
 .yb-nw{white-space:nowrap}
 
+/* JJ voice demo sits where the old dark plate was — inset at the bottom of the JJ card */
+.yb-jjcard-demo{position:absolute;left:14px;right:14px;bottom:14px;z-index:2}
+.yb-jjcard-demo .yb-voice{margin:0;max-width:none;min-height:clamp(150px,19vw,172px);padding:clamp(13px,1.5vw,16px);border-radius:20px;border-color:rgba(255,255,255,.08);box-shadow:0 26px 44px -22px rgba(0,0,0,.62)}
+.yb-jjcard-demo .yb-voice-wave{height:clamp(40px,7vw,52px)}
+.yb-jjcard-demo .yb-voice-cap{font-size:clamp(12.5px,1.25vw,14px);max-width:96%}
+.yb-jjcard-demo .yb-voice-mic{width:58px;height:58px}
+.yb-jjcard-demo .yb-voice-mic svg{width:23px;height:23px}
+.yb-jjcard-demo .yb-voice-lock{gap:10px}
+.yb-jjcard-demo .yb-voice-lock-hint{font-size:clamp(12.5px,1.3vw,14px)}
+.yb-jjcard-demo .yb-voice-stop{width:42px;height:42px;right:13px;bottom:13px}
+.yb-jjcard-demo .yb-voice-stop-ico{width:13px;height:13px}
+.yb-live-r .yb-press{text-align:left}
+
 /* in-page JJ voice demo */
-.yb-voice{display:flex;align-items:center;gap:20px;margin-top:30px;background:linear-gradient(135deg,#FCEBE1 0%,#FADFCE 100%);border:1.5px solid rgba(225,109,77,.42);border-radius:24px;padding:18px 22px;box-shadow:0 24px 46px -26px rgba(213,98,60,.5);min-width:0}
-.yb-voice-orb{position:relative;width:120px;height:120px;flex:0 0 auto;display:flex;align-items:center;justify-content:center}
-.yb-voice-ring{position:absolute;left:50%;top:50%;width:140px;height:140px;margin:-70px 0 0 -70px;border-radius:999px;background:radial-gradient(circle,rgba(225,109,77,.22) 0%,rgba(225,109,77,0) 68%);pointer-events:none;animation:yb-vpulse-idle 2.8s ease-out infinite}
-.yb-voice-ring.is-live{animation:yb-vpulse 1.7s ease-out infinite}
-@keyframes yb-vpulse{0%{box-shadow:0 0 0 0 rgba(225,109,77,.42)}100%{box-shadow:0 0 0 22px rgba(225,109,77,0)}}
-@keyframes yb-vpulse-idle{0%{box-shadow:0 0 0 0 rgba(225,109,77,.32)}70%,100%{box-shadow:0 0 0 15px rgba(225,109,77,0)}}
-.yb-vwring{position:absolute;left:50%;top:50%;width:0;height:0;z-index:1}
-.yb-vwbar{position:absolute;left:0;top:0;width:0;height:0}
-.yb-vwtick{position:absolute;left:-1.5px;top:-48px;width:3px;height:12px;border-radius:3px;background:linear-gradient(180deg,#EE8A6C,#D5623C);transform-origin:center;transform:scaleY(.28);will-change:transform}
-.yb-voice-mic{position:relative;z-index:2;width:82px;height:82px;border-radius:999px;background:linear-gradient(135deg,#EE8A6C,#D5623C);color:#fff;display:flex;align-items:center;justify-content:center;border:0;cursor:pointer;box-shadow:0 16px 30px -12px rgba(213,98,60,.6),0 0 0 6px rgba(255,255,255,.72);transition:transform .15s,filter .15s}
-.yb-voice-mic:hover{filter:brightness(1.05)}
-.yb-voice-mic:active{transform:scale(.95)}
-.yb-voice-mic:disabled{opacity:.7;cursor:default}
-.yb-voice-mic svg{width:32px;height:32px}
-.yb-voice-text{min-width:0}
-.yb-voice-status{font-family:var(--head);font-weight:800;font-size:19px;color:var(--ink);margin:0 0 4px}
-.yb-voice-hint{font-size:14px;line-height:1.5;color:var(--ink-soft);margin:0}
+/* JJ voice widget — premium dark card */
+.yb-voice{position:relative;display:flex;flex-direction:column;margin-top:28px;width:100%;max-width:540px;min-height:clamp(256px,27vw,292px);padding:clamp(20px,2.6vw,26px);border-radius:26px;background:radial-gradient(125% 120% at 50% 0%,#251e18 0%,#181310 60%,#120e0b 100%);border:1px solid rgba(255,255,255,.08);box-shadow:0 44px 84px -42px rgba(18,12,9,.82),inset 0 1px 0 rgba(255,255,255,.05);overflow:hidden;isolation:isolate}
+.yb-voice-glow{position:absolute;left:50%;top:44%;width:76%;height:62%;transform:translate(-50%,-50%);background:radial-gradient(ellipse at center,rgba(225,109,77,.55) 0%,rgba(225,109,77,0) 68%);filter:blur(28px);opacity:.2;pointer-events:none;z-index:0}
+.yb-voice-inner{position:relative;z-index:1;flex:1;display:flex;flex-direction:column;min-height:0;transition:filter .6s cubic-bezier(.4,0,.2,1),opacity .6s ease,transform .6s cubic-bezier(.4,0,.2,1)}
+.yb-voice:not(.is-live) .yb-voice-inner{filter:blur(9px);opacity:.62;transform:scale(1.03)}
+.yb-voice.is-busy .yb-voice-inner{filter:blur(4px);opacity:.84;transform:scale(1.012)}
+.yb-voice-top{flex:0 0 auto}
+.yb-voice-label{display:inline-flex;align-items:center;gap:8px;font-family:var(--head);font-weight:600;font-size:13px;letter-spacing:.01em;color:rgba(250,245,240,.52)}
+.yb-voice-dot{width:7px;height:7px;border-radius:999px;background:rgba(250,245,240,.3);transition:background .3s}
+.yb-voice.is-live .yb-voice-dot{background:var(--orange);animation:yb-voice-pulse 1.8s ease-out infinite}
+@keyframes yb-voice-pulse{0%{box-shadow:0 0 0 0 rgba(225,109,77,.55)}70%,100%{box-shadow:0 0 0 7px rgba(225,109,77,0)}}
+.yb-voice-stage{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:clamp(12px,1.7vw,18px);padding-bottom:clamp(8px,1.4vw,16px);min-height:0}
+.yb-voice-wave{display:flex;align-items:center;justify-content:center;gap:clamp(6px,.9vw,9px);height:clamp(58px,9vw,80px)}
+.yb-voice-bar{flex:0 0 auto;width:clamp(8px,1.05vw,10px);height:100%;border-radius:999px;background:linear-gradient(180deg,#fffaf5,#f1e5da);transform-origin:center;transform:scaleY(.2);box-shadow:0 0 16px rgba(255,247,240,.45),0 0 5px rgba(255,250,245,.6);will-change:transform,opacity}
+.yb-voice-cap{text-align:center;font-size:clamp(15px,1.5vw,17px);font-weight:500;line-height:1.4;color:rgba(250,245,240,.9);margin:0;max-width:min(90%,34ch);min-height:1.4em;white-space:nowrap;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent);mask-image:linear-gradient(90deg,transparent,#000 12%,#000 88%,transparent)}
+.yb-voice-lock{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;pointer-events:none}
+.yb-voice-mic{position:relative;pointer-events:auto;width:76px;height:76px;border-radius:999px;border:0;cursor:pointer;display:flex;align-items:center;justify-content:center;color:#fff;background:linear-gradient(135deg,#EE8A6C,var(--orange));box-shadow:0 20px 42px -14px rgba(213,98,60,.85),0 0 0 8px rgba(255,255,255,.05);transition:transform .18s ease,filter .18s ease}
+.yb-voice-mic::before{content:"";position:absolute;inset:0;border-radius:inherit;box-shadow:0 0 0 0 rgba(225,109,77,.5);animation:yb-voice-mic-pulse 2.4s ease-out infinite;pointer-events:none}
+.yb-voice-mic:hover{filter:brightness(1.06)}
+.yb-voice-mic:active{transform:scale(.94)}
+.yb-voice-mic:disabled{cursor:default}
+.yb-voice-mic svg{width:30px;height:30px;position:relative;z-index:1}
+@keyframes yb-voice-mic-pulse{0%{box-shadow:0 0 0 0 rgba(225,109,77,.45)}70%,100%{box-shadow:0 0 0 22px rgba(225,109,77,0)}}
+.yb-voice-lock-hint{font-family:var(--head);font-weight:600;font-size:clamp(14px,1.4vw,15.5px);color:rgba(250,245,240,.82);margin:0;text-align:center}
+.yb-voice-stop{position:absolute;right:clamp(18px,2.2vw,24px);bottom:clamp(18px,2.2vw,24px);z-index:3;width:54px;height:54px;border-radius:999px;border:2px solid var(--orange);background:rgba(225,109,77,.13);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .18s ease,background .18s ease}
+.yb-voice-stop:hover{background:rgba(225,109,77,.24)}
+.yb-voice-stop:active{transform:scale(.93)}
+.yb-voice-stop-ico{width:16px;height:16px;border-radius:5px;background:var(--orange)}
+.yb-voice-note{position:absolute;left:clamp(20px,2.6vw,26px);bottom:clamp(18px,2.2vw,24px);z-index:2;font-size:10.5px;line-height:1.35;color:rgba(250,245,240,.36);margin:0;max-width:26ch}
 .yb-spin{animation:yb-spin 1s linear infinite}
 @keyframes yb-spin{to{transform:rotate(360deg)}}
 
@@ -906,7 +998,8 @@ body{padding-bottom:0}
 .yb-hiw-card:hover{border-color:rgba(225,109,77,.55)}
 .yb-hiw-card.is-active{background:var(--dark);border-color:var(--dark);box-shadow:0 32px 60px -34px rgba(28,24,21,.68)}
 .yb-hiw-head{display:flex;align-items:center;gap:clamp(13px,1.4vw,18px);padding:clamp(19px,2vw,23px) 0}
-.yb-hiw-num{flex:0 0 auto;font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.08em;color:var(--orange)}
+.yb-hiw-ico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:var(--orange)}
+.yb-hiw-ico svg{width:25px;height:25px}
 .yb-hiw-title{flex:1 1 auto;min-width:0;font-family:var(--head);font-weight:700;font-size:clamp(17px,1.5vw,21px);letter-spacing:-.01em;color:inherit;transition:color .34s ease}
 .yb-hiw-card.is-active .yb-hiw-title{color:#fff}
 .yb-hiw-chev{flex:0 0 auto;display:inline-flex;color:var(--ink-soft);transition:transform .38s cubic-bezier(.4,0,.2,1),color .34s ease}
@@ -926,8 +1019,9 @@ body{padding-bottom:0}
 .yb-hiw-stack .yb-hiw-intro .yb-h2{font-size:clamp(40px,11vw,50px);line-height:1.04;max-width:12ch;margin:0 auto}
 .yb-hiw-item{display:flex;flex-direction:column;gap:20px}
 .yb-hiw-item-card{background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:clamp(22px,5.5vw,28px);box-shadow:var(--shadow-sm)}
-.yb-hiw-item-head{display:flex;align-items:baseline;gap:12px;margin-bottom:11px}
-.yb-hiw-item-num{flex:0 0 auto;font-family:var(--head);font-weight:800;font-size:14px;letter-spacing:.08em;color:var(--orange)}
+.yb-hiw-item-head{display:flex;align-items:center;gap:13px;margin-bottom:12px}
+.yb-hiw-item-ico{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;color:var(--orange)}
+.yb-hiw-item-ico svg{width:27px;height:27px}
 .yb-hiw-item-title{font-family:var(--head);font-weight:700;font-size:clamp(23px,6.2vw,29px);letter-spacing:-.015em;line-height:1.08;margin:0}
 .yb-hiw-item-text{font-size:clamp(17px,4.7vw,19.5px);font-weight:500;line-height:1.5;color:var(--ink-2);margin:0}
 .yb-hiw-item-phone img{display:block;width:100%;max-width:288px;margin:0 auto;filter:drop-shadow(0 40px 56px rgba(28,24,21,.17))}
@@ -1041,7 +1135,8 @@ body{padding-bottom:0}
   .yb-hero-copy{max-width:580px;text-align:left}
   .yb-hero-cta{justify-content:flex-start}
   #live{padding-top:clamp(150px,15vw,216px)}
-  .yb-live-r{margin-top:-78px}
+  .yb-live{align-items:center}
+  #try-live{scroll-margin-top:220px}
   .yb-claim-stage{flex-direction:row;align-items:center;justify-content:space-between;text-align:left;max-width:none;margin:0;gap:clamp(28px,4vw,72px);padding:clamp(20px,2vw,30px) 0}
   .yb-claim-copy{flex:0 1 auto;max-width:500px;text-align:left;margin-left:max(40px, calc((100% - 1200px) / 2 + 40px))}
   .yb-claim-copy .yb-h2{font-size:clamp(34px,4.6vw,56px)}
@@ -1078,8 +1173,8 @@ body{padding-bottom:0}
   .yb-live-head{order:1}
   .yb-jjcard{order:2}
   .yb-press{order:3;max-width:100%;overflow:hidden}
-  .yb-marquee-track img{height:54px}
   .yb-live-body{order:4}
+  .yb-marquee-track img{height:54px}
   .yb-about-media{max-width:520px;width:100%;margin:0 auto;aspect-ratio:5/4}
 }
 @media (max-width:560px){
@@ -1096,7 +1191,7 @@ body{padding-bottom:0}
   .yb-btn-lg{padding:17px 22px;font-size:17px}
   .yb-hero-cta{flex-direction:column;align-items:flex-start;gap:12px}
   .yb-hero-cta .yb-btn{width:auto}
-  .yb-voice{flex-direction:column;text-align:center;gap:14px}
+  .yb-voice{max-width:none;min-height:clamp(258px,64vw,300px)}
   .yb-claim-copy .yb-h2{font-size:clamp(38px,9vw,44px)}
   .yb-claim-copy .yb-lead{font-size:20px}
   .yb-claim-stage{padding-left:14px;padding-right:14px;padding-top:clamp(104px,26vw,132px);padding-bottom:clamp(96px,24vw,120px)}
