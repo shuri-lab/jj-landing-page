@@ -77,7 +77,7 @@ export function formatPrice(amount: number, currency: string) {
 
 export type SignupBillingInterval = "MONTHLY" | "MULTI_MONTH" | "FULL_PROGRAM";
 
-const SIGNUP_BASE = "https://yobody.ai/signup";
+const SIGNUP_BASE = "https://app.yobody.ai/signup";
 
 export function signupUrl(
   programId: string,
