@@ -4,9 +4,11 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
+import { useEffect } from "react";
 
 import appCss from "../styles.css?url";
 
@@ -206,6 +208,30 @@ if(!fired.has(a)){fired.add(a);if(typeof window.fbq==='function'){window.fbq('tr
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  // Meta Pixel ViewContent — fires on every landing page (all routes except checkout flow)
+  useEffect(() => {
+    if (pathname.startsWith("/checkout") || pathname.startsWith("/aftersell")) return;
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout>;
+    const page = pathname === "/" ? "home" : pathname.replace(/^\//, "").replace(/\/$/, "");
+    const fire = () => {
+      const fbq = (window as unknown as { fbq?: (...a: unknown[]) => void }).fbq;
+      if (typeof fbq === "function") {
+        fbq("track", "ViewContent", {
+          content_name: `Yobody Sales Page - ${page}`,
+          content_type: "product",
+          content_ids: ["yobody-coaching"],
+          currency: "USD",
+        });
+        return;
+      }
+      if (tries++ < 20) timer = setTimeout(fire, 250);
+    };
+    fire();
+    return () => clearTimeout(timer);
+  }, [pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>
