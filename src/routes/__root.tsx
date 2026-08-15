@@ -139,8 +139,9 @@ function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catc
 var qs0=new URLSearchParams(window.location.search);
 var saved=load();
 ['fbclid','utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){var v=qs0.get(k)||qs0.get(k.replace(/_(.)/g,function(m,c){return c.toUpperCase();}));if(v)saved[k]=v;});
-// Remember the ORIGINAL landing URL + referrer (first page of the session only)
-if(!saved.landing_url){saved.landing_url=window.location.href;saved.landing_referrer=document.referrer||'';}
+// Remember the ORIGINAL landing URL + referrer. Refresh it when a NEW campaign click arrives.
+var hasNewAttr=['fbclid','utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid'].some(function(k){return !!qs0.get(k);});
+if(!saved.landing_url||hasNewAttr){saved.landing_url=window.location.href;saved.landing_referrer=document.referrer||'';}
 store(saved);
 function ensureFbc(){var c=ck('_fbc');if(c)return c;var f=qs0.get('fbclid')||saved.fbclid||'';if(!f)return '';var v='fb.1.'+Date.now()+'.'+f;try{document.cookie='_fbc='+v+';path=/;max-age=7776000';}catch(e){}return v;}
 // _fbp is owned by the Meta Pixel; only read it, never fabricate one.
