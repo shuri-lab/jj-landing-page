@@ -87,23 +87,7 @@ function Cta({ label = "Start today", sub, href, full = false, onDark = false }:
 function Landing() {
   const [showSticky, setShowSticky] = useState(false);
   const [offerVisible, setOfferVisible] = useState(false);
-  useEffect(() => {
-    let tries = 0;
-    const fire = () => {
-      const fbq = (window as unknown as { fbq?: (...a: unknown[]) => void }).fbq;
-      if (typeof fbq === "function") {
-        fbq("track", "ViewContent", {
-          content_name: "Yobody Sales Page",
-          content_type: "product",
-          content_ids: ["yobody-coaching"],
-          currency: "USD",
-        });
-        return;
-      }
-      if (tries++ < 20) setTimeout(fire, 250);
-    };
-    fire();
-  }, []);
+  // Meta Pixel ViewContent is fired globally in __root.tsx for every landing page.
   useEffect(() => {
     const onScroll = () => setShowSticky(window.scrollY > 700);
     window.addEventListener("scroll", onScroll, { passive: true });
