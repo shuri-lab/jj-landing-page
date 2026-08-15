@@ -114,6 +114,41 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        {/* Meta Pixel */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','920675803850327');fbq('track','PageView');`,
+          }}
+        />
+        <noscript>
+          <img
+            height="1"
+            width="1"
+            style={{ display: "none" }}
+            alt=""
+            src="https://www.facebook.com/tr?id=920675803850327&ev=PageView&noscript=1"
+          />
+        </noscript>
+        {/* Meta: InitiateCheckout + fbclid/_fbc/_fbp/UTM passthrough to app.yobody.ai */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){function ck(n){var m=document.cookie.match('(^|;)\\\\s*'+n+'=([^;]*)');return m?decodeURIComponent(m[2]):'';}
+function ensureFbc(){var c=ck('_fbc');if(c)return c;try{var f=new URLSearchParams(window.location.search).get('fbclid');if(!f)return '';var v='fb.1.'+Date.now()+'.'+f;document.cookie='_fbc='+v+';path=/;max-age=7776000';return v;}catch(e){return '';}}
+ensureFbc();
+var fired=new WeakSet();
+function augment(a){try{if(!a||!a.href)return;var u=new URL(a.href,window.location.href);if(!/(^|\\.)yobody\\.ai$/.test(u.hostname)||u.pathname.indexOf('/signup')!==0)return;
+var qs=new URLSearchParams(window.location.search);function pick(){for(var i=0;i<arguments.length;i++){var v=qs.get(arguments[i]);if(v)return v;}return '';}
+function set(k,v){if(v&&!u.searchParams.has(k))u.searchParams.set(k,v);}
+set('fbclid',pick('fbclid'));set('fbc',ensureFbc());set('fbp',ck('_fbp'));
+set('utm_source',pick('utm_source','utmSource'));set('utm_medium',pick('utm_medium','utmMedium'));set('utm_campaign',pick('utm_campaign','utmCampaign'));set('utm_content',pick('utm_content','utmContent'));set('utm_term',pick('utm_term','utmTerm'));
+var btn=a.closest('[data-cta="yes-jj"], [data-buy-button="true"]')||a;var tier=(btn.dataset&&btn.dataset.tier)||u.searchParams.get('tier')||'';
+var eid='ic.'+Date.now()+'.'+Math.random().toString(36).slice(2,10);set('meta_event_id',eid);
+a.href=u.toString();
+if(!fired.has(a)){fired.add(a);if(typeof window.fbq==='function'){window.fbq('track','InitiateCheckout',{currency:'USD',content_name:'Yobody Coaching',content_category:tier||undefined,content_ids:[u.searchParams.get('coachProgramConfigId')||'yobody-program'],contents:[{id:u.searchParams.get('coachProgramConfigId')||'yobody-program',quantity:1}]},{eventID:eid});}}
+}catch(e){}}
+['click','mousedown','auxclick'].forEach(function(t){document.addEventListener(t,function(e){var a=e.target.closest&&e.target.closest('a[href]');if(a)augment(a);},true);});})();`,
+          }}
+        />
         <script
           defer
           src="https://static.cloudflareinsights.com/beacon.min.js"
