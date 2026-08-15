@@ -139,10 +139,14 @@ function load(){try{return JSON.parse(localStorage.getItem(KEY)||'{}')||{};}catc
 var qs0=new URLSearchParams(window.location.search);
 var saved=load();
 ['fbclid','utm_source','utm_medium','utm_campaign','utm_content','utm_term'].forEach(function(k){var v=qs0.get(k)||qs0.get(k.replace(/_(.)/g,function(m,c){return c.toUpperCase();}));if(v)saved[k]=v;});
+// Remember the ORIGINAL landing URL + referrer. Refresh it when a NEW campaign click arrives.
+var hasNewAttr=['fbclid','utm_source','utm_medium','utm_campaign','utm_content','utm_term','gclid'].some(function(k){return !!qs0.get(k);});
+if(!saved.landing_url||hasNewAttr){saved.landing_url=window.location.href;saved.landing_referrer=document.referrer||'';}
 store(saved);
 function ensureFbc(){var c=ck('_fbc');if(c)return c;var f=qs0.get('fbclid')||saved.fbclid||'';if(!f)return '';var v='fb.1.'+Date.now()+'.'+f;try{document.cookie='_fbc='+v+';path=/;max-age=7776000';}catch(e){}return v;}
-function ensureFbp(){var c=ck('_fbp');if(c)return c;var v='fb.1.'+Date.now()+'.'+Math.floor(Math.random()*1e10);try{document.cookie='_fbp='+v+';path=/;max-age=7776000';}catch(e){}return v;}
-ensureFbc();ensureFbp();
+// _fbp is owned by the Meta Pixel; only read it, never fabricate one.
+function ensureFbp(){return ck('_fbp');}
+ensureFbc();
 var fired=new WeakSet();
 function augment(a){try{if(!a||!a.href)return;var u=new URL(a.href,window.location.href);if(!/(^|\\.)yobody\\.ai$/.test(u.hostname)||u.pathname.indexOf('/signup')!==0)return;
 var qs=new URLSearchParams(window.location.search);var st=load();function pick(){for(var i=0;i<arguments.length;i++){var v=qs.get(arguments[i])||st[arguments[i]];if(v)return v;}return '';}
@@ -153,7 +157,7 @@ set('fbc',fbc);set('_fbc',fbc);set('fbp',fbp);set('_fbp',fbp);
 var us=pick('utm_source','utmSource'),um=pick('utm_medium','utmMedium'),uc=pick('utm_campaign','utmCampaign'),uct=pick('utm_content','utmContent'),ut=pick('utm_term','utmTerm');
 set('utm_source',us);set('utm_medium',um);set('utm_campaign',uc);set('utm_content',uct);set('utm_term',ut);
 set('utmSource',us);set('utmMedium',um);set('utmCampaign',uc);set('utmContent',uct);set('utmTerm',ut);
-set('sourceSurface','lovable');set('sourceContext','landing-page');set('pageUrl',window.location.href);set('referrer',document.referrer||'');
+set('sourceSurface','lovable');set('sourceContext','landing-page');set('pageUrl',st.landing_url||window.location.href);set('referrer',st.landing_referrer||document.referrer||'');
 var btn=a.closest('[data-cta="yes-jj"], [data-buy-button="true"]')||a;var tier=(btn.dataset&&btn.dataset.tier)||u.searchParams.get('tier')||'';
 set('tier',tier);set('buttonPosition',(btn.dataset&&btn.dataset.position)||'');
 var eid='ic.'+Date.now()+'.'+Math.random().toString(36).slice(2,10);set('meta_event_id',eid);
