@@ -112,10 +112,17 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
-        {/* Meta Pixel — must live in <head> so Meta's detection tools find it */}
+        {/* Meta Pixel bootstrap — kept inline so calls queue before the library loads */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','920675803850327');fbq('track','PageView');`,
+            __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');`,
+          }}
+        />
+        {/* A literal script URL is easier for Meta's Event Setup detector to identify. */}
+        <script async src="https://connect.facebook.net/en_US/fbevents.js" />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `fbq('init','920675803850327');fbq('track','PageView');`,
           }}
         />
         <noscript
