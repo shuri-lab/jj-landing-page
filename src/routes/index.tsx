@@ -43,7 +43,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Get Your Sexy Back After 40 — JJ Smith Personal Coaching" },
-      { name: "robots", content: "noindex" },
+      { name: "robots", content: "index, follow" },
       { name: "description", content: "Lose up to 15 pounds in your first 30 days with JJ Smith by your side every day. A plan built around the food you love, no starving, never alone." },
       { property: "og:title", content: "Get Your Sexy Back After 40 — JJ Smith" },
       { property: "og:description", content: "A plan built around the food you love, with JJ in your corner every single day." },
