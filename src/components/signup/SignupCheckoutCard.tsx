@@ -65,8 +65,6 @@ type Props = {
   onChangePlan: () => void;
 };
 
-const WIZARD_TOTAL = 5;
-
 const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
   contact: {
     title: "Create your account",
@@ -109,11 +107,14 @@ function signInUrl(email: string, loginBase?: string): string {
   return `${base}?${params.toString()}`;
 }
 
+const PROGRESS_BARS = 2;
+
 function Progress({ step }: { step: CheckoutCardStep }) {
-  const filled = wizardIndex(step) + 1;
+  // Bar 1 = contact/details, bar 2 = payment and everything after it.
+  const filled = wizardIndex(step) <= 0 ? 1 : PROGRESS_BARS;
   return (
     <div className="chk-progress" aria-hidden="true">
-      {Array.from({ length: WIZARD_TOTAL }).map((_, i) => (
+      {Array.from({ length: PROGRESS_BARS }).map((_, i) => (
         <span key={i} className={i < filled ? "is-on" : undefined} />
       ))}
     </div>
