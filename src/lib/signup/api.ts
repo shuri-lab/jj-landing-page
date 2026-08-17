@@ -1,0 +1,167 @@
+import { envApiUrl } from "./env";
+import {
+  SignupApiError,
+  type LovablePublicConfig,
+  type SignupBillingInterval,
+  type SignupIntentResponse,
+  type SignupMarketingAttribution,
+  type VerifiedDiscount,
+} from "./types";
+
+type Envelope<T> = { data?: T } & T;
+
+const PREFIX = "/public/landing/signup";
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const url = `${envApiUrl()}${path}`;
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...init,
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        ...(init?.headers ?? {}),
+      },
+    });
+  } catch {
+    throw new SignupApiError(0, "Could not reach checkout. Please try again.");
+  }
+
+  const json = (await response.json().catch(() => null)) as
+    | Envelope<T>
+    | { message?: string | string[]; statusCode?: number }
+    | null;
+
+  if (!response.ok) {
+    const raw =
+      json && typeof json === "object" && "message" in json ? json.message : null;
+    const message = Array.isArray(raw)
+      ? raw.join(" ")
+      : typeof raw === "string" && raw.trim()
+        ? raw
+        : `Request failed (${response.status})`;
+    throw new SignupApiError(response.status, message);
+  }
+
+  if (json && typeof json === "object" && "data" in json && json.data != null) {
+    return json.data as T;
+  }
+  return json as T;
+}
+
+export const landingSignupApi = {
+  getConfig(): Promise<LovablePublicConfig> {
+    return request<LovablePublicConfig>(`${PREFIX}/config`);
+  },
+
+  startEmail(payload: {
+    email: string;
+    coachId: string;
+    coachProgramConfigId?: string | null;
+    billingInterval?: SignupBillingInterval | null;
+    firstName?: string | null;
+    lastName?: string | null;
+    marketingAttribution?: SignupMarketingAttribution | null;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/email/start`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  me(intentToken: string): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/me`, {
+      method: "POST",
+      body: JSON.stringify({ intentToken }),
+    });
+  },
+
+  verifyDiscount(payload: {
+    intentToken: string;
+    discountCode: string;
+    coachProgramConfigId?: string | null;
+    billingInterval?: SignupBillingInterval | null;
+  }): Promise<VerifiedDiscount> {
+    return request<VerifiedDiscount>(`${PREFIX}/discount/verify`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  createCheckout(payload: {
+    intentToken: string;
+    coachProgramConfigId?: string | null;
+    discountCode?: string | null;
+    billingInterval?: SignupBillingInterval | null;
+    marketingAttribution?: SignupMarketingAttribution | null;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/checkout`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  verifyCheckout(payload: {
+    intentToken: string;
+    paymentIntentId: string;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/checkout/verify`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  setPassword(payload: {
+    intentToken: string;
+    password: string;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/password`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  updateProfile(payload: {
+    intentToken: string;
+    firstName: string;
+    lastName?: string | null;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/profile`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  requestPhoneOtp(payload: {
+    intentToken: string;
+    phoneNumber: string;
+  }): Promise<{ message?: string }> {
+    return request(`${PREFIX}/phone/request-otp`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  verifyPhone(payload: {
+    intentToken: string;
+    phoneNumber: string;
+    otpCode: string;
+    countryId?: string | null;
+  }): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/phone/verify`, {
+      method: "POST",
+      body: JSON.stringify(payload),
+    });
+  },
+
+  complete(intentToken: string): Promise<SignupIntentResponse> {
+    return request<SignupIntentResponse>(`${PREFIX}/complete`, {
+      method: "POST",
+      body: JSON.stringify({ intentToken }),
+    });
+  },
+};
+
+/** @deprecated Use landingSignupApi — kept so older imports still type-check during the swap. */
+export const lovableSignupApi = landingSignupApi;

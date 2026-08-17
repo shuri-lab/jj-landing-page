@@ -9,151 +9,36 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as YobodyRouteImport } from './routes/yobody'
-import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
-import { Route as QuizV3RouteImport } from './routes/quiz-v3'
-import { Route as QuizV2RouteImport } from './routes/quiz-v2'
-import { Route as QuizRouteImport } from './routes/quiz'
-import { Route as QrBRouteImport } from './routes/qr-b'
-import { Route as QrARouteImport } from './routes/qr-a'
-import { Route as QrRouteImport } from './routes/qr'
-import { Route as NoVideoRouteImport } from './routes/no-video'
-import { Route as MonthlyV3RouteImport } from './routes/monthly-v3'
-import { Route as MonthlyV2RouteImport } from './routes/monthly-v2'
-import { Route as LookYoungerImprovedV2RouteImport } from './routes/look-younger-improved-v2'
-import { Route as LookYoungerImprovedOb2RouteImport } from './routes/look-younger-improved-ob-2'
-import { Route as LookYoungerImprovedOb1RouteImport } from './routes/look-younger-improved-ob-1'
-import { Route as LookYoungerImprovedRouteImport } from './routes/look-younger-improved'
-import { Route as LookYoungerRouteImport } from './routes/look-younger'
-import { Route as DesignV2RouteImport } from './routes/design-v2'
-import { Route as CheckoutRouteImport } from './routes/checkout'
-import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
-import { Route as CallsTestRouteImport } from './routes/calls-test'
-import { Route as CRouteImport } from './routes/c'
-import { Route as BRouteImport } from './routes/b'
-import { Route as AftersellRouteImport } from './routes/aftersell'
-import { Route as ARouteImport } from './routes/a'
-import { Route as R11labsDemoRouteImport } from './routes/11labs-demo'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as R11labsDemoRouteImport } from './routes/11labs-demo'
+import { Route as ARouteImport } from './routes/a'
+import { Route as AftersellRouteImport } from './routes/aftersell'
+import { Route as BRouteImport } from './routes/b'
+import { Route as CRouteImport } from './routes/c'
+import { Route as CallsTestRouteImport } from './routes/calls-test'
+import { Route as ChallengeV1RouteImport } from './routes/challenge-v1'
+import { Route as CheckoutRouteImport } from './routes/checkout'
+import { Route as DesignV2RouteImport } from './routes/design-v2'
+import { Route as LookYoungerRouteImport } from './routes/look-younger'
+import { Route as LookYoungerImprovedRouteImport } from './routes/look-younger-improved'
+import { Route as LookYoungerImprovedOb1RouteImport } from './routes/look-younger-improved-ob-1'
+import { Route as LookYoungerImprovedOb2RouteImport } from './routes/look-younger-improved-ob-2'
+import { Route as LookYoungerImprovedV2RouteImport } from './routes/look-younger-improved-v2'
+import { Route as MonthlyV2RouteImport } from './routes/monthly-v2'
+import { Route as MonthlyV3RouteImport } from './routes/monthly-v3'
+import { Route as NoVideoRouteImport } from './routes/no-video'
+import { Route as QrRouteImport } from './routes/qr'
+import { Route as QrARouteImport } from './routes/qr-a'
+import { Route as QrBRouteImport } from './routes/qr-b'
+import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as QuizV2RouteImport } from './routes/quiz-v2'
+import { Route as QuizV3RouteImport } from './routes/quiz-v3'
+import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
+import { Route as YobodyRouteImport } from './routes/yobody'
 
-const YobodyRoute = YobodyRouteImport.update({
-  id: '/yobody',
-  path: '/yobody',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const VapiDemoRoute = VapiDemoRouteImport.update({
-  id: '/vapi-demo',
-  path: '/vapi-demo',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuizV3Route = QuizV3RouteImport.update({
-  id: '/quiz-v3',
-  path: '/quiz-v3',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuizV2Route = QuizV2RouteImport.update({
-  id: '/quiz-v2',
-  path: '/quiz-v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QuizRoute = QuizRouteImport.update({
-  id: '/quiz',
-  path: '/quiz',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QrBRoute = QrBRouteImport.update({
-  id: '/qr-b',
-  path: '/qr-b',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QrARoute = QrARouteImport.update({
-  id: '/qr-a',
-  path: '/qr-a',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const QrRoute = QrRouteImport.update({
-  id: '/qr',
-  path: '/qr',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const NoVideoRoute = NoVideoRouteImport.update({
-  id: '/no-video',
-  path: '/no-video',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MonthlyV3Route = MonthlyV3RouteImport.update({
-  id: '/monthly-v3',
-  path: '/monthly-v3',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const MonthlyV2Route = MonthlyV2RouteImport.update({
-  id: '/monthly-v2',
-  path: '/monthly-v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookYoungerImprovedV2Route = LookYoungerImprovedV2RouteImport.update({
-  id: '/look-younger-improved-v2',
-  path: '/look-younger-improved-v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookYoungerImprovedOb2Route = LookYoungerImprovedOb2RouteImport.update({
-  id: '/look-younger-improved-ob-2',
-  path: '/look-younger-improved-ob-2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookYoungerImprovedOb1Route = LookYoungerImprovedOb1RouteImport.update({
-  id: '/look-younger-improved-ob-1',
-  path: '/look-younger-improved-ob-1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookYoungerImprovedRoute = LookYoungerImprovedRouteImport.update({
-  id: '/look-younger-improved',
-  path: '/look-younger-improved',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const LookYoungerRoute = LookYoungerRouteImport.update({
-  id: '/look-younger',
-  path: '/look-younger',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DesignV2Route = DesignV2RouteImport.update({
-  id: '/design-v2',
-  path: '/design-v2',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CheckoutRoute = CheckoutRouteImport.update({
-  id: '/checkout',
-  path: '/checkout',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ChallengeV1Route = ChallengeV1RouteImport.update({
-  id: '/challenge-v1',
-  path: '/challenge-v1',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CallsTestRoute = CallsTestRouteImport.update({
-  id: '/calls-test',
-  path: '/calls-test',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CRoute = CRouteImport.update({
-  id: '/c',
-  path: '/c',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BRoute = BRouteImport.update({
-  id: '/b',
-  path: '/b',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const AftersellRoute = AftersellRouteImport.update({
-  id: '/aftersell',
-  path: '/aftersell',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ARoute = ARouteImport.update({
-  id: '/a',
-  path: '/a',
+const IndexRoute = IndexRouteImport.update({
+  id: '/',
+  path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const R11labsDemoRoute = R11labsDemoRouteImport.update({
@@ -161,9 +46,124 @@ const R11labsDemoRoute = R11labsDemoRouteImport.update({
   path: '/11labs-demo',
   getParentRoute: () => rootRouteImport,
 } as any)
-const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
+const ARoute = ARouteImport.update({
+  id: '/a',
+  path: '/a',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AftersellRoute = AftersellRouteImport.update({
+  id: '/aftersell',
+  path: '/aftersell',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BRoute = BRouteImport.update({
+  id: '/b',
+  path: '/b',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CRoute = CRouteImport.update({
+  id: '/c',
+  path: '/c',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CallsTestRoute = CallsTestRouteImport.update({
+  id: '/calls-test',
+  path: '/calls-test',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ChallengeV1Route = ChallengeV1RouteImport.update({
+  id: '/challenge-v1',
+  path: '/challenge-v1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignV2Route = DesignV2RouteImport.update({
+  id: '/design-v2',
+  path: '/design-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerRoute = LookYoungerRouteImport.update({
+  id: '/look-younger',
+  path: '/look-younger',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedRoute = LookYoungerImprovedRouteImport.update({
+  id: '/look-younger-improved',
+  path: '/look-younger-improved',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedOb1Route = LookYoungerImprovedOb1RouteImport.update({
+  id: '/look-younger-improved-ob-1',
+  path: '/look-younger-improved-ob-1',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedOb2Route = LookYoungerImprovedOb2RouteImport.update({
+  id: '/look-younger-improved-ob-2',
+  path: '/look-younger-improved-ob-2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LookYoungerImprovedV2Route = LookYoungerImprovedV2RouteImport.update({
+  id: '/look-younger-improved-v2',
+  path: '/look-younger-improved-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonthlyV2Route = MonthlyV2RouteImport.update({
+  id: '/monthly-v2',
+  path: '/monthly-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MonthlyV3Route = MonthlyV3RouteImport.update({
+  id: '/monthly-v3',
+  path: '/monthly-v3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NoVideoRoute = NoVideoRouteImport.update({
+  id: '/no-video',
+  path: '/no-video',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrRoute = QrRouteImport.update({
+  id: '/qr',
+  path: '/qr',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrARoute = QrARouteImport.update({
+  id: '/qr-a',
+  path: '/qr-a',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QrBRoute = QrBRouteImport.update({
+  id: '/qr-b',
+  path: '/qr-b',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizV2Route = QuizV2RouteImport.update({
+  id: '/quiz-v2',
+  path: '/quiz-v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const QuizV3Route = QuizV3RouteImport.update({
+  id: '/quiz-v3',
+  path: '/quiz-v3',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VapiDemoRoute = VapiDemoRouteImport.update({
+  id: '/vapi-demo',
+  path: '/vapi-demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const YobodyRoute = YobodyRouteImport.update({
+  id: '/yobody',
+  path: '/yobody',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -370,172 +370,11 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/yobody': {
-      id: '/yobody'
-      path: '/yobody'
-      fullPath: '/yobody'
-      preLoaderRoute: typeof YobodyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/vapi-demo': {
-      id: '/vapi-demo'
-      path: '/vapi-demo'
-      fullPath: '/vapi-demo'
-      preLoaderRoute: typeof VapiDemoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quiz-v3': {
-      id: '/quiz-v3'
-      path: '/quiz-v3'
-      fullPath: '/quiz-v3'
-      preLoaderRoute: typeof QuizV3RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quiz-v2': {
-      id: '/quiz-v2'
-      path: '/quiz-v2'
-      fullPath: '/quiz-v2'
-      preLoaderRoute: typeof QuizV2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/quiz': {
-      id: '/quiz'
-      path: '/quiz'
-      fullPath: '/quiz'
-      preLoaderRoute: typeof QuizRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/qr-b': {
-      id: '/qr-b'
-      path: '/qr-b'
-      fullPath: '/qr-b'
-      preLoaderRoute: typeof QrBRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/qr-a': {
-      id: '/qr-a'
-      path: '/qr-a'
-      fullPath: '/qr-a'
-      preLoaderRoute: typeof QrARouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/qr': {
-      id: '/qr'
-      path: '/qr'
-      fullPath: '/qr'
-      preLoaderRoute: typeof QrRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/no-video': {
-      id: '/no-video'
-      path: '/no-video'
-      fullPath: '/no-video'
-      preLoaderRoute: typeof NoVideoRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/monthly-v3': {
-      id: '/monthly-v3'
-      path: '/monthly-v3'
-      fullPath: '/monthly-v3'
-      preLoaderRoute: typeof MonthlyV3RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/monthly-v2': {
-      id: '/monthly-v2'
-      path: '/monthly-v2'
-      fullPath: '/monthly-v2'
-      preLoaderRoute: typeof MonthlyV2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/look-younger-improved-v2': {
-      id: '/look-younger-improved-v2'
-      path: '/look-younger-improved-v2'
-      fullPath: '/look-younger-improved-v2'
-      preLoaderRoute: typeof LookYoungerImprovedV2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/look-younger-improved-ob-2': {
-      id: '/look-younger-improved-ob-2'
-      path: '/look-younger-improved-ob-2'
-      fullPath: '/look-younger-improved-ob-2'
-      preLoaderRoute: typeof LookYoungerImprovedOb2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/look-younger-improved-ob-1': {
-      id: '/look-younger-improved-ob-1'
-      path: '/look-younger-improved-ob-1'
-      fullPath: '/look-younger-improved-ob-1'
-      preLoaderRoute: typeof LookYoungerImprovedOb1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/look-younger-improved': {
-      id: '/look-younger-improved'
-      path: '/look-younger-improved'
-      fullPath: '/look-younger-improved'
-      preLoaderRoute: typeof LookYoungerImprovedRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/look-younger': {
-      id: '/look-younger'
-      path: '/look-younger'
-      fullPath: '/look-younger'
-      preLoaderRoute: typeof LookYoungerRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/design-v2': {
-      id: '/design-v2'
-      path: '/design-v2'
-      fullPath: '/design-v2'
-      preLoaderRoute: typeof DesignV2RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/checkout': {
-      id: '/checkout'
-      path: '/checkout'
-      fullPath: '/checkout'
-      preLoaderRoute: typeof CheckoutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/challenge-v1': {
-      id: '/challenge-v1'
-      path: '/challenge-v1'
-      fullPath: '/challenge-v1'
-      preLoaderRoute: typeof ChallengeV1RouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/calls-test': {
-      id: '/calls-test'
-      path: '/calls-test'
-      fullPath: '/calls-test'
-      preLoaderRoute: typeof CallsTestRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/c': {
-      id: '/c'
-      path: '/c'
-      fullPath: '/c'
-      preLoaderRoute: typeof CRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/b': {
-      id: '/b'
-      path: '/b'
-      fullPath: '/b'
-      preLoaderRoute: typeof BRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/aftersell': {
-      id: '/aftersell'
-      path: '/aftersell'
-      fullPath: '/aftersell'
-      preLoaderRoute: typeof AftersellRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/a': {
-      id: '/a'
-      path: '/a'
-      fullPath: '/a'
-      preLoaderRoute: typeof ARouteImport
+    '/': {
+      id: '/'
+      path: '/'
+      fullPath: '/'
+      preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/11labs-demo': {
@@ -545,11 +384,172 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof R11labsDemoRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
+    '/a': {
+      id: '/a'
+      path: '/a'
+      fullPath: '/a'
+      preLoaderRoute: typeof ARouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aftersell': {
+      id: '/aftersell'
+      path: '/aftersell'
+      fullPath: '/aftersell'
+      preLoaderRoute: typeof AftersellRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/b': {
+      id: '/b'
+      path: '/b'
+      fullPath: '/b'
+      preLoaderRoute: typeof BRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/c': {
+      id: '/c'
+      path: '/c'
+      fullPath: '/c'
+      preLoaderRoute: typeof CRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/calls-test': {
+      id: '/calls-test'
+      path: '/calls-test'
+      fullPath: '/calls-test'
+      preLoaderRoute: typeof CallsTestRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/challenge-v1': {
+      id: '/challenge-v1'
+      path: '/challenge-v1'
+      fullPath: '/challenge-v1'
+      preLoaderRoute: typeof ChallengeV1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design-v2': {
+      id: '/design-v2'
+      path: '/design-v2'
+      fullPath: '/design-v2'
+      preLoaderRoute: typeof DesignV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger': {
+      id: '/look-younger'
+      path: '/look-younger'
+      fullPath: '/look-younger'
+      preLoaderRoute: typeof LookYoungerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved': {
+      id: '/look-younger-improved'
+      path: '/look-younger-improved'
+      fullPath: '/look-younger-improved'
+      preLoaderRoute: typeof LookYoungerImprovedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-ob-1': {
+      id: '/look-younger-improved-ob-1'
+      path: '/look-younger-improved-ob-1'
+      fullPath: '/look-younger-improved-ob-1'
+      preLoaderRoute: typeof LookYoungerImprovedOb1RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-ob-2': {
+      id: '/look-younger-improved-ob-2'
+      path: '/look-younger-improved-ob-2'
+      fullPath: '/look-younger-improved-ob-2'
+      preLoaderRoute: typeof LookYoungerImprovedOb2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/look-younger-improved-v2': {
+      id: '/look-younger-improved-v2'
+      path: '/look-younger-improved-v2'
+      fullPath: '/look-younger-improved-v2'
+      preLoaderRoute: typeof LookYoungerImprovedV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monthly-v2': {
+      id: '/monthly-v2'
+      path: '/monthly-v2'
+      fullPath: '/monthly-v2'
+      preLoaderRoute: typeof MonthlyV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/monthly-v3': {
+      id: '/monthly-v3'
+      path: '/monthly-v3'
+      fullPath: '/monthly-v3'
+      preLoaderRoute: typeof MonthlyV3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/no-video': {
+      id: '/no-video'
+      path: '/no-video'
+      fullPath: '/no-video'
+      preLoaderRoute: typeof NoVideoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr': {
+      id: '/qr'
+      path: '/qr'
+      fullPath: '/qr'
+      preLoaderRoute: typeof QrRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-a': {
+      id: '/qr-a'
+      path: '/qr-a'
+      fullPath: '/qr-a'
+      preLoaderRoute: typeof QrARouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/qr-b': {
+      id: '/qr-b'
+      path: '/qr-b'
+      fullPath: '/qr-b'
+      preLoaderRoute: typeof QrBRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz-v2': {
+      id: '/quiz-v2'
+      path: '/quiz-v2'
+      fullPath: '/quiz-v2'
+      preLoaderRoute: typeof QuizV2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/quiz-v3': {
+      id: '/quiz-v3'
+      path: '/quiz-v3'
+      fullPath: '/quiz-v3'
+      preLoaderRoute: typeof QuizV3RouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/vapi-demo': {
+      id: '/vapi-demo'
+      path: '/vapi-demo'
+      fullPath: '/vapi-demo'
+      preLoaderRoute: typeof VapiDemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/yobody': {
+      id: '/yobody'
+      path: '/yobody'
+      fullPath: '/yobody'
+      preLoaderRoute: typeof YobodyRouteImport
       parentRoute: typeof rootRouteImport
     }
   }

@@ -1,8 +1,12 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
-import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
+import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
+import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
+import { OFFER_PLANS } from "@/lib/signup/plans";
+import { trackSelectPlan } from "@/lib/signup/tracking";
+import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
@@ -73,12 +77,12 @@ function ShieldCheck({ className = "" }: { className?: string }) {
 
 const scroll = () => scrollToOffer();
 
-function Cta({ label = "Start today", sub, href, full = false, onDark = false }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean }) {
+function Cta({ label = "Start today", sub, href, full = false, onDark = false, onClick, position, tier = "standard" }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean; onClick?: () => void; position?: string; tier?: string }) {
   const cls = `ly-cta ly-cta-lg ${full ? "ly-cta-full" : ""}`;
   const inner = <>{label}<span className="ly-cta-arw" aria-hidden>→</span></>;
   const btn = href
-    ? <a href={href} className={cls} data-cta="yes-jj">{inner}</a>
-    : <button className={cls} onClick={scroll} data-cta="yes-jj">{inner}</button>;
+    ? <a href={href} className={cls} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</a>
+    : <button className={cls} onClick={onClick ?? scroll} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</button>;
   if (!sub) return btn;
   return <div className="ly-cta-wrap">{btn}<p className={`ly-cta-sub ${onDark ? "on-dark" : ""}`}>{sub}</p></div>;
 }
@@ -416,11 +420,31 @@ const VALUE_STACK: { label: string; value: number; note?: string }[] = [
 ];
 
 function Pricing() {
-  const { premium: basic } = useCoachPrograms();
+  const { premium: program } = useCoachPrograms();
+  const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
-  // 3-month prepay maps to the full-program (pay-up-front) billing interval
-  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM") : "/checkout";
+
+  useEffect(() => {
+    if (!selectedPlan) return;
+    const el = document.getElementById("checkout-card");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [selectedPlan]);
+
+  const choosePlan = (id: "monthly" | "quarter") => {
+    const plan = OFFER_PLANS[id];
+    setSelectedPlan(plan);
+    trackSelectPlan({
+      billing_interval: plan.billingInterval,
+      button_position: plan.buttonPosition,
+      cta_text: plan.ctaLabel,
+      tier: (program?.pricingTier || "standard").toLowerCase(),
+      content_id: program?.id,
+      value: plan.price,
+      currency: "USD",
+      coach_program_config_id: program?.id,
+    });
+  };
+
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
@@ -443,7 +467,7 @@ function Pricing() {
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
             <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} href={monthlyHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} full onClick={() => choosePlan("monthly")} position="offer-monthly" /></div>
           </div>
 
           <div className="ly-or"><span>or</span></div>
@@ -452,11 +476,19 @@ function Pricing() {
             <span className="ly-deal2-badge">Best value · save ${QUARTER_SAVE}</span>
             <div className="ly-deal2-now"><s>${QUARTER_MONTHLY_EQUIV}</s><span className="ly-deal2-num">${QUARTER_PRICE}</span><span className="ly-deal2-per">for 3 months</span></div>
             <p className="ly-stack-note">Pay once · that's just $1.41 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} href={quarterHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} full onClick={() => choosePlan("quarter")} position="offer-quarter" /></div>
           </div>
 
           <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
         </div>
+
+        {selectedPlan ? (
+          <SignupCheckoutCard
+            key={selectedPlan.id}
+            plan={selectedPlan}
+            onChangePlan={() => setSelectedPlan(null)}
+          />
+        ) : null}
       </div>
     </section>
   );
