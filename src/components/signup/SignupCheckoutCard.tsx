@@ -70,11 +70,11 @@ const WIZARD_TOTAL = 5;
 const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
   contact: {
     title: "Create your account",
-    sub: "Enter your email and name so we can set up your Yobody coaching.",
+    sub: "",
   },
   payment: {
-    title: "Complete your payment",
-    sub: "Stripe is ready with your plan total. Pay by card, Apple Pay, or Google Pay.",
+    title: "Payment",
+    sub: "",
   },
   password: {
     title: "Personal information",
@@ -93,6 +93,11 @@ const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
     sub: "Your coaching account is ready.",
   },
 };
+
+function splitFullName(full: string): { firstName: string; lastName: string } {
+  const parts = full.trim().split(/\s+/).filter(Boolean);
+  return { firstName: parts[0] ?? "", lastName: parts.slice(1).join(" ") };
+}
 
 function signInUrl(email: string, loginBase?: string): string {
   const base = (loginBase || envYobodyAuthUrl()).replace(/\/$/, "");
@@ -115,13 +120,13 @@ function Progress({ step }: { step: CheckoutCardStep }) {
   );
 }
 
-export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
+export function SignupCheckoutCard({ plan }: Props) {
   const [config, setConfig] = useState<LovablePublicConfig | null>(null);
   const [configError, setConfigError] = useState("");
   const [email, setEmail] = useState("");
+  const [fullName, setFullName] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
-  const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [emailSuggestion, setEmailSuggestion] = useState<string | null>(null);
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
@@ -391,11 +396,14 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
   );
 
   const prepareCheckout = useCallback(async () => {
-    if (!isValidEmail(email) || !firstName.trim() || !lastName.trim() || !acceptedTerms) return;
+    const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
+    if (!isValidEmail(email) || !contactFirst) return;
     if (!config?.coachId || !program?.id) {
       setError("No coaching program is available right now.");
       return;
     }
+    setFirstName(contactFirst);
+    setLastName(contactLast);
     const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program.id}|${discountCode ?? ""}`;
     if (prepareKeyRef.current === prepareKey && clientSecret) {
       setStep("payment");
@@ -414,8 +422,8 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
           coachId: config.coachId,
           coachProgramConfigId: program.id,
           billingInterval: plan.billingInterval,
-          firstName: firstName.trim(),
-          lastName: lastName.trim(),
+          firstName: contactFirst,
+          lastName: contactLast,
           marketingAttribution: buildMarketingAttribution({
             sourceSurface: "landing",
             sourceContext: "landing-page",
@@ -424,7 +432,7 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
             tier: trackingBase.tier,
           }),
         });
-        persistIntent(started, { firstName: firstName.trim(), lastName: lastName.trim() });
+        persistIntent(started, { firstName: contactFirst, lastName: contactLast });
         token = started.intentToken ?? null;
         trackSignupLead(trackingBase);
         trackContinueToPayment(trackingBase);
@@ -467,7 +475,7 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
           tier: trackingBase.tier,
         }),
       });
-      persistIntent(checkout, { firstName: firstName.trim(), lastName: lastName.trim() });
+      persistIntent(checkout, { firstName: contactFirst, lastName: contactLast });
       if (checkout.paymentComplete) {
         recordPurchase(checkout);
         setStep("password");
@@ -497,16 +505,14 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
       setIsPreparing(false);
     }
   }, [
-    acceptedTerms,
     appliedDiscount,
     clientSecret,
     config,
     discountCode,
     email,
-    firstName,
+    fullName,
     handleExistingEmail,
     intentToken,
-    lastName,
     persistIntent,
     plan,
     program,
@@ -700,14 +706,10 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
 
   const canContinueContact =
     isValidEmail(email) &&
-    firstName.trim().length > 0 &&
-    lastName.trim().length > 0 &&
-    acceptedTerms &&
+    splitFullName(fullName).firstName.length > 0 &&
     !isPreparing &&
     !configError;
   const payLabel = `Pay ${formatUsd(totalAmount)} USD`;
-  const paidSteps: CheckoutCardStep[] = ["password", "phone", "verify", "success"];
-  const showChangePlan = !paidSteps.includes(step);
 
   const renderRight = () => {
     if (step === "success") {
@@ -968,10 +970,10 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
                 appearance: {
                   theme: "stripe",
                   variables: {
-                    borderRadius: "8px",
-                    colorPrimary: "#e11d8f",
-                    colorText: "#111827",
-                    colorTextSecondary: "#6b7280",
+                    borderRadius: "13px",
+                    colorPrimary: "#7C3AA6",
+                    colorText: "#2A2036",
+                    colorTextSecondary: "#6C6180",
                   },
                 },
               }}
@@ -992,10 +994,6 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
               <p>Loading secure payment…</p>
             </div>
           )}
-          <p className="chk-pay-note">
-            <Lock size={14} />
-            Your payment information will be stored on a secure server for future purchases.
-          </p>
           {error ? <p className="chk-error">{error}</p> : null}
         </>
       );
@@ -1036,39 +1034,20 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
           ) : null}
         </div>
 
-        <div className="chk-name-row">
-          <div className="chk-field">
-            <label htmlFor="chk-first">First name</label>
-            <input
-              id="chk-first"
-              type="text"
-              autoComplete="given-name"
-              placeholder="First name"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-            />
-          </div>
-          <div className="chk-field">
-            <label htmlFor="chk-last">Last name</label>
-            <input
-              id="chk-last"
-              type="text"
-              autoComplete="family-name"
-              placeholder="Last name"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <label className="chk-terms">
+        <div className="chk-field">
+          <label htmlFor="chk-fullname">Full name</label>
           <input
-            type="checkbox"
-            checked={acceptedTerms}
-            onChange={(e) => setAcceptedTerms(e.target.checked)}
+            id="chk-fullname"
+            type="text"
+            autoComplete="name"
+            placeholder="Full name"
+            value={fullName}
+            onChange={(e) => {
+              setFullName(e.target.value);
+              setError("");
+            }}
           />
-          <span>I accept Terms of Service and Privacy Policy.</span>
-        </label>
+        </div>
 
         {configError ? <p className="chk-error">{configError}</p> : null}
         {error ? <p className="chk-error">{error}</p> : null}
@@ -1114,7 +1093,9 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
               <Progress step={step} />
               <header className="chk-header">
                 <h2 className="chk-title">{STEP_COPY[step].title}</h2>
-                <p className="chk-sub">{STEP_COPY[step].sub}</p>
+                {STEP_COPY[step].sub ? (
+                  <p className="chk-sub">{STEP_COPY[step].sub}</p>
+                ) : null}
               </header>
             </>
           ) : null}
@@ -1124,11 +1105,6 @@ export function SignupCheckoutCard({ plan, onChangePlan }: Props) {
             <Lock size={13} />
             Transactions are secure and encrypted
           </p>
-          {showChangePlan ? (
-            <button type="button" className="chk-change" onClick={onChangePlan}>
-              Change plan
-            </button>
-          ) : null}
         </div>
       </div>
     </div>

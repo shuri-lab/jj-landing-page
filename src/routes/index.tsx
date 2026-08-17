@@ -413,9 +413,7 @@ const VALUE_STACK: { label: string; value: number; note?: string }[] = [
   { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },
-  { label: "A plan made for your body and your life", value: 200 },
   { label: "Grocery lists that save you up to $75 a month", value: 150 },
-  { label: "The Recipe Vault", value: 97 },
   { label: "The Circle of Women", value: 200 },
 ];
 
@@ -453,7 +451,7 @@ function Pricing() {
         <p className="ly-lead ly-soft ly-mt ly-narrow">Less than a coffee ☕. A price with no excuse left in it, and a guarantee with no risk in it.</p>
 
         <div className="ly-stack">
-          <p className="ly-stack-h">Everything included when you join:</p>
+          <p className="ly-stack-h">Everything included:</p>
           <ul className="ly-stack-list">
             {VALUE_STACK.map((it) => (
               <li key={it.label}>
@@ -777,9 +775,11 @@ const CSS = `
 .ly-stack-list li{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--hair);font-size:15.5px;font-weight:500}
 .ly-stack-name{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
 .ly-stack-tick{width:22px;height:22px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
-.ly-stack-val{flex:0 0 auto;color:var(--ink-soft);text-decoration:line-through;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-val{flex:0 0 auto;position:relative;display:inline-block;color:var(--ink-soft);text-decoration:none;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-val::after{content:"";position:absolute;left:-6%;right:-6%;top:50%;height:2px;background:#E23B3B;transform:translateY(-50%) rotate(-12deg);border-radius:3px}
 .ly-stack-total{display:flex;justify-content:space-between;align-items:center;background:var(--lav);border-radius:12px;padding:13px 16px;margin-top:14px;font-family:var(--head);font-weight:800;font-size:16px}
-.ly-stack-total-v{color:var(--ink-soft);text-decoration:line-through;font-size:20px}
+.ly-stack-total-v{position:relative;display:inline-block;color:var(--ink-soft);text-decoration:none;font-size:20px}
+.ly-stack-total-v::after{content:"";position:absolute;left:-6%;right:-6%;top:50%;height:2px;background:#E23B3B;transform:translateY(-50%) rotate(-12deg);border-radius:3px}
 .ly-stack-deal{position:relative;margin-top:18px;border:2px solid var(--purple);border-radius:16px;background:linear-gradient(165deg,#FFF,#F7ECFB);padding:26px 18px 20px;text-align:center}
 .ly-stack-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;padding:8px 20px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 22px -10px rgba(91,42,128,.6)}
 .ly-stack-badge s{color:#fff;text-decoration:line-through;opacity:.75}
