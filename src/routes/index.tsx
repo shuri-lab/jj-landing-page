@@ -1,10 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
 import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
 import { OFFER_PLANS } from "@/lib/signup/plans";
+import { readLandingPrefill } from "@/lib/signup/attribution";
 import { trackSelectPlan } from "@/lib/signup/tracking";
 import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
@@ -420,13 +421,8 @@ const VALUE_STACK: { label: string; value: number; note?: string }[] = [
 function Pricing() {
   const { premium: program } = useCoachPrograms();
   const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
+  const openedFromUrl = useRef(false);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-
-  useEffect(() => {
-    if (!selectedPlan) return;
-    const el = document.getElementById("checkout-card");
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [selectedPlan]);
 
   const choosePlan = (id: "monthly" | "quarter") => {
     const plan = OFFER_PLANS[id];
@@ -442,6 +438,20 @@ function Pricing() {
       coach_program_config_id: program?.id,
     });
   };
+
+  useEffect(() => {
+    if (openedFromUrl.current) return;
+    const fromUrl = readLandingPrefill().plan;
+    if (!fromUrl) return;
+    openedFromUrl.current = true;
+    choosePlan(fromUrl);
+  }, [program]);
+
+  useEffect(() => {
+    if (!selectedPlan) return;
+    const el = document.getElementById("checkout-card");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [selectedPlan]);
 
   return (
     <section id="offer" className="ly-band ly-lav">

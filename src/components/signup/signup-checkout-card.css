@@ -424,6 +424,15 @@
   cursor: pointer;
 }
 
+.chk-pay-or {
+  margin: 10px 0 2px;
+  text-align: center;
+  color: var(--chk-muted);
+  font-size: 12.5px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .chk-alt {
   display: flex;
   flex-direction: column;

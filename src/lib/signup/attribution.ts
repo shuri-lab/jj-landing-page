@@ -94,3 +94,43 @@ export function readDiscountCodeFromUrl(): string | null {
   const code = currentSearchParams().get("discount-code")?.trim();
   return code ? code.toUpperCase() : null;
 }
+
+export function readLandingPrefill(): {
+  email: string;
+  firstName: string;
+  lastName: string;
+  fullName: string;
+  plan: "monthly" | "quarter" | null;
+} {
+  const params = currentSearchParams();
+  const email = readQueryValue(params, ["email"]) ?? "";
+  const firstName =
+    readQueryValue(params, ["firstName", "first_name"]) ?? "";
+  const lastName = readQueryValue(params, ["lastName", "last_name"]) ?? "";
+  const named =
+    readQueryValue(params, ["name", "fullName", "full_name"]) ?? "";
+  const fullName = named || [firstName, lastName].filter(Boolean).join(" ");
+  const planRaw = readQueryValue(params, ["plan"])?.toLowerCase();
+  const plan =
+    planRaw === "monthly" || planRaw === "quarter" ? planRaw : null;
+  return { email, firstName, lastName, fullName, plan };
+}
+
+export function buildLandingOfferUrl(input: {
+  email?: string;
+  firstName?: string;
+  lastName?: string;
+  plan?: "monthly" | "quarter";
+  extras?: Record<string, string | undefined>;
+}): string {
+  const params = new URLSearchParams();
+  if (input.email?.trim()) params.set("email", input.email.trim());
+  if (input.firstName?.trim()) params.set("firstName", input.firstName.trim());
+  if (input.lastName?.trim()) params.set("lastName", input.lastName.trim());
+  if (input.plan) params.set("plan", input.plan);
+  for (const [key, value] of Object.entries(input.extras ?? {})) {
+    if (value?.trim()) params.set(key, value.trim());
+  }
+  const query = params.toString();
+  return query ? `/?${query}#offer` : "/#offer";
+}

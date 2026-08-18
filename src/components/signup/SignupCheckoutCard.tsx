@@ -1,37 +1,28 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import type { StripePaymentElementOptions } from "@stripe/stripe-js";
+import type {
+  StripeExpressCheckoutElementConfirmEvent,
+  StripeExpressCheckoutElementReadyEvent,
+  StripePaymentElementOptions,
+} from "@stripe/stripe-js";
 import {
-  AddressElement,
   Elements,
+  ExpressCheckoutElement,
   PaymentElement,
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { Check, Eye, EyeOff, Lock } from "lucide-react";
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Check, Lock } from "lucide-react";
 import { landingSignupApi } from "@/lib/signup/api";
-import { buildMarketingAttribution, readDiscountCodeFromUrl } from "@/lib/signup/attribution";
+import {
+  buildMarketingAttribution,
+  readDiscountCodeFromUrl,
+  readLandingPrefill,
+} from "@/lib/signup/attribution";
+import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
-import { getPasswordPolicyError, hasPasswordEdgeWhitespace, isPasswordValid } from "@/lib/signup/password";
-import {
-  guessIsoCountry,
-  isValidNationalPhone,
-  maskPhone,
-  nextNationalPhoneInput,
-  pickDefaultCountry,
-  reformatNationalPhone,
-  toE164FromNational,
-} from "@/lib/signup/phone";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
 import {
   clearSignupIntentSession,
@@ -50,7 +41,6 @@ import {
 import { SignupApiError } from "@/lib/signup/types";
 import type {
   CheckoutCardStep,
-  LandingCountry,
   LovablePublicConfig,
   OfferPlan,
   PublicCoachProgram,
@@ -66,35 +56,39 @@ type Props = {
 };
 
 const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
-  contact: {
-    title: "Create your account",
-    sub: "",
-  },
-  payment: {
-    title: "Payment",
-    sub: "",
-  },
-  password: {
-    title: "Personal information",
-    sub: "Confirm your name and choose a password you will use to sign in.",
-  },
-  phone: {
-    title: "Verify your phone",
-    sub: "We will send a quick code so JJ can keep you on track.",
-  },
-  verify: {
-    title: "Verify your phone",
-    sub: "Enter the 6-digit code we just sent you.",
-  },
+  contact: { title: "Create your account", sub: "" },
+  payment: { title: "Payment", sub: "" },
   success: {
-    title: "You're in!",
-    sub: "Your coaching account is ready.",
+    title: "Payment successful",
+    sub: "Please wait while we redirect you to get set up.",
   },
 };
 
 function splitFullName(full: string): { firstName: string; lastName: string } {
   const parts = full.trim().split(/\s+/).filter(Boolean);
   return { firstName: parts[0] ?? "", lastName: parts.slice(1).join(" ") };
+}
+
+function billingDetailsForConfirm(
+  email: string,
+  name: string,
+  expressEvent?: StripeExpressCheckoutElementConfirmEvent,
+) {
+  const fromExpress = expressEvent?.billingDetails;
+  const address = fromExpress?.address;
+  return {
+    email: fromExpress?.email?.trim() || email.trim() || "",
+    name: fromExpress?.name?.trim() || name.trim() || "",
+    phone: fromExpress?.phone ?? "",
+    address: {
+      line1: address?.line1 ?? "",
+      line2: address?.line2 ?? "",
+      city: address?.city ?? "",
+      state: address?.state ?? "",
+      postal_code: address?.postal_code ?? "",
+      country: address?.country || "US",
+    },
+  };
 }
 
 function signInUrl(email: string, loginBase?: string): string {
@@ -110,7 +104,6 @@ function signInUrl(email: string, loginBase?: string): string {
 const PROGRESS_BARS = 2;
 
 function Progress({ step }: { step: CheckoutCardStep }) {
-  // Bar 1 = contact/details, bar 2 = payment and everything after it.
   const filled = wizardIndex(step) <= 0 ? 1 : PROGRESS_BARS;
   return (
     <div className="chk-progress" aria-hidden="true">
@@ -122,29 +115,23 @@ function Progress({ step }: { step: CheckoutCardStep }) {
 }
 
 export function SignupCheckoutCard({ plan }: Props) {
+  const prefill = useMemo(() => readLandingPrefill(), []);
   const [config, setConfig] = useState<LovablePublicConfig | null>(null);
   const [configError, setConfigError] = useState("");
-  const [email, setEmail] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [emailSuggestion, setEmailSuggestion] = useState<string | null>(null);
+  const [email, setEmail] = useState(prefill.email);
+  const [fullName, setFullName] = useState(prefill.fullName);
+  const [firstName, setFirstName] = useState(prefill.firstName);
+  const [lastName, setLastName] = useState(prefill.lastName);
+  const [emailSuggestion, setEmailSuggestion] = useState<string | null>(() =>
+    prefill.email ? suggestEmail(prefill.email) : null,
+  );
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [handoffUrl, setHandoffUrl] = useState("");
   const [error, setError] = useState("");
   const [isPreparing, setIsPreparing] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [hasPassword, setHasPassword] = useState(false);
-  const [phoneNational, setPhoneNational] = useState("");
-  const [phoneE164, setPhoneE164] = useState("");
-  const [countryId, setCountryId] = useState<string>("");
-  const [otpCode, setOtpCode] = useState("");
-  const [otpCountdown, setOtpCountdown] = useState(0);
-  const [emailSent, setEmailSent] = useState<boolean | null>(null);
-  const [showAuthRedirect, setShowAuthRedirect] = useState(false);
   const [discountCode] = useState<string | null>(() => readDiscountCodeFromUrl());
   const [appliedDiscount, setAppliedDiscount] = useState<{
     code: string;
@@ -153,16 +140,11 @@ export function SignupCheckoutCard({ plan }: Props) {
   } | null>(null);
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
-  const otpAutoRef = useRef(false);
 
   const program: PublicCoachProgram | null = useMemo(
     () => pickLandingProgram(config?.programs, plan.billingInterval, plan.price),
     [config, plan.billingInterval, plan.price],
   );
-  const countries: LandingCountry[] = config?.countries ?? [];
-  const selectedCountry =
-    countries.find((c) => c.id === countryId) ??
-    pickDefaultCountry(countries, guessIsoCountry());
   const liveAmount = amountForInterval(program, plan.billingInterval);
   const amount = typeof liveAmount === "number" ? liveAmount : plan.price;
   const amountOff = appliedDiscount?.amountOff ?? 0;
@@ -172,8 +154,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     () => (stripeKey ? loadStripe(stripeKey) : null),
     [stripeKey],
   );
-  const nameOnCard = `${firstName} ${lastName}`.trim();
-  const passwordError = getPasswordPolicyError(password);
+  const nameOnCard = `${firstName} ${lastName}`.trim() || fullName.trim();
   const loginBase = config?.loginUrl || envYobodyAuthUrl();
 
   const trackingBase = useMemo(
@@ -191,17 +172,11 @@ export function SignupCheckoutCard({ plan }: Props) {
   const persistIntent = useCallback(
     (
       response: SignupIntentResponse,
-      extras?: {
-        firstName?: string;
-        lastName?: string;
-        phoneE164?: string;
-        countryId?: string;
-      },
+      extras?: { firstName?: string; lastName?: string },
     ) => {
       const token = response.intentToken ?? intentToken ?? getSignupIntentSession()?.intentToken;
       if (!token) return;
       setIntentToken(token);
-      if (response.hasPassword) setHasPassword(true);
       const existing = getSignupIntentSession();
       saveSignupIntentSession({
         intentId: response.intentId,
@@ -217,11 +192,22 @@ export function SignupCheckoutCard({ plan }: Props) {
           response.lastName ||
           lastName ||
           existing?.lastName,
-        phoneE164: extras?.phoneE164 || phoneE164 || existing?.phoneE164,
-        countryId: extras?.countryId || countryId || existing?.countryId,
       });
     },
-    [countryId, email, firstName, intentToken, lastName, phoneE164],
+    [email, firstName, intentToken, lastName],
+  );
+
+  const rememberHandoff = useCallback(
+    (response: SignupIntentResponse, nextEmail = email) => {
+      const url = buildContinueSignupUrl({
+        response,
+        email: nextEmail || response.email,
+        config,
+      });
+      setHandoffUrl(url);
+      return url;
+    },
+    [config, email],
   );
 
   useEffect(() => {
@@ -236,8 +222,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       .then((payload) => {
         if (cancelled) return;
         setConfig(payload);
-        const fallback = pickDefaultCountry(payload.countries, guessIsoCountry());
-        if (fallback) setCountryId((current) => current || fallback.id);
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -251,29 +235,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       cancelled = true;
     };
   }, []);
-
-  useEffect(() => {
-    if (otpCountdown <= 0) return;
-    const timer = window.setTimeout(() => setOtpCountdown((n) => n - 1), 1000);
-    return () => window.clearTimeout(timer);
-  }, [otpCountdown]);
-
-  const authRedirectUrl = signInUrl(email, envYobodyAuthUrl());
-
-  useEffect(() => {
-    if (step !== "success") {
-      setShowAuthRedirect(false);
-      return;
-    }
-    const reveal = window.setTimeout(() => setShowAuthRedirect(true), 2500);
-    const redirect = window.setTimeout(() => {
-      window.location.assign(authRedirectUrl);
-    }, 5500);
-    return () => {
-      window.clearTimeout(reveal);
-      window.clearTimeout(redirect);
-    };
-  }, [authRedirectUrl, step]);
 
   const recordPurchase = useCallback(
     (response: SignupIntentResponse, fallbackId?: string) => {
@@ -290,68 +251,76 @@ export function SignupCheckoutCard({ plan }: Props) {
     [program?.id, totalAmount],
   );
 
-  const finishLanding = useCallback(
-    async (token: string) => {
-      const completed = await landingSignupApi.complete(token);
-      persistIntent(completed);
-      setEmailSent(completed.emailSent ?? true);
-      setStep("success");
+  const enterPaidSuccess = useCallback(
+    (response: SignupIntentResponse, fallbackId?: string) => {
+      persistIntent(response);
+      rememberHandoff(response);
+      recordPurchase(response, fallbackId);
       clearSignupIntentSession();
+      setStep("success");
     },
-    [persistIntent],
+    [persistIntent, recordPurchase, rememberHandoff],
   );
+
+  useEffect(() => {
+    if (step !== "success" || !handoffUrl) return;
+    const redirect = window.setTimeout(() => {
+      window.location.assign(handoffUrl);
+    }, 4500);
+    return () => window.clearTimeout(redirect);
+  }, [handoffUrl, step]);
 
   const applyIntent = useCallback(
     async (response: SignupIntentResponse) => {
       const session = getSignupIntentSession();
       const nextFirst = response.firstName || session?.firstName || firstName;
       const nextLast = response.lastName || session?.lastName || lastName;
-      persistIntent(response, {
-        firstName: nextFirst,
-        lastName: nextLast,
-      });
+      persistIntent(response, { firstName: nextFirst, lastName: nextLast });
       if (response.email) setEmail(response.email);
       if (nextFirst) setFirstName(nextFirst);
       if (nextLast) setLastName(nextLast);
-      const next = mapIntentToWizardStep(response);
-      if (next === "success") {
-        const token = response.intentToken ?? getSignupIntentSession()?.intentToken;
-        if (token && response.step !== "completed") {
-          await finishLanding(token);
-          return;
-        }
-        setEmailSent(response.emailSent ?? true);
-        setStep("success");
-        clearSignupIntentSession();
+      if (nextFirst && !fullName.trim()) {
+        setFullName([nextFirst, nextLast].filter(Boolean).join(" "));
+      }
+      if (response.paymentComplete) {
+        enterPaidSuccess(response);
         return;
       }
-      if (next === "verify") {
-        const storedPhone =
-          getSignupIntentSession()?.phoneE164 || phoneE164;
-        setStep(storedPhone ? "verify" : "phone");
-        return;
-      }
-      setStep(next);
+      setStep(mapIntentToWizardStep(response));
     },
-    [finishLanding, firstName, lastName, persistIntent, phoneE164],
+    [enterPaidSuccess, firstName, fullName, lastName, persistIntent],
   );
 
   useEffect(() => {
     if (!config || resumedRef.current) return;
     const session = getSignupIntentSession();
-    if (!session?.intentToken) return;
+    const urlEmail = prefill.email.trim().toLowerCase();
+    if (
+      urlEmail &&
+      session?.email &&
+      session.email.trim().toLowerCase() !== urlEmail
+    ) {
+      clearSignupIntentSession();
+      resumedRef.current = true;
+      return;
+    }
+    if (!session?.intentToken) {
+      resumedRef.current = true;
+      return;
+    }
     resumedRef.current = true;
     setIntentToken(session.intentToken);
-    if (session.email) setEmail(session.email);
-    if (session.firstName) setFirstName(session.firstName);
-    if (session.lastName) setLastName(session.lastName);
-    if (session.phoneE164) setPhoneE164(session.phoneE164);
-    if (session.countryId) setCountryId(session.countryId);
+    if (session.email && !prefill.email) setEmail(session.email);
+    if (session.firstName && !prefill.firstName) setFirstName(session.firstName);
+    if (session.lastName && !prefill.lastName) setLastName(session.lastName);
+    if (!prefill.fullName && (session.firstName || session.lastName)) {
+      setFullName([session.firstName, session.lastName].filter(Boolean).join(" "));
+    }
     void landingSignupApi
       .me(session.intentToken)
       .then(async (response) => {
         await applyIntent(response);
-        if (mapIntentToWizardStep(response) === "payment" && !response.paymentComplete) {
+        if (!response.paymentComplete && mapIntentToWizardStep(response) === "payment") {
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
             coachProgramConfigId: program?.id,
@@ -366,6 +335,11 @@ export function SignupCheckoutCard({ plan }: Props) {
             }),
           });
           persistIntent(checkout);
+          rememberHandoff(checkout);
+          if (checkout.paymentComplete) {
+            enterPaidSuccess(checkout);
+            return;
+          }
           if (checkout.clientSecret) setClientSecret(checkout.clientSecret);
         }
       })
@@ -378,9 +352,15 @@ export function SignupCheckoutCard({ plan }: Props) {
     applyIntent,
     config,
     discountCode,
+    enterPaidSuccess,
     persistIntent,
     plan,
+    prefill.email,
+    prefill.firstName,
+    prefill.fullName,
+    prefill.lastName,
     program?.id,
+    rememberHandoff,
     trackingBase.tier,
   ]);
 
@@ -399,13 +379,13 @@ export function SignupCheckoutCard({ plan }: Props) {
   const prepareCheckout = useCallback(async () => {
     const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
     if (!isValidEmail(email) || !contactFirst) return;
-    if (!config?.coachId || !program?.id) {
+    if (!config?.coachId) {
       setError("No coaching program is available right now.");
       return;
     }
     setFirstName(contactFirst);
     setLastName(contactLast);
-    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program.id}|${discountCode ?? ""}`;
+    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program?.id ?? "auto"}|${discountCode ?? ""}`;
     if (prepareKeyRef.current === prepareKey && clientSecret) {
       setStep("payment");
       return;
@@ -421,10 +401,10 @@ export function SignupCheckoutCard({ plan }: Props) {
         const started = await landingSignupApi.startEmail({
           email: email.trim(),
           coachId: config.coachId,
-          coachProgramConfigId: program.id,
+          coachProgramConfigId: program?.id,
           billingInterval: plan.billingInterval,
           firstName: contactFirst,
-          lastName: contactLast,
+          lastName: contactLast || undefined,
           marketingAttribution: buildMarketingAttribution({
             sourceSurface: "landing",
             sourceContext: "landing-page",
@@ -434,12 +414,12 @@ export function SignupCheckoutCard({ plan }: Props) {
           }),
         });
         persistIntent(started, { firstName: contactFirst, lastName: contactLast });
+        rememberHandoff(started);
         token = started.intentToken ?? null;
         trackSignupLead(trackingBase);
         trackContinueToPayment(trackingBase);
         if (started.paymentComplete) {
-          recordPurchase(started);
-          setStep("password");
+          enterPaidSuccess(started);
           return;
         }
       }
@@ -450,7 +430,7 @@ export function SignupCheckoutCard({ plan }: Props) {
           const verified = await landingSignupApi.verifyDiscount({
             intentToken: token,
             discountCode,
-            coachProgramConfigId: program.id,
+            coachProgramConfigId: program?.id,
             billingInterval: plan.billingInterval,
           });
           setAppliedDiscount({
@@ -465,7 +445,7 @@ export function SignupCheckoutCard({ plan }: Props) {
 
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
-        coachProgramConfigId: program.id,
+        coachProgramConfigId: program?.id,
         discountCode: appliedDiscount?.code ?? discountCode,
         billingInterval: plan.billingInterval,
         marketingAttribution: buildMarketingAttribution({
@@ -477,9 +457,9 @@ export function SignupCheckoutCard({ plan }: Props) {
         }),
       });
       persistIntent(checkout, { firstName: contactFirst, lastName: contactLast });
+      rememberHandoff(checkout);
       if (checkout.paymentComplete) {
-        recordPurchase(checkout);
-        setStep("password");
+        enterPaidSuccess(checkout);
         return;
       }
       if (!checkout.clientSecret) {
@@ -511,13 +491,14 @@ export function SignupCheckoutCard({ plan }: Props) {
     config,
     discountCode,
     email,
+    enterPaidSuccess,
     fullName,
     handleExistingEmail,
     intentToken,
     persistIntent,
     plan,
     program,
-    recordPurchase,
+    rememberHandoff,
     trackingBase,
   ]);
 
@@ -535,9 +516,20 @@ export function SignupCheckoutCard({ plan }: Props) {
           intentToken: token,
           paymentIntentId,
         });
-        persistIntent(verified, { firstName: firstName.trim(), lastName: lastName.trim() });
-        recordPurchase(verified, paymentIntentId);
-        setStep("password");
+        persistIntent(verified, {
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+        });
+        if (firstName.trim()) {
+          await landingSignupApi
+            .updateProfile({
+              intentToken: token,
+              firstName: firstName.trim(),
+              lastName: lastName.trim() || undefined,
+            })
+            .catch(() => undefined);
+        }
+        enterPaidSuccess(verified, paymentIntentId);
       } catch (err) {
         setError(
           err instanceof SignupApiError
@@ -548,161 +540,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         setIsBusy(false);
       }
     },
-    [firstName, intentToken, lastName, persistIntent, recordPurchase],
-  );
-
-  const handlePasswordContinue = useCallback(async () => {
-    const token = intentToken ?? getSignupIntentSession()?.intentToken;
-    if (!token) {
-      setError("Signup session missing. Please try again.");
-      return;
-    }
-    if (!hasPassword && !isPasswordValid(password)) return;
-    if (!firstName.trim() || !lastName.trim()) {
-      setError("First and last name are required.");
-      return;
-    }
-    setIsBusy(true);
-    setError("");
-    try {
-      if (!hasPassword) {
-        try {
-          const saved = await landingSignupApi.setPassword({
-            intentToken: token,
-            password,
-          });
-          persistIntent(saved);
-          setHasPassword(true);
-        } catch (err) {
-          if (!(err instanceof SignupApiError && err.statusCode === 409)) throw err;
-          setHasPassword(true);
-        }
-      }
-      const profiled = await landingSignupApi.updateProfile({
-        intentToken: token,
-        firstName: firstName.trim(),
-        lastName: lastName.trim() || null,
-      });
-      persistIntent(profiled, { firstName: firstName.trim(), lastName: lastName.trim() });
-      setStep("phone");
-    } catch (err) {
-      setError(
-        err instanceof SignupApiError
-          ? err.message
-          : "Unable to save your account details.",
-      );
-    } finally {
-      setIsBusy(false);
-    }
-  }, [firstName, hasPassword, intentToken, lastName, password, persistIntent]);
-
-  const sendPhoneCode = useCallback(async () => {
-    const token = intentToken ?? getSignupIntentSession()?.intentToken;
-    if (!token) {
-      setError("Signup session missing. Please try again.");
-      return;
-    }
-    if (!selectedCountry) {
-      setError("Please wait a moment while we load country codes.");
-      return;
-    }
-    if (!isValidNationalPhone(phoneNational, selectedCountry.countryCode)) {
-      setError("Enter a valid phone number for the selected country.");
-      return;
-    }
-    const e164 = toE164FromNational(
-      phoneNational,
-      selectedCountry.countryCode,
-      selectedCountry.countryDialCode,
-    );
-    setIsBusy(true);
-    setError("");
-    try {
-      await landingSignupApi.requestPhoneOtp({
-        intentToken: token,
-        phoneNumber: e164,
-      });
-      setPhoneE164(e164);
-      const session = getSignupIntentSession();
-      if (session) {
-        saveSignupIntentSession({
-          ...session,
-          phoneE164: e164,
-          countryId: selectedCountry?.id,
-        });
-      }
-      setOtpCode("");
-      otpAutoRef.current = false;
-      setOtpCountdown(30);
-      setStep("verify");
-    } catch (err) {
-      setError(
-        err instanceof SignupApiError
-          ? err.message
-          : "Unable to send a verification code.",
-      );
-    } finally {
-      setIsBusy(false);
-    }
-  }, [intentToken, phoneNational, selectedCountry]);
-
-  const handleCountryChange = useCallback(
-    (nextCountryId: string) => {
-      setCountryId(nextCountryId);
-      const next = countries.find((c) => c.id === nextCountryId);
-      if (!next) return;
-      setPhoneNational((prev) => reformatNationalPhone(prev, next.countryCode));
-      setError("");
-    },
-    [countries],
-  );
-
-  const handlePhoneInputChange = useCallback(
-    (value: string) => {
-      const next = nextNationalPhoneInput(value, selectedCountry?.countryCode);
-      if (next == null) return;
-      setPhoneNational(next);
-      setError("");
-    },
-    [selectedCountry?.countryCode],
-  );
-
-  const verifyPhoneCode = useCallback(
-    async (code = otpCode) => {
-      const token = intentToken ?? getSignupIntentSession()?.intentToken;
-      if (!token || !phoneE164) {
-        setError("Signup session missing. Please try again.");
-        return;
-      }
-      if (!/^\d{6}$/.test(code)) {
-        setError("Enter the 6-digit code.");
-        return;
-      }
-      setIsBusy(true);
-      setError("");
-      try {
-        const verified = await landingSignupApi.verifyPhone({
-          intentToken: token,
-          phoneNumber: phoneE164,
-          otpCode: code,
-          countryId: selectedCountry?.id ?? null,
-        });
-        persistIntent(verified);
-        setEmailSent(verified.emailSent ?? true);
-        setStep("success");
-        clearSignupIntentSession();
-      } catch (err) {
-        otpAutoRef.current = false;
-        setError(
-          err instanceof SignupApiError
-            ? err.message
-            : "That code did not match. Try again.",
-        );
-      } finally {
-        setIsBusy(false);
-      }
-    },
-    [intentToken, otpCode, persistIntent, phoneE164, selectedCountry?.id],
+    [enterPaidSuccess, firstName, intentToken, lastName, persistIntent],
   );
 
   const canContinueContact =
@@ -719,244 +557,24 @@ export function SignupCheckoutCard({ plan }: Props) {
           <div className="chk-success-icon">
             <Check size={32} strokeWidth={3} />
           </div>
-          <h3 className="chk-title">Success</h3>
+          <h3 className="chk-title">Payment successful</h3>
           <p className="chk-sub">
-            {emailSent === false
-              ? "Your account is ready. We could not send the confirmation email just now."
-              : `You're in. We emailed ${email || "you"} with a sign-in link.`}
+            Please wait while we redirect you to get set up.
           </p>
-          {showAuthRedirect ? (
-            <>
-              <p className="chk-hint">Taking you to YoBody to sign in…</p>
+          {handoffUrl ? (
+            <div className="chk-actions">
               <a
                 className="chk-pay"
-                href={authRedirectUrl}
+                href={handoffUrl}
                 style={{ display: "grid", placeItems: "center", textDecoration: "none" }}
               >
-                Continue to YoBody
+                Continue
               </a>
-            </>
+            </div>
           ) : (
-            <p className="chk-hint">Hang tight — we are preparing your sign-in link.</p>
+            <p className="chk-hint">Preparing your next step…</p>
           )}
         </div>
-      );
-    }
-
-    if (step === "password") {
-      const longEnough = password.length >= 6;
-      const noEdgeSpace = !hasPasswordEdgeWhitespace(password);
-      return (
-        <>
-          <div className="chk-name-row">
-            <div className="chk-field">
-              <label htmlFor="chk-first-pw">First name</label>
-              <input
-                id="chk-first-pw"
-                type="text"
-                autoComplete="given-name"
-                placeholder="First name"
-                value={firstName}
-                onChange={(e) => {
-                  setFirstName(e.target.value);
-                  setError("");
-                }}
-              />
-            </div>
-            <div className="chk-field">
-              <label htmlFor="chk-last-pw">Last name</label>
-              <input
-                id="chk-last-pw"
-                type="text"
-                autoComplete="family-name"
-                placeholder="Last name"
-                value={lastName}
-                onChange={(e) => {
-                  setLastName(e.target.value);
-                  setError("");
-                }}
-              />
-            </div>
-          </div>
-          {!hasPassword ? (
-            <div className="chk-field chk-password-field">
-              <label htmlFor="chk-password">Password</label>
-              <div className="chk-password-wrap">
-                <input
-                  id="chk-password"
-                  type={showPassword ? "text" : "password"}
-                  autoComplete="new-password"
-                  placeholder="Create a password"
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                    setError("");
-                  }}
-                />
-                <button
-                  type="button"
-                  className="chk-eye"
-                  onClick={() => setShowPassword((v) => !v)}
-                  aria-label={showPassword ? "Hide password" : "Show password"}
-                >
-                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <div className="chk-req">
-                <span className={longEnough ? "is-ok" : undefined}>At least 6 characters</span>
-                <span className={password.length > 0 && noEdgeSpace ? "is-ok" : undefined}>
-                  No spaces at the start or end
-                </span>
-              </div>
-              {passwordError ? <p className="chk-error">{passwordError}</p> : null}
-            </div>
-          ) : (
-            <p className="chk-hint">Password saved. Confirm your name to continue.</p>
-          )}
-          {error ? <p className="chk-error">{error}</p> : null}
-          <div className="chk-actions">
-            <button
-              type="button"
-              className="chk-pay"
-              disabled={
-                isBusy ||
-                (!hasPassword && !isPasswordValid(password)) ||
-                !firstName.trim() ||
-                !lastName.trim()
-              }
-              onClick={() => void handlePasswordContinue()}
-            >
-              {isBusy ? "Saving…" : "Continue"}
-            </button>
-          </div>
-        </>
-      );
-    }
-
-    if (step === "phone") {
-      const countryLabel = selectedCountry
-        ? [selectedCountry.flagEmoji ?? selectedCountry.countryCode, selectedCountry.countryDialCode]
-            .filter(Boolean)
-            .join(" ")
-        : "Code";
-      return (
-        <>
-          <div className="chk-phone-row">
-            <Select
-              value={selectedCountry?.id ?? ""}
-              onValueChange={handleCountryChange}
-              disabled={isBusy || countries.length === 0}
-            >
-              <SelectTrigger className="chk-country">
-                <SelectValue placeholder={countries.length ? "Code" : "…"}>
-                  {countryLabel}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {countries.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    <span className="flex items-center gap-2">
-                      {c.flagEmoji ? <span>{c.flagEmoji}</span> : null}
-                      <span>{c.countryDialCode}</span>
-                      <span className="max-w-[8rem] truncate text-muted-foreground">{c.name}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <div className="chk-field">
-              <label htmlFor="chk-phone" className="sr-only">
-                Phone number
-              </label>
-              <input
-                id="chk-phone"
-                type="tel"
-                inputMode="tel"
-                autoComplete="tel-national"
-                placeholder="Your phone number"
-                value={phoneNational}
-                onChange={(e) => handlePhoneInputChange(e.target.value)}
-                disabled={isBusy || !selectedCountry}
-              />
-            </div>
-          </div>
-          {error ? <p className="chk-error">{error}</p> : null}
-          <div className="chk-actions">
-            <button
-              type="button"
-              className="chk-pay"
-              disabled={isBusy || countries.length === 0 || !selectedCountry || !phoneNational.trim()}
-              onClick={() => void sendPhoneCode()}
-            >
-              {isBusy
-                ? "Sending…"
-                : countries.length === 0 || !selectedCountry
-                  ? "Loading country…"
-                  : "Send code"}
-            </button>
-          </div>
-        </>
-      );
-    }
-
-    if (step === "verify") {
-      return (
-        <>
-          <p className="chk-sub">
-            Sent to <strong>{maskPhone(phoneE164) || "your phone"}</strong>
-          </p>
-          <div className="chk-otp">
-            <InputOTP
-              maxLength={6}
-              value={otpCode}
-              onChange={(value) => {
-                setOtpCode(value);
-                setError("");
-                if (value.length === 6 && !otpAutoRef.current && !isBusy) {
-                  otpAutoRef.current = true;
-                  void verifyPhoneCode(value);
-                }
-              }}
-            >
-              <InputOTPGroup className="gap-2">
-                {[0, 1, 2, 3, 4, 5].map((i) => (
-                  <InputOTPSlot key={i} index={i} className="chk-otp-slot" />
-                ))}
-              </InputOTPGroup>
-            </InputOTP>
-          </div>
-          {error ? <p className="chk-error">{error}</p> : null}
-          <div className="chk-actions">
-            <button
-              type="button"
-              className="chk-pay"
-              disabled={isBusy || otpCode.length !== 6}
-              onClick={() => void verifyPhoneCode()}
-            >
-              {isBusy ? "Verifying…" : "Continue"}
-            </button>
-          </div>
-          <div className="chk-alt">
-            {otpCountdown > 0 ? (
-              <p className="chk-hint">Resend code in {otpCountdown}s</p>
-            ) : (
-              <button type="button" onClick={() => void sendPhoneCode()} disabled={isBusy}>
-                Resend code
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setOtpCode("");
-                setError("");
-                setStep("phone");
-              }}
-              disabled={isBusy}
-            >
-              Use a different number
-            </button>
-          </div>
-        </>
       );
     }
 
@@ -983,6 +601,7 @@ export function SignupCheckoutCard({ plan }: Props) {
                 email={email}
                 nameOnCard={nameOnCard}
                 payLabel={payLabel}
+                amount={totalAmount}
                 isVerifying={isBusy}
                 tracking={trackingBase}
                 onCompleted={handlePaymentCompleted}
@@ -1102,10 +721,12 @@ export function SignupCheckoutCard({ plan }: Props) {
           ) : null}
 
           {renderRight()}
-          <p className="chk-secure">
-            <Lock size={13} />
-            Transactions are secure and encrypted
-          </p>
+          {step !== "success" ? (
+            <p className="chk-secure">
+              <Lock size={13} />
+              Transactions are secure and encrypted
+            </p>
+          ) : null}
         </div>
       </div>
     </div>
@@ -1116,6 +737,7 @@ function CheckoutStripeForm({
   email,
   nameOnCard,
   payLabel,
+  amount,
   isVerifying,
   tracking,
   onCompleted,
@@ -1124,6 +746,7 @@ function CheckoutStripeForm({
   email: string;
   nameOnCard: string;
   payLabel: string;
+  amount: number;
   isVerifying: boolean;
   tracking: {
     content_id?: string;
@@ -1136,12 +759,18 @@ function CheckoutStripeForm({
   const stripe = useStripe();
   const elements = useElements();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasExpressMethods, setHasExpressMethods] = useState(false);
 
   const paymentElementOptions: StripePaymentElementOptions = {
     layout: "tabs",
     wallets: { applePay: "auto", googlePay: "auto", link: "auto" },
     fields: {
-      billingDetails: { name: "auto", email: "never", phone: "never" },
+      billingDetails: {
+        name: "never",
+        email: "never",
+        phone: "never",
+        address: "never",
+      },
     },
     defaultValues: {
       billingDetails: {
@@ -1151,14 +780,19 @@ function CheckoutStripeForm({
     },
   };
 
-  const handleConfirm = async () => {
+  const handleConfirm = async (
+    expressEvent?: StripeExpressCheckoutElementConfirmEvent,
+  ) => {
     if (!stripe || !elements) return;
     setIsSubmitting(true);
     onError("");
     trackAddPaymentInfo(tracking);
     const submitResult = await elements.submit();
     if (submitResult.error) {
-      onError(submitResult.error.message ?? "Please check your payment details.");
+      const message =
+        submitResult.error.message ?? "Please check your payment details.";
+      onError(message);
+      expressEvent?.paymentFailed({ reason: "invalid_payment_data", message });
       setIsSubmitting(false);
       return;
     }
@@ -1167,40 +801,68 @@ function CheckoutStripeForm({
       redirect: "if_required",
       confirmParams: {
         payment_method_data: {
-          billing_details: {
-            ...(email ? { email } : {}),
-            ...(nameOnCard ? { name: nameOnCard } : {}),
-          },
+          billing_details: billingDetailsForConfirm(
+            email,
+            nameOnCard,
+            expressEvent,
+          ),
         },
       },
     });
     if (result.error) {
-      onError(result.error.message ?? "Payment failed.");
+      const message = result.error.message ?? "Payment failed.";
+      onError(message);
+      expressEvent?.paymentFailed({ reason: "fail", message });
       setIsSubmitting(false);
       return;
     }
     const paymentIntentId = result.paymentIntent?.id;
     if (!paymentIntentId) {
-      onError("Payment confirmed but no payment intent id was returned.");
+      const message = "Payment confirmed but no payment intent id was returned.";
+      onError(message);
+      expressEvent?.paymentFailed({ reason: "fail", message });
       setIsSubmitting(false);
       return;
     }
     onCompleted(paymentIntentId);
   };
 
+  const handleExpressReady = (
+    event: StripeExpressCheckoutElementReadyEvent,
+  ) => {
+    setHasExpressMethods(Boolean(event.availablePaymentMethods));
+  };
+
   const disabled = !stripe || !elements || isSubmitting || isVerifying;
 
   return (
     <div className="space-y-3">
+      <div style={{ display: hasExpressMethods ? "block" : "none" }}>
+        <ExpressCheckoutElement
+          options={{
+            buttonHeight: 48,
+            buttonTheme: { applePay: "black", googlePay: "black" },
+            buttonType: { applePay: "plain", googlePay: "pay" },
+            layout: { maxColumns: 1, maxRows: 2, overflow: "auto" },
+            lineItems: [
+              {
+                name: "Yobody By JJ Smith",
+                amount: Math.round(Number(amount) * 100),
+              },
+            ],
+            paymentMethods: {
+              applePay: "auto",
+              googlePay: "auto",
+              link: "auto",
+              klarna: "auto",
+            },
+          }}
+          onReady={handleExpressReady}
+          onConfirm={handleConfirm}
+        />
+        {hasExpressMethods ? <div className="chk-pay-or">or pay with card</div> : null}
+      </div>
       <PaymentElement options={paymentElementOptions} />
-      <AddressElement
-        options={{
-          mode: "billing",
-          defaultValues: { name: nameOnCard || undefined },
-          fields: { phone: "never" },
-          display: { name: "full" },
-        }}
-      />
       <div className="chk-actions">
         <button
           type="button"

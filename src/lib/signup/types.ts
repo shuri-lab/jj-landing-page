@@ -1,12 +1,6 @@
 export type SignupBillingInterval = "MONTHLY" | "MULTI_MONTH" | "FULL_PROGRAM";
 
-export type CheckoutCardStep =
-  | "contact"
-  | "payment"
-  | "password"
-  | "phone"
-  | "verify"
-  | "success";
+export type CheckoutCardStep = "contact" | "payment" | "success";
 
 export type OfferPlanId = "monthly" | "quarter";
 

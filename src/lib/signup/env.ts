@@ -40,12 +40,29 @@ export function envMetaPixelId(): string {
   return (import.meta.env.VITE_META_PIXEL_ID ?? "920675803850327").trim();
 }
 
+function sameHostFallback(fromEnv: string, loopbackFallback: string, prodFallback: string): string {
+  if (typeof window === "undefined") return fromEnv;
+  try {
+    const envHost = new URL(fromEnv, window.location.origin).hostname;
+    if (envHost === window.location.hostname) {
+      return isLoopbackHost(window.location.hostname) ? loopbackFallback : prodFallback;
+    }
+  } catch {
+    /* ignore */
+  }
+  return fromEnv;
+}
+
 export function envYobodySignupUrl(): string {
-  return (import.meta.env.VITE_YOBODY_SIGNUP_URL ?? "https://app.yobody.ai/signup").replace(/\/$/, "");
+  const prod = "https://app.yobody.ai/signup";
+  const fromEnv = (import.meta.env.VITE_YOBODY_SIGNUP_URL ?? prod).replace(/\/$/, "");
+  return sameHostFallback(fromEnv, "http://localhost:3000/signup", prod);
 }
 
 export function envYobodyAuthUrl(): string {
-  return (import.meta.env.VITE_YOBODY_AUTH_URL ?? "https://app.yobody.ai/auth").replace(/\/$/, "");
+  const prod = "https://app.yobody.ai/auth";
+  const fromEnv = (import.meta.env.VITE_YOBODY_AUTH_URL ?? prod).replace(/\/$/, "");
+  return sameHostFallback(fromEnv, "http://localhost:3000/auth", prod);
 }
 
 export function envMetaPixelDebug(): boolean {
