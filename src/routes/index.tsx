@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
-import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
+import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
+import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
+import { OFFER_PLANS } from "@/lib/signup/plans";
+import { readLandingPrefill } from "@/lib/signup/attribution";
+import { trackSelectPlan } from "@/lib/signup/tracking";
+import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
@@ -73,12 +78,12 @@ function ShieldCheck({ className = "" }: { className?: string }) {
 
 const scroll = () => scrollToOffer();
 
-function Cta({ label = "Start today", sub, href, full = false, onDark = false }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean }) {
+function Cta({ label = "Start today", sub, href, full = false, onDark = false, onClick, position, tier = "standard" }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean; onClick?: () => void; position?: string; tier?: string }) {
   const cls = `ly-cta ly-cta-lg ${full ? "ly-cta-full" : ""}`;
   const inner = <>{label}<span className="ly-cta-arw" aria-hidden>→</span></>;
   const btn = href
-    ? <a href={href} className={cls} data-cta="yes-jj">{inner}</a>
-    : <button className={cls} onClick={scroll} data-cta="yes-jj">{inner}</button>;
+    ? <a href={href} className={cls} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</a>
+    : <button className={cls} onClick={onClick ?? scroll} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</button>;
   if (!sub) return btn;
   return <div className="ly-cta-wrap">{btn}<p className={`ly-cta-sub ${onDark ? "on-dark" : ""}`}>{sub}</p></div>;
 }
@@ -409,18 +414,45 @@ const VALUE_STACK: { label: string; value: number; note?: string }[] = [
   { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you meal plan, built around the food you love", value: 300 },
-  { label: "A plan made for your body and your life", value: 200 },
   { label: "Grocery lists that save you up to $75 a month", value: 150 },
-  { label: "The Recipe Vault", value: 97 },
   { label: "The Circle of Women", value: 200 },
 ];
 
 function Pricing() {
-  const { premium: basic } = useCoachPrograms();
+  const { premium: program } = useCoachPrograms();
+  const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
+  const openedFromUrl = useRef(false);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
-  // 3-month prepay maps to the full-program (pay-up-front) billing interval
-  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM") : "/checkout";
+
+  const choosePlan = (id: "monthly" | "quarter") => {
+    const plan = OFFER_PLANS[id];
+    setSelectedPlan(plan);
+    trackSelectPlan({
+      billing_interval: plan.billingInterval,
+      button_position: plan.buttonPosition,
+      cta_text: plan.ctaLabel,
+      tier: (program?.pricingTier || "standard").toLowerCase(),
+      content_id: program?.id,
+      value: plan.price,
+      currency: "USD",
+      coach_program_config_id: program?.id,
+    });
+  };
+
+  useEffect(() => {
+    if (openedFromUrl.current) return;
+    const fromUrl = readLandingPrefill().plan;
+    if (!fromUrl) return;
+    openedFromUrl.current = true;
+    choosePlan(fromUrl);
+  }, [program]);
+
+  useEffect(() => {
+    if (!selectedPlan) return;
+    const el = document.getElementById("checkout-card");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [selectedPlan]);
+
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
@@ -429,7 +461,7 @@ function Pricing() {
         <p className="ly-lead ly-soft ly-mt ly-narrow">Less than a coffee ☕. A price with no excuse left in it, and a guarantee with no risk in it.</p>
 
         <div className="ly-stack">
-          <p className="ly-stack-h">Everything included when you join:</p>
+          <p className="ly-stack-h">Everything included:</p>
           <ul className="ly-stack-list">
             {VALUE_STACK.map((it) => (
               <li key={it.label}>
@@ -443,7 +475,7 @@ function Pricing() {
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
             <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} href={monthlyHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} full onClick={() => choosePlan("monthly")} position="offer-monthly" /></div>
           </div>
 
           <div className="ly-or"><span>or</span></div>
@@ -452,11 +484,19 @@ function Pricing() {
             <span className="ly-deal2-badge">Best value · save ${QUARTER_SAVE}</span>
             <div className="ly-deal2-now"><s>${QUARTER_MONTHLY_EQUIV}</s><span className="ly-deal2-num">${QUARTER_PRICE}</span><span className="ly-deal2-per">for 3 months</span></div>
             <p className="ly-stack-note">Pay once · that's just $1.41 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} href={quarterHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} full onClick={() => choosePlan("quarter")} position="offer-quarter" /></div>
           </div>
 
           <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
         </div>
+
+        {selectedPlan ? (
+          <SignupCheckoutCard
+            key={selectedPlan.id}
+            plan={selectedPlan}
+            onChangePlan={() => setSelectedPlan(null)}
+          />
+        ) : null}
       </div>
     </section>
   );
@@ -745,9 +785,11 @@ const CSS = `
 .ly-stack-list li{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;padding:12px 0;border-bottom:1px dashed var(--hair);font-size:15.5px;font-weight:500}
 .ly-stack-name{display:flex;gap:10px;align-items:flex-start;line-height:1.4}
 .ly-stack-tick{width:22px;height:22px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
-.ly-stack-val{flex:0 0 auto;color:var(--ink-soft);text-decoration:line-through;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-val{flex:0 0 auto;position:relative;display:inline-block;color:var(--ink-soft);text-decoration:none;font-weight:700;font-family:var(--head);font-size:15px}
+.ly-stack-val::after{content:"";position:absolute;left:-6%;right:-6%;top:50%;height:2px;background:#E23B3B;transform:translateY(-50%) rotate(-12deg);border-radius:3px}
 .ly-stack-total{display:flex;justify-content:space-between;align-items:center;background:var(--lav);border-radius:12px;padding:13px 16px;margin-top:14px;font-family:var(--head);font-weight:800;font-size:16px}
-.ly-stack-total-v{color:var(--ink-soft);text-decoration:line-through;font-size:20px}
+.ly-stack-total-v{position:relative;display:inline-block;color:var(--ink-soft);text-decoration:none;font-size:20px}
+.ly-stack-total-v::after{content:"";position:absolute;left:-6%;right:-6%;top:50%;height:2px;background:#E23B3B;transform:translateY(-50%) rotate(-12deg);border-radius:3px}
 .ly-stack-deal{position:relative;margin-top:18px;border:2px solid var(--purple);border-radius:16px;background:linear-gradient(165deg,#FFF,#F7ECFB);padding:26px 18px 20px;text-align:center}
 .ly-stack-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:13.5px;letter-spacing:.05em;text-transform:uppercase;padding:8px 20px;border-radius:999px;white-space:nowrap;box-shadow:0 10px 22px -10px rgba(91,42,128,.6)}
 .ly-stack-badge s{color:#fff;text-decoration:line-through;opacity:.75}

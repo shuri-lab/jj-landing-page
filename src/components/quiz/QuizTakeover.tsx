@@ -23,7 +23,8 @@ import {
   Shuffle,
 } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
+import { useCoachPrograms } from "@/lib/coach-programs";
+import { buildLandingOfferUrl } from "@/lib/signup/attribution";
 import jjAvatar from "@/assets/landing/jj-selfie-sun.jpg";
 import t9 from "@/assets/landing/transformation-9.jpg";
 import t12 from "@/assets/landing/transformation-12.jpg";
@@ -186,19 +187,21 @@ export default function QuizTakeover({ open, onClose }: { open: boolean; onClose
   const goToCheckout = (billing: "MONTHLY" | "FULL_PROGRAM" = "MONTHLY") => {
     const r = resolve(state);
     track("checkout_start", { primary: r.primary });
-    const params = new URLSearchParams();
-    params.set("firstName", state.name?.trim() ?? "");
-    params.set("email", state.email?.trim() ?? "");
-    params.set("goal", state.goal ?? "");
-    params.set("why", state.why ?? "");
-    params.set("primary", r.primary);
-    params.set("paymentOption", billing === "FULL_PROGRAM" ? "pay_in_full" : "monthly");
-    params.set("utm_source", "quiz-belly-after-40");
-    params.set("version", "quiz01");
-    const url = basic
-      ? `${signupUrl(basic.id, billing)}&${params.toString()}`
-      : `/checkout?${params.toString()}`;
-    if (typeof window !== "undefined") window.location.href = url;
+    if (typeof window !== "undefined") {
+      window.location.href = buildLandingOfferUrl({
+        email: state.email ?? undefined,
+        firstName: state.name ?? undefined,
+        plan: billing === "FULL_PROGRAM" ? "quarter" : "monthly",
+        extras: {
+          goal: state.goal ?? undefined,
+          why: state.why ?? undefined,
+          primary: r.primary,
+          paymentOption: billing === "FULL_PROGRAM" ? "pay_in_full" : "monthly",
+          utm_source: "quiz-belly-after-40",
+          version: "quiz01",
+        },
+      });
+    }
   };
 
   if (!open) return null;

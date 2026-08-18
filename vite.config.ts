@@ -40,5 +40,21 @@ export default defineConfig({
         },
       },
     },
+    server: {
+      proxy: {
+        "/public/landing": {
+          target: process.env.VITE_API_URL || "http://localhost:4000",
+          changeOrigin: true,
+        },
+      },
+    },
+    preview: {
+      proxy: {
+        "/public/landing": {
+          target: process.env.VITE_API_URL || "http://localhost:4000",
+          changeOrigin: true,
+        },
+      },
+    },
   },
 });
