@@ -30,6 +30,7 @@ import { Route as NoVideoRouteImport } from './routes/no-video'
 import { Route as QrRouteImport } from './routes/qr'
 import { Route as QrARouteImport } from './routes/qr-a'
 import { Route as QrBRouteImport } from './routes/qr-b'
+import { Route as QrManychatRouteImport } from './routes/qr-manychat'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as QuizV2RouteImport } from './routes/quiz-v2'
 import { Route as QuizV3RouteImport } from './routes/quiz-v3'
@@ -141,6 +142,11 @@ const QrBRoute = QrBRouteImport.update({
   path: '/qr-b',
   getParentRoute: () => rootRouteImport,
 } as any)
+const QrManychatRoute = QrManychatRouteImport.update({
+  id: '/qr-manychat',
+  path: '/qr-manychat',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const QuizRoute = QuizRouteImport.update({
   id: '/quiz',
   path: '/quiz',
@@ -189,6 +195,7 @@ export interface FileRoutesByFullPath {
   '/qr': typeof QrRoute
   '/qr-a': typeof QrARoute
   '/qr-b': typeof QrBRoute
+  '/qr-manychat': typeof QrManychatRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -217,6 +224,7 @@ export interface FileRoutesByTo {
   '/qr': typeof QrRoute
   '/qr-a': typeof QrARoute
   '/qr-b': typeof QrBRoute
+  '/qr-manychat': typeof QrManychatRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -246,6 +254,7 @@ export interface FileRoutesById {
   '/qr': typeof QrRoute
   '/qr-a': typeof QrARoute
   '/qr-b': typeof QrBRoute
+  '/qr-manychat': typeof QrManychatRoute
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
@@ -276,6 +285,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/qr-a'
     | '/qr-b'
+    | '/qr-manychat'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -304,6 +314,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/qr-a'
     | '/qr-b'
+    | '/qr-manychat'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -332,6 +343,7 @@ export interface FileRouteTypes {
     | '/qr'
     | '/qr-a'
     | '/qr-b'
+    | '/qr-manychat'
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
@@ -361,6 +373,7 @@ export interface RootRouteChildren {
   QrRoute: typeof QrRoute
   QrARoute: typeof QrARoute
   QrBRoute: typeof QrBRoute
+  QrManychatRoute: typeof QrManychatRoute
   QuizRoute: typeof QuizRoute
   QuizV2Route: typeof QuizV2Route
   QuizV3Route: typeof QuizV3Route
@@ -517,6 +530,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QrBRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/qr-manychat': {
+      id: '/qr-manychat'
+      path: '/qr-manychat'
+      fullPath: '/qr-manychat'
+      preLoaderRoute: typeof QrManychatRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/quiz': {
       id: '/quiz'
       path: '/quiz'
@@ -577,6 +597,7 @@ const rootRouteChildren: RootRouteChildren = {
   QrRoute: QrRoute,
   QrARoute: QrARoute,
   QrBRoute: QrBRoute,
+  QrManychatRoute: QrManychatRoute,
   QuizRoute: QuizRoute,
   QuizV2Route: QuizV2Route,
   QuizV3Route: QuizV3Route,

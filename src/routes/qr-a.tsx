@@ -1,8 +1,13 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
-import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
-import { useCoachPrograms, signupUrl } from "@/lib/coach-programs";
+import { useEffect, useRef, useState } from "react";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, HeartHandshake } from "lucide-react";
+import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
+import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
+import { OFFER_PLANS } from "@/lib/signup/plans";
+import { readLandingPrefill } from "@/lib/signup/attribution";
+import { trackSelectPlan } from "@/lib/signup/tracking";
+import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
@@ -17,6 +22,13 @@ import resetPlanImage from "@/assets/landing/reset-plan.png";
 import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
 import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
+import greenBottle from "@/assets/landing/supplements/green-smoothie-gummies-bottle.png";
+import bsfBottle from "@/assets/landing/supplements/blood-sugar-focus-bottle.png";
+import tummyBottle from "@/assets/landing/supplements/tummy-focus-bottle.png";
+import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
+import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
+import whyEveryMonday from "@/assets/landing/why-every-monday.jpg";
+import whyOnYourOwn from "@/assets/landing/why-on-your-own.jpg";
 import jjBefore1 from "@/assets/landing/jj-before-1.png";
 import jjBefore2 from "@/assets/landing/jj-before-2.png";
 import jjAfter1 from "@/assets/landing/jj-after-1.png";
@@ -40,6 +52,9 @@ import partnerNyTimes from "@/assets/landing/partners/nytimes.png";
 import partnerWomansWorld from "@/assets/landing/partners/womansworld.png";
 
 export const Route = createFileRoute("/qr-a")({
+  validateSearch: (search: Record<string, unknown>): { supplement?: string } => ({
+    supplement: typeof search.supplement === "string" ? search.supplement : undefined,
+  }),
   head: () => ({
     meta: [
       { title: "1-on-1 Coaching with JJ Smith + Your Next Bottle Free" },
@@ -63,6 +78,18 @@ const QUARTER_MONTHLY_EQUIV = MEMBER_PRICE * 3; // 141
 const QUARTER_SAVE = QUARTER_MONTHLY_EQUIV - QUARTER_PRICE; // 14
 const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
 
+// Bottle shown in the hero + value stack, driven by the supplement picked on /qr.
+const SUPPLEMENT_BOTTLES: Record<string, { name: string; img: string }> = {
+  "liver-focus": { name: "Liver Focus", img: liverFocus },
+  "green-smoothie-gummies": { name: "Green Smoothie Gummies", img: greenBottle },
+  "blood-sugar-focus": { name: "Blood Sugar Focus", img: bsfBottle },
+  "tummy-focus": { name: "Tummy Focus", img: tummyBottle },
+};
+function useChosenBottle() {
+  const { supplement } = Route.useSearch();
+  return SUPPLEMENT_BOTTLES[supplement ?? ""] ?? SUPPLEMENT_BOTTLES["liver-focus"];
+}
+
 // ── highlight + icon helpers ─────────────────────────────────────────────────
 function Mark({ children }: { children: React.ReactNode }) { return <span className="ly-mark">{children}</span>; }
 function Hi({ children }: { children: React.ReactNode }) { return <span className="ly-hi">{children}</span>; }
@@ -75,12 +102,12 @@ function ShieldCheck({ className = "" }: { className?: string }) {
 
 const scroll = () => scrollToOffer();
 
-function Cta({ label = "Start today", sub, href, full = false, onDark = false }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean }) {
+function Cta({ label = "Start today", sub, href, full = false, onDark = false, onClick, position, tier = "standard" }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean; onClick?: () => void; position?: string; tier?: string }) {
   const cls = `ly-cta ly-cta-lg ${full ? "ly-cta-full" : ""}`;
   const inner = <>{label}<span className="ly-cta-arw" aria-hidden>→</span></>;
   const btn = href
-    ? <a href={href} className={cls} data-cta="yes-jj">{inner}</a>
-    : <button className={cls} onClick={scroll} data-cta="yes-jj">{inner}</button>;
+    ? <a href={href} className={cls} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</a>
+    : <button className={cls} onClick={onClick ?? scroll} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</button>;
   if (!sub) return btn;
   return <div className="ly-cta-wrap">{btn}<p className={`ly-cta-sub ${onDark ? "on-dark" : ""}`}>{sub}</p></div>;
 }
@@ -157,6 +184,7 @@ function Header() {
 
 // ── hero (offer) ─────────────────────────────────────────────────────────────
 function Hero() {
+  const bottle = useChosenBottle();
   const bullets = [
     <>A plan built around the food you love.</>,
     <>Two 1-on-1 calls a week, and daily texts.</>,
@@ -181,7 +209,7 @@ function Hero() {
               <span className="ly-hom-tag"><s>$34.95</s></span>
               <span className="ly-hom-free">Free</span>
             </div>
-            <img src={liverFocus} alt="Liver Focus bottle" />
+            <img src={bottle.img} alt={`${bottle.name} bottle`} />
           </div>
         </div>
 
@@ -271,10 +299,10 @@ function Story() {
         </div>
         <div className="ly-story-copy">
           <h2 className="ly-h2 on-dark">My body turned on me, <Hi>too.</Hi></h2>
-          <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. The weight came out of nowhere, I was exhausted and foggy, and some mornings I did not recognize the woman in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
-          <p className="ly-story-quote">"The advice was always eat less, move more. Nobody warned me my body had changed, and those old rules would never work for me again."</p>
-          <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy came roaring back,</strong> and in my 40s I felt better than I had at 30.</p>
-          <p className="ly-lead on-dark-soft ly-mt-s">The books I wrote became bestsellers, and hundreds of thousands of women have used them to get themselves back. But what I hold onto is simpler. It is the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
+          <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. Weight from nowhere, exhausted, foggy, a stranger in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
+          <p className="ly-story-quote">"Eat less, move more. Nobody warned me my body had changed, and those old rules would never work again."</p>
+          <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy roared back,</strong> and in my 40s I felt better than at 30.</p>
+          <p className="ly-lead on-dark-soft ly-mt-s">My books became bestsellers, and hundreds of thousands of women used them to get themselves back. But what I hold onto is simpler: the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
           <div className="ly-mt-l"><Cta label="Start with me today" sub={CTA_SUB} onDark /></div>
         </div>
       </div>
@@ -284,24 +312,25 @@ function Story() {
 
 // ── why nothing has worked ───────────────────────────────────────────────────
 function WhyNothing() {
-  const cards = [
-    { Icon: UtensilsCrossed, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
-    { Icon: Dumbbell, title: "You can't out-train your plate.", text: <>All those workouts, and the scale barely moves. <strong>What you eat matters far more than what you burn,</strong> and grinding harder only leaves you hungrier.</> },
-    { Icon: CalendarDays, title: "Every Monday is day one again.", text: <>You start strong. <strong>By Wednesday, you are back.</strong> You have started over more times than you can count, and you are tired of it.</> },
-    { Icon: HeartCrack, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
+  const cards: { title: string; text: React.ReactNode; img: string }[] = [
+    { img: whyEatingLess, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
+    { img: whyOutTrain, title: "You can't out-train your plate.", text: <>All those workouts, and the scale barely moves. <strong>What you eat matters far more than what you burn,</strong> and grinding harder only leaves you hungrier.</> },
+    { img: whyEveryMonday, title: "Every Monday is day one again.", text: <>You start strong. <strong>By Wednesday, you are back.</strong> You have started over more times than you can count, and you are tired of it.</> },
+    { img: whyOnYourOwn, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
   ];
   return (
     <section className="ly-band ly-white">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Why nothing has worked</span>
-        <h2 className="ly-h2">Sound <Hi>familiar?</Hi></h2>
-        <p className="ly-lead ly-soft ly-mt ly-narrow">You have tried everything. Here is why none of it stuck.</p>
+        <h2 className="ly-h2 ly-h2-sound">Sound <Hi>familiar?</Hi></h2>
         <div className="ly-rcards">
-          {cards.map(({ Icon, title, text }) => (
+          {cards.map(({ img, title, text }) => (
             <div className="ly-rcard" key={title}>
-              <span className="ly-rcard-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
-              <h3 className="ly-h3">{title}</h3>
-              <p className="ly-rcard-t">{text}</p>
+              <div className="ly-rcard-media"><img src={img} alt={title} loading="lazy" /></div>
+              <div className="ly-rcard-in">
+                <h3 className="ly-h3">{title}</h3>
+                <p className="ly-rcard-t">{text}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -423,11 +452,41 @@ const VALUE_STACK: { label: string; value: number; note?: string }[] = [
 ];
 
 function Pricing() {
-  const { premium: basic } = useCoachPrograms();
+  const { premium: program } = useCoachPrograms();
+  const bottle = useChosenBottle();
+  const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
+  const openedFromUrl = useRef(false);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0) + BOTTLE_VALUE;
-  const monthlyHref = basic ? signupUrl(basic.id, "MONTHLY") : "/checkout";
-  // 3-month prepay maps to the full-program (pay-up-front) billing interval
-  const quarterHref = basic ? signupUrl(basic.id, "FULL_PROGRAM") : "/checkout";
+
+  const choosePlan = (id: "monthly" | "quarter") => {
+    const plan = OFFER_PLANS[id];
+    setSelectedPlan(plan);
+    trackSelectPlan({
+      billing_interval: plan.billingInterval,
+      button_position: plan.buttonPosition,
+      cta_text: plan.ctaLabel,
+      tier: (program?.pricingTier || "standard").toLowerCase(),
+      content_id: program?.id,
+      value: plan.price,
+      currency: "USD",
+      coach_program_config_id: program?.id,
+    });
+  };
+
+  useEffect(() => {
+    if (openedFromUrl.current) return;
+    const fromUrl = readLandingPrefill().plan;
+    if (!fromUrl) return;
+    openedFromUrl.current = true;
+    choosePlan(fromUrl);
+  }, [program]);
+
+  useEffect(() => {
+    if (!selectedPlan) return;
+    const el = document.getElementById("checkout-card");
+    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [selectedPlan]);
+
   return (
     <section id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
@@ -446,9 +505,9 @@ function Pricing() {
             ))}
           </ul>
           <div className="ly-stack-bump">
-            <img src={liverFocus} className="ly-stack-bump-img" alt="Liver Focus bottle" loading="lazy" />
+            <img src={bottle.img} className="ly-stack-bump-img" alt={`${bottle.name} bottle`} loading="lazy" />
             <div className="ly-stack-bump-txt">
-              <strong>Your next Liver Focus bottle</strong>
+              <strong>Your next {bottle.name} bottle</strong>
               <span>Yours free when you join today</span>
             </div>
             <div className="ly-stack-bump-price">
@@ -461,7 +520,7 @@ function Pricing() {
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
             <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} href={monthlyHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} full onClick={() => choosePlan("monthly")} position="offer-monthly" /></div>
           </div>
 
           <div className="ly-or"><span>or</span></div>
@@ -470,11 +529,19 @@ function Pricing() {
             <span className="ly-deal2-badge">Best value · save ${QUARTER_SAVE}</span>
             <div className="ly-deal2-now"><s>${QUARTER_MONTHLY_EQUIV}</s><span className="ly-deal2-num">${QUARTER_PRICE}</span><span className="ly-deal2-per">for 3 months</span></div>
             <p className="ly-stack-note">Pay once · that's just $1.41 a day</p>
-            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} href={quarterHref} full /></div>
+            <div className="ly-mt-s"><Cta label={`Start today · $${QUARTER_PRICE} for 3 months`} full onClick={() => choosePlan("quarter")} position="offer-quarter" /></div>
           </div>
 
           <p className="ly-stack-trust"><ShieldCheck className="ly-ico-14" /> 14-day money-back guarantee · zero risk · cancel anytime</p>
         </div>
+
+        {selectedPlan ? (
+          <SignupCheckoutCard
+            key={selectedPlan.id}
+            plan={selectedPlan}
+            onChangePlan={() => setSelectedPlan(null)}
+          />
+        ) : null}
       </div>
     </section>
   );
@@ -743,10 +810,12 @@ const CSS = `
 
 /* why nothing (reason cards + callout) */
 .ly-rcards{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
-.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;padding:24px;box-shadow:var(--shadow-sm)}
-.ly-rcard-ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:15px;background:var(--purple-soft);color:var(--purple);margin-bottom:16px}
-.ly-rcard-ico svg{width:26px;height:26px}
+.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.ly-rcard-media{aspect-ratio:4/3;overflow:hidden;background:var(--purple-soft)}
+.ly-rcard-media img{width:100%;height:100%;object-fit:cover;display:block}
+.ly-rcard-in{padding:20px 22px 24px}
 .ly-rcard-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+@media (max-width:560px){ .ly-h2-sound{font-size:36px} }
 .ly-callout{margin-top:26px;background:var(--grad);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow)}
 .ly-callout p{margin:0;font-family:var(--head);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.35;color:#fff;max-width:780px;margin:0 auto}
 .ly-callout strong{color:#F6C9E4}
