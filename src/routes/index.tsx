@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Dumbbell, CalendarDays, HeartCrack, HeartHandshake } from "lucide-react";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, HeartHandshake } from "lucide-react";
 import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
@@ -22,6 +22,10 @@ import resetPlanImage from "@/assets/landing/reset-plan.png";
 import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
 import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
+import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
+import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
+import whyEveryMonday from "@/assets/landing/why-every-monday.jpg";
+import whyOnYourOwn from "@/assets/landing/why-on-your-own.jpg";
 import jjBefore1 from "@/assets/landing/jj-before-1.png";
 import jjBefore2 from "@/assets/landing/jj-before-2.png";
 import jjAfter1 from "@/assets/landing/jj-after-1.png";
@@ -267,10 +271,10 @@ function Story() {
         </div>
         <div className="ly-story-copy">
           <h2 className="ly-h2 on-dark">My body turned on me, <Hi>too.</Hi></h2>
-          <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. The weight came out of nowhere, I was exhausted and foggy, and some mornings I did not recognize the woman in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
-          <p className="ly-story-quote">"The advice was always eat less, move more. Nobody warned me my body had changed, and those old rules would never work for me again."</p>
-          <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy came roaring back,</strong> and in my 40s I felt better than I had at 30.</p>
-          <p className="ly-lead on-dark-soft ly-mt-s">The books I wrote became bestsellers, and hundreds of thousands of women have used them to get themselves back. But what I hold onto is simpler. It is the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
+          <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. Weight from nowhere, exhausted, foggy, a stranger in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
+          <p className="ly-story-quote">"Eat less, move more. Nobody warned me my body had changed, and those old rules would never work again."</p>
+          <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy roared back,</strong> and in my 40s I felt better than at 30.</p>
+          <p className="ly-lead on-dark-soft ly-mt-s">My books became bestsellers, and hundreds of thousands of women used them to get themselves back. But what I hold onto is simpler: the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
           <div className="ly-mt-l"><Cta label="Start with me today" sub={CTA_SUB} onDark /></div>
         </div>
       </div>
@@ -280,24 +284,25 @@ function Story() {
 
 // ── why nothing has worked ───────────────────────────────────────────────────
 function WhyNothing() {
-  const cards = [
-    { Icon: UtensilsCrossed, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
-    { Icon: Dumbbell, title: "You can't out-train your plate.", text: <>All those workouts, and the scale barely moves. <strong>What you eat matters far more than what you burn,</strong> and grinding harder only leaves you hungrier.</> },
-    { Icon: CalendarDays, title: "Every Monday is day one again.", text: <>You start strong. <strong>By Wednesday, you are back.</strong> You have started over more times than you can count, and you are tired of it.</> },
-    { Icon: HeartCrack, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
+  const cards: { title: string; text: React.ReactNode; img: string }[] = [
+    { img: whyEatingLess, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
+    { img: whyOutTrain, title: "You can't out-train your plate.", text: <>All those workouts, and the scale barely moves. <strong>What you eat matters far more than what you burn,</strong> and grinding harder only leaves you hungrier.</> },
+    { img: whyEveryMonday, title: "Every Monday is day one again.", text: <>You start strong. <strong>By Wednesday, you are back.</strong> You have started over more times than you can count, and you are tired of it.</> },
+    { img: whyOnYourOwn, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
   ];
   return (
     <section className="ly-band ly-white">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Why nothing has worked</span>
-        <h2 className="ly-h2">Sound <Hi>familiar?</Hi></h2>
-        <p className="ly-lead ly-soft ly-mt ly-narrow">You have tried everything. Here is why none of it stuck.</p>
+        <h2 className="ly-h2 ly-h2-sound">Sound <Hi>familiar?</Hi></h2>
         <div className="ly-rcards">
-          {cards.map(({ Icon, title, text }) => (
+          {cards.map(({ img, title, text }) => (
             <div className="ly-rcard" key={title}>
-              <span className="ly-rcard-ico"><Icon className="ly-ico-24" strokeWidth={2} /></span>
-              <h3 className="ly-h3">{title}</h3>
-              <p className="ly-rcard-t">{text}</p>
+              <div className="ly-rcard-media"><img src={img} alt={title} loading="lazy" /></div>
+              <div className="ly-rcard-in">
+                <h3 className="ly-h3">{title}</h3>
+                <p className="ly-rcard-t">{text}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -679,7 +684,7 @@ const CSS = `
 .ly-header-in{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
 .ly-logo{height:24px;width:auto}
 .ly-header-cta{background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:14px;border:0;border-radius:12px;padding:11px 20px;box-shadow:0 10px 22px -10px rgba(91,42,128,.5)}
-@media (max-width:560px){ .ly-header-cta{display:none} .ly-header-in{justify-content:center} }
+@media (max-width:560px){ .ly-header-cta{display:none} .ly-header-in{justify-content:center} .ly-h2-sound{font-size:36px} }
 
 /* hero */
 .ly-hero{background:linear-gradient(180deg,#FAF1FB 0%,#F4EBFB 100%);padding:0}
@@ -740,9 +745,10 @@ const CSS = `
 
 /* why nothing (reason cards + callout) */
 .ly-rcards{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
-.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;padding:24px;box-shadow:var(--shadow-sm)}
-.ly-rcard-ico{display:flex;align-items:center;justify-content:center;width:52px;height:52px;border-radius:15px;background:var(--purple-soft);color:var(--purple);margin-bottom:16px}
-.ly-rcard-ico svg{width:26px;height:26px}
+.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.ly-rcard-media{aspect-ratio:4/3;overflow:hidden;background:var(--purple-soft)}
+.ly-rcard-media img{width:100%;height:100%;object-fit:cover;display:block}
+.ly-rcard-in{padding:20px 22px 24px}
 .ly-rcard-t{margin:9px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
 .ly-callout{margin-top:26px;background:var(--grad);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow)}
 .ly-callout p{margin:0;font-family:var(--head);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.35;color:#fff;max-width:780px;margin:0 auto}
