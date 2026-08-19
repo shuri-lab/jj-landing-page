@@ -70,8 +70,6 @@ export const Route = createFileRoute("/qr-a")({
 
 const MEMBER_PRICE = 47;
 const MEMBER_WAS = 77;
-const OFFER_TOTAL = "111.95"; // program value + free bottle
-const BOTTLE_VALUE = 34.95;
 // 3-month prepay option: $127 up front vs $47/mo (= $141 over 3 months) → save $14, ~$1.41/day
 const QUARTER_PRICE = 127;
 const QUARTER_MONTHLY_EQUIV = MEMBER_PRICE * 3; // 141
@@ -79,11 +77,11 @@ const QUARTER_SAVE = QUARTER_MONTHLY_EQUIV - QUARTER_PRICE; // 14
 const CTA_SUB = "Only $1.57/day · 14-day money back guarantee";
 
 // Bottle shown in the hero + value stack, driven by the supplement picked on /qr.
-const SUPPLEMENT_BOTTLES: Record<string, { name: string; img: string }> = {
-  "liver-focus": { name: "Liver Focus", img: liverFocus },
-  "green-smoothie-gummies": { name: "Green Smoothie Gummies", img: greenBottle },
-  "blood-sugar-focus": { name: "Blood Sugar Focus", img: bsfBottle },
-  "tummy-focus": { name: "Tummy Focus", img: tummyBottle },
+const SUPPLEMENT_BOTTLES: Record<string, { name: string; img: string; price: number }> = {
+  "liver-focus": { name: "Liver Focus", img: liverFocus, price: 34.95 },
+  "green-smoothie-gummies": { name: "Green Smoothie Gummies", img: greenBottle, price: 25.99 },
+  "blood-sugar-focus": { name: "Blood Sugar Focus", img: bsfBottle, price: 33.99 },
+  "tummy-focus": { name: "Tummy Focus", img: tummyBottle, price: 25.99 },
 };
 function useChosenBottle() {
   const { supplement } = Route.useSearch();
@@ -206,7 +204,7 @@ function Hero() {
           <span className="ly-hom-tag ly-hom-tag-plan"><s>$77</s></span>
           <div className="ly-hom-bottle">
             <div className="ly-hom-bottle-tags">
-              <span className="ly-hom-tag"><s>$34.95</s></span>
+              <span className="ly-hom-tag"><s>{`$${bottle.price.toFixed(2)}`}</s></span>
               <span className="ly-hom-free">Free</span>
             </div>
             <img src={bottle.img} alt={`${bottle.name} bottle`} />
@@ -215,7 +213,7 @@ function Hero() {
 
         <div className="ly-hoa-bottom">
           <div className="ly-hero-deal">
-            <span className="ly-hd-value">Total value <s>${OFFER_TOTAL}</s></span>
+            <span className="ly-hd-value">Total value <s>${(MEMBER_WAS + bottle.price).toFixed(2)}</s></span>
             <span className="ly-hd-now">Join today for just <b>${MEMBER_PRICE}</b></span>
           </div>
           <div className="ly-hero-action"><Cta label="Start today" sub={CTA_SUB} full /></div>
@@ -456,7 +454,7 @@ function Pricing() {
   const bottle = useChosenBottle();
   const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
   const openedFromUrl = useRef(false);
-  const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0) + BOTTLE_VALUE;
+  const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0) + bottle.price;
 
   const choosePlan = (id: "monthly" | "quarter") => {
     const plan = OFFER_PLANS[id];
@@ -512,7 +510,7 @@ function Pricing() {
             </div>
             <div className="ly-stack-bump-price">
               <span className="ly-stack-bump-free">Free</span>
-              <s>${BOTTLE_VALUE}</s>
+              <s>${bottle.price.toFixed(2)}</s>
             </div>
           </div>
           <div className="ly-stack-total"><span>Total Value</span><span className="ly-stack-total-v">${totalValue.toLocaleString()}+</span></div>
