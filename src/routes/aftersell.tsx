@@ -24,8 +24,8 @@ const SAVE = WAS - NOW;
 const INCLUDED: { Icon: React.ComponentType<{ className?: string }>; text: React.ReactNode }[] = [
   { Icon: Phone, text: <><strong>Two 1-on-1 coaching calls a week with JJ&rsquo;s AI Twin</strong> — my exact voice, personality, and coaching.</> },
   { Icon: MessageCircle, text: <><strong>Daily texts to keep you on track</strong> — so you never fall off, even on the hard days.</> },
-  { Icon: Zap, text: <><strong>Your reset plan</strong> — built to drop up to 15 lbs in your first 2 weeks.</> },
   { Icon: UtensilsCrossed, text: <><strong>A meal plan around the food you love</strong> — no starving, no bland &ldquo;diet food.&rdquo;</> },
+  { Icon: Zap, text: <><strong>Your jumpstart plan</strong> — built to drop up to 15 lbs in your first 2 weeks.</> },
   { Icon: Users, text: <><strong>The Circle of Women</strong> losing the weight right alongside you.</> },
 ];
 
