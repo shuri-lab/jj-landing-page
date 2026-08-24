@@ -87,8 +87,6 @@ function Aftersell() {
 
             <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 30 days</span>, and we keep going together, with food you actually love, until every last pound is gone.</p>
 
-            <p className="ups-desc">Picture a few weeks from now: eating food you actually love, your clothes fitting looser, and the scale finally moving.</p>
-
             <div className="ups-incl-h">Here&rsquo;s everything you get:</div>
             <ul className="ups-incl">
               {INCLUDED.map((it, i) => (
