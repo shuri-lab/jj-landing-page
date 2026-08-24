@@ -35,6 +35,7 @@ import { Route as QrSupplementsRouteImport } from './routes/qr-supplements'
 import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as QuizV2RouteImport } from './routes/quiz-v2'
 import { Route as QuizV3RouteImport } from './routes/quiz-v3'
+import { Route as V2RouteImport } from './routes/v2'
 import { Route as VapiDemoRouteImport } from './routes/vapi-demo'
 import { Route as YobodyRouteImport } from './routes/yobody'
 
@@ -168,6 +169,11 @@ const QuizV3Route = QuizV3RouteImport.update({
   path: '/quiz-v3',
   getParentRoute: () => rootRouteImport,
 } as any)
+const V2Route = V2RouteImport.update({
+  id: '/v2',
+  path: '/v2',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const VapiDemoRoute = VapiDemoRouteImport.update({
   id: '/vapi-demo',
   path: '/vapi-demo',
@@ -206,6 +212,7 @@ export interface FileRoutesByFullPath {
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
+  '/v2': typeof V2Route
   '/vapi-demo': typeof VapiDemoRoute
   '/yobody': typeof YobodyRoute
 }
@@ -236,6 +243,7 @@ export interface FileRoutesByTo {
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
+  '/v2': typeof V2Route
   '/vapi-demo': typeof VapiDemoRoute
   '/yobody': typeof YobodyRoute
 }
@@ -267,6 +275,7 @@ export interface FileRoutesById {
   '/quiz': typeof QuizRoute
   '/quiz-v2': typeof QuizV2Route
   '/quiz-v3': typeof QuizV3Route
+  '/v2': typeof V2Route
   '/vapi-demo': typeof VapiDemoRoute
   '/yobody': typeof YobodyRoute
 }
@@ -299,6 +308,7 @@ export interface FileRouteTypes {
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
+    | '/v2'
     | '/vapi-demo'
     | '/yobody'
   fileRoutesByTo: FileRoutesByTo
@@ -329,6 +339,7 @@ export interface FileRouteTypes {
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
+    | '/v2'
     | '/vapi-demo'
     | '/yobody'
   id:
@@ -359,6 +370,7 @@ export interface FileRouteTypes {
     | '/quiz'
     | '/quiz-v2'
     | '/quiz-v3'
+    | '/v2'
     | '/vapi-demo'
     | '/yobody'
   fileRoutesById: FileRoutesById
@@ -390,6 +402,7 @@ export interface RootRouteChildren {
   QuizRoute: typeof QuizRoute
   QuizV2Route: typeof QuizV2Route
   QuizV3Route: typeof QuizV3Route
+  V2Route: typeof V2Route
   VapiDemoRoute: typeof VapiDemoRoute
   YobodyRoute: typeof YobodyRoute
 }
@@ -578,6 +591,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QuizV3RouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/v2': {
+      id: '/v2'
+      path: '/v2'
+      fullPath: '/v2'
+      preLoaderRoute: typeof V2RouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/vapi-demo': {
       id: '/vapi-demo'
       path: '/vapi-demo'
@@ -622,6 +642,7 @@ const rootRouteChildren: RootRouteChildren = {
   QuizRoute: QuizRoute,
   QuizV2Route: QuizV2Route,
   QuizV3Route: QuizV3Route,
+  V2Route: V2Route,
   VapiDemoRoute: VapiDemoRoute,
   YobodyRoute: YobodyRoute,
 }

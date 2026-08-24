@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, HeartHandshake } from "lucide-react";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap } from "lucide-react";
 import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
@@ -12,9 +12,9 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
-import designV2Hero from "@/assets/landing/design-v2-hero.png";
+import designV2Hero from "@/assets/landing/new-hero-image-jj-landing-v5-desktop.jpeg";
 import clarityImage from "@/assets/landing/clarity-image.png";
-import mobileHeroImage from "@/assets/landing/mobile-hero-image.png";
+import mobileHeroImage from "@/assets/landing/new-hero-image-jj-landing-v5.jpeg";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
 import weeklyCallsImage from "@/assets/landing/weekly-calls.png";
@@ -22,6 +22,10 @@ import resetPlanImage from "@/assets/landing/reset-plan.png";
 import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
 import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
+import methodReset from "@/assets/landing/method-reset.png";
+import methodFeed from "@/assets/landing/method-feed.jpeg";
+import methodCoach from "@/assets/landing/design-v2-hero.png";
+import eatGoodJJ from "@/assets/landing/eat-good-jj.png";
 import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
 import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
 import whyEveryMonday from "@/assets/landing/why-every-monday.jpg";
@@ -115,7 +119,7 @@ function Landing() {
     <div className="lyx">
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" />
+      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Montserrat:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" />
       <style>{CSS}</style>
 
       <AnnouncementBar />
@@ -123,9 +127,10 @@ function Landing() {
       <main>
         <Hero />
         <PressStrip />
-        <Story />
+        <EatGood />
         <WhyNothing />
         <Method />
+        <Story />
         <RealResults />
         <WhatYouGet />
         <Clarity />
@@ -179,8 +184,7 @@ function Hero() {
         <div className="ly-wrap ly-hero-inner">
           <div className="ly-hero-copy">
             <HeroTrust />
-            <h1 className="ly-h1"><span className="ly-nowrap">Can’t lose weight</span> <Mark>no matter what you try?</Mark></h1>
-            <p className="ly-hero-sub">Lose up to <Hi>15 pounds</Hi> in your first 30 days, and <strong>keep going with JJ until it's all gone.</strong></p>
+            <h1 className="ly-h1 ly-hero-h1">JJ’s Personal <br className="ly-hbr" /> Coaching System <br className="ly-hbr" /> Reveals a <Hi>Breakthrough <br className="ly-hbr" /> Way to Lose Weight</Hi> <br className="ly-hbr" /> and <Hi>Still Enjoy Food…</Hi></h1>
             <ul className="ly-hero-bullets">
               {bullets.map((b, i) => <li key={i}><span className="ly-hb-tick"><Check className="ly-ico-13" /></span> <span>{b}</span></li>)}
             </ul>
@@ -283,6 +287,36 @@ function Story() {
 }
 
 // ── why nothing has worked ───────────────────────────────────────────────────
+function EatGood() {
+  const feats = [
+    { Icon: MessageCircle, label: "Daily support" },
+    { Icon: Phone, label: "2× weekly coaching calls" },
+    { Icon: Users, label: "Women 40+" },
+  ];
+  return (
+    <section className="ly-band ly-eat">
+      <div className="ly-wrap ly-eat-grid">
+        <div className="ly-eat-copy">
+          <span className="ly-eyebrow ly-eat-eyebrow">All women want to do is</span>
+          <h2 className="ly-eat-h">Lose weight and eat good.</h2>
+          <p className="ly-eat-script">I got you, girl!
+            <svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden><path d="M4 9 C 70 3, 130 3, 190 7 S 268 11, 296 5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" /></svg>
+          </p>
+          <p className="ly-eat-sub">Meal plans built around the foods you actually love.</p>
+        </div>
+        <div className="ly-eat-media">
+          <img src={eatGoodJJ} alt="JJ Smith enjoying a plate of food from her plan" loading="lazy" />
+          {feats.map(({ Icon, label }, i) => (
+            <span className={`ly-eat-badge ly-eat-badge-${i + 1}`} key={label}>
+              <span className="ly-eat-bico"><Icon className="ly-ico-16" strokeWidth={2} /></span>{label}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function WhyNothing() {
   const cards: { title: string; text: React.ReactNode; img: string }[] = [
     { img: whyEatingLess, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
@@ -318,23 +352,26 @@ function WhyNothing() {
 // ── method ───────────────────────────────────────────────────────────────────
 function Method() {
   const shifts = [
-    { Icon: Zap, title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
-    { Icon: UtensilsCrossed, title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
-    { Icon: HeartHandshake, title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
+    { img: methodReset, title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
+    { img: methodFeed, title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
+    { img: methodCoach, title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
   ];
   return (
     <section className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">The method</span>
         <h2 className="ly-h2">The <Hi>3 shifts</Hi> that change everything</h2>
-        <p className="ly-lead ly-soft ly-mt ly-narrow">The exact shifts that took me from stuck to feeling like myself again. Now they are yours.</p>
         <div className="ly-method">
-          {shifts.map(({ Icon, title, text }, i) => (
+          {shifts.map(({ img, title, text }, i) => (
             <div className="ly-shift" key={title}>
-              <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
-              <span className="ly-shift-ico"><Icon className="ly-ico-24" strokeWidth={1.75} /></span>
-              <h3 className="ly-h3 ly-shift-h">{title}</h3>
-              <p className="ly-shift-t">{text}</p>
+              <div className="ly-shift-img">
+                <img src={img} alt={title} loading="lazy" />
+                <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
+              </div>
+              <div className="ly-shift-body">
+                <h3 className="ly-h3 ly-shift-h">{title}</h3>
+                <p className="ly-shift-t">{text}</p>
+              </div>
             </div>
           ))}
         </div>
@@ -674,6 +711,25 @@ const CSS = `
 .ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft)}
 .ly-cta-sub.on-dark{color:#D8C4E8}
 
+/* eat-good statement band */
+.ly-eat{position:relative;overflow:hidden;background:linear-gradient(118deg,#331646 0%,#5B2A80 47%,#8A2E62 100%);color:#F5EBFA}
+.ly-eat::before{content:"";position:absolute;inset:0;background:radial-gradient(58% 74% at 86% 26%,rgba(242,132,196,.24),transparent 62%);pointer-events:none}
+.ly-eat-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:32px;align-items:center}
+.ly-eat-eyebrow{color:#EDB4D8;font-size:16px;margin-bottom:14px}
+.ly-eat-h{margin:0;font-family:var(--head);font-weight:900;letter-spacing:-.02em;font-size:clamp(38px,7.4vw,60px);line-height:1.02;color:#FBF3E9;text-wrap:balance}
+.ly-eat-script{position:relative;width:fit-content;margin:6px 0 0;font-family:'Caveat',var(--head);font-weight:700;font-size:clamp(42px,7.2vw,64px);line-height:1;color:#F7A9D3}
+.ly-eat-script svg{position:absolute;left:2px;bottom:-4px;width:min(100%,300px);height:13px;overflow:visible}
+.ly-eat-sub{margin:24px 0 0;max-width:34ch;font-size:clamp(18px,2.1vw,21px);line-height:1.55;font-weight:500;color:#E6D5F2}
+.ly-eat-sub strong{color:#FBF3E9;font-weight:700}
+.ly-eat-badge{position:absolute;z-index:2;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#3A2350;font-family:var(--head);font-weight:700;font-size:12px;line-height:1.15;padding:6px 12px 6px 6px;border-radius:999px;box-shadow:0 14px 30px -12px rgba(18,4,26,.6);white-space:nowrap}
+.ly-eat-bico{display:flex;align-items:center;justify-content:center;width:25px;height:25px;flex:0 0 auto;border-radius:999px;background:var(--grad);color:#fff}
+.ly-eat-bico svg{width:13px;height:13px}
+.ly-eat-badge-1{top:1%;left:5%;z-index:0}
+.ly-eat-badge-2{top:50%;right:0}
+.ly-eat-badge-3{bottom:15%;left:4%}
+.ly-eat-media{position:relative;max-width:430px;margin:10px auto 0}
+.ly-eat-media img{position:relative;z-index:1;display:block;width:100%;height:auto;border-radius:0 0 24px 24px}
+
 /* announcement */
 .ly-announce{background:linear-gradient(90deg,#5B2A80 0%,#7E36A6 48%,#C0468C 100%);color:#fff}
 .ly-announce-in{display:flex;align-items:center;justify-content:center;gap:9px;flex-wrap:wrap;padding:6px 18px;font-family:var(--head);font-size:11.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;text-align:center}
@@ -698,6 +754,8 @@ const CSS = `
 .ly-hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 54%,rgba(246,238,251,.9) 74%,rgba(246,238,251,.62) 100%),linear-gradient(180deg,rgba(246,238,251,.15) 0%,rgba(246,238,251,.68) 58%,#F4EBFB 100%)}
 .ly-hero-inner{position:relative;z-index:1;width:100%}
 .ly-hero-copy{max-width:560px}
+.ly-hero-h1{font-size:clamp(28px,8.2vw,34px);line-height:1.12}
+.ly-hbr{display:none}
 .ly-hero-sub{margin-top:18px;max-width:520px;font-size:clamp(18px,2.2vw,21px);line-height:1.5;font-weight:600;color:var(--ink)}
 .ly-hero-bullets{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:11px;max-width:520px}
 .ly-hero-bullets li{display:flex;align-items:flex-start;gap:11px;font-size:17px;font-weight:600}
@@ -730,7 +788,7 @@ const CSS = `
 .ly-press.is-dark .ly-press-lbl{color:#C7B2DE}
 .ly-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .ly-marquee-track{display:flex;align-items:center;gap:50px;width:max-content;animation:ly-scroll 32s linear infinite}
-.ly-marquee-img{height:46px;width:auto;object-fit:contain;opacity:1;filter:none}
+.ly-marquee-img{height:54px;width:auto;object-fit:contain;opacity:1;filter:none}
 .ly-press.is-dark .ly-marquee{background:#fff;border-radius:14px;padding:14px 0}
 .ly-press.is-dark .ly-marquee-img{opacity:.8;filter:grayscale(1)}
 
@@ -755,13 +813,14 @@ const CSS = `
 .ly-callout strong{color:#F6C9E4}
 
 /* method */
-.ly-method{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
-.ly-shift{position:relative;overflow:hidden;background:var(--white);border:1px solid var(--hair);border-radius:22px;padding:30px 28px;box-shadow:var(--shadow-sm)}
-.ly-shift::before{content:"";position:absolute;top:0;left:0;right:0;height:4px;background:var(--grad)}
-.ly-shift-n{position:absolute;top:8px;right:20px;font-family:var(--head);font-weight:900;font-size:104px;line-height:1;color:var(--purple-soft);z-index:0;pointer-events:none;user-select:none}
-.ly-shift-ico{position:relative;z-index:1;display:flex;align-items:center;justify-content:center;width:56px;height:56px;border-radius:17px;background:var(--grad);color:#fff;box-shadow:0 16px 28px -14px rgba(91,42,128,.7)}
-.ly-shift-h{position:relative;z-index:1;margin-top:18px}
-.ly-shift-t{position:relative;z-index:1;margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
+.ly-method{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
+.ly-shift{position:relative;overflow:hidden;display:flex;flex-direction:column;background:var(--white);border:1px solid var(--hair);border-radius:22px;box-shadow:var(--shadow-sm)}
+.ly-shift-img{position:relative;width:100%;height:210px;background:var(--purple-soft)}
+.ly-shift-img img{width:100%;height:100%;object-fit:cover;display:block}
+.ly-shift-n{position:absolute;top:12px;right:14px;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:900;font-size:18px;line-height:1;box-shadow:0 10px 22px -10px rgba(91,42,128,.85)}
+.ly-shift-body{position:relative;padding:24px 26px 28px}
+.ly-shift-h{margin:0}
+.ly-shift-t{margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
 .ly-shift-t .ly-hi,.ly-rcard-t .ly-hi{font-weight:800}
 
 /* results */
@@ -865,7 +924,9 @@ const CSS = `
   .ly-hero-bg{display:block;left:auto;right:0;width:56%}
   .ly-hero-bg img{object-position:center 42%}
   .ly-hero-fade{background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 10%,rgba(246,238,251,.5) 26%,transparent 46%)}
-  .ly-hero-copy{max-width:500px}
+  .ly-hero-copy{max-width:540px}
+  .ly-hbr{display:inline}
+  .ly-hero-h1{font-size:clamp(38px,3.2vw,42px)}
   .ly-hero-action{max-width:480px;margin-top:28px}
   .ly-trust{display:flex;background:transparent;border:0;padding:0;box-shadow:none;font-size:13px}
   .ly-trust .ly-tdesk{display:inline-flex}
@@ -881,6 +942,14 @@ const CSS = `
   .ly-story-single{display:none}
   .ly-story-quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ly-story-cell{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
+  .ly-eat-grid{grid-template-columns:1.08fr .92fr;gap:58px}
+  .ly-eat-media{max-width:none;margin:0}
+  .ly-eat-badge{font-size:13.5px;padding:8px 15px 8px 8px;gap:9px}
+  .ly-eat-bico{width:29px;height:29px}
+  .ly-eat-bico svg{width:15px;height:15px}
+  .ly-eat-badge-1{top:5%;left:4%}
+  .ly-eat-badge-2{top:43%;right:-6%}
+  .ly-eat-badge-3{bottom:13%;left:-6%}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
   .ly-sticky{display:none}
   .lyx .ly-nowrap{white-space:nowrap}
