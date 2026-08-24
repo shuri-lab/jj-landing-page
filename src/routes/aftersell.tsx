@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CheckCircle2, Check, Star, ArrowRight, Phone, MessageCircle, Zap, UtensilsCrossed, Users } from "lucide-react";
-import productImage from "@/assets/landing/aftersell-hero-image.png";
+import productImage from "@/assets/landing/jj-aftersell-image.png";
 
 export const Route = createFileRoute("/aftersell")({
   head: () => ({
@@ -85,9 +85,9 @@ function Aftersell() {
             </div>
             <div className="ups-perday">That&rsquo;s just <strong>$1.57 a day</strong>, less than your morning coffee ☕</div>
 
-            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 30 days</span>, and we keep going together until every last pound is gone.</p>
+            <p className="ups-lead">Lose up to <span className="ups-hi">15 pounds in your first 30 days</span>, and we keep going together, with food you actually love, until every last pound is gone.</p>
 
-            <p className="ups-desc">Picture a few weeks from now: clothes fitting looser, the scale finally moving, and knowing that every step of the way, I&rsquo;m there with you.</p>
+            <p className="ups-desc">Picture a few weeks from now: your clothes fitting looser, the scale finally moving, eating food you actually love, and knowing that every step of the way, I&rsquo;m there with you.</p>
 
             <div className="ups-incl-h">Here&rsquo;s everything you get:</div>
             <ul className="ups-incl">
