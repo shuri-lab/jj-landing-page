@@ -816,10 +816,14 @@ const CSS = `
 .ly-research-h{margin:0;font-family:var(--head);font-weight:900;letter-spacing:-.02em;font-size:clamp(37px,6vw,46px);line-height:1.06;color:#FBF3E9;text-wrap:balance}
 .ly-research-hi{color:#F7A9D3}
 .ly-research-body{margin:24px auto 0;max-width:60ch;font-size:clamp(18.5px,2.2vw,21px);line-height:1.65;font-weight:500;color:#EBDDF5}
-.ly-research-body p{margin:0}
+.ly-research-body p{margin:0;text-wrap:balance}
 .ly-research-body p+p{margin-top:16px}
 .ly-research-body strong{color:#FBF3E9;font-weight:800}
 .ly-research-turn{color:#F7A9D3;font-weight:800}
+/* Comfortable side margins for the research body on phones */
+@media (max-width:600px){
+  .ly-research-body{padding:0 16px}
+}
 
 /* method */
 .ly-method{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
