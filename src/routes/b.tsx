@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap } from "lucide-react";
+import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, Users, Zap, Gift } from "lucide-react";
 import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
@@ -12,6 +12,8 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import jjOnTv from "@/assets/landing/jj-smith-on-tv-v3.png";
+import groceryLists from "@/assets/landing/grocery-lists.png";
 import clarityImage from "@/assets/landing/clarity-image.png";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
@@ -300,7 +302,12 @@ function Story() {
           <p className="ly-lead on-dark-soft ly-mt">In my late 30s, my body turned on me. Weight from nowhere, exhausted, foggy, a stranger in the mirror. So I did everything they tell you. <strong className="on-dark">Skipped meals. Cut carbs. Dragged myself to the gym.</strong> Nothing moved.</p>
           <p className="ly-story-quote">"Eat less, move more. Nobody warned me my body had changed, and those old rules would never work again."</p>
           <p className="ly-lead on-dark-soft ly-mt">So I stopped fighting my body and started working with it, my hormones, my blood sugar, all of it. <strong className="on-dark">The weight came off, my energy roared back,</strong> and in my 40s I felt better than at 30.</p>
-          <p className="ly-lead on-dark-soft ly-mt-s">My books became bestsellers, and hundreds of thousands of women used them to get themselves back. But what I hold onto is simpler: the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
+          <p className="ly-lead on-dark-soft ly-mt-s">My books became bestsellers, and hundreds of thousands of women used them to get themselves back.</p>
+          <img src={jjOnTv} className="ly-story-tv" alt="JJ Smith featured across TV shows and bestselling books" loading="lazy" />
+          <div className="ly-story-featured">
+            <PressStrip label="JJ Smith has been featured on" />
+          </div>
+          <p className="ly-lead on-dark-soft ly-mt">But what I hold onto is simpler: the woman who tells me she came off her medication, or feels like herself again. That is why I do this, and now I want to do it with you. <strong className="on-dark">I got you.</strong></p>
           <div className="ly-mt-l"><Cta label="Start with me today" sub={CTA_SUB} onDark /></div>
         </div>
       </div>
@@ -455,13 +462,13 @@ function WhatYouGet() {
 }
 
 // ── pricing / value stack ────────────────────────────────────────────────────
-const VALUE_STACK: { label: string; value: number; note?: string; bonus?: boolean }[] = [
+const VALUE_STACK: { label: string; value: number; note?: string; bonus?: boolean; avatars?: boolean; img?: string }[] = [
   { label: "Two 1-on-1 coaching calls every week with JJ's AI Twin", value: 1200, note: "my exact voice, personality, and coaching" },
   { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
   { label: "A done-for-you weekly meal plan, built around the food you love", value: 300 },
-  { label: "Grocery lists that save you up to $75 a month", value: 150, bonus: true },
-  { label: "The Circle of Women", value: 200, bonus: true },
+  { label: "Grocery lists that save you up to $75 a month", value: 150, bonus: true, img: groceryLists },
+  { label: "The Circle of Women", value: 200, bonus: true, avatars: true },
 ];
 
 function Pricing() {
@@ -519,7 +526,19 @@ function Pricing() {
           <div className="ly-stack-bonuses">
             {VALUE_STACK.filter((it) => it.bonus).map((it) => (
               <div className="ly-stack-bonus" key={it.label}>
-                <span className="ly-stack-bonus-name"><span className="ly-stack-bonus-tag">Bonus</span><span>{it.label}</span></span>
+                <span className="ly-stack-bonus-visual">
+                  {it.avatars ? (
+                    <span className="ly-stack-bonus-av">{[t8, t10, t4].map((src, i) => <img key={i} src={src} alt="" loading="lazy" />)}</span>
+                  ) : it.img ? (
+                    <img className="ly-stack-bonus-img" src={it.img} alt="" loading="lazy" />
+                  ) : (
+                    <span className="ly-stack-bonus-ico"><Gift className="ly-ico-16" strokeWidth={2} /></span>
+                  )}
+                </span>
+                <span className="ly-stack-bonus-main">
+                  <span className="ly-stack-bonus-tag">Bonus</span>
+                  <span className="ly-stack-bonus-label">{it.label}</span>
+                </span>
                 <span className="ly-stack-val">${it.value.toLocaleString()}</span>
               </div>
             ))}
@@ -620,15 +639,15 @@ function Close() {
 // ── faq ──────────────────────────────────────────────────────────────────────
 function Faq() {
   const items = [
-    { q: "I'm in my 50s and nothing has worked.", a: "That is exactly who this is for. The plan is built for your season, and this time you are not on your own." },
-    { q: "How can it really be you, there for me every day?", a: "I built my JJ Twin, so I finally can. It is my exact voice, my personality, and my coaching, everything I would tell you if we were sitting together. Talk to me any time, day or night, and it feels like me, because it is me." },
+    { q: "I'm in my 50s and nothing has worked.", a: "That is exactly who this is for. What stopped working was your body changing after 40, not you. The plan is built for your season, and this time you are not on your own." },
+    { q: "How can it really be you, there for me every day?", a: "I built my JJ Twin, so I finally can. My exact voice, personality, and coaching, everything I would tell you if we were sitting together. Talk to me any time, and it feels like me, because it is me." },
     { q: "I don't have time.", a: "Your meals are planned for you and the check-ins keep it simple. This is one less thing to carry, not one more." },
-    { q: "Do I have to drink green smoothies?", a: "No. The reset is a fast start. After it, you keep the food you love." },
-    { q: "What makes this different?", a: "Everyone else hands you a plan and leaves. I stay, one on one, every single day." },
-    { q: "I'm on a weight-loss shot. Is this for me?", a: "Yes. A shot can quiet your appetite. It cannot build your habits, protect your muscle, or be in your corner. That is the part that lasts, and that is what we do together." },
-    { q: "How does billing work?", a: "Monthly. Cancel anytime, no contract." },
+    { q: "Do I have to drink green smoothies?", a: "No. You start with a jumpstart to reset your body, smoothies optional. After that, your weekly meals are built around the food you already love." },
+    { q: "What makes this different?", a: "Everyone else hands you a plan and leaves. I stay, one on one, every single day. Each week we even plan around your real life, so eating out and busy weekends never knock you off track." },
+    { q: "I'm on a weight-loss shot. Is this for me?", a: "Yes. A shot can quiet your appetite. It cannot build your habits or be in your corner on the hard days. That is the part that lasts, and that is what we do together." },
+    { q: "How does billing work?", a: "$47 a month, cancel anytime in two clicks. No calls, no contract." },
     { q: "What if I fall behind?", a: "You pick up right where you left off, and I help you. This was never about being perfect." },
-    { q: "What if I change my mind?", a: "The 14-day promise has you covered. Money back, no reason needed." },
+    { q: "What if I change my mind?", a: "You are covered two ways. Lose 10 pounds your first month or it is free. And if you change your mind in your first 14 days, every penny back, no reason needed." },
   ];
   return (
     <section className="ly-band ly-cream ly-center">
@@ -793,12 +812,17 @@ const CSS = `
 .ly-press.is-dark .ly-press-lbl{color:#C7B2DE}
 .ly-marquee{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
 .ly-marquee-track{display:flex;align-items:center;gap:50px;width:max-content;animation:ly-scroll 32s linear infinite}
-.ly-marquee-img{height:54px;width:auto;object-fit:contain;opacity:1;filter:none}
+.ly-marquee-img{height:64px;width:auto;object-fit:contain;opacity:1;filter:none}
 .ly-press.is-dark .ly-marquee{background:#fff;border-radius:14px;padding:14px 0}
 .ly-press.is-dark .ly-marquee-img{opacity:.8;filter:grayscale(1)}
+.ly-story-tv{display:block;width:100%;height:auto;margin-top:18px}
+.ly-story-featured{margin-top:12px}
+.ly-story-featured .ly-press{border:0;border-radius:14px;padding:16px 0;background:#fff}
+.ly-story-featured .ly-press-lbl{margin-bottom:12px}
 
 /* story (dark) */
 .ly-story-grid{display:grid;grid-template-columns:1fr;gap:30px}
+.ly-story-grid>*{min-width:0}
 .ly-story-single{max-width:440px;margin:0 auto;border-radius:22px;overflow:hidden;box-shadow:0 30px 60px -24px rgba(0,0,0,.7);border:1px solid rgba(255,255,255,.1)}
 .ly-story-single img{width:100%;height:auto}
 .ly-story-quad{display:none}
@@ -888,9 +912,16 @@ const CSS = `
 .ly-urgency strong{font-weight:800;color:var(--pink-accent);white-space:nowrap}
 .ly-stack-sub{display:block;font-size:13px;color:var(--ink-soft);font-weight:500;margin-top:3px}
 .ly-stack-bonuses{margin-top:12px;display:flex;flex-direction:column;gap:9px}
-.ly-stack-bonus{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:11px 13px;border:1.5px dashed var(--purple);background:var(--purple-soft);border-radius:14px;font-size:15.5px;font-weight:600}
-.ly-stack-bonus-name{display:flex;gap:9px;align-items:flex-start;line-height:1.35;min-width:0}
-.ly-stack-bonus-tag{flex:0 0 auto;margin-top:1px;font-family:var(--head);font-weight:900;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--grad);padding:3px 8px;border-radius:999px}
+.ly-stack-bonus{display:flex;align-items:center;gap:11px;padding:10px 12px;border:1.5px dashed var(--purple);background:var(--purple-soft);border-radius:14px}
+.ly-stack-bonus-visual{flex:0 0 auto;display:inline-flex;align-items:center}
+.ly-stack-bonus-av{display:inline-flex}
+.ly-stack-bonus-av img{width:31px;height:31px;border-radius:999px;object-fit:cover;object-position:top;margin-left:-11px;border:2px solid #fff;box-shadow:0 2px 5px -2px rgba(0,0,0,.35)}
+.ly-stack-bonus-av img:first-child{margin-left:0}
+.ly-stack-bonus-ico{width:34px;height:34px;border-radius:10px;background:#fff;color:var(--purple);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-sm)}
+.ly-stack-bonus-img{height:42px;width:auto;object-fit:contain;display:block}
+.ly-stack-bonus-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;text-align:left}
+.ly-stack-bonus-tag{align-self:flex-start;font-family:var(--head);font-weight:900;font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:#fff;background:var(--grad);padding:2px 8px;border-radius:999px;line-height:1.35}
+.ly-stack-bonus-label{font-size:14.5px;font-weight:700;color:var(--ink);line-height:1.3}
 .ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:16px 0 0;flex-wrap:wrap}
 .ly-stack-trust svg{color:var(--purple)}
 .ly-or{display:flex;align-items:center;gap:14px;margin:16px 2px 0;color:var(--ink-soft);font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
