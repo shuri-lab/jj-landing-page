@@ -12,9 +12,7 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
 import quizHeroMobile from "@/assets/landing/quiz-hero-image-mobile.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
-import designV2Hero from "@/assets/landing/new-hero-image-jj-landing-v5-desktop.jpeg";
 import clarityImage from "@/assets/landing/clarity-image.png";
-import mobileHeroImage from "@/assets/landing/new-hero-image-jj-landing-v5.jpeg";
 import { styleGuide as guaranteeSeal } from "@/assets/look-younger";
 import dailySmsImage from "@/assets/landing/daily-sms-image.png";
 import weeklyCallsImage from "@/assets/landing/weekly-calls.png";
@@ -127,7 +125,7 @@ function Landing() {
       <main>
         <Hero />
         <PressStrip />
-        <EatGood />
+        <ResearchSupport />
         <WhyNothing />
         <Method />
         <Story />
@@ -150,8 +148,7 @@ function AnnouncementBar() {
     <div className="ly-announce">
       <div className="ly-wrap ly-announce-in">
         <span className="ly-announce-star" aria-hidden>✦</span>
-        <span>14-Day Money Back Guarantee</span>
-        <span className="ly-announce-x"><span className="ly-announce-dot" aria-hidden>·</span> Join today with zero risk</span>
+        <span>Lose 10 pounds or your money back*</span>
       </div>
     </div>
   );
@@ -170,30 +167,30 @@ function Header() {
 
 // ── hero ─────────────────────────────────────────────────────────────────────
 function Hero() {
-  const bullets = [
-    <>A plan built around the food you love.<span className="ly-bdesk"> No starving.</span></>,
-    <>Two 1-on-1 calls a week, and daily texts.</>,
+  const badges = [
+    { Icon: MessageCircle, label: "Daily support" },
+    { Icon: Phone, label: "2× weekly coaching calls" },
+    { Icon: UtensilsCrossed, label: "Food you love" },
   ];
   return (
     <section className="ly-band ly-hero">
       <div className="ly-hero-stage">
-        <div className="ly-hero-bg" aria-hidden>
-          <img src={designV2Hero} alt="" fetchPriority="high" />
-          <span className="ly-hero-fade" />
-        </div>
         <div className="ly-wrap ly-hero-inner">
           <div className="ly-hero-copy">
             <HeroTrust />
-            <h1 className="ly-h1 ly-hero-h1">JJ’s Personal <br className="ly-hbr" /> Coaching System <br className="ly-hbr" /> Reveals a <Hi>Breakthrough <br className="ly-hbr" /> Way to Lose Weight</Hi> <br className="ly-hbr" /> and <Hi>Still Enjoy Food…</Hi></h1>
-            <ul className="ly-hero-bullets">
-              {bullets.map((b, i) => <li key={i}><span className="ly-hb-tick"><Check className="ly-ico-13" /></span> <span>{b}</span></li>)}
-            </ul>
+            <h1 className="ly-h1 ly-hero-h1">Finally lose the weight after 40, <Hi>without giving up the food you love.</Hi></h1>
+            <p className="ly-hero-sub">Lose up to <Mark>15 pounds in your first 30 days</Mark>, and we keep going together, with food you actually love, until every last pound is gone.</p>
+            <div className="ly-hero-action">
+              <Cta label="Start today" sub={CTA_SUB} full />
+            </div>
           </div>
-          <div className="ly-hero-action">
-            <Cta label="Start today" sub={CTA_SUB} full />
-          </div>
-          <div className="ly-hero-mob-img">
-            <img src={mobileHeroImage} alt="JJ Smith, your personal coach" loading="lazy" />
+          <div className="ly-hero-media">
+            <img src={eatGoodJJ} alt="JJ Smith enjoying a plate of food from her plan" fetchPriority="high" />
+            {badges.map(({ Icon, label }, i) => (
+              <span className={`ly-hero-badge ly-hero-badge-${i + 1}`} key={label}>
+                <span className="ly-hero-bico"><Icon className="ly-ico-16" strokeWidth={2} /></span>{label}
+              </span>
+            ))}
           </div>
         </div>
       </div>
@@ -227,19 +224,44 @@ const TRANSFORMATIONS = [
   { src: tTammi, caption: "-20 lbs in 8 weeks" },
 ];
 
-function TransformationsMarquee() {
-  const track = [...TRANSFORMATIONS, ...TRANSFORMATIONS];
+function TfCard({ tr }: { tr: { src: string; caption: string } }) {
   return (
-    <div className="ly-tf">
-      <div className="ly-tf-track">
-        {track.map((tr, i) => (
-          <figure className="ly-tf-card" key={i}>
-            <img src={tr.src} alt="A woman's before and after transformation" loading="lazy" />
-            <figcaption>{tr.caption}</figcaption>
-          </figure>
-        ))}
+    <figure className="ly-tf-card">
+      <img src={tr.src} alt="A woman's before and after transformation" loading="lazy" />
+      <figcaption>{tr.caption}</figcaption>
+    </figure>
+  );
+}
+
+function TransformationsMarquee() {
+  const mid = Math.ceil(TRANSFORMATIONS.length / 2);
+  const rowTop = TRANSFORMATIONS.slice(0, mid);      // first half → top row (scrolls left→right)
+  const rowBottom = TRANSFORMATIONS.slice(mid);      // second half → bottom row (scrolls right→left)
+  const full = [...TRANSFORMATIONS, ...TRANSFORMATIONS];
+  const top = [...rowTop, ...rowTop];
+  const bottom = [...rowBottom, ...rowBottom];
+  return (
+    <>
+      {/* Desktop: single slider (unchanged) */}
+      <div className="ly-tf ly-tf-desk">
+        <div className="ly-tf-track">
+          {full.map((tr, i) => <TfCard key={i} tr={tr} />)}
+        </div>
       </div>
-    </div>
+      {/* Mobile: two stacked sliders running in opposite directions */}
+      <div className="ly-tf-mob">
+        <div className="ly-tf">
+          <div className="ly-tf-track ly-tf-rev">
+            {top.map((tr, i) => <TfCard key={i} tr={tr} />)}
+          </div>
+        </div>
+        <div className="ly-tf">
+          <div className="ly-tf-track">
+            {bottom.map((tr, i) => <TfCard key={i} tr={tr} />)}
+          </div>
+        </div>
+      </div>
+    </>
   );
 }
 
@@ -287,36 +309,6 @@ function Story() {
 }
 
 // ── why nothing has worked ───────────────────────────────────────────────────
-function EatGood() {
-  const feats = [
-    { Icon: MessageCircle, label: "Daily support" },
-    { Icon: Phone, label: "2× weekly coaching calls" },
-    { Icon: Users, label: "Women 40+" },
-  ];
-  return (
-    <section className="ly-band ly-eat">
-      <div className="ly-wrap ly-eat-grid">
-        <div className="ly-eat-copy">
-          <span className="ly-eyebrow ly-eat-eyebrow">All women want to do is</span>
-          <h2 className="ly-eat-h">Lose weight and eat good.</h2>
-          <p className="ly-eat-script">I got you, girl!
-            <svg viewBox="0 0 300 14" preserveAspectRatio="none" aria-hidden><path d="M4 9 C 70 3, 130 3, 190 7 S 268 11, 296 5" fill="none" stroke="currentColor" strokeWidth="3.2" strokeLinecap="round" /></svg>
-          </p>
-          <p className="ly-eat-sub">Meal plans built around the foods you actually love.</p>
-        </div>
-        <div className="ly-eat-media">
-          <img src={eatGoodJJ} alt="JJ Smith enjoying a plate of food from her plan" loading="lazy" />
-          {feats.map(({ Icon, label }, i) => (
-            <span className={`ly-eat-badge ly-eat-badge-${i + 1}`} key={label}>
-              <span className="ly-eat-bico"><Icon className="ly-ico-16" strokeWidth={2} /></span>{label}
-            </span>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function WhyNothing() {
   const cards: { title: string; text: React.ReactNode; img: string }[] = [
     { img: whyEatingLess, title: "Eating less just backfires.", text: <>You cut back and skip meals. Then <strong>you are starving by night, and it all comes back.</strong> Eating less was never the answer.</> },
@@ -340,10 +332,22 @@ function WhyNothing() {
             </div>
           ))}
         </div>
-        <div className="ly-callout">
-          <p><strong>It was never your willpower.</strong> Your body changed after 40, and nobody gave you a plan built for it, or stayed with you through it. That is exactly what I do.</p>
+      </div>
+    </section>
+  );
+}
+
+// ── research / you're not alone (dark band, echoes the "eat good" design) ─────
+function ResearchSupport() {
+  return (
+    <section className="ly-band ly-research">
+      <div className="ly-wrap ly-research-in">
+        <span className="ly-eyebrow ly-research-eyebrow">Research shows</span>
+        <h2 className="ly-research-h">92% of women won&rsquo;t reach their goal weight <span className="ly-research-hi">without personalized support.</span></h2>
+        <div className="ly-research-body">
+          <p>Women with <strong>personalized support</strong> are up to <strong>3&times; more likely to keep the weight off.</strong></p>
+          <p>The difference was <strong>never willpower.</strong> It was <span className="ly-research-turn">support.</span></p>
         </div>
-        <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
       </div>
     </section>
   );
@@ -500,7 +504,7 @@ function Pricing() {
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Get started</span>
         <h2 className="ly-h2">Your comeback starts at <Hi>$1.57 a day</Hi></h2>
-        <p className="ly-lead ly-soft ly-mt ly-narrow">Less than a coffee ☕. A price with no excuse left in it, and a guarantee with no risk in it.</p>
+        <p className="ly-lead ly-soft ly-mt ly-narrow">Less than a coffee ☕. <strong>Lose 10 pounds in your first month, or it&rsquo;s free.</strong></p>
 
         <div className="ly-stack">
           <p className="ly-stack-h">Everything included:</p>
@@ -568,16 +572,18 @@ function Clarity() {
 
 // ── guarantee ────────────────────────────────────────────────────────────────
 function Guarantee() {
-  const pills = ["14-Day Money Back", "No Questions Asked", "Cancel Anytime", "Zero Risk"];
+  const pills = ["Lose 10 lbs or free", "14-day money back", "no questions asked", "cancel anytime"];
   return (
     <section className="ly-band ly-white">
       <div className="ly-wrap ly-guar-grid">
         <img src={guaranteeSeal} alt="100% money-back guarantee" className="ly-guar-img" loading="lazy" />
         <div>
           <span className="ly-eyebrow">My promise to you</span>
-          <h2 className="ly-h2">You Either See Results <Hi>or Your Money Back</Hi></h2>
-          <p className="ly-lead ly-mt">Give me 14 days. Do the work with me, and if you do not feel different, more hopeful, more in control, like this is finally the thing, just tell me. <strong>I send back every penny.</strong> No questions. No guilt. I only want your money if you are glad you are here. That is my promise to you.</p>
-          <p className="ly-guar-sig">JJ</p>
+          <h2 className="ly-h2">You either lose the weight, <Hi>or your money back.</Hi></h2>
+          <p className="ly-lead ly-mt">Give me your first month. Do the work with me, and if you don&rsquo;t lose at least 10 pounds, <strong>your month is free.</strong> That is how sure I am that this works.</p>
+          <p className="ly-lead ly-mt">And if somewhere in your first 14 days you decide this isn&rsquo;t for you, just tell me. <strong>I send back every penny.</strong> No questions. No guilt. I only want your money if you are glad you are here.</p>
+          <p className="ly-lead ly-mt">That is my promise to you.</p>
+          <p className="ly-guar-sig">&mdash; JJ</p>
           <div className="ly-pills">
             {pills.map((p) => <span className="ly-pill" key={p}><Check className="ly-ico-12" /> {p}</span>)}
           </div>
@@ -708,27 +714,8 @@ const CSS = `
 .ly-cta-full{width:100%;padding-left:16px;padding-right:16px}
 .ly-cta-arw{font-size:1.2em;line-height:1;transform:translateY(-1px)}
 .ly-cta-wrap{width:100%}
-.ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft)}
+.ly-cta-sub{margin:12px 0 0;font-size:14px;font-weight:600;color:var(--ink-soft);text-align:center}
 .ly-cta-sub.on-dark{color:#D8C4E8}
-
-/* eat-good statement band */
-.ly-eat{position:relative;overflow:hidden;background:linear-gradient(118deg,#331646 0%,#5B2A80 47%,#8A2E62 100%);color:#F5EBFA}
-.ly-eat::before{content:"";position:absolute;inset:0;background:radial-gradient(58% 74% at 86% 26%,rgba(242,132,196,.24),transparent 62%);pointer-events:none}
-.ly-eat-grid{position:relative;z-index:1;display:grid;grid-template-columns:1fr;gap:32px;align-items:center}
-.ly-eat-eyebrow{color:#EDB4D8;font-size:16px;margin-bottom:14px}
-.ly-eat-h{margin:0;font-family:var(--head);font-weight:900;letter-spacing:-.02em;font-size:clamp(38px,7.4vw,60px);line-height:1.02;color:#FBF3E9;text-wrap:balance}
-.ly-eat-script{position:relative;width:fit-content;margin:6px 0 0;font-family:'Caveat',var(--head);font-weight:700;font-size:clamp(42px,7.2vw,64px);line-height:1;color:#F7A9D3}
-.ly-eat-script svg{position:absolute;left:2px;bottom:-4px;width:min(100%,300px);height:13px;overflow:visible}
-.ly-eat-sub{margin:24px 0 0;max-width:34ch;font-size:clamp(18px,2.1vw,21px);line-height:1.55;font-weight:500;color:#E6D5F2}
-.ly-eat-sub strong{color:#FBF3E9;font-weight:700}
-.ly-eat-badge{position:absolute;z-index:2;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#3A2350;font-family:var(--head);font-weight:700;font-size:12px;line-height:1.15;padding:6px 12px 6px 6px;border-radius:999px;box-shadow:0 14px 30px -12px rgba(18,4,26,.6);white-space:nowrap}
-.ly-eat-bico{display:flex;align-items:center;justify-content:center;width:25px;height:25px;flex:0 0 auto;border-radius:999px;background:var(--grad);color:#fff}
-.ly-eat-bico svg{width:13px;height:13px}
-.ly-eat-badge-1{top:1%;left:5%;z-index:0}
-.ly-eat-badge-2{top:50%;right:0}
-.ly-eat-badge-3{bottom:15%;left:4%}
-.ly-eat-media{position:relative;max-width:430px;margin:10px auto 0}
-.ly-eat-media img{position:relative;z-index:1;display:block;width:100%;height:auto;border-radius:0 0 24px 24px}
 
 /* announcement */
 .ly-announce{background:linear-gradient(90deg,#5B2A80 0%,#7E36A6 48%,#C0468C 100%);color:#fff}
@@ -744,22 +731,20 @@ const CSS = `
 
 /* hero */
 .ly-hero{background:linear-gradient(180deg,#FAF1FB 0%,#F4EBFB 100%);padding:0}
-.ly-hero-stage{position:relative;overflow:hidden;display:flex;align-items:center;padding:30px 0 42px}
-.ly-hero-bg{display:none;position:absolute;inset:0;z-index:0}
-.ly-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
-.ly-hero-mob-img{margin:26px auto 0;max-width:400px;aspect-ratio:1/1;border-radius:22px;overflow:hidden;box-shadow:var(--shadow)}
-.ly-hero-mob-img img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
-.ly-announce-x{display:inline-flex;align-items:center;gap:9px}
-@media (max-width:600px){ .ly-announce-x{display:none} }
-.ly-hero-fade{position:absolute;inset:0;background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 54%,rgba(246,238,251,.9) 74%,rgba(246,238,251,.62) 100%),linear-gradient(180deg,rgba(246,238,251,.15) 0%,rgba(246,238,251,.68) 58%,#F4EBFB 100%)}
+.ly-hero-stage{position:relative;overflow:hidden;padding:28px 0 42px}
 .ly-hero-inner{position:relative;z-index:1;width:100%}
 .ly-hero-copy{max-width:560px}
-.ly-hero-h1{font-size:clamp(28px,8.2vw,34px);line-height:1.12}
+.ly-hero-h1{font-size:clamp(30px,8.4vw,38px);line-height:1.1}
 .ly-hbr{display:none}
-.ly-hero-sub{margin-top:18px;max-width:520px;font-size:clamp(18px,2.2vw,21px);line-height:1.5;font-weight:600;color:var(--ink)}
-.ly-hero-bullets{list-style:none;padding:0;margin:18px 0 0;display:grid;gap:11px;max-width:520px}
-.ly-hero-bullets li{display:flex;align-items:flex-start;gap:11px;font-size:17px;font-weight:600}
-.ly-hb-tick{width:24px;height:24px;flex:0 0 auto;border-radius:999px;background:var(--purple-soft);color:var(--purple);display:flex;align-items:center;justify-content:center;margin-top:1px}
+.ly-hero-sub{margin-top:18px;max-width:560px;font-size:clamp(18px,2.5vw,23px);line-height:1.4;font-weight:800;color:var(--ink)}
+.ly-hero-media{position:relative;max-width:380px;margin:34px auto 6px}
+.ly-hero-media>img{position:relative;z-index:1;display:block;width:100%;height:auto}
+.ly-hero-badge{position:absolute;z-index:2;display:inline-flex;align-items:center;gap:8px;background:#fff;color:#3A2350;font-family:var(--head);font-weight:700;font-size:13.5px;line-height:1.15;padding:7px 14px 7px 7px;border-radius:999px;box-shadow:0 16px 34px -14px rgba(74,35,90,.4);white-space:nowrap}
+.ly-hero-bico{display:flex;align-items:center;justify-content:center;width:27px;height:27px;flex:0 0 auto;border-radius:999px;background:var(--grad);color:#fff}
+.ly-hero-bico svg{width:14px;height:14px}
+.ly-hero-badge-1{top:2%;left:-3%}
+.ly-hero-badge-2{top:46%;right:-4%}
+.ly-hero-badge-3{bottom:14%;left:-5%}
 .ly-hero-action{max-width:480px;margin-top:24px}
 
 /* hero trust (eyebrow / mobile pill) */
@@ -780,6 +765,17 @@ const CSS = `
 .ly-tf-card img{width:100%;height:220px;object-fit:cover;object-position:top}
 .ly-tf-card figcaption{position:absolute;left:0;right:0;bottom:10px;margin:0 auto;width:fit-content;background:rgba(255,255,255,.96);border-radius:999px;padding:5px 12px;font-family:var(--head);font-size:13px;font-weight:800;color:var(--purple-deep);box-shadow:0 6px 14px -6px rgba(0,0,0,.3)}
 @keyframes ly-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.ly-tf-track.ly-tf-rev{animation-direction:reverse}
+.ly-tf-mob{display:none}
+/* Mobile: two stacked transformation sliders (opposite directions), bigger cards */
+@media (max-width:859px){
+  .ly-tf-desk{display:none}
+  .ly-tf-mob{display:flex;flex-direction:column;gap:12px;padding:18px 0 6px}
+  .ly-tf-mob .ly-tf{padding:0}
+  .ly-tf-mob .ly-tf-track{animation-duration:75s}
+  .ly-tf-card{width:212px}
+  .ly-tf-card img{height:258px}
+}
 
 /* press */
 .ly-press{padding:30px 0;background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
@@ -811,6 +807,23 @@ const CSS = `
 .ly-callout{margin-top:26px;background:var(--grad);border-radius:22px;padding:30px 26px;box-shadow:var(--shadow)}
 .ly-callout p{margin:0;font-family:var(--head);font-weight:700;font-size:clamp(20px,3vw,25px);line-height:1.35;color:#fff;max-width:780px;margin:0 auto}
 .ly-callout strong{color:#F6C9E4}
+
+/* research / you're not alone band — echoes the "eat good" design (no image) */
+.ly-research{position:relative;overflow:hidden;background:linear-gradient(118deg,#331646 0%,#5B2A80 47%,#8A2E62 100%);color:#F5EBFA}
+.ly-research::before{content:"";position:absolute;inset:0;background:radial-gradient(58% 74% at 86% 26%,rgba(242,132,196,.24),transparent 62%);pointer-events:none}
+.ly-research-in{position:relative;z-index:1;max-width:840px;margin:0 auto;text-align:center}
+.ly-research-eyebrow{color:#EDB4D8}
+.ly-research-h{margin:0;font-family:var(--head);font-weight:900;letter-spacing:-.02em;font-size:clamp(37px,6vw,46px);line-height:1.06;color:#FBF3E9;text-wrap:balance}
+.ly-research-hi{color:#F7A9D3}
+.ly-research-body{margin:24px auto 0;max-width:60ch;font-size:clamp(18.5px,2.2vw,21px);line-height:1.65;font-weight:500;color:#EBDDF5}
+.ly-research-body p{margin:0;text-wrap:balance}
+.ly-research-body p+p{margin-top:16px}
+.ly-research-body strong{color:#FBF3E9;font-weight:800}
+.ly-research-turn{color:#F7A9D3;font-weight:800}
+/* Comfortable side margins for the research body on phones */
+@media (max-width:600px){
+  .ly-research-body{padding:0 16px}
+}
 
 /* method */
 .ly-method{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
@@ -919,15 +932,18 @@ const CSS = `
   .ly-clarity{grid-template-columns:0.82fr 1.18fr;gap:54px}
   .ly-only-mob{display:none} .ly-only-desk{display:block}
   .ly-hero{padding:0}
-  .ly-hero-stage{min-height:560px;padding:0}
-  .ly-hero-mob-img{display:none}
-  .ly-hero-bg{display:block;left:auto;right:0;width:56%}
-  .ly-hero-bg img{object-position:center 42%}
-  .ly-hero-fade{background:linear-gradient(90deg,#F6EEFB 0%,#F6EEFB 10%,rgba(246,238,251,.5) 26%,transparent 46%)}
-  .ly-hero-copy{max-width:540px}
-  .ly-hbr{display:inline}
-  .ly-hero-h1{font-size:clamp(38px,3.2vw,42px)}
+  .ly-hero-stage{padding:48px 0 10px}
+  .ly-hero-inner{display:grid;grid-template-columns:1.05fr .95fr;gap:44px;align-items:center}
+  .ly-hero-copy{max-width:560px}
+  .ly-hero-h1{font-size:clamp(38px,3.8vw,50px)}
   .ly-hero-action{max-width:480px;margin-top:28px}
+  .ly-hero-media{max-width:none;margin:0}
+  .ly-hero-badge{font-size:15px;padding:9px 17px 9px 9px;gap:10px}
+  .ly-hero-bico{width:32px;height:32px}
+  .ly-hero-bico svg{width:16px;height:16px}
+  .ly-hero-badge-1{top:4%;left:0}
+  .ly-hero-badge-2{top:42%;right:-5%}
+  .ly-hero-badge-3{bottom:12%;left:-5%}
   .ly-trust{display:flex;background:transparent;border:0;padding:0;box-shadow:none;font-size:13px}
   .ly-trust .ly-tdesk{display:inline-flex}
   .ly-bdesk{display:inline}
@@ -942,14 +958,6 @@ const CSS = `
   .ly-story-single{display:none}
   .ly-story-quad{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .ly-story-cell{aspect-ratio:4/5;border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,.12);box-shadow:0 24px 50px -24px rgba(0,0,0,.7)}
-  .ly-eat-grid{grid-template-columns:1.08fr .92fr;gap:58px}
-  .ly-eat-media{max-width:none;margin:0}
-  .ly-eat-badge{font-size:13.5px;padding:8px 15px 8px 8px;gap:9px}
-  .ly-eat-bico{width:29px;height:29px}
-  .ly-eat-bico svg{width:15px;height:15px}
-  .ly-eat-badge-1{top:5%;left:4%}
-  .ly-eat-badge-2{top:43%;right:-6%}
-  .ly-eat-badge-3{bottom:13%;left:-6%}
   .ly-guar-grid{grid-template-columns:auto 1fr;gap:48px;text-align:left;justify-items:start}
   .ly-sticky{display:none}
   .lyx .ly-nowrap{white-space:nowrap}
