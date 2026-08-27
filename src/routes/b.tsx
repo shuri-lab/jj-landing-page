@@ -455,13 +455,13 @@ function WhatYouGet() {
 }
 
 // ── pricing / value stack ────────────────────────────────────────────────────
-const VALUE_STACK: { label: string; value: number; note?: string }[] = [
+const VALUE_STACK: { label: string; value: number; note?: string; bonus?: boolean }[] = [
   { label: "Two 1-on-1 coaching calls every week with JJ's AI Twin", value: 1200, note: "my exact voice, personality, and coaching" },
   { label: "Daily texts from JJ", value: 400 },
   { label: "Your reset plan, lose up to 15lbs in the first 2 weeks", value: 97 },
-  { label: "A done-for-you meal plan, built around the food you love", value: 300 },
-  { label: "Grocery lists that save you up to $75 a month", value: 150 },
-  { label: "The Circle of Women", value: 200 },
+  { label: "A done-for-you weekly meal plan, built around the food you love", value: 300 },
+  { label: "Grocery lists that save you up to $75 a month", value: 150, bonus: true },
+  { label: "The Circle of Women", value: 200, bonus: true },
 ];
 
 function Pricing() {
@@ -509,19 +509,28 @@ function Pricing() {
         <div className="ly-stack">
           <p className="ly-stack-h">Everything included:</p>
           <ul className="ly-stack-list">
-            {VALUE_STACK.map((it) => (
+            {VALUE_STACK.filter((it) => !it.bonus).map((it) => (
               <li key={it.label}>
                 <span className="ly-stack-name"><span className="ly-stack-tick"><Check className="ly-ico-12" /></span><span>{it.label}{it.note ? <span className="ly-stack-sub">{it.note}</span> : null}</span></span>
                 <span className="ly-stack-val">${it.value.toLocaleString()}</span>
               </li>
             ))}
           </ul>
+          <div className="ly-stack-bonuses">
+            {VALUE_STACK.filter((it) => it.bonus).map((it) => (
+              <div className="ly-stack-bonus" key={it.label}>
+                <span className="ly-stack-bonus-name"><span className="ly-stack-bonus-tag">Bonus</span><span>{it.label}</span></span>
+                <span className="ly-stack-val">${it.value.toLocaleString()}</span>
+              </div>
+            ))}
+          </div>
           <div className="ly-stack-total"><span>Total Value</span><span className="ly-stack-total-v">${totalValue.toLocaleString()}+</span></div>
           <div className="ly-stack-deal">
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
             <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
             <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} full onClick={() => choosePlan("monthly")} position="offer-monthly" /></div>
+            <p className="ly-urgency">Price goes back to ${MEMBER_WAS} soon. <strong>Lock it in today.</strong></p>
           </div>
 
           <div className="ly-or"><span>or</span></div>
@@ -875,7 +884,13 @@ const CSS = `
 .ly-stack-num{font-family:var(--head);font-weight:900;font-size:74px;line-height:1;color:var(--purple);letter-spacing:-.03em}
 .ly-stack-per{font-family:var(--head);font-weight:800;font-size:22px;color:var(--ink-soft)}
 .ly-stack-note{font-size:13.5px;font-weight:700;color:var(--ink-soft);margin:0}
+.ly-urgency{margin:11px 0 0;font-family:var(--head);font-weight:700;font-size:13.5px;line-height:1.35;color:var(--pink-accent)}
+.ly-urgency strong{font-weight:800;color:var(--pink-accent);white-space:nowrap}
 .ly-stack-sub{display:block;font-size:13px;color:var(--ink-soft);font-weight:500;margin-top:3px}
+.ly-stack-bonuses{margin-top:12px;display:flex;flex-direction:column;gap:9px}
+.ly-stack-bonus{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;padding:11px 13px;border:1.5px dashed var(--purple);background:var(--purple-soft);border-radius:14px;font-size:15.5px;font-weight:600}
+.ly-stack-bonus-name{display:flex;gap:9px;align-items:flex-start;line-height:1.35;min-width:0}
+.ly-stack-bonus-tag{flex:0 0 auto;margin-top:1px;font-family:var(--head);font-weight:900;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:#fff;background:var(--grad);padding:3px 8px;border-radius:999px}
 .ly-stack-trust{display:flex;align-items:center;justify-content:center;gap:8px;color:var(--ink-soft);font-size:13px;font-weight:600;margin:16px 0 0;flex-wrap:wrap}
 .ly-stack-trust svg{color:var(--purple)}
 .ly-or{display:flex;align-items:center;gap:14px;margin:16px 2px 0;color:var(--ink-soft);font-family:var(--head);font-weight:800;font-size:12px;letter-spacing:.16em;text-transform:uppercase}
