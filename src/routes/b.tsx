@@ -126,7 +126,10 @@ function Landing() {
       <Header />
       <main>
         <Hero />
-        <PressStrip />
+        <PressStrip label="JJ Smith has been featured on" />
+        <div className="ly-only-mob ly-press-tv">
+          <div className="ly-wrap"><img src={jjOnTv} alt="JJ Smith featured across TV shows and bestselling books" loading="lazy" /></div>
+        </div>
         <ResearchSupport />
         <WhyNothing />
         <Method />
@@ -807,6 +810,8 @@ const CSS = `
 
 /* press */
 .ly-press{padding:30px 0;background:var(--white);border-top:1px solid var(--hair);border-bottom:1px solid var(--hair)}
+.ly-press-tv{background:var(--white);padding:22px 0 30px;border-bottom:1px solid var(--hair);margin-top:-1px}
+.ly-press-tv img{display:block;width:100%;height:auto}
 .ly-press.is-dark{background:transparent;border:0;padding:0}
 .ly-press-lbl{text-align:center;font-family:var(--head);font-size:13px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-soft);margin:0 0 16px}
 .ly-press.is-dark .ly-press-lbl{color:#C7B2DE}
