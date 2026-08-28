@@ -15,11 +15,18 @@ import {
 import { Check, Lock } from "lucide-react";
 import { landingSignupApi } from "@/lib/signup/api";
 import {
+  buildLandingOfferUrl,
   buildMarketingAttribution,
   readDiscountCodeFromUrl,
   readLandingPrefill,
 } from "@/lib/signup/attribution";
 import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
+import {
+  copyText,
+  inAppName,
+  isInAppBrowser,
+  openInSystemBrowser,
+} from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
@@ -31,6 +38,7 @@ import {
 } from "@/lib/signup/session";
 import {
   trackAddPaymentInfo,
+  trackCheckoutError,
   trackContinueToPayment,
   trackPaymentScreenView,
   trackPurchase,
@@ -132,6 +140,12 @@ export function SignupCheckoutCard({ plan }: Props) {
   const [error, setError] = useState("");
   const [isPreparing, setIsPreparing] = useState(false);
   const [isBusy, setIsBusy] = useState(false);
+  // "Open in your real browser" escape hatch, shown when the embedded checkout
+  // fails inside a Facebook / Instagram in-app webview.
+  const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
+  const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">(
+    "idle",
+  );
   const [discountCode] = useState<string | null>(() => readDiscountCodeFromUrl());
   const [appliedDiscount, setAppliedDiscount] = useState<{
     code: string;
@@ -393,7 +407,10 @@ export function SignupCheckoutCard({ plan }: Props) {
 
     setIsPreparing(true);
     setError("");
+    setEscapeUrl(null);
+    setEscapeHint("idle");
     setStep("payment");
+    let stage: "start_email" | "create_checkout" = "start_email";
     try {
       let token = intentToken ?? getSignupIntentSession()?.intentToken ?? null;
       if (!token) {
@@ -443,6 +460,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         }
       }
 
+      stage = "create_checkout";
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
         coachProgramConfigId: program?.id,
@@ -474,14 +492,37 @@ export function SignupCheckoutCard({ plan }: Props) {
         handleExistingEmail(email);
         return;
       }
+      const statusCode = err instanceof SignupApiError ? err.statusCode : undefined;
+      const message =
+        err instanceof Error ? err.message : "Unable to start checkout.";
+      const inApp = isInAppBrowser();
+      // Make the previously-invisible funnel drop measurable + segmentable.
+      trackCheckoutError(trackingBase, {
+        stage,
+        statusCode,
+        message,
+        inApp,
+        email: email.trim(),
+        firstName: contactFirst,
+        lastName: contactLast,
+      });
       setStep("contact");
-      setError(
-        err instanceof SignupApiError
-          ? err.message
-          : err instanceof Error
-            ? err.message
-            : "Unable to start checkout.",
-      );
+      setError(message);
+      // For in-app (Facebook/Instagram) webviews, where the embedded Stripe
+      // checkout is unreliable, offer a "finish in your real browser" escape
+      // that reopens THIS page deep-linked straight to the checkout.
+      if (inApp && typeof window !== "undefined") {
+        setEscapeUrl(
+          window.location.origin +
+            buildLandingOfferUrl({
+              plan: plan.id,
+              email: email.trim() || undefined,
+              firstName: contactFirst || undefined,
+              lastName: contactLast || undefined,
+            }),
+        );
+        setEscapeHint("idle");
+      }
     } finally {
       setIsPreparing(false);
     }
@@ -549,6 +590,49 @@ export function SignupCheckoutCard({ plan }: Props) {
     !isPreparing &&
     !configError;
   const payLabel = `Pay ${formatUsd(totalAmount)} USD`;
+
+  const handleOpenInBrowser = () => {
+    if (!escapeUrl) return;
+    trackCheckoutError(trackingBase, { stage: "open_external", inApp: true });
+    const result = openInSystemBrowser(escapeUrl);
+    if (result === "manual") {
+      setEscapeHint("manual");
+      void copyText(escapeUrl).then((ok) => {
+        if (ok) setEscapeHint("copied");
+      });
+    }
+  };
+
+  const renderEscape = () =>
+    escapeUrl ? (
+      <div className="chk-escape">
+        <p className="chk-escape-title">
+          Payment couldn’t load in the {inAppName()} browser.
+        </p>
+        <p className="chk-escape-sub">
+          Open this page in your phone’s browser to finish securely — your spot
+          and details carry over.
+        </p>
+        <button
+          type="button"
+          className="chk-pay chk-escape-btn"
+          onClick={handleOpenInBrowser}
+        >
+          Open in your phone browser →
+        </button>
+        {escapeHint === "manual" ? (
+          <p className="chk-escape-hint">
+            Tap the <strong>•••</strong> (or <strong>Aa</strong>) menu at the
+            top and choose <strong>“Open in Browser”</strong>. We copied the
+            link too — paste it into Safari if needed.
+          </p>
+        ) : escapeHint === "copied" ? (
+          <p className="chk-escape-hint">
+            Link copied. Open Safari or Chrome and paste it to finish.
+          </p>
+        ) : null}
+      </div>
+    ) : null;
 
   const renderRight = () => {
     if (step === "success") {
@@ -671,6 +755,7 @@ export function SignupCheckoutCard({ plan }: Props) {
 
         {configError ? <p className="chk-error">{configError}</p> : null}
         {error ? <p className="chk-error">{error}</p> : null}
+        {renderEscape()}
 
         <div className="chk-actions">
           <button

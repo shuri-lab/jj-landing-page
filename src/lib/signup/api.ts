@@ -12,20 +12,59 @@ type Envelope<T> = { data?: T } & T;
 
 const PREFIX = "/public/landing/signup";
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const url = `${envApiUrl()}${path}`;
-  let response: Response;
+const REQUEST_TIMEOUT_MS = 10000;
+
+function isAbortError(err: unknown): boolean {
+  return (
+    !!err &&
+    typeof err === "object" &&
+    (err as { name?: string }).name === "AbortError"
+  );
+}
+
+async function fetchOnce(url: string, init?: RequestInit): Promise<Response> {
+  const controller =
+    typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer =
+    controller && typeof setTimeout !== "undefined"
+      ? setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+      : null;
   try {
-    response = await fetch(url, {
+    return await fetch(url, {
       ...init,
+      signal: controller?.signal,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
         ...(init?.headers ?? {}),
       },
     });
-  } catch {
-    throw new SignupApiError(0, "Could not reach checkout. Please try again.");
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const url = `${envApiUrl()}${path}`;
+  let response: Response;
+  try {
+    response = await fetchOnce(url, init);
+  } catch (err) {
+    // A dropped connection (frequent in Facebook/Instagram in-app browsers)
+    // means the request never reached the server, so one retry is safe.
+    // A timeout abort is ambiguous, so we surface it without retrying.
+    if (isAbortError(err)) {
+      throw new SignupApiError(0, "The checkout timed out. Please try again.");
+    }
+    try {
+      await new Promise((resolve) => setTimeout(resolve, 600));
+      response = await fetchOnce(url, init);
+    } catch {
+      throw new SignupApiError(
+        0,
+        "Could not reach checkout. Please try again.",
+      );
+    }
   }
 
   const json = (await response.json().catch(() => null)) as

@@ -117,6 +117,40 @@ export function trackPaymentScreenView(payload?: SignupAnalyticsPayload): void {
   });
 }
 
+/**
+ * Fired when the checkout API fails between "continue to payment" and the
+ * payment screen actually rendering — the funnel step that silently loses
+ * ~half of in-app-browser buyers. Not deduped: every failure is counted.
+ */
+export function trackCheckoutError(
+  payload: SignupAnalyticsPayload | undefined,
+  info: {
+    stage: string;
+    statusCode?: number;
+    message?: string;
+    inApp?: boolean;
+    email?: string;
+    firstName?: string;
+    lastName?: string;
+  },
+): void {
+  trackGaEvent("checkout_error", {
+    ...payload,
+    error_stage: info.stage,
+    error_status: typeof info.statusCode === "number" ? info.statusCode : "none",
+    error_message: (info.message ?? "").slice(0, 120),
+    in_app_browser: info.inApp ? "yes" : "no",
+    // Who dropped, so you can follow up. NOTE: raw email/name in Google
+    // Analytics is against Google's PII policy — Clarity picks these up fine,
+    // but consider recovering from your captured leads (the email is saved the
+    // moment they tap Continue) rather than relying on GA for it.
+    lead_email: info.email?.trim() || undefined,
+    lead_name:
+      [info.firstName, info.lastName].filter(Boolean).join(" ").trim() ||
+      undefined,
+  });
+}
+
 export function trackSignupMethodSelect(
   signupMethod: "email" | "google",
   payload?: SignupAnalyticsPayload,

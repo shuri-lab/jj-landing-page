@@ -501,6 +501,15 @@ function Pricing() {
     if (!fromUrl) return;
     openedFromUrl.current = true;
     choosePlan(fromUrl);
+    // Arriving via a prefilled link (e.g. the in-app "open in browser" escape)
+    // should land the user right on the checkout.
+    if (typeof window !== "undefined") {
+      window.setTimeout(() => {
+        const card = document.getElementById("checkout-card");
+        if (card) card.scrollIntoView({ behavior: "smooth", block: "start" });
+        else scrollToOffer();
+      }, 250);
+    }
   }, [program]);
 
   useEffect(() => {
