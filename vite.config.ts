@@ -6,6 +6,7 @@
 // You can pass additional config via defineConfig({ vite: { ... } }) if needed.
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { nodePolyfills } from "vite-plugin-node-polyfills";
+import { imagetools } from "vite-imagetools";
 
 const fromRoot = (path: string) => new URL(path, import.meta.url).pathname;
 
@@ -17,6 +18,18 @@ export default defineConfig({
   },
   vite: {
     plugins: [
+      // Build-time image optimization: convert raster photos to WebP (visually
+      // identical, ~80% smaller). Skips small line-art logos and non-raster assets.
+      // No resize, so nothing is upscaled. Imports stay the same in every route.
+      imagetools({
+        defaultDirectives: (url: URL) => {
+          const p = url.pathname;
+          if (/\/partners\//.test(p)) return new URLSearchParams();
+          if (/\.(svg|webp|avif|gif|ico)$/i.test(p)) return new URLSearchParams();
+          if (/\.(png|jpe?g)$/i.test(p)) return new URLSearchParams({ format: "webp", quality: "80" });
+          return new URLSearchParams();
+        },
+      }),
       nodePolyfills({
         include: ["events"],
         globals: {
