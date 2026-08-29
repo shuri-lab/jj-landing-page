@@ -5,7 +5,7 @@ import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
 import { OFFER_PLANS } from "@/lib/signup/plans";
-import { readLandingPrefill } from "@/lib/signup/attribution";
+import { readCheckoutSessionIdFromUrl, readLandingPrefill } from "@/lib/signup/attribution";
 import { trackSelectPlan } from "@/lib/signup/tracking";
 import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
@@ -498,9 +498,10 @@ function Pricing() {
   useEffect(() => {
     if (openedFromUrl.current) return;
     const fromUrl = readLandingPrefill().plan;
-    if (!fromUrl) return;
+    const returningSession = Boolean(readCheckoutSessionIdFromUrl());
+    if (!fromUrl && !returningSession) return;
     openedFromUrl.current = true;
-    choosePlan(fromUrl);
+    choosePlan(fromUrl ?? "monthly");
     // Arriving via a prefilled link (e.g. the in-app "open in browser" escape)
     // should land the user right on the checkout.
     if (typeof window !== "undefined") {

@@ -13,10 +13,7 @@ const PURCHASE_STORAGE_PREFIX = "yo_landing_funnel_purchase:";
 const RECORDING_STOPPED_KEY = "yo_signup_funnel_recording_stopped";
 
 type AnalyticsPrimitive = string | number | boolean;
-export type SignupAnalyticsPayload = Record<
-  string,
-  AnalyticsPrimitive | null | undefined
->;
+export type SignupAnalyticsPayload = Record<string, AnalyticsPrimitive | null | undefined>;
 
 declare global {
   interface Window {
@@ -97,9 +94,7 @@ export function trackSelectPlan(payload: SignupAnalyticsPayload): void {
     currency: typeof payload.currency === "string" ? payload.currency : "USD",
     content_ids: contentId ? [contentId] : ["yobody-program"],
     content_name: "Yobody Coaching",
-    contents: contentId
-      ? [{ id: contentId, quantity: 1, item_price: value ?? 0 }]
-      : undefined,
+    contents: contentId ? [{ id: contentId, quantity: 1, item_price: value ?? 0 }] : undefined,
   });
 }
 
@@ -115,6 +110,11 @@ export function trackPaymentScreenView(payload?: SignupAnalyticsPayload): void {
   trackGaEvent("payment_screen_view", payload, {
     onceKey: "payment_screen_view",
   });
+  try {
+    window.clarity?.("upgrade", "checkout");
+  } catch {
+    /* ignore */
+  }
 }
 
 /**
@@ -129,9 +129,6 @@ export function trackCheckoutError(
     statusCode?: number;
     message?: string;
     inApp?: boolean;
-    email?: string;
-    firstName?: string;
-    lastName?: string;
   },
 ): void {
   trackGaEvent("checkout_error", {
@@ -140,14 +137,6 @@ export function trackCheckoutError(
     error_status: typeof info.statusCode === "number" ? info.statusCode : "none",
     error_message: (info.message ?? "").slice(0, 120),
     in_app_browser: info.inApp ? "yes" : "no",
-    // Who dropped, so you can follow up. NOTE: raw email/name in Google
-    // Analytics is against Google's PII policy — Clarity picks these up fine,
-    // but consider recovering from your captured leads (the email is saved the
-    // moment they tap Continue) rather than relying on GA for it.
-    lead_email: info.email?.trim() || undefined,
-    lead_name:
-      [info.firstName, info.lastName].filter(Boolean).join(" ").trim() ||
-      undefined,
   });
 }
 
@@ -212,9 +201,7 @@ export function trackPurchase(payload: SignupAnalyticsPayload): void {
       currency: String(payload.currency ?? "USD"),
       order_id: transactionId,
       content_ids: contentId ? [contentId] : undefined,
-      contents: contentId
-        ? [{ id: contentId, quantity: 1, item_price: value }]
-        : undefined,
+      contents: contentId ? [{ id: contentId, quantity: 1, item_price: value }] : undefined,
       eventID: lockedEventId || resolveMetaPurchaseEventId(transactionId),
     });
   }
