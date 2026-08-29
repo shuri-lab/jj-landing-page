@@ -101,6 +101,7 @@ export interface SignupIntentResponse {
   firstName?: string;
   lastName?: string;
   clientSecret?: string | null;
+  checkoutSessionId?: string | null;
   message?: string;
   emailSent?: boolean;
   purchaseTracking?: SignupPurchaseTracking | null;

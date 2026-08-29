@@ -517,3 +517,8 @@
 .chk-escape-hint strong {
   color: var(--chk-ink);
 }
+
+.chk-embedded {
+  min-height: 320px;
+  margin: 0 -2px 4px;
+}

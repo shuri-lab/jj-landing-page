@@ -1,32 +1,18 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { loadStripe } from "@stripe/stripe-js";
-import type {
-  StripeExpressCheckoutElementConfirmEvent,
-  StripeExpressCheckoutElementReadyEvent,
-  StripePaymentElementOptions,
-} from "@stripe/stripe-js";
-import {
-  Elements,
-  ExpressCheckoutElement,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
+import { EmbeddedCheckout, EmbeddedCheckoutProvider } from "@stripe/react-stripe-js";
 import { Check, Lock } from "lucide-react";
 import { landingSignupApi } from "@/lib/signup/api";
 import {
+  buildEmbeddedReturnUrl,
   buildLandingOfferUrl,
   buildMarketingAttribution,
+  readCheckoutSessionIdFromUrl,
   readDiscountCodeFromUrl,
   readLandingPrefill,
 } from "@/lib/signup/attribution";
 import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
-import {
-  copyText,
-  inAppName,
-  isInAppBrowser,
-  openInSystemBrowser,
-} from "@/lib/signup/inapp";
+import { copyText, inAppName, isInAppBrowser, openInSystemBrowser } from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
@@ -77,28 +63,6 @@ function splitFullName(full: string): { firstName: string; lastName: string } {
   return { firstName: parts[0] ?? "", lastName: parts.slice(1).join(" ") };
 }
 
-function billingDetailsForConfirm(
-  email: string,
-  name: string,
-  expressEvent?: StripeExpressCheckoutElementConfirmEvent,
-) {
-  const fromExpress = expressEvent?.billingDetails;
-  const address = fromExpress?.address;
-  return {
-    email: fromExpress?.email?.trim() || email.trim() || "",
-    name: fromExpress?.name?.trim() || name.trim() || "",
-    phone: fromExpress?.phone ?? "",
-    address: {
-      line1: address?.line1 ?? "",
-      line2: address?.line2 ?? "",
-      city: address?.city ?? "",
-      state: address?.state ?? "",
-      postal_code: address?.postal_code ?? "",
-      country: address?.country || "US",
-    },
-  };
-}
-
 function signInUrl(email: string, loginBase?: string): string {
   const base = (loginBase || envYobodyAuthUrl()).replace(/\/$/, "");
   const params = new URLSearchParams();
@@ -136,6 +100,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [checkoutSessionId, setCheckoutSessionId] = useState<string | null>(null);
   const [handoffUrl, setHandoffUrl] = useState("");
   const [error, setError] = useState("");
   const [isPreparing, setIsPreparing] = useState(false);
@@ -143,9 +108,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   // "Open in your real browser" escape hatch, shown when the embedded checkout
   // fails inside a Facebook / Instagram in-app webview.
   const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
-  const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">(
-    "idle",
-  );
+  const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">("idle");
   const [discountCode] = useState<string | null>(() => readDiscountCodeFromUrl());
   const [appliedDiscount, setAppliedDiscount] = useState<{
     code: string;
@@ -164,11 +127,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   const amountOff = appliedDiscount?.amountOff ?? 0;
   const totalAmount = Math.max(0, amount - amountOff);
   const stripeKey = config?.stripePublishableKey || envStripePublishableKey();
-  const stripePromise = useMemo(
-    () => (stripeKey ? loadStripe(stripeKey) : null),
-    [stripeKey],
-  );
-  const nameOnCard = `${firstName} ${lastName}`.trim() || fullName.trim();
+  const stripePromise = useMemo(() => (stripeKey ? loadStripe(stripeKey) : null), [stripeKey]);
   const loginBase = config?.loginUrl || envYobodyAuthUrl();
 
   const trackingBase = useMemo(
@@ -184,28 +143,21 @@ export function SignupCheckoutCard({ plan }: Props) {
   );
 
   const persistIntent = useCallback(
-    (
-      response: SignupIntentResponse,
-      extras?: { firstName?: string; lastName?: string },
-    ) => {
+    (response: SignupIntentResponse, extras?: { firstName?: string; lastName?: string }) => {
       const token = response.intentToken ?? intentToken ?? getSignupIntentSession()?.intentToken;
       if (!token) return;
       setIntentToken(token);
+      if (response.checkoutSessionId) {
+        setCheckoutSessionId(response.checkoutSessionId);
+      }
       const existing = getSignupIntentSession();
       saveSignupIntentSession({
         intentId: response.intentId,
         intentToken: token,
         email: response.email || email || existing?.email,
-        firstName:
-          extras?.firstName ||
-          response.firstName ||
-          firstName ||
-          existing?.firstName,
-        lastName:
-          extras?.lastName ||
-          response.lastName ||
-          lastName ||
-          existing?.lastName,
+        firstName: extras?.firstName || response.firstName || firstName || existing?.firstName,
+        lastName: extras?.lastName || response.lastName || lastName || existing?.lastName,
+        checkoutSessionId: response.checkoutSessionId || existing?.checkoutSessionId,
       });
     },
     [email, firstName, intentToken, lastName],
@@ -240,9 +192,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       .catch((err: unknown) => {
         if (cancelled) return;
         setConfigError(
-          err instanceof SignupApiError
-            ? err.message
-            : "Checkout is unavailable right now.",
+          err instanceof SignupApiError ? err.message : "Checkout is unavailable right now.",
         );
       });
     return () => {
@@ -254,8 +204,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     (response: SignupIntentResponse, fallbackId?: string) => {
       if (!response.paymentComplete && !response.purchaseTracking) return;
       trackPurchase({
-        transaction_id:
-          response.purchaseTracking?.orderId ?? fallbackId ?? response.intentId,
+        transaction_id: response.purchaseTracking?.orderId ?? fallbackId ?? response.intentId,
         value: response.purchaseTracking?.value ?? totalAmount,
         currency: response.purchaseTracking?.currency ?? "USD",
         content_id: response.purchaseTracking?.contentId ?? program?.id,
@@ -309,11 +258,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     if (!config || resumedRef.current) return;
     const session = getSignupIntentSession();
     const urlEmail = prefill.email.trim().toLowerCase();
-    if (
-      urlEmail &&
-      session?.email &&
-      session.email.trim().toLowerCase() !== urlEmail
-    ) {
+    if (urlEmail && session?.email && session.email.trim().toLowerCase() !== urlEmail) {
       clearSignupIntentSession();
       resumedRef.current = true;
       return;
@@ -324,6 +269,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     }
     resumedRef.current = true;
     setIntentToken(session.intentToken);
+    if (session.checkoutSessionId) setCheckoutSessionId(session.checkoutSessionId);
     if (session.email && !prefill.email) setEmail(session.email);
     if (session.firstName && !prefill.firstName) setFirstName(session.firstName);
     if (session.lastName && !prefill.lastName) setLastName(session.lastName);
@@ -335,11 +281,30 @@ export function SignupCheckoutCard({ plan }: Props) {
       .then(async (response) => {
         await applyIntent(response);
         if (!response.paymentComplete && mapIntentToWizardStep(response) === "payment") {
+          const returningSessionId = readCheckoutSessionIdFromUrl();
+          if (returningSessionId) {
+            const verified = await landingSignupApi.verifyCheckout({
+              intentToken: session.intentToken,
+              checkoutSessionId: returningSessionId,
+            });
+            persistIntent(verified);
+            rememberHandoff(verified);
+            if (verified.paymentComplete) {
+              enterPaidSuccess(verified, returningSessionId);
+              return;
+            }
+          }
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
             coachProgramConfigId: program?.id,
             discountCode: appliedDiscount?.code ?? discountCode,
             billingInterval: plan.billingInterval,
+            returnUrl: buildEmbeddedReturnUrl({
+              plan: plan.id,
+              email: session.email || email,
+              firstName: session.firstName || firstName,
+              lastName: session.lastName || lastName,
+            }),
             marketingAttribution: buildMarketingAttribution({
               sourceSurface: "landing",
               sourceContext: "checkout",
@@ -354,6 +319,9 @@ export function SignupCheckoutCard({ plan }: Props) {
             enterPaidSuccess(checkout);
             return;
           }
+          if (checkout.checkoutSessionId) {
+            setCheckoutSessionId(checkout.checkoutSessionId);
+          }
           if (checkout.clientSecret) setClientSecret(checkout.clientSecret);
         }
       })
@@ -366,7 +334,10 @@ export function SignupCheckoutCard({ plan }: Props) {
     applyIntent,
     config,
     discountCode,
+    email,
     enterPaidSuccess,
+    firstName,
+    lastName,
     persistIntent,
     plan,
     prefill.email,
@@ -466,6 +437,12 @@ export function SignupCheckoutCard({ plan }: Props) {
         coachProgramConfigId: program?.id,
         discountCode: appliedDiscount?.code ?? discountCode,
         billingInterval: plan.billingInterval,
+        returnUrl: buildEmbeddedReturnUrl({
+          plan: plan.id,
+          email: email.trim(),
+          firstName: contactFirst,
+          lastName: contactLast,
+        }),
         marketingAttribution: buildMarketingAttribution({
           sourceSurface: "landing",
           sourceContext: "checkout",
@@ -484,6 +461,9 @@ export function SignupCheckoutCard({ plan }: Props) {
         throw new Error(checkout.message || "Unable to initialize payment.");
       }
       prepareKeyRef.current = prepareKey;
+      if (checkout.checkoutSessionId) {
+        setCheckoutSessionId(checkout.checkoutSessionId);
+      }
       setClientSecret(checkout.clientSecret);
       setStep("payment");
       trackPaymentScreenView(trackingBase);
@@ -493,8 +473,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         return;
       }
       const statusCode = err instanceof SignupApiError ? err.statusCode : undefined;
-      const message =
-        err instanceof Error ? err.message : "Unable to start checkout.";
+      const message = err instanceof Error ? err.message : "Unable to start checkout.";
       const inApp = isInAppBrowser();
       // Make the previously-invisible funnel drop measurable + segmentable.
       trackCheckoutError(trackingBase, {
@@ -502,9 +481,6 @@ export function SignupCheckoutCard({ plan }: Props) {
         statusCode,
         message,
         inApp,
-        email: email.trim(),
-        firstName: contactFirst,
-        lastName: contactLast,
       });
       setStep("contact");
       setError(message);
@@ -544,7 +520,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   ]);
 
   const handlePaymentCompleted = useCallback(
-    async (paymentIntentId: string) => {
+    async (sessionId: string) => {
       const token = intentToken ?? getSignupIntentSession()?.intentToken;
       if (!token) {
         setError("Signup session missing. Please try again.");
@@ -552,10 +528,11 @@ export function SignupCheckoutCard({ plan }: Props) {
       }
       setIsBusy(true);
       setError("");
+      trackAddPaymentInfo(trackingBase);
       try {
         const verified = await landingSignupApi.verifyCheckout({
           intentToken: token,
-          paymentIntentId,
+          checkoutSessionId: sessionId,
         });
         persistIntent(verified, {
           firstName: firstName.trim(),
@@ -570,7 +547,12 @@ export function SignupCheckoutCard({ plan }: Props) {
             })
             .catch(() => undefined);
         }
-        enterPaidSuccess(verified, paymentIntentId);
+        if (!verified.paymentComplete) {
+          throw new Error(
+            verified.message || "Payment is still confirming. Please wait a moment and try again.",
+          );
+        }
+        enterPaidSuccess(verified, sessionId);
       } catch (err) {
         setError(
           err instanceof SignupApiError
@@ -581,7 +563,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         setIsBusy(false);
       }
     },
-    [enterPaidSuccess, firstName, intentToken, lastName, persistIntent],
+    [enterPaidSuccess, firstName, intentToken, lastName, persistIntent, trackingBase],
   );
 
   const canContinueContact =
@@ -589,7 +571,17 @@ export function SignupCheckoutCard({ plan }: Props) {
     splitFullName(fullName).firstName.length > 0 &&
     !isPreparing &&
     !configError;
-  const payLabel = `Pay ${formatUsd(totalAmount)} USD`;
+
+  const embeddedOptions = useMemo(
+    () => ({
+      clientSecret: clientSecret ?? undefined,
+      onComplete: () => {
+        const sessionId = checkoutSessionId ?? getSignupIntentSession()?.checkoutSessionId;
+        if (sessionId) void handlePaymentCompleted(sessionId);
+      },
+    }),
+    [checkoutSessionId, clientSecret, handlePaymentCompleted],
+  );
 
   const handleOpenInBrowser = () => {
     if (!escapeUrl) return;
@@ -606,25 +598,19 @@ export function SignupCheckoutCard({ plan }: Props) {
   const renderEscape = () =>
     escapeUrl ? (
       <div className="chk-escape">
-        <p className="chk-escape-title">
-          Payment couldn’t load in the {inAppName()} browser.
-        </p>
+        <p className="chk-escape-title">Payment couldn’t load in the {inAppName()} browser.</p>
         <p className="chk-escape-sub">
-          Open this page in your phone’s browser to finish securely — your spot
-          and details carry over.
+          Open this page in your phone’s browser to finish securely — your spot and details carry
+          over.
         </p>
-        <button
-          type="button"
-          className="chk-pay chk-escape-btn"
-          onClick={handleOpenInBrowser}
-        >
+        <button type="button" className="chk-pay chk-escape-btn" onClick={handleOpenInBrowser}>
           Open in your phone browser →
         </button>
         {escapeHint === "manual" ? (
           <p className="chk-escape-hint">
-            Tap the <strong>•••</strong> (or <strong>Aa</strong>) menu at the
-            top and choose <strong>“Open in Browser”</strong>. We copied the
-            link too — paste it into Safari if needed.
+            Tap the <strong>•••</strong> (or <strong>Aa</strong>) menu at the top and choose{" "}
+            <strong>“Open in Browser”</strong>. We copied the link too — paste it into Safari if
+            needed.
           </p>
         ) : escapeHint === "copied" ? (
           <p className="chk-escape-hint">
@@ -642,9 +628,7 @@ export function SignupCheckoutCard({ plan }: Props) {
             <Check size={32} strokeWidth={3} />
           </div>
           <h3 className="chk-title">Payment successful</h3>
-          <p className="chk-sub">
-            Please wait while we redirect you to get set up.
-          </p>
+          <p className="chk-sub">Please wait while we redirect you to get set up.</p>
           {handoffUrl ? (
             <div className="chk-actions">
               <a
@@ -666,32 +650,16 @@ export function SignupCheckoutCard({ plan }: Props) {
       return (
         <>
           {clientSecret && stripePromise ? (
-            <Elements
-              stripe={stripePromise}
-              options={{
-                clientSecret,
-                appearance: {
-                  theme: "stripe",
-                  variables: {
-                    borderRadius: "13px",
-                    colorPrimary: "#7C3AA6",
-                    colorText: "#2A2036",
-                    colorTextSecondary: "#6C6180",
-                  },
-                },
-              }}
-            >
-              <CheckoutStripeForm
-                email={email}
-                nameOnCard={nameOnCard}
-                payLabel={payLabel}
-                amount={totalAmount}
-                isVerifying={isBusy}
-                tracking={trackingBase}
-                onCompleted={handlePaymentCompleted}
-                onError={setError}
-              />
-            </Elements>
+            <div className="chk-embedded">
+              <EmbeddedCheckoutProvider stripe={stripePromise} options={embeddedOptions}>
+                <EmbeddedCheckout />
+              </EmbeddedCheckoutProvider>
+              {isBusy ? (
+                <p className="chk-hint" role="status" aria-live="polite">
+                  Verifying payment…
+                </p>
+              ) : null}
+            </div>
           ) : (
             <div className="chk-pay-loading" role="status" aria-live="polite">
               <span className="chk-pay-spinner" aria-hidden="true" />
@@ -699,6 +667,7 @@ export function SignupCheckoutCard({ plan }: Props) {
             </div>
           )}
           {error ? <p className="chk-error">{error}</p> : null}
+          {renderEscape()}
         </>
       );
     }
@@ -798,9 +767,7 @@ export function SignupCheckoutCard({ plan }: Props) {
               <Progress step={step} />
               <header className="chk-header">
                 <h2 className="chk-title">{STEP_COPY[step].title}</h2>
-                {STEP_COPY[step].sub ? (
-                  <p className="chk-sub">{STEP_COPY[step].sub}</p>
-                ) : null}
+                {STEP_COPY[step].sub ? <p className="chk-sub">{STEP_COPY[step].sub}</p> : null}
               </header>
             </>
           ) : null}
@@ -813,150 +780,6 @@ export function SignupCheckoutCard({ plan }: Props) {
             </p>
           ) : null}
         </div>
-      </div>
-    </div>
-  );
-}
-
-function CheckoutStripeForm({
-  email,
-  nameOnCard,
-  payLabel,
-  amount,
-  isVerifying,
-  tracking,
-  onCompleted,
-  onError,
-}: {
-  email: string;
-  nameOnCard: string;
-  payLabel: string;
-  amount: number;
-  isVerifying: boolean;
-  tracking: {
-    content_id?: string;
-    value: number;
-    currency: string;
-  };
-  onCompleted: (paymentIntentId: string) => void;
-  onError: (message: string) => void;
-}) {
-  const stripe = useStripe();
-  const elements = useElements();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [hasExpressMethods, setHasExpressMethods] = useState(false);
-
-  const paymentElementOptions: StripePaymentElementOptions = {
-    layout: "tabs",
-    wallets: { applePay: "auto", googlePay: "auto", link: "auto" },
-    fields: {
-      billingDetails: {
-        name: "never",
-        email: "never",
-        phone: "never",
-        address: "never",
-      },
-    },
-    defaultValues: {
-      billingDetails: {
-        email: email || undefined,
-        name: nameOnCard || undefined,
-      },
-    },
-  };
-
-  const handleConfirm = async (
-    expressEvent?: StripeExpressCheckoutElementConfirmEvent,
-  ) => {
-    if (!stripe || !elements) return;
-    setIsSubmitting(true);
-    onError("");
-    trackAddPaymentInfo(tracking);
-    const submitResult = await elements.submit();
-    if (submitResult.error) {
-      const message =
-        submitResult.error.message ?? "Please check your payment details.";
-      onError(message);
-      expressEvent?.paymentFailed({ reason: "invalid_payment_data", message });
-      setIsSubmitting(false);
-      return;
-    }
-    const result = await stripe.confirmPayment({
-      elements,
-      redirect: "if_required",
-      confirmParams: {
-        payment_method_data: {
-          billing_details: billingDetailsForConfirm(
-            email,
-            nameOnCard,
-            expressEvent,
-          ),
-        },
-      },
-    });
-    if (result.error) {
-      const message = result.error.message ?? "Payment failed.";
-      onError(message);
-      expressEvent?.paymentFailed({ reason: "fail", message });
-      setIsSubmitting(false);
-      return;
-    }
-    const paymentIntentId = result.paymentIntent?.id;
-    if (!paymentIntentId) {
-      const message = "Payment confirmed but no payment intent id was returned.";
-      onError(message);
-      expressEvent?.paymentFailed({ reason: "fail", message });
-      setIsSubmitting(false);
-      return;
-    }
-    onCompleted(paymentIntentId);
-  };
-
-  const handleExpressReady = (
-    event: StripeExpressCheckoutElementReadyEvent,
-  ) => {
-    setHasExpressMethods(Boolean(event.availablePaymentMethods));
-  };
-
-  const disabled = !stripe || !elements || isSubmitting || isVerifying;
-
-  return (
-    <div className="space-y-3">
-      <div style={{ display: hasExpressMethods ? "block" : "none" }}>
-        <ExpressCheckoutElement
-          options={{
-            buttonHeight: 48,
-            buttonTheme: { applePay: "black", googlePay: "black" },
-            buttonType: { applePay: "plain", googlePay: "pay" },
-            layout: { maxColumns: 1, maxRows: 2, overflow: "auto" },
-            lineItems: [
-              {
-                name: "Yobody By JJ Smith",
-                amount: Math.round(Number(amount) * 100),
-              },
-            ],
-            paymentMethods: {
-              applePay: "auto",
-              googlePay: "auto",
-              link: "auto",
-              klarna: "auto",
-            },
-          }}
-          onReady={handleExpressReady}
-          onConfirm={handleConfirm}
-        />
-        {hasExpressMethods ? <div className="chk-pay-or">or pay with card</div> : null}
-      </div>
-      <PaymentElement options={paymentElementOptions} />
-      <div className="chk-actions">
-        <button
-          type="button"
-          className="chk-pay"
-          disabled={disabled}
-          onClick={() => void handleConfirm()}
-        >
-          {isVerifying ? "Verifying payment…" : isSubmitting ? "Processing…" : payLabel}
-        </button>
       </div>
     </div>
   );

@@ -15,19 +15,18 @@ const PREFIX = "/public/landing/signup";
 const REQUEST_TIMEOUT_MS = 10000;
 
 function isAbortError(err: unknown): boolean {
-  return (
-    !!err &&
-    typeof err === "object" &&
-    (err as { name?: string }).name === "AbortError"
-  );
+  return !!err && typeof err === "object" && (err as { name?: string }).name === "AbortError";
 }
 
-async function fetchOnce(url: string, init?: RequestInit): Promise<Response> {
-  const controller =
-    typeof AbortController !== "undefined" ? new AbortController() : null;
+async function fetchOnce(
+  url: string,
+  init?: RequestInit,
+  timeoutMs = REQUEST_TIMEOUT_MS,
+): Promise<Response> {
+  const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
   const timer =
     controller && typeof setTimeout !== "undefined"
-      ? setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS)
+      ? setTimeout(() => controller.abort(), timeoutMs)
       : null;
   try {
     return await fetch(url, {
@@ -44,11 +43,16 @@ async function fetchOnce(url: string, init?: RequestInit): Promise<Response> {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+  options?: { timeoutMs?: number },
+): Promise<T> {
   const url = `${envApiUrl()}${path}`;
+  const timeoutMs = options?.timeoutMs ?? REQUEST_TIMEOUT_MS;
   let response: Response;
   try {
-    response = await fetchOnce(url, init);
+    response = await fetchOnce(url, init, timeoutMs);
   } catch (err) {
     // A dropped connection (frequent in Facebook/Instagram in-app browsers)
     // means the request never reached the server, so one retry is safe.
@@ -58,23 +62,17 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
     try {
       await new Promise((resolve) => setTimeout(resolve, 600));
-      response = await fetchOnce(url, init);
+      response = await fetchOnce(url, init, timeoutMs);
     } catch {
-      throw new SignupApiError(
-        0,
-        "Could not reach checkout. Please try again.",
-      );
+      throw new SignupApiError(0, "Could not reach checkout. Please try again.");
     }
   }
 
   const json = (await response.json().catch(() => null)) as
-    | Envelope<T>
-    | { message?: string | string[]; statusCode?: number }
-    | null;
+    Envelope<T> | { message?: string | string[]; statusCode?: number } | null;
 
   if (!response.ok) {
-    const raw =
-      json && typeof json === "object" && "message" in json ? json.message : null;
+    const raw = json && typeof json === "object" && "message" in json ? json.message : null;
     const message = Array.isArray(raw)
       ? raw.join(" ")
       : typeof raw === "string" && raw.trim()
@@ -134,6 +132,7 @@ export const landingSignupApi = {
     discountCode?: string | null;
     billingInterval?: SignupBillingInterval | null;
     marketingAttribution?: SignupMarketingAttribution | null;
+    returnUrl?: string | null;
   }): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/checkout`, {
       method: "POST",
@@ -143,18 +142,20 @@ export const landingSignupApi = {
 
   verifyCheckout(payload: {
     intentToken: string;
-    paymentIntentId: string;
+    paymentIntentId?: string;
+    checkoutSessionId?: string;
   }): Promise<SignupIntentResponse> {
-    return request<SignupIntentResponse>(`${PREFIX}/checkout/verify`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-    });
+    return request<SignupIntentResponse>(
+      `${PREFIX}/checkout/verify`,
+      {
+        method: "POST",
+        body: JSON.stringify(payload),
+      },
+      { timeoutMs: 20000 },
+    );
   },
 
-  setPassword(payload: {
-    intentToken: string;
-    password: string;
-  }): Promise<SignupIntentResponse> {
+  setPassword(payload: { intentToken: string; password: string }): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/password`, {
       method: "POST",
       body: JSON.stringify(payload),
