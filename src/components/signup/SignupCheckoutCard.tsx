@@ -384,32 +384,33 @@ export function SignupCheckoutCard({ plan }: Props) {
     let stage: "start_email" | "create_checkout" = "start_email";
     try {
       let token = intentToken ?? getSignupIntentSession()?.intentToken ?? null;
-      if (!token) {
+      const hadSession = Boolean(token);
+      const started = await landingSignupApi.startEmail({
+        email: email.trim(),
+        coachId: config.coachId,
+        coachProgramConfigId: program?.id,
+        billingInterval: plan.billingInterval,
+        firstName: contactFirst,
+        lastName: contactLast || undefined,
+        marketingAttribution: buildMarketingAttribution({
+          sourceSurface: "landing",
+          sourceContext: "landing-page",
+          buttonPosition: plan.buttonPosition,
+          ctaText: plan.ctaLabel,
+          tier: trackingBase.tier,
+        }),
+      });
+      persistIntent(started, { firstName: contactFirst, lastName: contactLast });
+      rememberHandoff(started);
+      token = started.intentToken ?? token;
+      if (!hadSession) {
         trackSignupMethodSelect("email", trackingBase);
-        const started = await landingSignupApi.startEmail({
-          email: email.trim(),
-          coachId: config.coachId,
-          coachProgramConfigId: program?.id,
-          billingInterval: plan.billingInterval,
-          firstName: contactFirst,
-          lastName: contactLast || undefined,
-          marketingAttribution: buildMarketingAttribution({
-            sourceSurface: "landing",
-            sourceContext: "landing-page",
-            buttonPosition: plan.buttonPosition,
-            ctaText: plan.ctaLabel,
-            tier: trackingBase.tier,
-          }),
-        });
-        persistIntent(started, { firstName: contactFirst, lastName: contactLast });
-        rememberHandoff(started);
-        token = started.intentToken ?? null;
         trackSignupLead(trackingBase);
         trackContinueToPayment(trackingBase);
-        if (started.paymentComplete) {
-          enterPaidSuccess(started);
-          return;
-        }
+      }
+      if (started.paymentComplete) {
+        enterPaidSuccess(started);
+        return;
       }
       if (!token) throw new Error("Missing signup session.");
 
