@@ -22,9 +22,10 @@ import resetPlanImage from "@/assets/landing/reset-plan.png";
 import planForYourBodyImage from "@/assets/landing/plan-for-your-body.png";
 import theCircleImage from "@/assets/landing/the-circle.png";
 import mealsCardImage from "@/assets/landing/meals-card-image.png";
-import methodReset from "@/assets/landing/method-reset.png";
-import methodFeed from "@/assets/landing/method-feed.jpeg";
-import methodCoach from "@/assets/landing/design-v2-hero.png";
+import stepOnboarding from "@/assets/landing/step-onboarding.png";
+import stepJumpstart from "@/assets/landing/step-jumpstart.png";
+import stepMealPlan from "@/assets/landing/step-meal-plan.png";
+import stepHome from "@/assets/landing/step-home.png";
 import eatGoodJJ from "@/assets/landing/eat-good-jj.png";
 import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
 import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
@@ -365,26 +366,27 @@ function ResearchSupport() {
 
 // ── method ───────────────────────────────────────────────────────────────────
 function Method() {
-  const shifts = [
-    { img: methodReset, title: "First, we reset your body.", text: <>We start with a reset that gets your body working with you again. It quiets your cravings, settles your hormones and your blood sugar, and <Hi>drops up to 15 pounds.</Hi> You feel it fast, and it gives you your running start.</> },
-    { img: methodFeed, title: "Then we feed your body, we don't punish it.", text: <><strong>No starving. No punishing gym.</strong> Real food you actually love, simple to make, planned around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
-    { img: methodCoach, title: "And this time, you've got me.", text: <>You already know what to do. You have the books. What you never had is <strong>somebody who shows up every day and does not leave.</strong> Two coaching calls a week, and a text every morning, so you are never doing this alone. <strong>That is what finally makes it stick.</strong></> },
+  const steps = [
+    { img: stepOnboarding, title: "First, we get on a call, and I get to know you.", text: <>I learn your body, your life, <strong>the food you love,</strong> and everything you've already tried. <Hi>Everything is built around you.</Hi></> },
+    { img: stepJumpstart, title: "We reset your body.", text: <>A reset that gets your body working with you again. It quiets cravings, settles your hormones and blood sugar, and <Hi>drops up to 15 pounds, fast.</Hi> <strong>Your running start.</strong></> },
+    { img: stepMealPlan, title: "We feed your body, we don't punish it.", text: <><strong>Real food you love,</strong> easy to make, with a fresh plan every week around your life. The grocery lists alone can <Hi>save you up to $75 a month.</Hi></> },
+    { img: stepHome, title: "And every day, I'm right there with you.", text: <>Two coaching calls a week to fix what got in your way and <strong>adjust your plan,</strong> plus a text every morning. <Hi>Somebody who shows up, and never leaves.</Hi></> },
   ];
   return (
     <section className="ly-band ly-lav">
-      <div className="ly-wrap ly-center">
+      <div className="ly-wrap ly-center ly-steps-wrap">
         <span className="ly-eyebrow">The method</span>
-        <h2 className="ly-h2">The <Hi>3 shifts</Hi> that change everything</h2>
-        <div className="ly-method">
-          {shifts.map(({ img, title, text }, i) => (
-            <div className="ly-shift" key={title}>
-              <div className="ly-shift-img">
+        <h2 className="ly-h2">The <Hi>4 steps</Hi> that change everything</h2>
+        <div className="ly-steps">
+          {steps.map(({ img, title, text }, i) => (
+            <div className="ly-step" key={title}>
+              <div className="ly-step-img">
                 <img src={img} alt={title} loading="lazy" />
-                <span className="ly-shift-n" aria-hidden="true">{i + 1}</span>
               </div>
-              <div className="ly-shift-body">
-                <h3 className="ly-h3 ly-shift-h">{title}</h3>
-                <p className="ly-shift-t">{text}</p>
+              <div className="ly-step-card">
+                <span className="ly-step-n" aria-hidden="true">{i + 1}</span>
+                <h3 className="ly-h3 ly-step-h">{title}</h3>
+                <p className="ly-step-t">{text}</p>
               </div>
             </div>
           ))}
@@ -560,7 +562,7 @@ function Pricing() {
           <div className="ly-stack-deal">
             <span className="ly-stack-badge">Was <s>${MEMBER_WAS}</s> · Now</span>
             <div className="ly-stack-now"><span className="ly-stack-num">${MEMBER_PRICE}</span><span className="ly-stack-per">/month</span></div>
-            <p className="ly-stack-note">Billed monthly · cancel anytime · that's just $1.57 a day</p>
+            <p className="ly-stack-note">Cancel anytime · that's just $1.57 a day</p>
             <div className="ly-mt-s"><Cta label={`Start today · $${MEMBER_PRICE}/month`} full onClick={() => choosePlan("monthly")} position="offer-monthly" /></div>
             <p className="ly-urgency">Price goes back to ${MEMBER_WAS} soon. <strong>Lock it in today.</strong></p>
           </div>
@@ -874,15 +876,15 @@ const CSS = `
 }
 
 /* method */
-.ly-method{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
-.ly-shift{position:relative;overflow:hidden;display:flex;flex-direction:column;background:var(--white);border:1px solid var(--hair);border-radius:22px;box-shadow:var(--shadow-sm)}
-.ly-shift-img{position:relative;width:100%;height:210px;background:var(--purple-soft)}
-.ly-shift-img img{width:100%;height:100%;object-fit:cover;display:block}
-.ly-shift-n{position:absolute;top:12px;right:14px;display:flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:900;font-size:18px;line-height:1;box-shadow:0 10px 22px -10px rgba(91,42,128,.85)}
-.ly-shift-body{position:relative;padding:24px 26px 28px}
-.ly-shift-h{margin:0}
-.ly-shift-t{margin:10px 0 0;font-size:17px;line-height:1.55;color:var(--ink-soft)}
-.ly-shift-t .ly-hi,.ly-rcard-t .ly-hi{font-weight:800}
+.ly-steps{display:grid;grid-template-columns:1fr;gap:42px;margin-top:36px}
+.ly-step{display:flex;flex-direction:column;align-items:center;text-align:center}
+.ly-step-img{width:100%;max-width:252px;margin:0 auto}
+.ly-step-img img{width:100%;height:auto;display:block}
+.ly-step-card{position:relative;width:100%;max-width:420px;margin-top:2px;background:var(--white);border:1px solid var(--hair);border-radius:20px;box-shadow:var(--shadow-sm);padding:32px 22px 26px}
+.ly-step-n{position:absolute;top:-20px;left:16px;display:flex;align-items:center;justify-content:center;width:42px;height:42px;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:900;font-size:19px;line-height:1;box-shadow:0 12px 24px -10px rgba(91,42,128,.7);border:3px solid var(--white)}
+.ly-step-h{margin:0;text-wrap:balance}
+.ly-step-t{margin:11px 0 0;font-size:16.5px;line-height:1.55;color:var(--ink-soft)}
+.ly-step-t .ly-hi{font-weight:800}
 
 /* results */
 .ly-results{display:grid;grid-template-columns:1fr;gap:20px;margin-top:34px;text-align:left}
@@ -1012,7 +1014,10 @@ const CSS = `
   .ly-marquee-img{height:58px}
   .ly-marquee-track{gap:72px}
   .ly-rcards{grid-template-columns:1fr 1fr;gap:20px}
-  .ly-method{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-steps-wrap{max-width:1240px}
+  .ly-steps{grid-template-columns:repeat(4,1fr);gap:clamp(22px,3vw,40px)}
+  .ly-step-img{max-width:none}
+  .ly-step-card{flex:1 1 auto;padding:34px 22px 30px}
   .ly-results{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-get{grid-template-columns:1fr 1fr 1fr;gap:22px}
   .ly-story-grid{grid-template-columns:.85fr 1fr;gap:48px;align-items:start}
