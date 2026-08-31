@@ -671,7 +671,7 @@ function Faq() {
         <h2 className="ly-h2">Let me answer <Hi>what's on your mind</Hi>.</h2>
         <div className="ly-faq">
           {items.map((it, i) => (
-            <details key={i} className="ly-faq-item">
+            <details key={i} className="ly-faq-item" open={i === 0}>
               <summary>{it.q}<span className="ly-faq-mark" aria-hidden /></summary>
               <div className="ly-faq-a">{it.a}</div>
             </details>
