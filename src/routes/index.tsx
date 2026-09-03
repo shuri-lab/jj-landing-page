@@ -4,6 +4,7 @@ import { Award, TrendingDown, Phone, MessageCircle, UtensilsCrossed, UserCheck, 
 import { useCoachPrograms } from "@/lib/coach-programs";
 import { scrollToOffer } from "@/lib/scroll-to-offer";
 import { SignupCheckoutCard } from "@/components/signup/SignupCheckoutCard";
+import SocialProofWidget from "@/components/social-proof/SocialProofWidget";
 import { OFFER_PLANS } from "@/lib/signup/plans";
 import { readCheckoutSessionIdFromUrl, readLandingPrefill } from "@/lib/signup/attribution";
 import { trackSelectPlan } from "@/lib/signup/tracking";
@@ -145,6 +146,7 @@ function Landing() {
       </main>
       <Footer />
       <StickyCta show={showSticky && !offerVisible} />
+      <SocialProofWidget />
     </div>
   );
 }
