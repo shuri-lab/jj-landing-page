@@ -1,0 +1,157 @@
+/* Social-proof notification widget.
+ * Mobile: FULL-BLEED bottom sheet — flush to the bottom and both sides, no margins.
+ *         Sits over the sticky CTA bar for the few seconds it shows. Slides up/down.
+ * Desktop: floating card tucked into the bottom-left corner. Slides up/down. */
+
+.jj-sp {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 60;
+
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 15px calc(8px + env(safe-area-inset-bottom, 0px));
+
+  background: var(--white, #fff);
+  border: 1px solid var(--hair, #ebe1f5);
+  border-bottom: 0;
+  border-radius: 0; /* flat, same height as the sticky CTA bar it covers */
+  box-shadow: 0 -9px 30px -14px rgba(74, 35, 90, 0.26);
+  font-family: var(--sans, "DM Sans", -apple-system, "Segoe UI", sans-serif);
+
+  /* entrance state: come up from below */
+  transform: translateY(calc(100% + 24px));
+  opacity: 0;
+  transition:
+    transform 0.48s cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 0.42s ease;
+  will-change: transform, opacity;
+}
+
+.jj-sp.is-shown {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.jj-sp-map {
+  flex: 0 0 auto;
+  width: 58px;
+  height: 58px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--purple-soft, #f0e6fa);
+  border: 1px solid var(--hair, #ebe1f5);
+}
+
+.jj-sp-map img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.jj-sp-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--purple, #7c3aa6);
+}
+
+.jj-sp-body {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.jj-sp-l1 {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 700;
+}
+
+.jj-sp-name {
+  color: var(--purple, #7c3aa6);
+  font-weight: 800;
+}
+
+.jj-sp-loc {
+  color: var(--ink-soft, #6c6180);
+  font-weight: 600;
+}
+
+.jj-sp-l2 {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.3;
+  font-weight: 600;
+  color: var(--ink, #2a2036);
+}
+
+.jj-sp-l3 {
+  margin: 3px 0 0;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  line-height: 1.2;
+  color: var(--ink-soft, #6c6180);
+  font-weight: 500;
+}
+
+.jj-sp-check {
+  flex: 0 0 auto;
+  display: block;
+}
+
+.jj-sp-x {
+  flex: 0 0 auto;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px -2px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink-soft, #6c6180);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.jj-sp-x:hover {
+  background: var(--purple-soft, #f0e6fa);
+  color: var(--purple, #7c3aa6);
+}
+
+/* Desktop: original floating card in the bottom-left corner. */
+@media (min-width: 860px) {
+  .jj-sp {
+    left: 20px;
+    right: auto;
+    bottom: 20px;
+    width: 340px;
+    padding: 10px 12px;
+    border: 1px solid var(--hair, #ebe1f5);
+    border-radius: 16px;
+    box-shadow:
+      0 20px 44px -18px rgba(74, 35, 90, 0.38),
+      0 4px 12px -6px rgba(74, 35, 90, 0.16);
+  }
+}
+
+/* Respect reduced motion: fade only, no slide (kept last so it wins). */
+@media (prefers-reduced-motion: reduce) {
+  .jj-sp,
+  .jj-sp.is-shown {
+    transform: none;
+    transition: opacity 0.42s ease;
+  }
+}
