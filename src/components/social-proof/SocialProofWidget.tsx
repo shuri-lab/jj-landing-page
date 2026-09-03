@@ -31,7 +31,7 @@ const SOCIAL_PROOF_ENTRIES: ProofEntry[] = [
 const ACTION_TEXT = "Joined JJ Smith's coaching";
 
 /* Timing (ms). Tweak here to match a reference widget. */
-const INITIAL_DELAY = 3000; // wait before the first notification (hero gets focus)
+const INITIAL_DELAY = 4000; // wait before the first notification (hero gets focus)
 const VISIBLE_MIN = 8000; // notification stays on screen: 8–10s (readable)
 const VISIBLE_MAX = 10000;
 
@@ -53,8 +53,6 @@ const AGO_START_MIN = 3; // first (most recent) purchase: 3–6 min ago
 const AGO_START_MAX = 6;
 const AGO_STEP_BASE = 16; // gap to the next-oldest purchase (~16 min at first)…
 const AGO_STEP_GROWTH = 1.3; // …widening for older purchases in the list
-
-const DISMISS_KEY = "jj_social_proof_dismissed";
 
 /* Static map thumbnail matching the location.
  * Uses Google Static Maps when a key is provided (best quality, includes a pin);
@@ -100,7 +98,6 @@ export default function SocialProofWidget() {
   const [entry, setEntry] = useState<ProofEntry | null>(null);
   const [agoLabel, setAgoLabel] = useState("");
   const [shown, setShown] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
   const [mapError, setMapError] = useState(false);
   const [suppressed, setSuppressed] = useState(false); // hidden for good once checkout/payment shows
 
@@ -156,16 +153,6 @@ export default function SocialProofWidget() {
   }, [after, nextEntry]);
 
   useEffect(() => {
-    let already = false;
-    try {
-      already = sessionStorage.getItem(DISMISS_KEY) === "1";
-    } catch {
-      /* private mode / storage blocked — just show it */
-    }
-    if (already) {
-      setDismissed(true);
-      return;
-    }
     stopped.current = false;
     after(INITIAL_DELAY, cycle);
     return () => {
@@ -173,18 +160,6 @@ export default function SocialProofWidget() {
       clearTimers();
     };
   }, [after, clearTimers, cycle]);
-
-  const dismiss = useCallback(() => {
-    stopped.current = true;
-    clearTimers();
-    setShown(false);
-    setDismissed(true);
-    try {
-      sessionStorage.setItem(DISMISS_KEY, "1");
-    } catch {
-      /* ignore */
-    }
-  }, [clearTimers]);
 
   // Once the Stripe payment/checkout screen is visible, stop showing notifications
   // for the rest of the session — never distract a buyer who is at the payment step.
@@ -204,7 +179,7 @@ export default function SocialProofWidget() {
     return () => obs.disconnect();
   }, [clearTimers]);
 
-  if (dismissed || suppressed || !entry) return null;
+  if (suppressed || !entry) return null;
 
   return (
     <div className={`jj-sp${shown ? " is-shown" : ""}`} role="status" aria-live="polite">
@@ -257,12 +232,6 @@ export default function SocialProofWidget() {
           </svg>
         </p>
       </div>
-
-      <button className="jj-sp-x" type="button" aria-label="Dismiss notifications" onClick={dismiss}>
-        <svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true">
-          <path d="M2 2l10 10M12 2L2 12" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-        </svg>
-      </button>
     </div>
   );
 }

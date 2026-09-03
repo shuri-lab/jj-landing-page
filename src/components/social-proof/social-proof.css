@@ -108,29 +108,6 @@
   display: block;
 }
 
-.jj-sp-x {
-  flex: 0 0 auto;
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin: -2px -2px 0 0;
-  padding: 0;
-  border: 0;
-  border-radius: 7px;
-  background: transparent;
-  color: var(--ink-soft, #6c6180);
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s;
-}
-
-.jj-sp-x:hover {
-  background: var(--purple-soft, #f0e6fa);
-  color: var(--purple, #7c3aa6);
-}
-
 /* Desktop: original floating card in the bottom-left corner. */
 @media (min-width: 860px) {
   .jj-sp {
