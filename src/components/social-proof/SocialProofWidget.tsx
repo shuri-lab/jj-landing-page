@@ -28,6 +28,11 @@ const SOCIAL_PROOF_ENTRIES: ProofEntry[] = [
   { name: "Nile", location: "Orlando, FL", lat: 28.5383, lng: -81.3792 },
 ];
 
+// ── Master on/off switch ──────────────────────────────────────────────────────
+// Deactivated for now because the mobile bar was covering the sticky CTA.
+// Flip to `true` to re-activate the widget (all its code is kept intact).
+const WIDGET_ENABLED = false;
+
 const ACTION_TEXT = "Joined JJ Smith's coaching";
 
 /* Timing (ms). Tweak here to match a reference widget. */
@@ -153,6 +158,7 @@ export default function SocialProofWidget() {
   }, [after, nextEntry]);
 
   useEffect(() => {
+    if (!WIDGET_ENABLED) return; // deactivated — never start the cycle
     stopped.current = false;
     after(INITIAL_DELAY, cycle);
     return () => {
@@ -179,7 +185,7 @@ export default function SocialProofWidget() {
     return () => obs.disconnect();
   }, [clearTimers]);
 
-  if (suppressed || !entry) return null;
+  if (!WIDGET_ENABLED || suppressed || !entry) return null;
 
   return (
     <div className={`jj-sp${shown ? " is-shown" : ""}`} role="status" aria-live="polite">
