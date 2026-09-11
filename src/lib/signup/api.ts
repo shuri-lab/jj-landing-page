@@ -114,6 +114,13 @@ export const landingSignupApi = {
     });
   },
 
+  pingActivity(intentToken: string): Promise<{ ok: true; lastActivityAt: string }> {
+    return request<{ ok: true; lastActivityAt: string }>(`${PREFIX}/activity`, {
+      method: "POST",
+      body: JSON.stringify({ intentToken }),
+    });
+  },
+
   verifyDiscount(payload: {
     intentToken: string;
     discountCode: string;

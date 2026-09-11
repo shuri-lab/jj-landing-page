@@ -109,12 +109,17 @@ export function SignupCheckoutCard({ plan }: Props) {
   // fails inside a Facebook / Instagram in-app webview.
   const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
   const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">("idle");
-  const [discountCode] = useState<string | null>(() => readDiscountCodeFromUrl());
-  const [appliedDiscount, setAppliedDiscount] = useState<{
-    code: string;
-    amountOff: number;
-    discountedAmount: number;
-  } | null>(null);
+  const [discountInput, setDiscountInput] = useState(
+    () => (readDiscountCodeFromUrl() ?? "").trim().toUpperCase(),
+  );
+  const [discountState, setDiscountState] = useState<{
+    verified: boolean;
+    code?: string;
+    amountOff?: number;
+    discountedAmount?: number;
+    message?: string;
+  }>({ verified: false });
+  const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
 
@@ -124,8 +129,12 @@ export function SignupCheckoutCard({ plan }: Props) {
   );
   const liveAmount = amountForInterval(program, plan.billingInterval);
   const amount = typeof liveAmount === "number" ? liveAmount : plan.price;
-  const amountOff = appliedDiscount?.amountOff ?? 0;
+  const amountOff = discountState.verified ? (discountState.amountOff ?? 0) : 0;
   const totalAmount = Math.max(0, amount - amountOff);
+  const appliedDiscountCode =
+    discountInput.trim() && discountState.verified
+      ? discountState.code ?? discountInput.trim()
+      : null;
   const stripeKey = config?.stripePublishableKey || envStripePublishableKey();
   const stripePromise = useMemo(() => (stripeKey ? loadStripe(stripeKey) : null), [stripeKey]);
   const loginBase = config?.loginUrl || envYobodyAuthUrl();
@@ -233,6 +242,32 @@ export function SignupCheckoutCard({ plan }: Props) {
     return () => window.clearTimeout(redirect);
   }, [handoffUrl, step]);
 
+  // Keep lastActivityAt fresh while the prospect is on contact/payment so the
+  // 30-minute cart-abandon clock does not fire mid-checkout.
+  useEffect(() => {
+    if (step !== "contact" && step !== "payment") return;
+    const token = intentToken ?? getSignupIntentSession()?.intentToken;
+    if (!token) return;
+
+    let cancelled = false;
+    const ping = () => {
+      if (cancelled || document.visibilityState === "hidden") return;
+      void landingSignupApi.pingActivity(token).catch(() => undefined);
+    };
+
+    ping();
+    const intervalId = window.setInterval(ping, 45_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") ping();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [intentToken, step]);
+
   const applyIntent = useCallback(
     async (response: SignupIntentResponse) => {
       const session = getSignupIntentSession();
@@ -297,7 +332,7 @@ export function SignupCheckoutCard({ plan }: Props) {
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
             coachProgramConfigId: program?.id,
-            discountCode: appliedDiscount?.code ?? discountCode,
+            discountCode: appliedDiscountCode,
             billingInterval: plan.billingInterval,
             returnUrl: buildEmbeddedReturnUrl({
               plan: plan.id,
@@ -330,10 +365,9 @@ export function SignupCheckoutCard({ plan }: Props) {
         setIntentToken(null);
       });
   }, [
-    appliedDiscount?.code,
+    appliedDiscountCode,
     applyIntent,
     config,
-    discountCode,
     email,
     enterPaidSuccess,
     firstName,
@@ -361,28 +395,11 @@ export function SignupCheckoutCard({ plan }: Props) {
     [loginBase],
   );
 
-  const prepareCheckout = useCallback(async () => {
-    const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
-    if (!isValidEmail(email) || !contactFirst) return;
-    if (!config?.coachId) {
-      setError("No coaching program is available right now.");
-      return;
-    }
-    setFirstName(contactFirst);
-    setLastName(contactLast);
-    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program?.id ?? "auto"}|${discountCode ?? ""}`;
-    if (prepareKeyRef.current === prepareKey && clientSecret) {
-      setStep("payment");
-      return;
-    }
-
-    setIsPreparing(true);
-    setError("");
-    setEscapeUrl(null);
-    setEscapeHint("idle");
-    setStep("payment");
-    let stage: "start_email" | "create_checkout" = "start_email";
-    try {
+  const ensureSignupIntent = useCallback(
+    async (contactFirst: string, contactLast: string) => {
+      if (!config?.coachId) {
+        throw new Error("No coaching program is available right now.");
+      }
       let token = intentToken ?? getSignupIntentSession()?.intentToken ?? null;
       const hadSession = Boolean(token);
       const started = await landingSignupApi.startEmail({
@@ -403,6 +420,122 @@ export function SignupCheckoutCard({ plan }: Props) {
       persistIntent(started, { firstName: contactFirst, lastName: contactLast });
       rememberHandoff(started);
       token = started.intentToken ?? token;
+      if (!token) throw new Error("Missing signup session.");
+      return { token, started, hadSession };
+    },
+    [
+      config?.coachId,
+      email,
+      intentToken,
+      persistIntent,
+      plan.billingInterval,
+      plan.buttonPosition,
+      plan.ctaLabel,
+      program?.id,
+      rememberHandoff,
+      trackingBase.tier,
+    ],
+  );
+
+  const handleVerifyDiscount = useCallback(async () => {
+    const code = discountInput.trim();
+    if (!code) return;
+    const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
+    if (!isValidEmail(email) || !contactFirst) {
+      setDiscountState({
+        verified: false,
+        message: "Enter your email and full name before applying a discount.",
+      });
+      return;
+    }
+    if (!config?.coachId) {
+      setDiscountState({
+        verified: false,
+        message: "No coaching program is available right now.",
+      });
+      return;
+    }
+
+    setIsVerifyingDiscount(true);
+    setError("");
+    try {
+      setFirstName(contactFirst);
+      setLastName(contactLast);
+      const { token } = await ensureSignupIntent(contactFirst, contactLast);
+      const verified = await landingSignupApi.verifyDiscount({
+        intentToken: token,
+        discountCode: code,
+        coachProgramConfigId: program?.id,
+        billingInterval: plan.billingInterval,
+      });
+      setDiscountState({
+        verified: true,
+        code: verified.discount.code,
+        amountOff: verified.discount.amountOff,
+        discountedAmount: verified.discount.discountedAmount,
+        message: "Discount applied.",
+      });
+      setDiscountInput(verified.discount.code);
+      setClientSecret(null);
+      prepareKeyRef.current = "";
+    } catch (err) {
+      if (err instanceof SignupApiError && err.statusCode === 409) {
+        handleExistingEmail(email);
+        return;
+      }
+      setDiscountState({
+        verified: false,
+        message:
+          err instanceof SignupApiError
+            ? err.message
+            : "Invalid or expired discount code.",
+      });
+    } finally {
+      setIsVerifyingDiscount(false);
+    }
+  }, [
+    config?.coachId,
+    discountInput,
+    email,
+    ensureSignupIntent,
+    fullName,
+    handleExistingEmail,
+    plan.billingInterval,
+    program?.id,
+  ]);
+
+  const prepareCheckout = useCallback(async () => {
+    const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
+    if (!isValidEmail(email) || !contactFirst) return;
+    if (!config?.coachId) {
+      setError("No coaching program is available right now.");
+      return;
+    }
+    const trimmedDiscount = discountInput.trim();
+    if (trimmedDiscount && !discountState.verified) {
+      setError("Please apply your discount code before continuing.");
+      return;
+    }
+
+    setFirstName(contactFirst);
+    setLastName(contactLast);
+    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program?.id ?? "auto"}|${appliedDiscountCode ?? ""}`;
+    if (prepareKeyRef.current === prepareKey && clientSecret) {
+      setStep("payment");
+      return;
+    }
+
+    setIsPreparing(true);
+    setError("");
+    setEscapeUrl(null);
+    setEscapeHint("idle");
+    setStep("payment");
+    let stage: "start_email" | "create_checkout" = "start_email";
+    try {
+      const { token, started, hadSession } = await ensureSignupIntent(
+        contactFirst,
+        contactLast,
+      );
       if (!hadSession) {
         trackSignupMethodSelect("email", trackingBase);
         trackSignupLead(trackingBase);
@@ -412,31 +545,12 @@ export function SignupCheckoutCard({ plan }: Props) {
         enterPaidSuccess(started);
         return;
       }
-      if (!token) throw new Error("Missing signup session.");
-
-      if (discountCode && !appliedDiscount) {
-        try {
-          const verified = await landingSignupApi.verifyDiscount({
-            intentToken: token,
-            discountCode,
-            coachProgramConfigId: program?.id,
-            billingInterval: plan.billingInterval,
-          });
-          setAppliedDiscount({
-            code: verified.discount.code,
-            amountOff: verified.discount.amountOff,
-            discountedAmount: verified.discount.discountedAmount,
-          });
-        } catch {
-          /* invalid promo — continue at list price */
-        }
-      }
 
       stage = "create_checkout";
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
         coachProgramConfigId: program?.id,
-        discountCode: appliedDiscount?.code ?? discountCode,
+        discountCode: appliedDiscountCode,
         billingInterval: plan.billingInterval,
         returnUrl: buildEmbeddedReturnUrl({
           plan: plan.id,
@@ -476,7 +590,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       const statusCode = err instanceof SignupApiError ? err.statusCode : undefined;
       const message = err instanceof Error ? err.message : "Unable to start checkout.";
       const inApp = isInAppBrowser();
-      // Make the previously-invisible funnel drop measurable + segmentable.
       trackCheckoutError(trackingBase, {
         stage,
         statusCode,
@@ -485,9 +598,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       });
       setStep("contact");
       setError(message);
-      // For in-app (Facebook/Instagram) webviews, where the embedded Stripe
-      // checkout is unreliable, offer a "finish in your real browser" escape
-      // that reopens THIS page deep-linked straight to the checkout.
       if (inApp && typeof window !== "undefined") {
         setEscapeUrl(
           window.location.origin +
@@ -504,15 +614,16 @@ export function SignupCheckoutCard({ plan }: Props) {
       setIsPreparing(false);
     }
   }, [
-    appliedDiscount,
+    appliedDiscountCode,
     clientSecret,
-    config,
-    discountCode,
+    config?.coachId,
+    discountInput,
+    discountState.verified,
     email,
+    ensureSignupIntent,
     enterPaidSuccess,
     fullName,
     handleExistingEmail,
-    intentToken,
     persistIntent,
     plan,
     program,
@@ -571,7 +682,9 @@ export function SignupCheckoutCard({ plan }: Props) {
     isValidEmail(email) &&
     splitFullName(fullName).firstName.length > 0 &&
     !isPreparing &&
-    !configError;
+    !isVerifyingDiscount &&
+    !configError &&
+    !(discountInput.trim() && !discountState.verified);
 
   const embeddedOptions = useMemo(
     () => ({
@@ -721,6 +834,63 @@ export function SignupCheckoutCard({ plan }: Props) {
               setError("");
             }}
           />
+        </div>
+
+        <div className="chk-field">
+          <label htmlFor="chk-discount">Discount code</label>
+          <div className="chk-discount-row">
+            <input
+              id="chk-discount"
+              type="text"
+              inputMode="text"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="Enter code"
+              value={discountInput}
+              onChange={(e) => {
+                setDiscountInput(e.target.value.toUpperCase());
+                if (discountState.verified || discountState.message) {
+                  setDiscountState({ verified: false });
+                }
+                setClientSecret(null);
+                prepareKeyRef.current = "";
+                setError("");
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  void handleVerifyDiscount();
+                }
+              }}
+              disabled={isPreparing || isVerifyingDiscount}
+            />
+            <button
+              type="button"
+              className="chk-discount-apply"
+              disabled={
+                !discountInput.trim() ||
+                isVerifyingDiscount ||
+                discountState.verified ||
+                isPreparing
+              }
+              onClick={() => void handleVerifyDiscount()}
+            >
+              {isVerifyingDiscount
+                ? "Applying…"
+                : discountState.verified
+                  ? "Applied"
+                  : "Apply"}
+            </button>
+          </div>
+          {discountState.message ? (
+            <p
+              className={
+                discountState.verified ? "chk-discount-ok" : "chk-error"
+              }
+            >
+              {discountState.message}
+            </p>
+          ) : null}
         </div>
 
         {configError ? <p className="chk-error">{configError}</p> : null}

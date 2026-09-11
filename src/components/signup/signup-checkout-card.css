@@ -142,6 +142,56 @@
   box-shadow: 0 0 0 4px var(--chk-purple-soft);
 }
 
+.chk-discount-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.chk-discount-row input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.chk-discount-row input::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.chk-discount-apply {
+  flex: 0 0 auto;
+  min-width: 96px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--chk-grad);
+  color: #fff;
+  font-family: var(--chk-sans);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chk-discount-apply:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.chk-discount-apply:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.chk-discount-ok {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f7a3f;
+}
+
 .chk-hint {
   margin: 0;
   font-size: 13px;
