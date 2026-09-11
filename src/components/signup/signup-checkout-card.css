@@ -142,6 +142,41 @@
   box-shadow: 0 0 0 4px var(--chk-purple-soft);
 }
 
+.chk-discount {
+  display: grid;
+  gap: 8px;
+}
+
+.chk-discount-toggle {
+  justify-self: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--chk-purple);
+  font-family: var(--chk-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.chk-discount-toggle:hover {
+  color: var(--chk-ink, #221c2e);
+}
+
+.chk-discount-fields {
+  margin: 0;
+}
+
+.chk-discount-applied {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .chk-discount-row {
   display: flex;
   align-items: stretch;

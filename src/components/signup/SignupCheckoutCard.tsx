@@ -120,6 +120,9 @@ export function SignupCheckoutCard({ plan }: Props) {
     message?: string;
   }>({ verified: false });
   const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(
+    () => Boolean((readDiscountCodeFromUrl() ?? "").trim()),
+  );
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
 
@@ -476,6 +479,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         message: "Discount applied.",
       });
       setDiscountInput(verified.discount.code);
+      setDiscountOpen(false);
       setClientSecret(null);
       prepareKeyRef.current = "";
     } catch (err) {
@@ -836,61 +840,102 @@ export function SignupCheckoutCard({ plan }: Props) {
           />
         </div>
 
-        <div className="chk-field">
-          <label htmlFor="chk-discount">Discount code</label>
-          <div className="chk-discount-row">
-            <input
-              id="chk-discount"
-              type="text"
-              inputMode="text"
-              autoComplete="off"
-              spellCheck={false}
-              placeholder="Enter code"
-              value={discountInput}
-              onChange={(e) => {
-                setDiscountInput(e.target.value.toUpperCase());
-                if (discountState.verified || discountState.message) {
-                  setDiscountState({ verified: false });
-                }
-                setClientSecret(null);
-                prepareKeyRef.current = "";
-                setError("");
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  e.preventDefault();
-                  void handleVerifyDiscount();
-                }
-              }}
-              disabled={isPreparing || isVerifyingDiscount}
-            />
-            <button
-              type="button"
-              className="chk-discount-apply"
-              disabled={
-                !discountInput.trim() ||
-                isVerifyingDiscount ||
-                discountState.verified ||
-                isPreparing
-              }
-              onClick={() => void handleVerifyDiscount()}
-            >
-              {isVerifyingDiscount
-                ? "Applying…"
-                : discountState.verified
-                  ? "Applied"
-                  : "Apply"}
-            </button>
-          </div>
-          {discountState.message ? (
-            <p
-              className={
-                discountState.verified ? "chk-discount-ok" : "chk-error"
-              }
-            >
-              {discountState.message}
-            </p>
-          ) : null}
+        <div className="chk-discount">
+          {discountState.verified && !discountOpen ? (
+            <div className="chk-discount-applied">
+              <p className="chk-discount-ok">
+                Code <strong>{discountState.code ?? discountInput}</strong> applied
+                {amountOff > 0 ? ` · save ${formatUsd(amountOff)}` : ""}.
+              </p>
+              <button
+                type="button"
+                className="chk-discount-toggle"
+                onClick={() => setDiscountOpen(true)}
+              >
+                Change
+              </button>
+            </div>
+          ) : (
+            <>
+              <button
+                type="button"
+                className="chk-discount-toggle"
+                aria-expanded={discountOpen}
+                onClick={() => {
+                  setDiscountOpen((open) => {
+                    if (open && !discountState.verified) {
+                      setDiscountInput("");
+                      setDiscountState({ verified: false });
+                      setClientSecret(null);
+                      prepareKeyRef.current = "";
+                      setError("");
+                    }
+                    return !open;
+                  });
+                }}
+              >
+                {discountOpen ? "Hide discount code" : "Have a discount code?"}
+              </button>
+              {discountOpen ? (
+                <div className="chk-field chk-discount-fields">
+                  <label htmlFor="chk-discount">Discount code</label>
+                  <div className="chk-discount-row">
+                    <input
+                      id="chk-discount"
+                      type="text"
+                      inputMode="text"
+                      autoComplete="off"
+                      spellCheck={false}
+                      placeholder="Enter code"
+                      value={discountInput}
+                      onChange={(e) => {
+                        setDiscountInput(e.target.value.toUpperCase());
+                        if (discountState.verified || discountState.message) {
+                          setDiscountState({ verified: false });
+                        }
+                        setClientSecret(null);
+                        prepareKeyRef.current = "";
+                        setError("");
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          void handleVerifyDiscount();
+                        }
+                      }}
+                      disabled={isPreparing || isVerifyingDiscount}
+                    />
+                    <button
+                      type="button"
+                      className="chk-discount-apply"
+                      disabled={
+                        !discountInput.trim() ||
+                        isVerifyingDiscount ||
+                        discountState.verified ||
+                        isPreparing
+                      }
+                      onClick={() => void handleVerifyDiscount()}
+                    >
+                      {isVerifyingDiscount
+                        ? "Applying…"
+                        : discountState.verified
+                          ? "Applied"
+                          : "Apply"}
+                    </button>
+                  </div>
+                  {discountState.message ? (
+                    <p
+                      className={
+                        discountState.verified ? "chk-discount-ok" : "chk-error"
+                      }
+                    >
+                      {discountState.message}
+                    </p>
+                  ) : null}
+                </div>
+              ) : null}
+            </>
+          )}
         </div>
 
         {configError ? <p className="chk-error">{configError}</p> : null}
