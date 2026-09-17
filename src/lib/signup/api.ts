@@ -99,6 +99,7 @@ export const landingSignupApi = {
     billingInterval?: SignupBillingInterval | null;
     firstName?: string | null;
     lastName?: string | null;
+    phoneNumber?: string | null;
     marketingAttribution?: SignupMarketingAttribution | null;
   }): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/email/start`, {

@@ -14,6 +14,13 @@ import {
 import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
 import { copyText, inAppName, isInAppBrowser, openInSystemBrowser } from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
+import {
+  nextNationalPhoneInput,
+  parseValidE164,
+  pickDefaultCountry,
+  reformatNationalPhone,
+  startEmailPhoneField,
+} from "@/lib/signup/phone";
 import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
@@ -88,6 +95,7 @@ function Progress({ step }: { step: CheckoutCardStep }) {
 
 export function SignupCheckoutCard({ plan }: Props) {
   const prefill = useMemo(() => readLandingPrefill(), []);
+  const urlDiscountCode = useMemo(() => (readDiscountCodeFromUrl() ?? "").trim().toUpperCase(), []);
   const [config, setConfig] = useState<LovablePublicConfig | null>(null);
   const [configError, setConfigError] = useState("");
   const [email, setEmail] = useState(prefill.email);
@@ -97,6 +105,8 @@ export function SignupCheckoutCard({ plan }: Props) {
   const [emailSuggestion, setEmailSuggestion] = useState<string | null>(() =>
     prefill.email ? suggestEmail(prefill.email) : null,
   );
+  const [phone, setPhone] = useState("");
+  const [phoneIso, setPhoneIso] = useState("US");
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -109,9 +119,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   // fails inside a Facebook / Instagram in-app webview.
   const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
   const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">("idle");
-  const [discountInput, setDiscountInput] = useState(
-    () => (readDiscountCodeFromUrl() ?? "").trim().toUpperCase(),
-  );
+  const [discountInput, setDiscountInput] = useState(urlDiscountCode);
   const [discountState, setDiscountState] = useState<{
     verified: boolean;
     code?: string;
@@ -120,9 +128,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     message?: string;
   }>({ verified: false });
   const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
-  const [discountOpen, setDiscountOpen] = useState(
-    () => Boolean((readDiscountCodeFromUrl() ?? "").trim()),
-  );
+  const [discountOpen, setDiscountOpen] = useState(() => Boolean(urlDiscountCode));
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
 
@@ -141,6 +147,42 @@ export function SignupCheckoutCard({ plan }: Props) {
   const stripeKey = config?.stripePublishableKey || envStripePublishableKey();
   const stripePromise = useMemo(() => (stripeKey ? loadStripe(stripeKey) : null), [stripeKey]);
   const loginBase = config?.loginUrl || envYobodyAuthUrl();
+
+  const phoneCountries = useMemo(() => {
+    const list = (config?.countries ?? []).filter((c) => c.countryCode.trim());
+    if (list.length > 0) return list;
+    return [
+      {
+        id: "__default-us__",
+        name: "United States",
+        countryCode: "US",
+        countryDialCode: "+1",
+        flagEmoji: null,
+      },
+    ];
+  }, [config?.countries]);
+  const effectivePhoneIso = pickDefaultCountry(phoneCountries, phoneIso)?.countryCode ?? "US";
+  const phoneE164 = useMemo(
+    () => parseValidE164(phone, effectivePhoneIso),
+    [phone, effectivePhoneIso],
+  );
+  const phoneReady = !phone.trim() || phoneE164 !== null;
+
+  const handlePhoneChange = useCallback(
+    (value: string) => {
+      const next = nextNationalPhoneInput(value, effectivePhoneIso);
+      if (next === null) return;
+      setPhone(next);
+      setError("");
+    },
+    [effectivePhoneIso],
+  );
+
+  const handlePhoneCountryChange = useCallback((iso: string) => {
+    setPhoneIso(iso);
+    setPhone((prev) => reformatNationalPhone(prev, iso));
+    setError("");
+  }, []);
 
   const trackingBase = useMemo(
     () => ({
@@ -399,7 +441,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   );
 
   const ensureSignupIntent = useCallback(
-    async (contactFirst: string, contactLast: string) => {
+    async (contactFirst: string, contactLast: string, opts?: { includePhone?: boolean }) => {
       if (!config?.coachId) {
         throw new Error("No coaching program is available right now.");
       }
@@ -412,6 +454,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         billingInterval: plan.billingInterval,
         firstName: contactFirst,
         lastName: contactLast || undefined,
+        ...startEmailPhoneField(opts?.includePhone, phoneE164),
         marketingAttribution: buildMarketingAttribution({
           sourceSurface: "landing",
           sourceContext: "landing-page",
@@ -431,6 +474,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       email,
       intentToken,
       persistIntent,
+      phoneE164,
       plan.billingInterval,
       plan.buttonPosition,
       plan.ctaLabel,
@@ -464,11 +508,15 @@ export function SignupCheckoutCard({ plan }: Props) {
     try {
       setFirstName(contactFirst);
       setLastName(contactLast);
-      const { token } = await ensureSignupIntent(contactFirst, contactLast);
+      const { token } = await ensureSignupIntent(contactFirst, contactLast, {
+        includePhone: false,
+      });
+      // No coachProgramConfigId: the intent already carries the
+      // server-resolved program from start, and a price-matched guess here
+      // can point at a different coach's program and fail verification.
       const verified = await landingSignupApi.verifyDiscount({
         intentToken: token,
         discountCode: code,
-        coachProgramConfigId: program?.id,
         billingInterval: plan.billingInterval,
       });
       setDiscountState({
@@ -511,6 +559,10 @@ export function SignupCheckoutCard({ plan }: Props) {
   const prepareCheckout = useCallback(async () => {
     const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
     if (!isValidEmail(email) || !contactFirst) return;
+    if (phone.trim() && !phoneE164) {
+      setError("Please enter a valid phone number, or leave it blank.");
+      return;
+    }
     if (!config?.coachId) {
       setError("No coaching program is available right now.");
       return;
@@ -551,9 +603,10 @@ export function SignupCheckoutCard({ plan }: Props) {
       }
 
       stage = "create_checkout";
+      // Same as verify above: let the server price the intent's own
+      // resolved program instead of overriding it with a local guess.
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
-        coachProgramConfigId: program?.id,
         discountCode: appliedDiscountCode,
         billingInterval: plan.billingInterval,
         returnUrl: buildEmbeddedReturnUrl({
@@ -629,6 +682,8 @@ export function SignupCheckoutCard({ plan }: Props) {
     fullName,
     handleExistingEmail,
     persistIntent,
+    phone,
+    phoneE164,
     plan,
     program,
     rememberHandoff,
@@ -685,6 +740,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   const canContinueContact =
     isValidEmail(email) &&
     splitFullName(fullName).firstName.length > 0 &&
+    phoneReady &&
     !isPreparing &&
     !isVerifyingDiscount &&
     !configError &&
@@ -840,103 +896,141 @@ export function SignupCheckoutCard({ plan }: Props) {
           />
         </div>
 
-        <div className="chk-discount">
-          {discountState.verified && !discountOpen ? (
-            <div className="chk-discount-applied">
-              <p className="chk-discount-ok">
-                Code <strong>{discountState.code ?? discountInput}</strong> applied
-                {amountOff > 0 ? ` · save ${formatUsd(amountOff)}` : ""}.
-              </p>
-              <button
-                type="button"
-                className="chk-discount-toggle"
-                onClick={() => setDiscountOpen(true)}
-              >
-                Change
-              </button>
-            </div>
-          ) : (
-            <>
-              <button
-                type="button"
-                className="chk-discount-toggle"
-                aria-expanded={discountOpen}
-                onClick={() => {
-                  setDiscountOpen((open) => {
-                    if (open && !discountState.verified) {
-                      setDiscountInput("");
-                      setDiscountState({ verified: false });
-                      setClientSecret(null);
-                      prepareKeyRef.current = "";
-                      setError("");
-                    }
-                    return !open;
-                  });
-                }}
-              >
-                {discountOpen ? "Hide discount code" : "Have a discount code?"}
-              </button>
-              {discountOpen ? (
-                <div className="chk-field chk-discount-fields">
-                  <label htmlFor="chk-discount">Discount code</label>
-                  <div className="chk-discount-row">
-                    <input
-                      id="chk-discount"
-                      type="text"
-                      inputMode="text"
-                      autoComplete="off"
-                      spellCheck={false}
-                      placeholder="Enter code"
-                      value={discountInput}
-                      onChange={(e) => {
-                        setDiscountInput(e.target.value.toUpperCase());
-                        if (discountState.verified || discountState.message) {
-                          setDiscountState({ verified: false });
-                        }
+        <div className="chk-field">
+          <label htmlFor="chk-phone">
+            Phone number <span className="chk-optional">(optional)</span>
+          </label>
+          <div className="chk-phone-row">
+            <select
+              className="chk-country"
+              aria-label="Country code"
+              value={effectivePhoneIso}
+              onChange={(e) => handlePhoneCountryChange(e.target.value)}
+              disabled={isPreparing || isVerifyingDiscount}
+            >
+              {phoneCountries.map((c) => (
+                <option key={c.countryCode} value={c.countryCode}>
+                  {c.flagEmoji ? `${c.flagEmoji} ` : ""}
+                  {c.countryDialCode} · {c.name}
+                </option>
+              ))}
+            </select>
+            <input
+              id="chk-phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="(555) 123-4567"
+              value={phone}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              disabled={isPreparing || isVerifyingDiscount}
+            />
+          </div>
+          {phone.trim() && !phoneE164 ? (
+            <p className="chk-error" style={{ margin: 0 }}>
+              Enter a valid phone number, or leave it blank.
+            </p>
+          ) : null}
+        </div>
+
+        {urlDiscountCode ? (
+          <div className="chk-discount">
+            {discountState.verified && !discountOpen ? (
+              <div className="chk-discount-applied">
+                <p className="chk-discount-ok">
+                  Code <strong>{discountState.code ?? discountInput}</strong> applied
+                  {amountOff > 0 ? ` · save ${formatUsd(amountOff)}` : ""}.
+                </p>
+                <button
+                  type="button"
+                  className="chk-discount-toggle"
+                  onClick={() => setDiscountOpen(true)}
+                >
+                  Change
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="chk-discount-toggle"
+                  aria-expanded={discountOpen}
+                  onClick={() => {
+                    setDiscountOpen((open) => {
+                      if (open && !discountState.verified) {
+                        setDiscountState({ verified: false });
                         setClientSecret(null);
                         prepareKeyRef.current = "";
                         setError("");
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          void handleVerifyDiscount();
+                      }
+                      return !open;
+                    });
+                  }}
+                >
+                  {discountOpen ? "Hide discount code" : "Have a discount code?"}
+                </button>
+                {discountOpen ? (
+                  <div className="chk-field chk-discount-fields">
+                    <label htmlFor="chk-discount">Discount code</label>
+                    <div className="chk-discount-row">
+                      <input
+                        id="chk-discount"
+                        type="text"
+                        inputMode="text"
+                        autoComplete="off"
+                        spellCheck={false}
+                        placeholder="Enter code"
+                        value={discountInput}
+                        onChange={(e) => {
+                          setDiscountInput(e.target.value.toUpperCase());
+                          if (discountState.verified || discountState.message) {
+                            setDiscountState({ verified: false });
+                          }
+                          setClientSecret(null);
+                          prepareKeyRef.current = "";
+                          setError("");
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            void handleVerifyDiscount();
+                          }
+                        }}
+                        disabled={isPreparing || isVerifyingDiscount}
+                      />
+                      <button
+                        type="button"
+                        className="chk-discount-apply"
+                        disabled={
+                          !discountInput.trim() ||
+                          isVerifyingDiscount ||
+                          discountState.verified ||
+                          isPreparing
                         }
-                      }}
-                      disabled={isPreparing || isVerifyingDiscount}
-                    />
-                    <button
-                      type="button"
-                      className="chk-discount-apply"
-                      disabled={
-                        !discountInput.trim() ||
-                        isVerifyingDiscount ||
-                        discountState.verified ||
-                        isPreparing
-                      }
-                      onClick={() => void handleVerifyDiscount()}
-                    >
-                      {isVerifyingDiscount
-                        ? "Applying…"
-                        : discountState.verified
-                          ? "Applied"
-                          : "Apply"}
-                    </button>
+                        onClick={() => void handleVerifyDiscount()}
+                      >
+                        {isVerifyingDiscount
+                          ? "Applying…"
+                          : discountState.verified
+                            ? "Applied"
+                            : "Apply"}
+                      </button>
+                    </div>
+                    {discountState.message ? (
+                      <p
+                        className={
+                          discountState.verified ? "chk-discount-ok" : "chk-error"
+                        }
+                      >
+                        {discountState.message}
+                      </p>
+                    ) : null}
                   </div>
-                  {discountState.message ? (
-                    <p
-                      className={
-                        discountState.verified ? "chk-discount-ok" : "chk-error"
-                      }
-                    >
-                      {discountState.message}
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-            </>
-          )}
-        </div>
+                ) : null}
+              </>
+            )}
+          </div>
+        ) : null}
 
         {configError ? <p className="chk-error">{configError}</p> : null}
         {error ? <p className="chk-error">{error}</p> : null}

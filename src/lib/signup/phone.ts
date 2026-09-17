@@ -148,3 +148,31 @@ export function maskPhone(e164: string): string {
   if (digits.length < 4) return e164;
   return `•••-•••-${digits.slice(-4)}`;
 }
+
+/** Strict E.164 parse: valid number or null (never a fallback guess). */
+export function parseValidE164(
+  value: string,
+  iso: string | null | undefined,
+): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = parsePhoneNumberFromString(trimmed, asCountryCode(iso));
+    return parsed?.isValid() ? parsed.format("E.164") : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Phone field for the email/start payload. The discount Apply path passes
+ * includePhone=false so verifying a code never submits the phone number;
+ * an empty optional field is always omitted.
+ */
+export function startEmailPhoneField(
+  includePhone: boolean | undefined,
+  phoneE164: string | null,
+): { phoneNumber?: string } {
+  if (includePhone === false || !phoneE164) return {};
+  return { phoneNumber: phoneE164 };
+}
