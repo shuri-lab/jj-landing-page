@@ -99,6 +99,7 @@ export const landingSignupApi = {
     billingInterval?: SignupBillingInterval | null;
     firstName?: string | null;
     lastName?: string | null;
+    phoneNumber?: string | null;
     marketingAttribution?: SignupMarketingAttribution | null;
   }): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/email/start`, {
@@ -109,6 +110,13 @@ export const landingSignupApi = {
 
   me(intentToken: string): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/me`, {
+      method: "POST",
+      body: JSON.stringify({ intentToken }),
+    });
+  },
+
+  pingActivity(intentToken: string): Promise<{ ok: true; lastActivityAt: string }> {
+    return request<{ ok: true; lastActivityAt: string }>(`${PREFIX}/activity`, {
       method: "POST",
       body: JSON.stringify({ intentToken }),
     });

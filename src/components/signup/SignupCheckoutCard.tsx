@@ -14,6 +14,13 @@ import {
 import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
 import { copyText, inAppName, isInAppBrowser, openInSystemBrowser } from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
+import {
+  nextNationalPhoneInput,
+  parseValidE164,
+  pickDefaultCountry,
+  reformatNationalPhone,
+  startEmailPhoneField,
+} from "@/lib/signup/phone";
 import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
@@ -88,6 +95,7 @@ function Progress({ step }: { step: CheckoutCardStep }) {
 
 export function SignupCheckoutCard({ plan }: Props) {
   const prefill = useMemo(() => readLandingPrefill(), []);
+  const urlDiscountCode = useMemo(() => (readDiscountCodeFromUrl() ?? "").trim().toUpperCase(), []);
   const [config, setConfig] = useState<LovablePublicConfig | null>(null);
   const [configError, setConfigError] = useState("");
   const [email, setEmail] = useState(prefill.email);
@@ -97,6 +105,8 @@ export function SignupCheckoutCard({ plan }: Props) {
   const [emailSuggestion, setEmailSuggestion] = useState<string | null>(() =>
     prefill.email ? suggestEmail(prefill.email) : null,
   );
+  const [phone, setPhone] = useState("");
+  const [phoneIso, setPhoneIso] = useState("US");
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -109,12 +119,16 @@ export function SignupCheckoutCard({ plan }: Props) {
   // fails inside a Facebook / Instagram in-app webview.
   const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
   const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">("idle");
-  const [discountCode] = useState<string | null>(() => readDiscountCodeFromUrl());
-  const [appliedDiscount, setAppliedDiscount] = useState<{
-    code: string;
-    amountOff: number;
-    discountedAmount: number;
-  } | null>(null);
+  const [discountInput, setDiscountInput] = useState(urlDiscountCode);
+  const [discountState, setDiscountState] = useState<{
+    verified: boolean;
+    code?: string;
+    amountOff?: number;
+    discountedAmount?: number;
+    message?: string;
+  }>({ verified: false });
+  const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
+  const [discountOpen, setDiscountOpen] = useState(() => Boolean(urlDiscountCode));
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
 
@@ -124,11 +138,51 @@ export function SignupCheckoutCard({ plan }: Props) {
   );
   const liveAmount = amountForInterval(program, plan.billingInterval);
   const amount = typeof liveAmount === "number" ? liveAmount : plan.price;
-  const amountOff = appliedDiscount?.amountOff ?? 0;
+  const amountOff = discountState.verified ? (discountState.amountOff ?? 0) : 0;
   const totalAmount = Math.max(0, amount - amountOff);
+  const appliedDiscountCode =
+    discountInput.trim() && discountState.verified
+      ? discountState.code ?? discountInput.trim()
+      : null;
   const stripeKey = config?.stripePublishableKey || envStripePublishableKey();
   const stripePromise = useMemo(() => (stripeKey ? loadStripe(stripeKey) : null), [stripeKey]);
   const loginBase = config?.loginUrl || envYobodyAuthUrl();
+
+  const phoneCountries = useMemo(() => {
+    const list = (config?.countries ?? []).filter((c) => c.countryCode.trim());
+    if (list.length > 0) return list;
+    return [
+      {
+        id: "__default-us__",
+        name: "United States",
+        countryCode: "US",
+        countryDialCode: "+1",
+        flagEmoji: null,
+      },
+    ];
+  }, [config?.countries]);
+  const effectivePhoneIso = pickDefaultCountry(phoneCountries, phoneIso)?.countryCode ?? "US";
+  const phoneE164 = useMemo(
+    () => parseValidE164(phone, effectivePhoneIso),
+    [phone, effectivePhoneIso],
+  );
+  const phoneReady = !phone.trim() || phoneE164 !== null;
+
+  const handlePhoneChange = useCallback(
+    (value: string) => {
+      const next = nextNationalPhoneInput(value, effectivePhoneIso);
+      if (next === null) return;
+      setPhone(next);
+      setError("");
+    },
+    [effectivePhoneIso],
+  );
+
+  const handlePhoneCountryChange = useCallback((iso: string) => {
+    setPhoneIso(iso);
+    setPhone((prev) => reformatNationalPhone(prev, iso));
+    setError("");
+  }, []);
 
   const trackingBase = useMemo(
     () => ({
@@ -233,6 +287,32 @@ export function SignupCheckoutCard({ plan }: Props) {
     return () => window.clearTimeout(redirect);
   }, [handoffUrl, step]);
 
+  // Keep lastActivityAt fresh while the prospect is on contact/payment so the
+  // 30-minute cart-abandon clock does not fire mid-checkout.
+  useEffect(() => {
+    if (step !== "contact" && step !== "payment") return;
+    const token = intentToken ?? getSignupIntentSession()?.intentToken;
+    if (!token) return;
+
+    let cancelled = false;
+    const ping = () => {
+      if (cancelled || document.visibilityState === "hidden") return;
+      void landingSignupApi.pingActivity(token).catch(() => undefined);
+    };
+
+    ping();
+    const intervalId = window.setInterval(ping, 45_000);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") ping();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    return () => {
+      cancelled = true;
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisible);
+    };
+  }, [intentToken, step]);
+
   const applyIntent = useCallback(
     async (response: SignupIntentResponse) => {
       const session = getSignupIntentSession();
@@ -297,7 +377,7 @@ export function SignupCheckoutCard({ plan }: Props) {
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
             coachProgramConfigId: program?.id,
-            discountCode: appliedDiscount?.code ?? discountCode,
+            discountCode: appliedDiscountCode,
             billingInterval: plan.billingInterval,
             returnUrl: buildEmbeddedReturnUrl({
               plan: plan.id,
@@ -330,10 +410,9 @@ export function SignupCheckoutCard({ plan }: Props) {
         setIntentToken(null);
       });
   }, [
-    appliedDiscount?.code,
+    appliedDiscountCode,
     applyIntent,
     config,
-    discountCode,
     email,
     enterPaidSuccess,
     firstName,
@@ -361,16 +440,142 @@ export function SignupCheckoutCard({ plan }: Props) {
     [loginBase],
   );
 
+  const ensureSignupIntent = useCallback(
+    async (contactFirst: string, contactLast: string, opts?: { includePhone?: boolean }) => {
+      if (!config?.coachId) {
+        throw new Error("No coaching program is available right now.");
+      }
+      let token = intentToken ?? getSignupIntentSession()?.intentToken ?? null;
+      const hadSession = Boolean(token);
+      const started = await landingSignupApi.startEmail({
+        email: email.trim(),
+        coachId: config.coachId,
+        coachProgramConfigId: program?.id,
+        billingInterval: plan.billingInterval,
+        firstName: contactFirst,
+        lastName: contactLast || undefined,
+        ...startEmailPhoneField(opts?.includePhone, phoneE164),
+        marketingAttribution: buildMarketingAttribution({
+          sourceSurface: "landing",
+          sourceContext: "landing-page",
+          buttonPosition: plan.buttonPosition,
+          ctaText: plan.ctaLabel,
+          tier: trackingBase.tier,
+        }),
+      });
+      persistIntent(started, { firstName: contactFirst, lastName: contactLast });
+      rememberHandoff(started);
+      token = started.intentToken ?? token;
+      if (!token) throw new Error("Missing signup session.");
+      return { token, started, hadSession };
+    },
+    [
+      config?.coachId,
+      email,
+      intentToken,
+      persistIntent,
+      phoneE164,
+      plan.billingInterval,
+      plan.buttonPosition,
+      plan.ctaLabel,
+      program?.id,
+      rememberHandoff,
+      trackingBase.tier,
+    ],
+  );
+
+  const handleVerifyDiscount = useCallback(async () => {
+    const code = discountInput.trim();
+    if (!code) return;
+    const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
+    if (!isValidEmail(email) || !contactFirst) {
+      setDiscountState({
+        verified: false,
+        message: "Enter your email and full name before applying a discount.",
+      });
+      return;
+    }
+    if (!config?.coachId) {
+      setDiscountState({
+        verified: false,
+        message: "No coaching program is available right now.",
+      });
+      return;
+    }
+
+    setIsVerifyingDiscount(true);
+    setError("");
+    try {
+      setFirstName(contactFirst);
+      setLastName(contactLast);
+      const { token } = await ensureSignupIntent(contactFirst, contactLast, {
+        includePhone: false,
+      });
+      // No coachProgramConfigId: the intent already carries the
+      // server-resolved program from start, and a price-matched guess here
+      // can point at a different coach's program and fail verification.
+      const verified = await landingSignupApi.verifyDiscount({
+        intentToken: token,
+        discountCode: code,
+        billingInterval: plan.billingInterval,
+      });
+      setDiscountState({
+        verified: true,
+        code: verified.discount.code,
+        amountOff: verified.discount.amountOff,
+        discountedAmount: verified.discount.discountedAmount,
+        message: "Discount applied.",
+      });
+      setDiscountInput(verified.discount.code);
+      setDiscountOpen(false);
+      setClientSecret(null);
+      prepareKeyRef.current = "";
+    } catch (err) {
+      if (err instanceof SignupApiError && err.statusCode === 409) {
+        handleExistingEmail(email);
+        return;
+      }
+      setDiscountState({
+        verified: false,
+        message:
+          err instanceof SignupApiError
+            ? err.message
+            : "Invalid or expired discount code.",
+      });
+    } finally {
+      setIsVerifyingDiscount(false);
+    }
+  }, [
+    config?.coachId,
+    discountInput,
+    email,
+    ensureSignupIntent,
+    fullName,
+    handleExistingEmail,
+    plan.billingInterval,
+    program?.id,
+  ]);
+
   const prepareCheckout = useCallback(async () => {
     const { firstName: contactFirst, lastName: contactLast } = splitFullName(fullName);
     if (!isValidEmail(email) || !contactFirst) return;
+    if (phone.trim() && !phoneE164) {
+      setError("Please enter a valid phone number, or leave it blank.");
+      return;
+    }
     if (!config?.coachId) {
       setError("No coaching program is available right now.");
       return;
     }
+    const trimmedDiscount = discountInput.trim();
+    if (trimmedDiscount && !discountState.verified) {
+      setError("Please apply your discount code before continuing.");
+      return;
+    }
+
     setFirstName(contactFirst);
     setLastName(contactLast);
-    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program?.id ?? "auto"}|${discountCode ?? ""}`;
+    const prepareKey = `${email.trim().toLowerCase()}|${plan.billingInterval}|${program?.id ?? "auto"}|${appliedDiscountCode ?? ""}`;
     if (prepareKeyRef.current === prepareKey && clientSecret) {
       setStep("payment");
       return;
@@ -383,26 +588,10 @@ export function SignupCheckoutCard({ plan }: Props) {
     setStep("payment");
     let stage: "start_email" | "create_checkout" = "start_email";
     try {
-      let token = intentToken ?? getSignupIntentSession()?.intentToken ?? null;
-      const hadSession = Boolean(token);
-      const started = await landingSignupApi.startEmail({
-        email: email.trim(),
-        coachId: config.coachId,
-        coachProgramConfigId: program?.id,
-        billingInterval: plan.billingInterval,
-        firstName: contactFirst,
-        lastName: contactLast || undefined,
-        marketingAttribution: buildMarketingAttribution({
-          sourceSurface: "landing",
-          sourceContext: "landing-page",
-          buttonPosition: plan.buttonPosition,
-          ctaText: plan.ctaLabel,
-          tier: trackingBase.tier,
-        }),
-      });
-      persistIntent(started, { firstName: contactFirst, lastName: contactLast });
-      rememberHandoff(started);
-      token = started.intentToken ?? token;
+      const { token, started, hadSession } = await ensureSignupIntent(
+        contactFirst,
+        contactLast,
+      );
       if (!hadSession) {
         trackSignupMethodSelect("email", trackingBase);
         trackSignupLead(trackingBase);
@@ -412,31 +601,13 @@ export function SignupCheckoutCard({ plan }: Props) {
         enterPaidSuccess(started);
         return;
       }
-      if (!token) throw new Error("Missing signup session.");
-
-      if (discountCode && !appliedDiscount) {
-        try {
-          const verified = await landingSignupApi.verifyDiscount({
-            intentToken: token,
-            discountCode,
-            coachProgramConfigId: program?.id,
-            billingInterval: plan.billingInterval,
-          });
-          setAppliedDiscount({
-            code: verified.discount.code,
-            amountOff: verified.discount.amountOff,
-            discountedAmount: verified.discount.discountedAmount,
-          });
-        } catch {
-          /* invalid promo — continue at list price */
-        }
-      }
 
       stage = "create_checkout";
+      // Same as verify above: let the server price the intent's own
+      // resolved program instead of overriding it with a local guess.
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
-        coachProgramConfigId: program?.id,
-        discountCode: appliedDiscount?.code ?? discountCode,
+        discountCode: appliedDiscountCode,
         billingInterval: plan.billingInterval,
         returnUrl: buildEmbeddedReturnUrl({
           plan: plan.id,
@@ -476,7 +647,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       const statusCode = err instanceof SignupApiError ? err.statusCode : undefined;
       const message = err instanceof Error ? err.message : "Unable to start checkout.";
       const inApp = isInAppBrowser();
-      // Make the previously-invisible funnel drop measurable + segmentable.
       trackCheckoutError(trackingBase, {
         stage,
         statusCode,
@@ -485,9 +655,6 @@ export function SignupCheckoutCard({ plan }: Props) {
       });
       setStep("contact");
       setError(message);
-      // For in-app (Facebook/Instagram) webviews, where the embedded Stripe
-      // checkout is unreliable, offer a "finish in your real browser" escape
-      // that reopens THIS page deep-linked straight to the checkout.
       if (inApp && typeof window !== "undefined") {
         setEscapeUrl(
           window.location.origin +
@@ -504,16 +671,19 @@ export function SignupCheckoutCard({ plan }: Props) {
       setIsPreparing(false);
     }
   }, [
-    appliedDiscount,
+    appliedDiscountCode,
     clientSecret,
-    config,
-    discountCode,
+    config?.coachId,
+    discountInput,
+    discountState.verified,
     email,
+    ensureSignupIntent,
     enterPaidSuccess,
     fullName,
     handleExistingEmail,
-    intentToken,
     persistIntent,
+    phone,
+    phoneE164,
     plan,
     program,
     rememberHandoff,
@@ -570,8 +740,11 @@ export function SignupCheckoutCard({ plan }: Props) {
   const canContinueContact =
     isValidEmail(email) &&
     splitFullName(fullName).firstName.length > 0 &&
+    phoneReady &&
     !isPreparing &&
-    !configError;
+    !isVerifyingDiscount &&
+    !configError &&
+    !(discountInput.trim() && !discountState.verified);
 
   const embeddedOptions = useMemo(
     () => ({
@@ -722,6 +895,142 @@ export function SignupCheckoutCard({ plan }: Props) {
             }}
           />
         </div>
+
+        <div className="chk-field">
+          <label htmlFor="chk-phone">
+            Phone number <span className="chk-optional">(optional)</span>
+          </label>
+          <div className="chk-phone-row">
+            <select
+              className="chk-country"
+              aria-label="Country code"
+              value={effectivePhoneIso}
+              onChange={(e) => handlePhoneCountryChange(e.target.value)}
+              disabled={isPreparing || isVerifyingDiscount}
+            >
+              {phoneCountries.map((c) => (
+                <option key={c.countryCode} value={c.countryCode}>
+                  {c.flagEmoji ? `${c.flagEmoji} ` : ""}
+                  {c.countryDialCode} · {c.name}
+                </option>
+              ))}
+            </select>
+            <input
+              id="chk-phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="(555) 123-4567"
+              value={phone}
+              onChange={(e) => handlePhoneChange(e.target.value)}
+              disabled={isPreparing || isVerifyingDiscount}
+            />
+          </div>
+          {phone.trim() && !phoneE164 ? (
+            <p className="chk-error" style={{ margin: 0 }}>
+              Enter a valid phone number, or leave it blank.
+            </p>
+          ) : null}
+        </div>
+
+        {urlDiscountCode ? (
+          <div className="chk-discount">
+            {discountState.verified && !discountOpen ? (
+              <div className="chk-discount-applied">
+                <p className="chk-discount-ok">
+                  Code <strong>{discountState.code ?? discountInput}</strong> applied
+                  {amountOff > 0 ? ` · save ${formatUsd(amountOff)}` : ""}.
+                </p>
+                <button
+                  type="button"
+                  className="chk-discount-toggle"
+                  onClick={() => setDiscountOpen(true)}
+                >
+                  Change
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  type="button"
+                  className="chk-discount-toggle"
+                  aria-expanded={discountOpen}
+                  onClick={() => {
+                    setDiscountOpen((open) => {
+                      if (open && !discountState.verified) {
+                        setDiscountState({ verified: false });
+                        setClientSecret(null);
+                        prepareKeyRef.current = "";
+                        setError("");
+                      }
+                      return !open;
+                    });
+                  }}
+                >
+                  {discountOpen ? "Hide discount code" : "Have a discount code?"}
+                </button>
+                {discountOpen ? (
+                  <div className="chk-field chk-discount-fields">
+                    <label htmlFor="chk-discount">Discount code</label>
+                    <div className="chk-discount-row">
+                      <input
+                        id="chk-discount"
+                        type="text"
+                        inputMode="text"
+                        autoComplete="off"
+                        spellCheck={false}
+                        placeholder="Enter code"
+                        value={discountInput}
+                        onChange={(e) => {
+                          setDiscountInput(e.target.value.toUpperCase());
+                          if (discountState.verified || discountState.message) {
+                            setDiscountState({ verified: false });
+                          }
+                          setClientSecret(null);
+                          prepareKeyRef.current = "";
+                          setError("");
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault();
+                            void handleVerifyDiscount();
+                          }
+                        }}
+                        disabled={isPreparing || isVerifyingDiscount}
+                      />
+                      <button
+                        type="button"
+                        className="chk-discount-apply"
+                        disabled={
+                          !discountInput.trim() ||
+                          isVerifyingDiscount ||
+                          discountState.verified ||
+                          isPreparing
+                        }
+                        onClick={() => void handleVerifyDiscount()}
+                      >
+                        {isVerifyingDiscount
+                          ? "Applying…"
+                          : discountState.verified
+                            ? "Applied"
+                            : "Apply"}
+                      </button>
+                    </div>
+                    {discountState.message ? (
+                      <p
+                        className={
+                          discountState.verified ? "chk-discount-ok" : "chk-error"
+                        }
+                      >
+                        {discountState.message}
+                      </p>
+                    ) : null}
+                  </div>
+                ) : null}
+              </>
+            )}
+          </div>
+        ) : null}
 
         {configError ? <p className="chk-error">{configError}</p> : null}
         {error ? <p className="chk-error">{error}</p> : null}

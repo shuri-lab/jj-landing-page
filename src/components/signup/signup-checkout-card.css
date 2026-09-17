@@ -142,6 +142,91 @@
   box-shadow: 0 0 0 4px var(--chk-purple-soft);
 }
 
+.chk-discount {
+  display: grid;
+  gap: 8px;
+}
+
+.chk-discount-toggle {
+  justify-self: start;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--chk-purple);
+  font-family: var(--chk-sans);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.chk-discount-toggle:hover {
+  color: var(--chk-ink, #221c2e);
+}
+
+.chk-discount-fields {
+  margin: 0;
+}
+
+.chk-discount-applied {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.chk-discount-row {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.chk-discount-row input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.chk-discount-row input::placeholder {
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 500;
+}
+
+.chk-discount-apply {
+  flex: 0 0 auto;
+  min-width: 96px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--chk-grad);
+  color: #fff;
+  font-family: var(--chk-sans);
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.chk-discount-apply:hover:not(:disabled) {
+  filter: brightness(1.05);
+}
+
+.chk-discount-apply:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.chk-discount-ok {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 600;
+  color: #1f7a3f;
+}
+
 .chk-hint {
   margin: 0;
   font-size: 13px;
@@ -365,6 +450,31 @@
   border-radius: 13px !important;
   background: #fff !important;
   box-shadow: none !important;
+}
+
+select.chk-country {
+  font-family: var(--chk-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--chk-ink);
+  padding: 0 4px 0 10px;
+  cursor: pointer;
+}
+
+select.chk-country:focus {
+  outline: none;
+  border-color: var(--chk-purple);
+  box-shadow: 0 0 0 4px var(--chk-purple-soft);
+}
+
+select.chk-country:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.chk-optional {
+  color: var(--chk-muted);
+  font-weight: 500;
 }
 
 .chk-phone-row .chk-field {
