@@ -934,10 +934,7 @@ export function SignupCheckoutCard({ plan }: Props) {
               Enter a valid phone number, or leave it blank.
             </p>
           ) : null}
-          <label
-            htmlFor="chk-sms-consent"
-            className="chk-consent"
-          >
+          <label htmlFor="chk-sms-consent" className="chk-consent">
             <input
               id="chk-sms-consent"
               type="checkbox"
