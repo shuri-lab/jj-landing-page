@@ -632,3 +632,23 @@ select.chk-country:disabled {
   min-height: 320px;
   margin: 0 -2px 4px;
 }
+
+.chk-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 8px 0 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--chk-muted);
+  cursor: pointer;
+}
+
+.chk-consent input[type="checkbox"] {
+  flex-shrink: 0;
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: var(--chk-purple-deep);
+  cursor: pointer;
+}

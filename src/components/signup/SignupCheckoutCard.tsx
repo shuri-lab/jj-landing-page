@@ -15,6 +15,7 @@ import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
 import { copyText, inAppName, isInAppBrowser, openInSystemBrowser } from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import {
+  SMS_CONSENT_COPY,
   nextNationalPhoneInput,
   parseValidE164,
   pickDefaultCountry,
@@ -107,6 +108,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   );
   const [phone, setPhone] = useState("");
   const [phoneIso, setPhoneIso] = useState("US");
+  const [smsConsent, setSmsConsent] = useState(false);
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string | null>(null);
@@ -454,7 +456,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         billingInterval: plan.billingInterval,
         firstName: contactFirst,
         lastName: contactLast || undefined,
-        ...startEmailPhoneField(opts?.includePhone, phoneE164),
+        ...startEmailPhoneField(opts?.includePhone, phoneE164, smsConsent),
         marketingAttribution: buildMarketingAttribution({
           sourceSurface: "landing",
           sourceContext: "landing-page",
@@ -475,6 +477,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       intentToken,
       persistIntent,
       phoneE164,
+      smsConsent,
       plan.billingInterval,
       plan.buttonPosition,
       plan.ctaLabel,
@@ -931,6 +934,16 @@ export function SignupCheckoutCard({ plan }: Props) {
               Enter a valid phone number, or leave it blank.
             </p>
           ) : null}
+          <label htmlFor="chk-sms-consent" className="chk-consent">
+            <input
+              id="chk-sms-consent"
+              type="checkbox"
+              checked={smsConsent}
+              onChange={(e) => setSmsConsent(e.target.checked)}
+              disabled={isPreparing || isVerifyingDiscount}
+            />
+            <span>{SMS_CONSENT_COPY}</span>
+          </label>
         </div>
 
         {urlDiscountCode ? (
