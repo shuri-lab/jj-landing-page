@@ -100,6 +100,7 @@ export const landingSignupApi = {
     firstName?: string | null;
     lastName?: string | null;
     phoneNumber?: string | null;
+    smsConsent?: boolean | null;
     marketingAttribution?: SignupMarketingAttribution | null;
   }): Promise<SignupIntentResponse> {
     return request<SignupIntentResponse>(`${PREFIX}/email/start`, {
