@@ -89,6 +89,13 @@ export interface SignupIntentResponse {
   intentId: string;
   intentToken?: string;
   continueSignupUrl?: string;
+  /**
+   * The server withholds a fresh intent token once this email has already
+   * reached checkout, and asks for the signup to be resumed (and re-verified)
+   * in the app instead. No `intentToken` or `intentId` comes back with it.
+   */
+  resumeRequired?: boolean;
+  resumeChallengeToken?: string;
   authMethod?: "email" | "sso_google";
   status?: string;
   step?: string;

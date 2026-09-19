@@ -29,12 +29,25 @@ export function buildContinueSignupUrl(input: {
     }
   }
 
-  const params = new URLSearchParams();
-  if (input.response?.intentId) params.set("intentId", input.response.intentId);
-  if (input.response?.intentToken) {
-    params.set("intentToken", input.response.intentToken);
+  // The configured base already carries a query string
+  // ("…/signup?coach=jj-smith"), so appending "?" a second time would fold
+  // every parameter into the coach value. Merge through URL instead.
+  const base = resolveContinueSignupBase(input.config);
+  const setAll = (target: URLSearchParams) => {
+    if (input.response?.intentId) target.set("intentId", input.response.intentId);
+    if (input.response?.intentToken) {
+      target.set("intentToken", input.response.intentToken);
+    }
+    if (email) target.set("email", email);
+    target.set("step", "success");
+  };
+  try {
+    const url = new URL(base);
+    setAll(url.searchParams);
+    return url.toString();
+  } catch {
+    const params = new URLSearchParams();
+    setAll(params);
+    return `${base}${base.includes("?") ? "&" : "?"}${params.toString()}`;
   }
-  if (email) params.set("email", email);
-  params.set("step", "success");
-  return `${resolveContinueSignupBase(input.config)}?${params.toString()}`;
 }

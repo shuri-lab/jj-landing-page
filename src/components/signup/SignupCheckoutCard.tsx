@@ -57,6 +57,18 @@ type Props = {
   onChangePlan: () => void;
 };
 
+/**
+ * Not a failure: we are already sending the buyer to the app to resume a
+ * signup that had reached checkout. Callers swallow it so the redirect is
+ * not reported to them as a checkout error.
+ */
+class SignupResumeRedirect extends Error {
+  constructor() {
+    super("Resuming signup in the app.");
+    this.name = "SignupResumeRedirect";
+  }
+}
+
 const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
   contact: { title: "Create your account", sub: "" },
   payment: { title: "Payment", sub: "" },
@@ -430,6 +442,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     trackingBase.tier,
   ]);
 
+  /** Thrown when we are already navigating the buyer to finish in the app. */
   const handleExistingEmail = useCallback(
     (value: string) => {
       clearSignupIntentSession();
@@ -440,6 +453,24 @@ export function SignupCheckoutCard({ plan }: Props) {
       }, 1200);
     },
     [loginBase],
+  );
+
+  // An email that already reached checkout gets no new intent token back, by
+  // design — the signup has to be resumed and re-verified in the app. Before
+  // this, that response produced "Missing signup session." and the buyer had
+  // no way through except inventing another email address.
+  const handleResumeRequired = useCallback(
+    (response: SignupIntentResponse, value: string) => {
+      const url = buildContinueSignupUrl({ response, email: value, config });
+      clearSignupIntentSession();
+      setIntentToken(null);
+      setEscapeUrl(url);
+      setError("You already started checking out. Taking you there to finish…");
+      window.setTimeout(() => {
+        window.location.assign(url);
+      }, 1200);
+    },
+    [config],
   );
 
   const ensureSignupIntent = useCallback(
@@ -468,12 +499,19 @@ export function SignupCheckoutCard({ plan }: Props) {
       persistIntent(started, { firstName: contactFirst, lastName: contactLast });
       rememberHandoff(started);
       token = started.intentToken ?? token;
-      if (!token) throw new Error("Missing signup session.");
+      if (!token) {
+        if (started.resumeRequired) {
+          handleResumeRequired(started, email.trim());
+          throw new SignupResumeRedirect();
+        }
+        throw new Error("Missing signup session.");
+      }
       return { token, started, hadSession };
     },
     [
       config?.coachId,
       email,
+      handleResumeRequired,
       intentToken,
       persistIntent,
       phoneE164,
@@ -534,6 +572,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       setClientSecret(null);
       prepareKeyRef.current = "";
     } catch (err) {
+      if (err instanceof SignupResumeRedirect) return;
       if (err instanceof SignupApiError && err.statusCode === 409) {
         handleExistingEmail(email);
         return;
@@ -643,6 +682,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       setStep("payment");
       trackPaymentScreenView(trackingBase);
     } catch (err) {
+      if (err instanceof SignupResumeRedirect) return;
       if (err instanceof SignupApiError && err.statusCode === 409) {
         handleExistingEmail(email);
         return;
