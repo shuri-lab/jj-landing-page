@@ -934,16 +934,23 @@ export function SignupCheckoutCard({ plan }: Props) {
               Enter a valid phone number, or leave it blank.
             </p>
           ) : null}
-          <label htmlFor="chk-sms-consent" className="chk-consent">
-            <input
-              id="chk-sms-consent"
-              type="checkbox"
-              checked={smsConsent}
-              onChange={(e) => setSmsConsent(e.target.checked)}
-              disabled={isPreparing || isVerifyingDiscount}
-            />
-            <span>{SMS_CONSENT_COPY}</span>
-          </label>
+          {/* The phone number is optional, so with the field empty there is
+              nothing to consent to and the checkbox only reads as another
+              required step. startEmailPhoneField already refuses to send
+              consent without a valid number, so hiding it changes nothing
+              that reaches the server. */}
+          {phone.trim() ? (
+            <label htmlFor="chk-sms-consent" className="chk-consent">
+              <input
+                id="chk-sms-consent"
+                type="checkbox"
+                checked={smsConsent}
+                onChange={(e) => setSmsConsent(e.target.checked)}
+                disabled={isPreparing || isVerifyingDiscount}
+              />
+              <span>{SMS_CONSENT_COPY}</span>
+            </label>
+          ) : null}
         </div>
 
         {urlDiscountCode ? (
