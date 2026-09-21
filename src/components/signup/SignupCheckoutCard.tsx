@@ -22,7 +22,11 @@ import {
   reformatNationalPhone,
   startEmailPhoneField,
 } from "@/lib/signup/phone";
-import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
+import {
+  envStripePublishableKey,
+  envYobodyAuthUrl,
+  envYobodyTermsUrl,
+} from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
 import {
@@ -1066,6 +1070,15 @@ export function SignupCheckoutCard({ plan }: Props) {
             {isPreparing ? "Opening checkout…" : "Continue to checkout"}
           </button>
         </div>
+        {/* Same short disclosure as the payment step (Stripe renders its own
+            copy of this line inside the embedded checkout). */}
+        <p className="chk-terms">
+          By continuing, you agree to our{" "}
+          <a href={envYobodyTermsUrl()} target="_blank" rel="noopener noreferrer">
+            Terms &amp; Conditions
+          </a>
+          . Cancel anytime.
+        </p>
         {!stripePromise && !configError ? (
           <p className="chk-error">Stripe publishable key is missing.</p>
         ) : null}
