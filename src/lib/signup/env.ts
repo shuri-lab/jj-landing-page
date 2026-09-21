@@ -65,6 +65,13 @@ export function envYobodyAuthUrl(): string {
   return sameHostFallback(fromEnv, "http://localhost:3000/auth", prod);
 }
 
+/** Terms & Conditions page (public route on the YoBody app). */
+export function envYobodyTermsUrl(): string {
+  const prod = "https://app.yobody.ai/terms";
+  const fromEnv = (import.meta.env.VITE_YOBODY_TERMS_URL ?? prod).replace(/\/$/, "");
+  return sameHostFallback(fromEnv, "http://localhost:3000/terms", prod);
+}
+
 export function envMetaPixelDebug(): boolean {
   return (
     import.meta.env.VITE_META_PIXEL_DEBUG === "true" ||

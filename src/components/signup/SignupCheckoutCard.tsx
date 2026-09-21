@@ -22,7 +22,11 @@ import {
   reformatNationalPhone,
   startEmailPhoneField,
 } from "@/lib/signup/phone";
-import { envStripePublishableKey, envYobodyAuthUrl } from "@/lib/signup/env";
+import {
+  envStripePublishableKey,
+  envYobodyAuthUrl,
+  envYobodyTermsUrl,
+} from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
 import {
@@ -811,7 +815,7 @@ export function SignupCheckoutCard({ plan }: Props) {
               <a
                 className="chk-pay"
                 href={handoffUrl}
-                style={{ display: "grid", placeItems: "center", textDecoration: "none" }}
+                style={{ display: "grid", placeItems: "center", textDecoration: "none", color: "white" }}
               >
                 Continue
               </a>
@@ -824,6 +828,15 @@ export function SignupCheckoutCard({ plan }: Props) {
     }
 
     if (step === "payment") {
+      const termsAmount = Number.isInteger(totalAmount)
+        ? `$${totalAmount}`
+        : formatUsd(totalAmount);
+      const termsCadence =
+        plan.billingInterval === "FULL_PROGRAM"
+          ? `One payment of ${termsAmount} for the full program — no renewal.`
+          : plan.billingInterval === "MULTI_MONTH"
+            ? `${termsAmount} every 3 months, cancel anytime.`
+            : `${termsAmount}/month, cancel anytime.`;
       return (
         <>
           {clientSecret && stripePromise ? (
@@ -836,6 +849,18 @@ export function SignupCheckoutCard({ plan }: Props) {
                   Verifying payment…
                 </p>
               ) : null}
+              {/*
+                Stripe Embedded Checkout always places custom_text.submit ABOVE
+                the Pay button (no API to move it). We own the disclosure here
+                so it sits below the iframe / Pay button instead.
+              */}
+              <p className="chk-terms chk-terms--below-pay">
+                By continuing, you agree to our{" "}
+                <a href={envYobodyTermsUrl()} target="_blank" rel="noopener noreferrer">
+                  Terms &amp; Conditions
+                </a>
+                . {termsCadence}
+              </p>
             </div>
           ) : (
             <div className="chk-pay-loading" role="status" aria-live="polite">
@@ -1066,6 +1091,14 @@ export function SignupCheckoutCard({ plan }: Props) {
             {isPreparing ? "Opening checkout…" : "Continue to checkout"}
           </button>
         </div>
+        {/* Same short disclosure as the payment step (shown below the CTA). */}
+        <p className="chk-terms">
+          By continuing, you agree to our{" "}
+          <a href={envYobodyTermsUrl()} target="_blank" rel="noopener noreferrer">
+            Terms &amp; Conditions
+          </a>
+          . Cancel anytime.
+        </p>
         {!stripePromise && !configError ? (
           <p className="chk-error">Stripe publishable key is missing.</p>
         ) : null}
