@@ -112,6 +112,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* HYROS universal script — must load in <head> before the rest of the tags */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `var hyrosHead = document.head;
+var hyrosScript = document.createElement('script');
+hyrosScript.type = 'text/javascript';
+hyrosScript.src = "https://224254.t.hyros.com/v1/lst/universal-script?ph=01be9e27086bea56a534993ace52a5cd7b38088eb9e5420fe8c09b155e83f308&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
+hyrosHead.appendChild(hyrosScript);`,
+          }}
+        />
         {/* Meta Pixel bootstrap — kept inline so calls queue before the library loads */}
         <script
           dangerouslySetInnerHTML={{
