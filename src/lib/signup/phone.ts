@@ -148,3 +148,37 @@ export function maskPhone(e164: string): string {
   if (digits.length < 4) return e164;
   return `•••-•••-${digits.slice(-4)}`;
 }
+
+/** Strict E.164 parse: valid number or null (never a fallback guess). */
+export function parseValidE164(
+  value: string,
+  iso: string | null | undefined,
+): string | null {
+  const trimmed = value.trim();
+  if (!trimmed) return null;
+  try {
+    const parsed = parsePhoneNumberFromString(trimmed, asCountryCode(iso));
+    return parsed?.isValid() ? parsed.format("E.164") : null;
+  } catch {
+    return null;
+  }
+}
+
+export const SMS_CONSENT_COPY =
+  "Text me my link and a check-in from JJ (msg & data rates may apply, reply STOP to opt out)";
+
+/**
+ * Phone field for the email/start payload. The discount Apply path passes
+ * includePhone=false so verifying a code never submits the phone number;
+ * an empty optional field is always omitted. smsConsent is only sent with
+ * a valid number and a checked box — recovery texts require both.
+ */
+export function startEmailPhoneField(
+  includePhone: boolean | undefined,
+  phoneE164: string | null,
+  smsConsent?: boolean,
+): { phoneNumber?: string; smsConsent?: boolean } {
+  if (includePhone === false || !phoneE164) return {};
+  if (smsConsent === true) return { phoneNumber: phoneE164, smsConsent: true };
+  return { phoneNumber: phoneE164 };
+}
