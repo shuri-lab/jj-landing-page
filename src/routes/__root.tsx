@@ -9,8 +9,16 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
+import posthog from "posthog-js";
 
 import appCss from "../styles.css?url";
+
+// PostHog project (public) API key — client-side write key, safe in the bundle.
+const POSTHOG_KEY = "phc_kTK9U4b4kAALQcgKJYM9rvRECAGa9hCrm7bn4BDmHdjB";
+const POSTHOG_HOST = "https://us.i.posthog.com";
+
+// Guards against a second init (React StrictMode runs mount effects twice in dev).
+let posthogStarted = false;
 
 function NotFoundComponent() {
   return (
@@ -112,6 +120,16 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* HYROS universal script — must load in <head> before the rest of the tags */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `var hyrosHead = document.head;
+var hyrosScript = document.createElement('script');
+hyrosScript.type = 'text/javascript';
+hyrosScript.src = "https://224254.t.hyros.com/v1/lst/universal-script?ph=01be9e27086bea56a534993ace52a5cd7b38088eb9e5420fe8c09b155e83f308&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
+hyrosHead.appendChild(hyrosScript);`,
+          }}
+        />
         {/* Meta Pixel bootstrap — kept inline so calls queue before the library loads */}
         <script
           dangerouslySetInnerHTML={{
@@ -212,6 +230,17 @@ if(!fired.has(a)){fired.add(a);if(typeof window.fbq==='function'){window.fbq('tr
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  // PostHog — browser-only init. The 2025-05-24 defaults enable history-change
+  // pageviews, so client-side navigations are captured without hooking the router.
+  useEffect(() => {
+    if (posthogStarted) return;
+    posthogStarted = true;
+    posthog.init(POSTHOG_KEY, {
+      api_host: POSTHOG_HOST,
+      defaults: "2025-05-24",
+    });
+  }, []);
 
   // Meta Pixel ViewContent — fires on every landing page (all routes except checkout flow)
   useEffect(() => {
