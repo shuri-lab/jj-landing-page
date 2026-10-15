@@ -1,3 +1,4 @@
+import { getAttribution } from "@/lib/analytics/attribution";
 import { getMetaClickIds } from "./meta-pixel";
 import type { SignupMarketingAttribution } from "./types";
 
@@ -32,6 +33,13 @@ export function buildMarketingAttribution(
 ): SignupMarketingAttribution {
   const params = currentSearchParams();
   const clickIds = getMetaClickIds(params);
+  // Persisted first/latest touch. Without this, attribution was read from the
+  // live URL only — so a reload, an in-app-browser hand-off or simply reaching
+  // step 2 dropped the campaign before the lead and the Stripe session were
+  // created. Latest touch wins, first touch is the fallback.
+  const { first: firstTouch, last: lastTouch } = getAttribution();
+  const persisted = (key: "utm_source" | "utm_medium" | "utm_campaign" | "utm_content" | "utm_term" | "fbclid" | "referrer"): string =>
+    lastTouch[key] || firstTouch[key] || "";
   const raw: SignupMarketingAttribution = {
     sourceSurface:
       overrides?.sourceSurface ??
@@ -47,17 +55,38 @@ export function buildMarketingAttribution(
       readQueryValue(params, ["buttonPosition", "button_position"]) ??
       "offer",
     ctaText: overrides?.ctaText ?? readQueryValue(params, ["ctaText", "cta_text"]) ?? "",
-    utmSource: overrides?.utmSource ?? readQueryValue(params, ["utmSource", "utm_source"]) ?? "",
-    utmMedium: overrides?.utmMedium ?? readQueryValue(params, ["utmMedium", "utm_medium"]) ?? "",
+    utmSource:
+      overrides?.utmSource ??
+      readQueryValue(params, ["utmSource", "utm_source"]) ??
+      persisted("utm_source"),
+    utmMedium:
+      overrides?.utmMedium ??
+      readQueryValue(params, ["utmMedium", "utm_medium"]) ??
+      persisted("utm_medium"),
     utmCampaign:
-      overrides?.utmCampaign ?? readQueryValue(params, ["utmCampaign", "utm_campaign"]) ?? "",
+      overrides?.utmCampaign ??
+      readQueryValue(params, ["utmCampaign", "utm_campaign"]) ??
+      persisted("utm_campaign"),
     utmContent:
-      overrides?.utmContent ?? readQueryValue(params, ["utmContent", "utm_content"]) ?? "",
-    utmTerm: overrides?.utmTerm ?? readQueryValue(params, ["utmTerm", "utm_term"]) ?? "",
+      overrides?.utmContent ??
+      readQueryValue(params, ["utmContent", "utm_content"]) ??
+      persisted("utm_content"),
+    utmTerm:
+      overrides?.utmTerm ?? readQueryValue(params, ["utmTerm", "utm_term"]) ?? persisted("utm_term"),
     pageUrl:
       overrides?.pageUrl ?? readQueryValue(params, ["pageUrl", "page_url"]) ?? currentPageUrl(),
-    referrer: overrides?.referrer ?? readQueryValue(params, ["referrer"]) ?? currentReferrer(),
-    fbclid: overrides?.fbclid ?? readQueryValue(params, ["fbclid"]) ?? clickIds.fbclid,
+    referrer:
+      overrides?.referrer ??
+      readQueryValue(params, ["referrer"]) ??
+      // Parenthesised: `??` and `||` cannot be mixed bare. `||` is required
+      // because currentReferrer() returns "" on a direct hit, and an empty
+      // string must still fall through to the remembered referrer.
+      (currentReferrer() || persisted("referrer")),
+    fbclid:
+      overrides?.fbclid ??
+      readQueryValue(params, ["fbclid"]) ??
+      clickIds.fbclid ??
+      persisted("fbclid"),
     fbc: overrides?.fbc ?? readQueryValue(params, ["_fbc", "fbc"]) ?? clickIds.fbc,
     fbp: overrides?.fbp ?? readQueryValue(params, ["_fbp", "fbp"]) ?? clickIds.fbp,
     metaEventId:

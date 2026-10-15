@@ -44,6 +44,16 @@ import {
   trackSignupMethodSelect,
   trackSignupScreenView,
 } from "@/lib/signup/tracking";
+import {
+  categorizeCheckoutError,
+  trackCheckoutError as trackPhCheckoutError,
+  trackCheckoutStepViewed,
+  trackLeadCaptured,
+  trackLeadFormStarted,
+  trackPurchaseConfirmedClientSide,
+  trackStripeCheckoutLoaded,
+} from "@/lib/analytics/events";
+import { identifyLead } from "@/lib/analytics/posthog";
 import { SignupApiError } from "@/lib/signup/types";
 import type {
   CheckoutCardStep,
@@ -135,6 +145,8 @@ export function SignupCheckoutCard({ plan }: Props) {
   }>({ verified: false });
   const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(() => Boolean(urlDiscountCode));
+  const [leadId, setLeadId] = useState<string | null>(null);
+  const embeddedRef = useRef<HTMLDivElement | null>(null);
   const prepareKeyRef = useRef("");
   const resumedRef = useRef(false);
 
@@ -202,6 +214,14 @@ export function SignupCheckoutCard({ plan }: Props) {
     [plan, program, totalAmount],
   );
 
+  // PostHog: first meaningful interaction with the contact step (once/session).
+  const noteFormStarted = useCallback(() => {
+    trackLeadFormStarted({
+      billing_interval: plan.billingInterval,
+      offer_id: program?.id,
+    });
+  }, [plan.billingInterval, program?.id]);
+
   const persistIntent = useCallback(
     (response: SignupIntentResponse, extras?: { firstName?: string; lastName?: string }) => {
       const token = response.intentToken ?? intentToken ?? getSignupIntentSession()?.intentToken;
@@ -211,6 +231,7 @@ export function SignupCheckoutCard({ plan }: Props) {
         setCheckoutSessionId(response.checkoutSessionId);
       }
       const existing = getSignupIntentSession();
+      if (response.intentId) setLeadId(response.intentId);
       saveSignupIntentSession({
         intentId: response.intentId,
         intentToken: token,
@@ -241,6 +262,54 @@ export function SignupCheckoutCard({ plan }: Props) {
     trackSignupScreenView(trackingBase);
   }, [trackingBase]);
 
+  // PostHog: which checkout step the visitor reached. "payment" is recorded as
+  // soon as the step opens, so the gap to yobody_stripe_checkout_loaded
+  // measures payment UIs that never actually rendered.
+  useEffect(() => {
+    if (step !== "contact" && step !== "payment") return;
+    trackCheckoutStepViewed(step, {
+      billing_interval: plan.billingInterval,
+      offer_id: program?.id,
+    });
+  }, [plan.billingInterval, program?.id, step]);
+
+  // PostHog: Stripe Embedded Checkout has no onReady callback, so treat "the
+  // iframe is in the DOM" as the ready signal rather than guessing from state.
+  useEffect(() => {
+    if (step !== "payment" || !clientSecret) return;
+    const host = embeddedRef.current;
+    if (!host) return;
+
+    let fired = false;
+    const check = () => {
+      if (fired || !host.querySelector("iframe")) return;
+      fired = true;
+      observer.disconnect();
+      trackStripeCheckoutLoaded({
+        lead_id: leadId ?? getSignupIntentSession()?.intentId,
+        offer_id: program?.id,
+        billing_interval: plan.billingInterval,
+        value: totalAmount,
+        currency: (program?.priceCurrency || "USD").toUpperCase(),
+        discount_applied: Boolean(discountState.verified),
+      });
+    };
+
+    const observer = new MutationObserver(check);
+    observer.observe(host, { childList: true, subtree: true });
+    check();
+    return () => observer.disconnect();
+  }, [
+    clientSecret,
+    discountState.verified,
+    leadId,
+    plan.billingInterval,
+    program?.id,
+    program?.priceCurrency,
+    step,
+    totalAmount,
+  ]);
+
   useEffect(() => {
     let cancelled = false;
     void landingSignupApi
@@ -269,6 +338,16 @@ export function SignupCheckoutCard({ plan }: Props) {
         currency: response.purchaseTracking?.currency ?? "USD",
         content_id: response.purchaseTracking?.contentId ?? program?.id,
         event_id: response.purchaseTracking?.eventId,
+      });
+      // Browser-side only. The authoritative purchase event is
+      // yobody_purchase_completed, emitted from the Stripe webhook (see
+      // TRACKING_PLAN.md — currently a backend dependency).
+      trackPurchaseConfirmedClientSide({
+        lead_id: response.intentId,
+        order_id: response.purchaseTracking?.orderId ?? fallbackId ?? response.intentId,
+        value: response.purchaseTracking?.value ?? totalAmount,
+        currency: response.purchaseTracking?.currency ?? "USD",
+        offer_id: response.purchaseTracking?.contentId ?? program?.id,
       });
     },
     [program?.id, totalAmount],
@@ -471,6 +550,25 @@ export function SignupCheckoutCard({ plan }: Props) {
       });
       persistIntent(started, { firstName: contactFirst, lastName: contactLast });
       rememberHandoff(started);
+      // PostHog: Step 1 accepted. `intentId` is the durable backend lead id, so
+      // it becomes the person identity — never the email address.
+      if (started.intentId) {
+        const hasPhone = Boolean(opts?.includePhone !== false && phoneE164);
+        identifyLead(started.intentId, {
+          lead_created: true,
+          has_phone: hasPhone,
+          sms_consent: Boolean(hasPhone && smsConsent),
+        });
+        trackLeadCaptured({
+          lead_id: started.intentId,
+          has_phone: hasPhone,
+          sms_consent: Boolean(hasPhone && smsConsent),
+          billing_interval: plan.billingInterval,
+          offer_id: program?.id,
+          value: totalAmount,
+          currency: (program?.priceCurrency || "USD").toUpperCase(),
+        });
+      }
       token = started.intentToken ?? token;
       if (!token) throw new Error("Missing signup session.");
       return { token, started, hadSession };
@@ -660,6 +758,12 @@ export function SignupCheckoutCard({ plan }: Props) {
         message,
         inApp,
       });
+      trackPhCheckoutError({
+        error_category: categorizeCheckoutError({ stage, statusCode, message }),
+        checkout_step: stage === "start_email" ? "contact" : "payment",
+        status_code: statusCode,
+        in_app_browser: inApp,
+      });
       setStep("contact");
       setError(message);
       if (inApp && typeof window !== "undefined") {
@@ -840,7 +944,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       return (
         <>
           {clientSecret && stripePromise ? (
-            <div className="chk-embedded">
+            <div className="chk-embedded" ref={embeddedRef}>
               <EmbeddedCheckoutProvider stripe={stripePromise} options={embeddedOptions}>
                 <EmbeddedCheckout />
               </EmbeddedCheckoutProvider>
@@ -885,6 +989,7 @@ export function SignupCheckoutCard({ plan }: Props) {
             placeholder="Email"
             value={email}
             onChange={(e) => {
+              noteFormStarted();
               setEmail(e.target.value);
               setEmailSuggestion(suggestEmail(e.target.value));
               setError("");
@@ -918,6 +1023,7 @@ export function SignupCheckoutCard({ plan }: Props) {
             placeholder="Full name"
             value={fullName}
             onChange={(e) => {
+              noteFormStarted();
               setFullName(e.target.value);
               setError("");
             }}
@@ -950,7 +1056,10 @@ export function SignupCheckoutCard({ plan }: Props) {
               autoComplete="tel"
               placeholder="(555) 123-4567"
               value={phone}
-              onChange={(e) => handlePhoneChange(e.target.value)}
+              onChange={(e) => {
+                noteFormStarted();
+                handlePhoneChange(e.target.value);
+              }}
               disabled={isPreparing || isVerifyingDiscount}
             />
           </div>

@@ -8,6 +8,8 @@ import SocialProofWidget from "@/components/social-proof/SocialProofWidget";
 import { OFFER_PLANS } from "@/lib/signup/plans";
 import { readCheckoutSessionIdFromUrl, readLandingPrefill } from "@/lib/signup/attribution";
 import { trackSelectPlan } from "@/lib/signup/tracking";
+import { sectionNameOf, trackCtaClicked } from "@/lib/analytics/events";
+import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
 import type { OfferPlan } from "@/lib/signup/types";
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import quizHeroDesktop from "@/assets/landing/quiz-hero-image-desktop.png";
@@ -91,9 +93,17 @@ const scroll = () => scrollToOffer();
 function Cta({ label = "Start today", sub, href, full = false, onDark = false, onClick, position, tier = "standard" }: { label?: string; sub?: React.ReactNode; href?: string; full?: boolean; onDark?: boolean; onClick?: () => void; position?: string; tier?: string }) {
   const cls = `ly-cta ly-cta-lg ${full ? "ly-cta-full" : ""}`;
   const inner = <>{label}<span className="ly-cta-arw" aria-hidden>→</span></>;
+  const track = (e: React.MouseEvent<HTMLElement>) => {
+    trackCtaClicked({
+      cta_name: position || label,
+      section_name: sectionNameOf(e.currentTarget),
+      destination_type: href ? "external" : "scroll",
+      tier,
+    });
+  };
   const btn = href
-    ? <a href={href} className={cls} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</a>
-    : <button className={cls} onClick={onClick ?? scroll} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</button>;
+    ? <a href={href} className={cls} data-cta="yes-jj" data-position={position} data-tier={tier} onClick={track}>{inner}</a>
+    : <button className={cls} onClick={(e) => { track(e); (onClick ?? scroll)(); }} data-cta="yes-jj" data-position={position} data-tier={tier}>{inner}</button>;
   if (!sub) return btn;
   return <div className="ly-cta-wrap">{btn}<p className={`ly-cta-sub ${onDark ? "on-dark" : ""}`}>{sub}</p></div>;
 }
@@ -102,6 +112,8 @@ function Cta({ label = "Start today", sub, href, full = false, onDark = false, o
 function Landing() {
   const [showSticky, setShowSticky] = useState(false);
   const [offerVisible, setOfferVisible] = useState(false);
+  // Section reach + scroll depth (PostHog). Autocapture/replay covers the rest.
+  useLandingBehaviorTracking();
   // Meta Pixel ViewContent is fired globally in __root.tsx for every landing page.
   useEffect(() => {
     const onScroll = () => setShowSticky(window.scrollY > 700);
@@ -181,7 +193,7 @@ function Hero() {
     { Icon: UtensilsCrossed, label: "Food you love" },
   ];
   return (
-    <section className="ly-band ly-hero">
+    <section data-yb-section="hero" className="ly-band ly-hero">
       <div className="ly-hero-stage">
         <div className="ly-wrap ly-hero-inner">
           <div className="ly-hero-copy">
@@ -277,7 +289,7 @@ const ALL_LOGOS = [partnerNyTimes, partnerDrOz, partnerTheView, partnerSteveHarv
 
 function PressStrip({ dark = false, label = "As seen on" }: { dark?: boolean; label?: string }) {
   return (
-    <section className={`ly-press ${dark ? "is-dark" : ""}`}>
+    <section data-yb-section="press_features" className={`ly-press ${dark ? "is-dark" : ""}`}>
       <p className="ly-press-lbl">{label}</p>
       <div className="ly-marquee">
         <div className="ly-marquee-track">
@@ -291,7 +303,7 @@ function PressStrip({ dark = false, label = "As seen on" }: { dark?: boolean; la
 // ── story (dark) ─────────────────────────────────────────────────────────────
 function Story() {
   return (
-    <section className="ly-band ly-dark">
+    <section data-yb-section="jj_story" className="ly-band ly-dark">
       <div className="ly-wrap ly-story-grid">
         <div className="ly-story-media">
           <div className="ly-story-single">
@@ -330,7 +342,7 @@ function WhyNothing() {
     { img: whyOnYourOwn, title: "On your own, it never lasts.", text: <>You hold it together for a week or two, then life hits and <strong>nobody is there to catch you.</strong> Willpower runs out. <Hi>Somebody in your corner does not.</Hi></> },
   ];
   return (
-    <section className="ly-band ly-white">
+    <section data-yb-section="why_nothing_works" className="ly-band ly-white">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Why nothing has worked</span>
         <h2 className="ly-h2 ly-h2-sound">Sound <Hi>familiar?</Hi></h2>
@@ -353,7 +365,7 @@ function WhyNothing() {
 // ── research / you're not alone (dark band, echoes the "eat good" design) ─────
 function ResearchSupport() {
   return (
-    <section className="ly-band ly-research">
+    <section data-yb-section="research_support" className="ly-band ly-research">
       <div className="ly-wrap ly-research-in">
         <span className="ly-eyebrow ly-research-eyebrow">Research shows</span>
         <h2 className="ly-research-h">92% of women won&rsquo;t reach their goal weight <span className="ly-research-hi">without personalized support.</span></h2>
@@ -375,7 +387,7 @@ function Method() {
     { img: stepHome, title: "And every day, I'm right there with you.", text: <>Two coaching calls a week to fix what got in your way and <strong>adjust your plan,</strong> plus a text every morning. <Hi>Somebody who shows up, and never leaves.</Hi></> },
   ];
   return (
-    <section className="ly-band ly-lav">
+    <section data-yb-section="method_4_steps" className="ly-band ly-lav">
       <div className="ly-wrap ly-center ly-steps-wrap">
         <span className="ly-eyebrow">The method</span>
         <h2 className="ly-h2">The <Hi>4 steps</Hi> that change everything</h2>
@@ -410,7 +422,7 @@ function RealResults() {
     { src: t4, name: "Danielle", num: "Lost 34 lbs.", text: "\"I got my curves back, snatched, not skinny. I fit into the dress I had been saving for three years and wore it to my daughter's wedding, feeling like the best version of me.\"" },
   ];
   return (
-    <section className="ly-band ly-white">
+    <section data-yb-section="real_results" className="ly-band ly-white">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Real women, real results</span>
         <h2 className="ly-h2">They got themselves back. <Hi>So will you.</Hi></h2>
@@ -443,7 +455,7 @@ function WhatYouGet() {
     { Icon: Users, img: theCircleImage, title: "The Circle of Women.", text: "A private room of women on the same journey, so you are never the only one, and you never feel like it." },
   ];
   return (
-    <section className="ly-band ly-pink">
+    <section data-yb-section="what_you_get" className="ly-band ly-pink">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">What is inside</span>
         <h2 className="ly-h2">Here is <Hi>everything you get</Hi></h2>
@@ -524,7 +536,7 @@ function Pricing() {
   }, [selectedPlan]);
 
   return (
-    <section id="offer" className="ly-band ly-lav">
+    <section data-yb-section="pricing_offer" id="offer" className="ly-band ly-lav">
       <div className="ly-wrap ly-center">
         <span className="ly-eyebrow">Get started</span>
         <h2 className="ly-h2">Your comeback starts at <Hi>$1.57 a day</Hi></h2>
@@ -596,7 +608,7 @@ function Pricing() {
 // ── clarity (how she can be there every day) ─────────────────────────────────
 function Clarity() {
   return (
-    <section className="ly-band ly-cream">
+    <section data-yb-section="clarity" className="ly-band ly-cream">
       <div className="ly-wrap ly-clarity">
         <div className="ly-clarity-media">
           <img src={clarityImage} alt="JJ Smith" loading="lazy" />
@@ -619,7 +631,7 @@ function Clarity() {
 function Guarantee() {
   const pills = ["Lose 10 lbs or free", "14-day money back", "no questions asked", "cancel anytime"];
   return (
-    <section className="ly-band ly-white">
+    <section data-yb-section="guarantee" className="ly-band ly-white">
       <div className="ly-wrap ly-guar-grid">
         <img src={guaranteeSeal} alt="100% money-back guarantee" className="ly-guar-img" loading="lazy" />
         <div>
@@ -642,7 +654,7 @@ function Guarantee() {
 // ── close (dark) ─────────────────────────────────────────────────────────────
 function Close() {
   return (
-    <section className="ly-band ly-dark ly-center">
+    <section data-yb-section="final_close" className="ly-band ly-dark ly-center">
       <div className="ly-wrap ly-narrow">
         <h2 className="ly-h2 on-dark">The months ahead are <Hi>coming either way.</Hi></h2>
         <p className="ly-lead on-dark-soft ly-mt">You can spend them like the last ones. Or you can spend them with me beside you, and come out the other side <strong className="on-dark">feeling like yourself again.</strong></p>
@@ -667,7 +679,7 @@ function Faq() {
     { q: "What if I change my mind?", a: "You are covered two ways. Lose 10 pounds your first month or it is free. And if you change your mind in your first 14 days, every penny back, no reason needed." },
   ];
   return (
-    <section className="ly-band ly-cream ly-center">
+    <section data-yb-section="faq" className="ly-band ly-cream ly-center">
       <div className="ly-wrap">
         <span className="ly-eyebrow">Questions women ask me</span>
         <h2 className="ly-h2">Let me answer <Hi>what's on your mind</Hi>.</h2>
@@ -694,7 +706,22 @@ function StickyCta({ show }: { show: boolean }) {
     <div className={`ly-sticky ${show ? "is-show" : ""}`} aria-hidden={!show}>
       <div className="ly-sticky-in">
         <span className="ly-sticky-lbl"><strong>$1.57 a day</strong> · cancel anytime<span className="ly-sticky-more"> · 14-day money-back guarantee</span></span>
-        <button className="ly-cta ly-sticky-btn" onClick={scroll}>Start today<span className="ly-cta-arw" aria-hidden>→</span></button>
+        <button
+          className="ly-cta ly-sticky-btn"
+          onClick={() => {
+            trackCtaClicked({
+              cta_name: "sticky_start_today",
+              section_name: "sticky_bar",
+              destination_type: "scroll",
+            });
+            scroll();
+          }}
+        >
+          Start today
+          <span className="ly-cta-arw" aria-hidden>
+            →
+          </span>
+        </button>
       </div>
     </div>
   );

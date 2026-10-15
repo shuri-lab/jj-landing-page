@@ -9,16 +9,9 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import posthog from "posthog-js";
+import { initPostHog } from "@/lib/analytics/posthog";
 
 import appCss from "../styles.css?url";
-
-// PostHog project (public) API key — client-side write key, safe in the bundle.
-const POSTHOG_KEY = "phc_kTK9U4b4kAALQcgKJYM9rvRECAGa9hCrm7bn4BDmHdjB";
-const POSTHOG_HOST = "https://us.i.posthog.com";
-
-// Guards against a second init (React StrictMode runs mount effects twice in dev).
-let posthogStarted = false;
 
 function NotFoundComponent() {
   return (
@@ -231,15 +224,10 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  // PostHog — browser-only init. The 2025-05-24 defaults enable history-change
-  // pageviews, so client-side navigations are captured without hooking the router.
+  // PostHog — browser-only init. Config, privacy rules and attribution all
+  // live in lib/analytics/posthog.ts; this is the single initialization site.
   useEffect(() => {
-    if (posthogStarted) return;
-    posthogStarted = true;
-    posthog.init(POSTHOG_KEY, {
-      api_host: POSTHOG_HOST,
-      defaults: "2025-05-24",
-    });
+    initPostHog();
   }, []);
 
   // Meta Pixel ViewContent — fires on every landing page (all routes except checkout flow)
