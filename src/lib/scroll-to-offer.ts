@@ -1,10 +1,21 @@
 export function scrollToOffer() {
-  const el =
-    document.getElementById("offer-limited") ?? document.getElementById("offer");
+  const el = document.getElementById("offer-limited") ?? document.getElementById("offer");
   if (!el) return;
+  scrollToElement(el);
+}
 
-  const targetTop = () =>
-    Math.max(0, el.getBoundingClientRect().top + window.scrollY);
+/**
+ * The same controlled scroll, for pages whose primary target is not the offer
+ * (for example the booking card on /free-call).
+ */
+export function scrollToId(id: string) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  scrollToElement(el);
+}
+
+function scrollToElement(el: HTMLElement) {
+  const targetTop = () => Math.max(0, el.getBoundingClientRect().top + window.scrollY);
 
   const prefersReduced =
     typeof window.matchMedia === "function" &&
@@ -23,20 +34,15 @@ export function scrollToOffer() {
     cancelled = true;
     cleanup();
   };
-  const cleanup = () =>
-    cancelEvents.forEach((e) => window.removeEventListener(e, cancel));
-  cancelEvents.forEach((e) =>
-    window.addEventListener(e, cancel, { passive: true }),
-  );
+  const cleanup = () => cancelEvents.forEach((e) => window.removeEventListener(e, cancel));
+  cancelEvents.forEach((e) => window.addEventListener(e, cancel, { passive: true }));
 
   const startY = window.scrollY;
-  const startTime =
-    typeof performance !== "undefined" ? performance.now() : Date.now();
+  const startTime = typeof performance !== "undefined" ? performance.now() : Date.now();
   const DURATION = 550;
   const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
 
-  const now = () =>
-    typeof performance !== "undefined" ? performance.now() : Date.now();
+  const now = () => (typeof performance !== "undefined" ? performance.now() : Date.now());
 
   const animate = () => {
     if (cancelled) return;
