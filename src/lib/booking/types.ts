@@ -5,6 +5,8 @@
  * document Christophe builds the real endpoint against.
  */
 
+import type { WhenSelection } from "./slots";
+
 export interface BookingUtm {
   source: string | null;
   medium: string | null;
@@ -13,20 +15,18 @@ export interface BookingUtm {
   term: string | null;
 }
 
-/** The chosen slot. `iso` is null when she picked "Other time". */
-export interface BookingSlot {
-  iso: string | null;
-  label: string;
-}
-
 export interface BookingPayload {
+  /**
+   * When she wants the call.
+   *  - `{ mode: "now", iso: null, label: "Now" }` means call as soon as you can
+   *  - `{ mode: "scheduled", iso, label }` carries the instant and the words
+   *    she saw, for example "Tomorrow at 9:00 AM"
+   */
+  when: WhenSelection;
   firstName: string;
   /** E.164, for example +13235550147. */
   phone: string;
   email: string;
-  /** The optional "number one goal" answer. null when left blank. */
-  goal: string | null;
-  slot: BookingSlot;
   /** Always true: the form cannot be submitted with the box unticked. */
   consent: true;
   /** ISO 8601, the moment the box was ticked. */

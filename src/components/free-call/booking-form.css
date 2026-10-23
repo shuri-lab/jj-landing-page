@@ -1,8 +1,8 @@
 /*
  * Booking card for /free-call.
  *
- * Tokens mirror the landing-page design system (same palette, radii, shadows
- * and fonts as .lyx and .chk), kept local so the card is self-contained and
+ * Tokens mirror the JJ Smith landing page design system (same palette, radii,
+ * shadows and fonts as .lyx), kept local so the card is self-contained and
  * can sit on any band without inheriting surprises.
  */
 
@@ -16,12 +16,13 @@
   --fcb-purple-soft: #f0e6fa;
   --fcb-grad: linear-gradient(135deg, #7e36a6 0%, #5b2a80 100%);
   --fcb-shadow: 0 34px 64px -36px rgba(74, 35, 90, 0.44);
+  --fcb-shadow-sm: 0 18px 38px -26px rgba(74, 35, 90, 0.4);
   --fcb-danger: #b42318;
   --fcb-sans: "DM Sans", -apple-system, "Segoe UI", sans-serif;
   --fcb-head: "Montserrat", var(--fcb-sans);
   font-family: var(--fcb-sans);
   color: var(--fcb-ink);
-  font-size: 16px;
+  font-size: 17px;
   line-height: 1.55;
   font-weight: 500;
   text-align: left;
@@ -42,40 +43,326 @@
   padding: 22px 20px 20px;
 }
 
-.fcb-head {
-  margin: 0 0 18px;
+.fcb-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
 }
 
-.fcb-kicker {
-  display: inline-block;
-  margin: 0 0 8px;
-  font-family: var(--fcb-head);
-  font-weight: 800;
-  font-size: 11.5px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--fcb-purple);
+.fcb-head {
+  margin: 0 0 18px;
 }
 
 .fcb-h {
   margin: 0;
   font-family: var(--fcb-head);
   font-weight: 800;
-  font-size: 23px;
+  font-size: 25px;
   line-height: 1.18;
   letter-spacing: -0.01em;
   color: var(--fcb-ink);
 }
 
+.fcb-h:focus {
+  outline: none;
+}
+
 .fcb-sub {
-  margin: 7px 0 0;
-  font-size: 14.5px;
+  margin: 8px 0 0;
+  font-size: 16px;
   line-height: 1.5;
   color: var(--fcb-muted);
   font-weight: 500;
 }
 
-/* fields */
+/* ── step 1: the three day cards ──────────────────────────────────────── */
+
+.fcb-days {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+  border: 0;
+  padding: 0;
+  margin: 0 0 18px;
+  min-width: 0;
+}
+
+.fcb-day {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+  padding: 17px 18px;
+  border: 1.5px solid var(--fcb-line);
+  border-radius: 16px;
+  background: #fff;
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    box-shadow 0.15s;
+}
+
+.fcb-day input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.fcb-day:hover {
+  border-color: #d9c7ec;
+  background: #fdfaff;
+}
+
+.fcb-day.is-on {
+  border-color: var(--fcb-purple);
+  background: var(--fcb-purple-soft);
+  box-shadow: 0 0 0 1px var(--fcb-purple);
+}
+
+.fcb-day:has(input:focus-visible) {
+  outline: 3px solid var(--fcb-purple);
+  outline-offset: 3px;
+}
+
+.fcb-day-mark {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  border: 1.5px solid var(--fcb-line);
+  border-radius: 999px;
+  background: #fff;
+  color: transparent;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.fcb-day.is-on .fcb-day-mark {
+  background: var(--fcb-grad);
+  border-color: transparent;
+  color: #fff;
+}
+
+.fcb-day-main {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.fcb-day-title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  font-family: var(--fcb-head);
+  font-weight: 800;
+  font-size: 17.5px;
+  line-height: 1.2;
+  color: var(--fcb-ink);
+}
+
+.fcb-day.is-on .fcb-day-title {
+  color: var(--fcb-purple-deep);
+}
+
+.fcb-tag {
+  font-family: var(--fcb-head);
+  font-weight: 800;
+  font-size: 10.5px;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--fcb-grad);
+  padding: 3px 9px;
+  border-radius: 999px;
+  line-height: 1.35;
+}
+
+.fcb-day-sub {
+  font-size: 14.5px;
+  line-height: 1.45;
+  color: var(--fcb-muted);
+}
+
+/* ── step 1: the time list ────────────────────────────────────────────── */
+
+.fcb-times {
+  margin: 0 0 18px;
+}
+
+.fcb-times-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 9px;
+}
+
+.fcb-times-lbl {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fcb-ink);
+}
+
+.fcb-tz {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--fcb-muted);
+}
+
+.fcb-tz svg {
+  flex: 0 0 auto;
+}
+
+/* A single scrolling column, the pattern every scheduling tool uses. Capped
+   so the list never pushes the submit button off a phone screen. */
+.fcb-times-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border: 1.5px solid var(--fcb-line);
+  border-radius: 16px;
+  padding: 10px;
+  margin: 0;
+  min-width: 0;
+  max-height: 304px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: #fdfbff;
+}
+
+.fcb-time {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 50px;
+  padding: 12px 14px;
+  border: 1.5px solid var(--fcb-line);
+  border-radius: 13px;
+  background: #fff;
+  font-family: var(--fcb-head);
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fcb-ink);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    background 0.15s,
+    color 0.15s;
+}
+
+.fcb-time input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+  margin: 0;
+}
+
+.fcb-time:hover {
+  border-color: #d9c7ec;
+  background: #fdfaff;
+}
+
+.fcb-time.is-on {
+  border-color: var(--fcb-purple);
+  background: var(--fcb-purple-soft);
+  color: var(--fcb-purple-deep);
+}
+
+.fcb-time:has(input:focus-visible) {
+  outline: 3px solid var(--fcb-purple);
+  outline-offset: 2px;
+}
+
+.fcb-time-mark {
+  display: none;
+  color: var(--fcb-purple);
+}
+
+.fcb-time.is-on .fcb-time-mark {
+  display: inline-flex;
+}
+
+.fcb-empty {
+  margin: 0;
+  padding: 18px;
+  border: 1.5px dashed var(--fcb-line);
+  border-radius: 16px;
+  background: #fdfbff;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--fcb-muted);
+}
+
+.fcb-empty strong {
+  color: var(--fcb-purple-deep);
+  font-weight: 800;
+}
+
+/* ── step 2 ───────────────────────────────────────────────────────────── */
+
+.fcb-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 13px 16px;
+  border-radius: 14px;
+  background: var(--fcb-purple-soft);
+  font-family: var(--fcb-head);
+  font-size: 15.5px;
+  font-weight: 800;
+  color: var(--fcb-purple-deep);
+}
+
+.fcb-summary-k {
+  font-weight: 700;
+  opacity: 0.75;
+}
+
+.fcb-link,
+.fcb-back {
+  background: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fcb-purple);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.fcb-back {
+  display: block;
+  margin: 14px auto 0;
+  font-family: var(--fcb-sans);
+  color: var(--fcb-muted);
+}
 
 .fcb-field {
   display: flex;
@@ -84,18 +371,11 @@
   margin-bottom: 15px;
 }
 
-.fcb-field > label,
-.fcb-legend {
+.fcb-field > label {
   font-family: var(--fcb-sans);
   font-size: 14px;
   font-weight: 700;
   color: var(--fcb-ink);
-}
-
-.fcb-optional {
-  margin-left: 6px;
-  color: var(--fcb-muted);
-  font-weight: 500;
 }
 
 .fcb-field input[type="text"],
@@ -148,8 +428,8 @@
 }
 
 select.fcb-country {
-  width: 108px;
-  flex: 0 0 108px;
+  width: 104px;
+  flex: 0 0 104px;
   min-height: 54px;
   font-family: var(--fcb-sans);
   font-size: 15px;
@@ -208,87 +488,12 @@ select.fcb-country:disabled {
   font-weight: 600;
 }
 
-/* slot picker */
-
-.fcb-slots {
-  border: 0;
-  padding: 0;
-  margin: 0 0 15px;
-  min-width: 0;
-}
-
-.fcb-legend {
-  padding: 0;
-  margin-bottom: 9px;
-}
-
-.fcb-slots .fcb-hint {
-  margin-top: 9px;
-}
-
-.fcb-slot-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 9px;
-}
-
-.fcb-slot-other {
-  grid-column: 1 / -1;
-}
-
-.fcb-slot {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 52px;
-  padding: 12px 10px;
-  border: 1.5px solid var(--fcb-line);
-  border-radius: 13px;
-  background: #fff;
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--fcb-ink);
-  cursor: pointer;
-  transition:
-    border-color 0.15s,
-    background 0.15s,
-    color 0.15s;
-}
-
-.fcb-slot input {
-  position: absolute;
-  opacity: 0;
-  width: 1px;
-  height: 1px;
-  margin: 0;
-}
-
-.fcb-slot:hover {
-  border-color: #d9c7ec;
-  background: #fdfaff;
-}
-
-.fcb-slot.is-on {
-  border-color: var(--fcb-purple);
-  background: var(--fcb-purple-soft);
-  color: var(--fcb-purple-deep);
-}
-
-.fcb-slot:has(input:focus-visible) {
-  outline: 3px solid var(--fcb-purple);
-  outline-offset: 3px;
-}
-
-/* consent */
-
 .fcb-consent {
   display: flex;
   align-items: flex-start;
   gap: 10px;
   margin: 4px 0 16px;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
   color: var(--fcb-muted);
   cursor: pointer;
@@ -307,29 +512,29 @@ select.fcb-country:disabled {
   margin: -10px 0 16px;
 }
 
-/* submit */
+/* ── the button ───────────────────────────────────────────────────────── */
 
 .fcb-submit {
   width: 100%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  min-height: 58px;
-  padding: 17px 20px;
+  gap: 10px;
+  min-height: 62px;
+  padding: 18px 20px;
   border: 0;
-  border-radius: 14px;
+  border-radius: 16px;
   background: var(--fcb-grad);
   color: #fff;
   font-family: var(--fcb-head);
   font-weight: 800;
-  font-size: 18px;
+  font-size: 19px;
   line-height: 1.15;
-  box-shadow: 0 16px 34px -12px rgba(91, 42, 128, 0.5);
+  box-shadow: 0 20px 40px -18px rgba(91, 42, 128, 0.65);
   cursor: pointer;
   transition:
-    transform 0.15s,
-    filter 0.15s;
+    transform 0.16s,
+    filter 0.16s;
 }
 
 .fcb-submit:hover:not(:disabled) {
@@ -339,13 +544,13 @@ select.fcb-country:disabled {
 
 .fcb-submit:disabled {
   cursor: not-allowed;
-  filter: saturate(0.7) brightness(0.98);
+  background: #cdbfdd;
+  box-shadow: none;
 }
 
 .fcb-submit-arw {
-  font-size: 1.2em;
+  font-size: 1.15em;
   line-height: 1;
-  transform: translateY(-1px);
 }
 
 .fcb-spinner {
@@ -366,7 +571,7 @@ select.fcb-country:disabled {
 .fcb-foot {
   margin: 12px 0 0;
   text-align: center;
-  font-size: 12.5px;
+  font-size: 13px;
   line-height: 1.5;
   font-weight: 600;
   color: var(--fcb-muted);
@@ -387,7 +592,7 @@ select.fcb-country:disabled {
   font-weight: 600;
 }
 
-/* confirmation */
+/* ── confirmation ─────────────────────────────────────────────────────── */
 
 .fcb-done {
   text-align: center;
@@ -415,7 +620,7 @@ select.fcb-country:disabled {
   margin: 0;
   font-family: var(--fcb-head);
   font-weight: 800;
-  font-size: 25px;
+  font-size: 26px;
   line-height: 1.16;
   letter-spacing: -0.01em;
   text-wrap: balance;
@@ -440,10 +645,24 @@ select.fcb-country:disabled {
 
 .fcb-done-p {
   margin: 14px 0 0;
-  font-size: 15px;
+  font-size: 15.5px;
   line-height: 1.6;
   color: var(--fcb-muted);
   text-wrap: balance;
+}
+
+.fcb-done-soon {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin: 18px 0 0;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: var(--fcb-soft);
+  font-family: var(--fcb-head);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: var(--fcb-purple-deep);
 }
 
 .fcb-cal {
@@ -486,7 +705,8 @@ select.fcb-country:disabled {
 
 @media (prefers-reduced-motion: reduce) {
   .fcb-submit,
-  .fcb-slot,
+  .fcb-day,
+  .fcb-time,
   .fcb-cal-btn,
   .fcb-spinner {
     transition: none !important;
@@ -500,6 +720,6 @@ select.fcb-country:disabled {
   }
 
   .fcb-h {
-    font-size: 25px;
+    font-size: 27px;
   }
 }
