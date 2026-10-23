@@ -343,8 +343,7 @@
   opacity: 0.75;
 }
 
-.fcb-link,
-.fcb-back {
+.fcb-link {
   background: none;
   border: 0;
   padding: 0;
@@ -355,13 +354,6 @@
   text-decoration: underline;
   text-underline-offset: 3px;
   cursor: pointer;
-}
-
-.fcb-back {
-  display: block;
-  margin: 14px auto 0;
-  font-family: var(--fcb-sans);
-  color: var(--fcb-muted);
 }
 
 .fcb-field {

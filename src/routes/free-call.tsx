@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 import {
   Award,
+  ChevronDown,
   CalendarCheck,
   ClipboardCheck,
   Gift,
@@ -15,36 +16,43 @@ import {
 import { scrollToId } from "@/lib/scroll-to-offer";
 import { sectionNameOf, trackCtaClicked } from "@/lib/analytics/events";
 import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
+import { trackFcCtaClicked } from "@/lib/analytics/free-call";
+import type { FcCtaLocation } from "@/lib/analytics/free-call";
 import { BookingForm } from "@/components/free-call/BookingForm";
 import {
   BOOKING_ANCHOR_ID,
   BOOKING_CTA_LABEL,
+  BOOKING_SECTION_ID,
   CALLER_LABEL,
   CALL_MINUTES,
   COACH_LABEL,
   REASSURANCE,
 } from "@/lib/booking/config";
+// Every photo import below carries the width it is actually painted at.
+// vite-imagetools merges that with the plugin defaults (WebP, quality 80) and
+// clamps to the intrinsic size, so none of them is ever upscaled. Without it
+// the page shipped 2000px originals into 220px boxes.
 import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
-import jjCutout from "@/assets/landing/hero-jj-no-video.png";
-import jjOnTv from "@/assets/landing/jj-smith-on-tv-v3.png";
-import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
-import clarityImage from "@/assets/landing/clarity-image.png";
-import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
-import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
-import whyOnYourOwn from "@/assets/landing/why-on-your-own.jpg";
-import jjBefore1 from "@/assets/landing/jj-before-1.png";
-import jjBefore2 from "@/assets/landing/jj-before-2.png";
-import jjAfter1 from "@/assets/landing/jj-after-1.png";
-import jjAfter2 from "@/assets/landing/jj-after-2.png";
-import t1 from "@/assets/landing/transformation-1.jpg";
-import t4 from "@/assets/landing/transformation-4.jpg";
-import t7 from "@/assets/landing/transformation-7.jpg";
-import t8 from "@/assets/landing/transformation-8.jpg";
-import t9 from "@/assets/landing/transformation-9.jpg";
-import t10 from "@/assets/landing/transformation-10.jpg";
-import t11 from "@/assets/landing/transformation-11.jpg";
-import t12 from "@/assets/landing/transformation-12.jpg";
-import tTammi from "@/assets/landing/transformation-tammi.jpg";
+import heroBg from "@/assets/landing/design-v2-hero.png?w=1100";
+import jjOnTv from "@/assets/landing/jj-smith-on-tv-v3.png?w=1120";
+import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png?w=880";
+import clarityImage from "@/assets/landing/clarity-image.png?w=800";
+import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg?w=760";
+import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg?w=760";
+import whyOnYourOwn from "@/assets/landing/why-on-your-own.jpg?w=760";
+import jjBefore1 from "@/assets/landing/jj-before-1.png?w=460";
+import jjBefore2 from "@/assets/landing/jj-before-2.png?w=460";
+import jjAfter1 from "@/assets/landing/jj-after-1.png?w=460";
+import jjAfter2 from "@/assets/landing/jj-after-2.png?w=460";
+import t1 from "@/assets/landing/transformation-1.jpg?w=760";
+import t4 from "@/assets/landing/transformation-4.jpg?w=760";
+import t7 from "@/assets/landing/transformation-7.jpg?w=760";
+import t8 from "@/assets/landing/transformation-8.jpg?w=760";
+import t9 from "@/assets/landing/transformation-9.jpg?w=760";
+import t10 from "@/assets/landing/transformation-10.jpg?w=760";
+import t11 from "@/assets/landing/transformation-11.jpg?w=760";
+import t12 from "@/assets/landing/transformation-12.jpg?w=760";
+import tTammi from "@/assets/landing/transformation-tammi.jpg?w=760";
 import partnerEssence from "@/assets/landing/partners/essence.png";
 import partnerFox from "@/assets/landing/partners/fox.png";
 import partnerDrOz from "@/assets/landing/partners/droz.png";
@@ -240,7 +248,53 @@ function Check({ className = "" }: { className?: string }) {
   );
 }
 
-const scrollToForm = () => scrollToId(BOOKING_ANCHOR_ID);
+/**
+ * Wide enough that a 360px panel in the corner still leaves the content
+ * column readable. Below this the form stays where it is, in the closing
+ * section, and every button scrolls to it as before.
+ */
+const FLOATING_QUERY = "(min-width: 1280px)";
+
+function formIsFloating(): boolean {
+  return typeof window !== "undefined" && window.matchMedia(FLOATING_QUERY).matches;
+}
+
+/**
+ * What a "Book my free call" button does. On a wide desktop the form is
+ * already on screen, so the button opens and flags it instead of scrolling to
+ * an empty band. Passed through context rather than threaded as a prop
+ * through all six sections that hold a button.
+ */
+const BookContext = createContext<() => void>(() => scrollToId(BOOKING_SECTION_ID));
+
+function useBook(): () => void {
+  return useContext(BookContext);
+}
+
+/**
+ * The section names the "Free Call Funnel" dashboard breaks `fc_cta_clicked`
+ * down by. Kept as a map rather than renaming `position`, so the existing
+ * `yobody_cta_clicked` property values on this page are left alone.
+ */
+const FC_LOCATION: Record<string, FcCtaLocation> = {
+  hero: "hero",
+  pain: "pain",
+  meet_jj: "jj",
+  how_it_works: "howitworks",
+  what_you_get: "valueprops",
+  faq: "faq",
+  closer: "closer",
+  every_day: "everyday",
+  header: "header",
+  sticky: "sticky",
+};
+
+/** One place to fire both: the shared landing event, and this page's own. */
+function trackBookClick(position: string, section: string): void {
+  trackCtaClicked({ cta_name: position, section_name: section, destination_type: "scroll" });
+  const location = FC_LOCATION[position];
+  if (location) trackFcCtaClicked(location);
+}
 
 /**
  * Every button on this page does one thing: send her to the booking form.
@@ -256,6 +310,7 @@ function Cta({
   center?: boolean;
   onDark?: boolean;
 }) {
+  const book = useBook();
   return (
     <div className={`fc-cta ${center ? "is-center" : ""}`}>
       <button
@@ -263,12 +318,8 @@ function Cta({
         data-cta="book-free-call"
         data-position={position}
         onClick={(e) => {
-          trackCtaClicked({
-            cta_name: position,
-            section_name: sectionNameOf(e.currentTarget),
-            destination_type: "scroll",
-          });
-          scrollToForm();
+          trackBookClick(position, sectionNameOf(e.currentTarget));
+          book();
         }}
       >
         {BOOKING_CTA_LABEL}
@@ -296,6 +347,11 @@ function Cta({
 function FreeCall() {
   const [showSticky, setShowSticky] = useState(false);
   const [formVisible, setFormVisible] = useState(false);
+  // The floating panel only exists above FLOATING_QUERY. These two are inert
+  // below it, where the form simply sits in the closing section.
+  const [formOpen, setFormOpen] = useState(true);
+  const [nudging, setNudging] = useState(false);
+  const nudgeTimer = useRef<number | undefined>(undefined);
 
   // Section reach + scroll depth, the same signals the main landing page sends.
   useLandingBehaviorTracking();
@@ -305,6 +361,26 @@ function FreeCall() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => () => window.clearTimeout(nudgeTimer.current), []);
+
+  const book = useCallback(() => {
+    if (!formIsFloating()) {
+      // the band, not the card: she should read the close on the way in
+      scrollToId(BOOKING_SECTION_ID);
+      return;
+    }
+    // Already on screen, so open it, ring it once so a mouse user sees where
+    // the click went, and put focus on its heading for everyone else.
+    setFormOpen(true);
+    setNudging(false);
+    window.clearTimeout(nudgeTimer.current);
+    window.requestAnimationFrame(() => {
+      setNudging(true);
+      nudgeTimer.current = window.setTimeout(() => setNudging(false), 950);
+      document.querySelector<HTMLElement>(`#${BOOKING_ANCHOR_ID} .fcb-h`)?.focus();
+    });
   }, []);
 
   // No point nagging with a sticky bar while the form is on screen.
@@ -320,31 +396,38 @@ function FreeCall() {
   }, []);
 
   return (
-    <div className="lyx">
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-      <link
-        rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
-      />
-      <style>{CSS}</style>
+    <BookContext.Provider value={book}>
+      <div className="lyx">
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800;900&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap"
+        />
+        <style>{CSS}</style>
 
-      <Announce />
-      <Header />
-      <main>
-        <Hero />
-        <Pain />
-        <MeetJJ />
-        <HowItWorks />
-        <SocialProof />
-        <WhatYouGet />
-        <Faq />
-        <Closer />
-        <EveryDay />
-      </main>
-      <Footer />
-      <StickyCta show={showSticky && !formVisible} />
-    </div>
+        <Announce />
+        <Header />
+        <main>
+          <Hero />
+          <Pain />
+          <MeetJJ />
+          <HowItWorks />
+          <SocialProof />
+          <WhatYouGet />
+          <Faq />
+          <Closer
+            open={formOpen}
+            nudging={nudging}
+            onCollapse={() => setFormOpen(false)}
+            onExpand={() => setFormOpen(true)}
+          />
+          <EveryDay />
+        </main>
+        <Footer />
+        <StickyCta show={showSticky && !formVisible} />
+      </div>
+    </BookContext.Provider>
   );
 }
 
@@ -367,6 +450,7 @@ function Announce() {
 }
 
 function Header() {
+  const book = useBook();
   return (
     <header className="ly-header">
       <div className="ly-wrap ly-header-in">
@@ -376,12 +460,8 @@ function Header() {
           data-cta="book-free-call"
           data-position="header"
           onClick={() => {
-            trackCtaClicked({
-              cta_name: "header",
-              section_name: "header",
-              destination_type: "scroll",
-            });
-            scrollToForm();
+            trackBookClick("header", "header");
+            book();
           }}
         >
           {BOOKING_CTA_LABEL}
@@ -407,6 +487,16 @@ function Hero() {
   return (
     <section data-yb-section="free_call_hero" className="fc-hero">
       <div className="fc-hero-top">
+        {/* The /vapi-demo hero treatment: the photo bleeds off the right edge
+            behind a gradient that keeps the copy readable, which is what lets
+            the booking panel sit on top of it without cutting anyone in half.
+            Desktop only, so `lazy` keeps phones from downloading it: it is in
+            the viewport where it does show, so it still loads at once. */}
+        <div className="fc-hero-bg" aria-hidden>
+          <img src={heroBg} alt="" loading="lazy" decoding="async" />
+          <span className="fc-hero-fade" />
+        </div>
+
         <div className="ly-wrap fc-hero-grid">
           <div className="fc-hero-copy">
             <HeroTrust />
@@ -427,14 +517,6 @@ function Hero() {
             <Cta position="hero" />
           </div>
         </div>
-
-        <img
-          className="fc-hero-shot"
-          src={jjCutout}
-          alt="JJ Smith"
-          fetchPriority="high"
-          decoding="async"
-        />
       </div>
 
       <PhotoStrip />
@@ -480,10 +562,29 @@ function HeroTrust() {
   );
 }
 
-function PhotoCard({ photo }: { photo: { src: string; caption: string } }) {
+/**
+ * `eager` is for the cards that open each row. Below 1280px this strip is the
+ * hero image and the LCP candidate, so lazy loading the first of them would
+ * cost exactly the metric it is meant to help.
+ */
+function PhotoCard({
+  photo,
+  eager = false,
+}: {
+  photo: { src: string; caption: string };
+  eager?: boolean;
+}) {
   return (
     <figure className="fc-tf-card">
-      <img src={photo.src} alt="A woman's before and after transformation" loading="lazy" />
+      <img
+        src={photo.src}
+        alt="A woman's before and after transformation"
+        width={212}
+        height={258}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : undefined}
+        decoding={eager ? "sync" : "async"}
+      />
       <figcaption>{photo.caption}</figcaption>
     </figure>
   );
@@ -506,7 +607,7 @@ function PhotoStrip() {
       <div className="fc-tf fc-tf-desk">
         <div className="fc-tf-track">
           {full.map((photo, i) => (
-            <PhotoCard key={i} photo={photo} />
+            <PhotoCard key={i} photo={photo} eager={i < 2} />
           ))}
         </div>
       </div>
@@ -514,14 +615,14 @@ function PhotoStrip() {
         <div className="fc-tf">
           <div className="fc-tf-track is-rev">
             {top.map((photo, i) => (
-              <PhotoCard key={i} photo={photo} />
+              <PhotoCard key={i} photo={photo} eager={i < 2} />
             ))}
           </div>
         </div>
         <div className="fc-tf">
           <div className="fc-tf-track">
             {bottom.map((photo, i) => (
-              <PhotoCard key={i} photo={photo} />
+              <PhotoCard key={i} photo={photo} eager={i < 2} />
             ))}
           </div>
         </div>
@@ -707,7 +808,14 @@ function SocialProof() {
           {RESULTS.map((r) => (
             <figure className="ly-result" key={r.name}>
               <div className="ly-result-ph">
-                <img src={r.src} alt="A woman's before and after transformation" loading="lazy" />
+                <img
+                  src={r.src}
+                  alt="A woman's before and after transformation"
+                  width={760}
+                  height={760}
+                  loading="lazy"
+                  decoding="async"
+                />
               </div>
               <figcaption className="ly-result-in">
                 <p className="ly-result-name">{r.name}</p>
@@ -778,20 +886,64 @@ function Faq() {
 }
 
 // ── closer and the booking form ──────────────────────────────────────────────
-function Closer() {
+/**
+ * The closing band, and the form's single home in the DOM.
+ *
+ * Above FLOATING_QUERY the slot is taken out of flow and pinned to the bottom
+ * right corner, so she can book from anywhere on the page. It is one instance
+ * either way: rendering a second copy for the desktop would mean two forms
+ * with their own state and duplicate field ids.
+ *
+ * Because the slot leaves the flow up there, the band grows its own button,
+ * which is what `fc-closer-desk` is for.
+ */
+function Closer({
+  open,
+  nudging,
+  onCollapse,
+  onExpand,
+}: {
+  open: boolean;
+  nudging: boolean;
+  onCollapse: () => void;
+  onExpand: () => void;
+}) {
   return (
-    <section data-yb-section="free_call_booking" className="ly-band ly-dark ly-center">
+    <section
+      id={BOOKING_SECTION_ID}
+      data-yb-section="free_call_booking"
+      className="ly-band ly-dark ly-center"
+    >
       <div className="ly-wrap">
         <h2 className="ly-h2 on-dark">
           Your plan is <Hi>one short call away.</Hi>
         </h2>
-        {/* no name here: the form directly below says who takes the call, and
-            the two must not disagree */}
+        {/* no name here: the form says who takes the call, and the two must
+            not disagree */}
         <p className="ly-lead on-dark-soft ly-mt ly-narrow">
           Book your free call. No card, no pressure, and you keep the plan either way.
         </p>
-        <div className="fc-form-slot">
+
+        <div className="fc-closer-desk">
+          <Cta position="closer" center onDark />
+        </div>
+
+        <div className={`fc-form-slot ${open ? "" : "is-collapsed"} ${nudging ? "is-nudged" : ""}`}>
+          <button
+            type="button"
+            className="fc-form-collapse"
+            onClick={onCollapse}
+            aria-label="Hide the booking form"
+          >
+            <ChevronDown size={18} strokeWidth={2.6} aria-hidden />
+          </button>
           <BookingForm />
+          <button type="button" className="fc-form-pill" onClick={onExpand}>
+            {BOOKING_CTA_LABEL}
+            <span className="fc-btn-arw" aria-hidden>
+              &rarr;
+            </span>
+          </button>
         </div>
       </div>
     </section>
@@ -853,6 +1005,7 @@ function Footer() {
 }
 
 function StickyCta({ show }: { show: boolean }) {
+  const book = useBook();
   return (
     <div className={`ly-sticky ${show ? "is-show" : ""}`} aria-hidden={!show}>
       <div className="ly-sticky-in">
@@ -865,12 +1018,8 @@ function StickyCta({ show }: { show: boolean }) {
           data-cta="book-free-call"
           data-position="sticky"
           onClick={() => {
-            trackCtaClicked({
-              cta_name: "sticky",
-              section_name: "sticky_bar",
-              destination_type: "scroll",
-            });
-            scrollToForm();
+            trackBookClick("sticky", "sticky_bar");
+            book();
           }}
         >
           {BOOKING_CTA_LABEL}
@@ -963,18 +1112,14 @@ const CSS = `
 /* ═══ hero, ported from the Hormone Focus landing page ═══════════════════ */
 .fc-hero{background:linear-gradient(180deg,#FAF1FB 0%,#F1E7FA 100%);padding:clamp(24px,3.4vw,60px) 0 0}
 .fc-hero-top{position:relative;padding-bottom:clamp(26px,3.4vw,60px)}
-.fc-hero-grid{display:grid;grid-template-columns:minmax(0,1fr) clamp(240px,24vw,340px);gap:clamp(28px,4vw,56px);align-items:start}
+.fc-hero-grid{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,1fr) clamp(240px,24vw,340px);gap:clamp(28px,4vw,56px);align-items:start}
 .fc-hero-copy{display:flex;flex-direction:column;align-items:flex-start;gap:clamp(16px,2.1vw,26px);min-width:0}
 
-/* The cut-out comes out of the grid and pins to the bottom right of the full
-   width band, so it can reach past the wrap's gutter the way the Hormone
-   hero's product shot does. */
-.fc-hero-shot{
-  position:absolute;bottom:0;pointer-events:none;
-  --gutter:max(20px,calc((100% - 1120px) / 2));
-  right:max(0px,calc(var(--gutter) - 124px));
-  height:min(100%,38vw);width:auto;
-}
+/* The hero photo, ported from /vapi-demo: it fills the right of the band and
+   the fade carries it into the page background so the copy stays readable. */
+.fc-hero-bg{display:none;position:absolute;inset:0;z-index:0}
+.fc-hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center 32%}
+.fc-hero-fade{position:absolute;inset:0}
 
 /* the main landing page's credibility pill, verbatim: a white pill on a phone,
    a bare inline row carrying the extra NYT item on desktop */
@@ -1050,7 +1195,6 @@ const CSS = `
   .fc-press{order:3}
   .fc-press-tv{order:4}
   /* out-specifies .lyx img{display:block}, which is (0,1,1) and would win */
-  .lyx .fc-hero-shot{display:none}
 
   /* two stacked rows running opposite ways, as on the main landing page */
   .fc-photos{background:transparent;border-top:0;padding:clamp(20px,4vw,30px) 0 0}
@@ -1064,6 +1208,35 @@ const CSS = `
   .fc-press{margin-top:clamp(22px,3.4vw,32px);padding-top:clamp(24px,5vw,34px);border-top:1px solid var(--hair)}
 }
 @media (prefers-reduced-motion:reduce){ .fc-tf-track,.fc-marquee-track{animation:none} }
+
+/* ── hero: the desktop photo ──────────────────────────────────────────── */
+@media (min-width:941px){
+  /* The photo is square and object-fit:cover, so how much gets cropped off
+     the top is set by the BOX's aspect. A fixed height meant the crop grew
+     tighter the wider the screen, which is what was slicing her hair off.
+     Tying the height to the viewport keeps the box at a constant 1.78, so one
+     object-position frames her the same way at 1280 and at 2560. */
+  /* Flush to the top bar, the way /vapi-demo's stage is. The band's own top
+     padding was leaving a strip of lavender above the photo, which read as
+     the photo being pushed down the page. The copy is centred in the band, so
+     it does not need the padding to sit off the header. */
+  .fc-hero{padding-top:0}
+  .fc-hero-top{min-height:clamp(520px,36vw,700px);padding-bottom:0;display:flex;align-items:center}
+  .fc-hero-grid{width:100%}
+  /* Wider than vapi-demo's 56%: the booking panel owns the right 26% of the
+     screen, so a narrower photo would park her face behind it. At 64% she
+     lands in the gap between the headline and the panel. */
+  .fc-hero-bg{display:block;left:auto;right:0;width:64%}
+  /* 34% leaves her about 4% of the frame in headroom at every width */
+  .fc-hero-bg img{object-position:center 34%}
+  /* NOTE: this sits inside .fc-hero-bg, so its stops are a share of the PHOTO,
+     not of the viewport. At 64% wide that makes every percent worth a lot of
+     pixels, and a ramp that ran to 70% washed straight across her.
+     It now covers only the strip the headline reaches over (which ends near
+     32% of the photo at every width from 1280 up) and is fully clear well
+     before her face, at 52%. */
+  .fc-hero-fade{background:linear-gradient(90deg,#FAF1FB 0%,#FAF1FB 32%,rgba(250,241,251,.55) 39%,rgba(250,241,251,0) 47%)}
+}
 
 /* ═══ pain, on the main landing page's photo cards ══════════════════════ */
 .ly-rcards{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
@@ -1125,14 +1298,50 @@ const CSS = `
 /* ═══ results ════════════════════════════════════════════════════════════ */
 .ly-results{display:grid;grid-template-columns:1fr;gap:18px;margin-top:34px;text-align:left}
 .ly-result{background:var(--white);border:1px solid var(--hair);border-radius:20px;overflow:hidden;box-shadow:var(--shadow-sm);margin:0}
-.ly-result-ph img{width:100%;height:auto;object-fit:cover}
+/* a reserved square box: no layout shift as the photos arrive, and the six
+   cards line up instead of each starting its text at a different height */
+.ly-result-ph{aspect-ratio:1/1;overflow:hidden;background:var(--purple-soft)}
+.ly-result-ph img{width:100%;height:100%;object-fit:cover;object-position:top}
 .ly-result-in{padding:20px 22px 24px}
 .ly-result-name{font-family:var(--head);font-weight:800;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink);margin:0 0 6px}
 .ly-result-num{font-family:var(--head);font-weight:900;font-size:24px;color:var(--purple);margin:0}
 .ly-result-t{margin:8px 0 0;font-size:16px;line-height:1.55;color:var(--ink-soft)}
 
 /* ═══ the booking form slot ══════════════════════════════════════════════ */
-.fc-form-slot{max-width:560px;margin:34px auto 0;text-align:left}
+.fc-form-slot{position:relative;max-width:560px;margin:34px auto 0;text-align:left}
+/* only the floating panel has these */
+.fc-form-collapse,.fc-form-pill,.fc-closer-desk{display:none}
+
+/* ═══ the form floating in the corner, wide desktop only ════════════════ */
+@media (min-width:1280px){
+  /* on screen from the first paint, so she can book without scrolling at all */
+  .fc-form-slot{position:fixed;right:22px;bottom:22px;z-index:45;width:360px;max-width:none;margin:0}
+  /* the card scrolls inside itself, so a tall step two can never run off a
+     short laptop screen */
+  .fc-form-slot .fcb-card{max-height:calc(100vh - 44px);overflow-y:auto;overscroll-behavior:contain;box-shadow:0 30px 70px -22px rgba(36,20,56,.62)}
+  /* a touch smaller so the step headings hold one line at 360px, next to the collapse control */
+  .fc-form-slot .fcb-h{font-size:23px;padding-right:34px}
+  .fc-form-slot .fcb-done-h{font-size:23px}
+
+  .fc-form-collapse{position:absolute;top:13px;right:13px;z-index:2;display:flex;align-items:center;justify-content:center;width:30px;height:30px;padding:0;border:0;border-radius:999px;background:var(--purple-soft);color:var(--purple-deep);box-shadow:0 2px 6px -2px rgba(0,0,0,.2);transition:background .15s}
+  .fc-form-collapse:hover{background:#E4D4F4}
+
+  .fc-form-slot.is-collapsed{width:auto}
+  .fc-form-slot.is-collapsed .fcb,.fc-form-slot.is-collapsed .fc-form-collapse{display:none}
+  .fc-form-slot.is-collapsed .fc-form-pill{display:inline-flex}
+  .fc-form-pill{align-items:center;gap:10px;min-height:56px;padding:16px 26px;border:0;border-radius:999px;background:var(--grad);color:#fff;font-family:var(--head);font-weight:800;font-size:16px;box-shadow:0 20px 40px -16px rgba(91,42,128,.7);transition:transform .15s,filter .15s}
+  .fc-form-pill:hover{transform:translateY(-1px);filter:brightness(1.05)}
+
+  /* one ring when a button sends her here, so a mouse user sees where it went */
+  .fc-form-slot.is-nudged .fcb-card{animation:fc-nudge .9s ease-out}
+
+  /* the band needs its own button now that the form has left the flow */
+  .fc-closer-desk{display:block;margin-top:34px}
+}
+@keyframes fc-nudge{
+  from{box-shadow:0 30px 70px -22px rgba(36,20,56,.62),0 0 0 0 rgba(192,70,140,.5)}
+  to{box-shadow:0 30px 70px -22px rgba(36,20,56,.62),0 0 0 18px rgba(192,70,140,0)}
+}
 
 /* ═══ footer and sticky bar ══════════════════════════════════════════════ */
 .ly-footer{padding:28px 20px;text-align:center;color:var(--ink-soft);font-size:14px;background:var(--white);border-top:1px solid var(--hair)}

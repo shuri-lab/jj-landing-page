@@ -185,6 +185,47 @@ click. `EmbeddedCheckoutProvider` exposes only `onComplete`,
 - move to Stripe Elements, where we own the submit handler, or
 - emit it server-side from the `payment_intent.created` webhook.
 
+### `/free-call` — the `fc_*` prefix
+
+One project, one key, one init. Pages are kept apart by **event prefix and by
+path**, never by a second project: a second project would fragment visitors
+and lose data when the SPA switches routes. `/` sends `yobody_*`, the Hormone
+Focus page sends `hf_*`, and `/free-call` sends `fc_*` from
+`lib/analytics/free-call.ts`.
+
+Every `fc_*` event carries `page: "free-call"` as an **event property, never a
+registered super property**, so it cannot bleed onto `/` in a session that
+visits both.
+
+| Event                | When                                                      | Properties                 | Dedupe              |
+| -------------------- | --------------------------------------------------------- | -------------------------- | ------------------- |
+| `fc_cta_clicked`     | any "Book my free call" button                            | `location`                 | none                |
+| `fc_booking_started` | first touch of the booking form — **funnel step 2**       | none                       | once per page load  |
+| `fc_time_selected`   | the "when" becomes a real choice                          | `when_mode`                | none                |
+| `fc_booked`          | successful booking submit — **funnel step 3, conversion** | `when_mode`, `had_time`    | none                |
+
+`location` ∈ `hero`, `pain`, `jj`, `howitworks`, `valueprops`, `faq`,
+`everyday`, `header`, `sticky`. There is no `closer` value: the closing
+section *is* the form, so it has no button of its own.
+
+`when_mode` ∈ `now`, `today`, `tomorrow` — the day she picked in step 1, not
+the `when.mode` in the booking payload (which is `now` or `scheduled`).
+`had_time` is true only when a specific time was chosen, so it is always false
+on the `now` path.
+
+`fc_time_selected` fires when the choice is actually complete: immediately for
+`now`, which needs no time, and on the time row for `today` and `tomorrow`.
+Picking the day alone does not fire it.
+
+Funnel step 1 is `$pageview` where `$pathname` contains `/free-call`, which
+PostHog captures automatically (`history_change`, §2). The page emits no
+pageview of its own.
+
+`/free-call` also still emits `yobody_section_viewed` and
+`yobody_scroll_depth_reached` from the shared `useLandingBehaviorTracking`
+hook. That is deliberate and harmless: those are filterable by `$pathname`,
+and the `fc_*` funnel is independent of them.
+
 ### Section names
 
 Render order on `/`, set via `data-yb-section` in `routes/index.tsx`:
@@ -426,7 +467,10 @@ See "EXTERNAL ACCESS NEEDED FOR PHASE 2" in the handover report. Summary:
 ## 12. Conventions
 
 - Add an event? Add it to `lib/analytics/events.ts` **and** the table in §5.
-  Nothing else may name a `yobody_*` string.
+  Nothing else may name a `yobody_*` string. `fc_*` events live in
+  `lib/analytics/free-call.ts` and are documented in the same section.
+- One project, one key, one init. Never add a second PostHog project for a new
+  page — give it a prefix and filter by path.
 - Never pass raw email / phone / name / card data into an event helper.
 - Never call `posthog.init` outside `lib/analytics/posthog.ts`.
 - New landing section? Give it `data-yb-section="<stable_snake_name>"` and list

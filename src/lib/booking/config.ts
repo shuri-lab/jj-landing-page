@@ -41,8 +41,15 @@ export const REASSURANCE = `Free · about ${CALL_MINUTES} minutes`;
 /** Route path. Also sent to the backend as `pagePath`. */
 export const FREE_CALL_PATH = "/free-call";
 
-/** id of the booking card. Every CTA on the page scrolls here. */
+/** id of the booking card itself. */
 export const BOOKING_ANCHOR_ID = "book";
+
+/**
+ * id of the whole closing band. This is what a CTA scrolls to, so she lands
+ * on "Your plan is one short call away" and reads the close before the form,
+ * rather than on the bare top of the card.
+ */
+export const BOOKING_SECTION_ID = "book-section";
 
 /** The one CTA label on the page. */
 export const BOOKING_CTA_LABEL = "Book my free call";

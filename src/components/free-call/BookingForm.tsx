@@ -3,6 +3,11 @@ import { AlertCircle, CalendarDays, CalendarPlus, Check, Clock, Zap } from "luci
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import { nextNationalPhoneInput, parseValidE164, reformatNationalPhone } from "@/lib/signup/phone";
 import { pushDataLayer } from "@/lib/analytics/data-layer";
+import {
+  trackFcBooked,
+  trackFcBookingStarted,
+  trackFcTimeSelected,
+} from "@/lib/analytics/free-call";
 import { submitBooking } from "@/lib/booking/api";
 import { readBookingContext } from "@/lib/booking/attribution";
 import { buildGoogleCalendarUrl, downloadIcs } from "@/lib/booking/calendar";
@@ -202,9 +207,11 @@ export function BookingForm() {
           setFormError(RETRY_COPY);
           return;
         }
-        // No personal data in the event: this is the hook marketing attaches
-        // its conversion tags to.
+        // No personal data in either: the dataLayer push is the hook marketing
+        // attaches its conversion tags to, and fc_booked is the funnel's
+        // conversion step on the "Free Call Funnel" dashboard.
         pushDataLayer({ event: "free_call_booked" });
+        trackFcBooked({ when_mode: day, had_time: payload.when.iso !== null });
         setBooked({ firstName: payload.firstName, when: payload.when });
       } catch {
         setFormError(RETRY_COPY);
@@ -212,7 +219,7 @@ export function BookingForm() {
         setSubmitting(false);
       }
     },
-    [buildPayload, submitting, validate],
+    [buildPayload, day, submitting, validate],
   );
 
   if (booked) {
@@ -242,7 +249,12 @@ export function BookingForm() {
                     name="fc-day"
                     value={option.id}
                     checked={day === option.id}
-                    onChange={() => setDay(option.id)}
+                    onChange={() => {
+                      trackFcBookingStarted();
+                      setDay(option.id);
+                      // "Now" needs no time, so choosing it completes the when
+                      if (option.id === "now") trackFcTimeSelected("now");
+                    }}
                   />
                   <span className="fcb-day-mark" aria-hidden>
                     <Check size={13} strokeWidth={3.5} />
@@ -284,7 +296,12 @@ export function BookingForm() {
                           name="fc-time"
                           value={time.iso}
                           checked={timeIso === time.iso}
-                          onChange={() => setTimeIso(time.iso)}
+                          onChange={() => {
+                            trackFcBookingStarted();
+                            setTimeIso(time.iso);
+                            // inside this branch day is today or tomorrow
+                            trackFcTimeSelected(day);
+                          }}
                         />
                         <span>{time.label}</span>
                         <span className="fcb-time-mark" aria-hidden>
@@ -306,7 +323,10 @@ export function BookingForm() {
               type="button"
               className="fcb-submit"
               disabled={!canContinue}
-              onClick={() => setStep(2)}
+              onClick={() => {
+                trackFcBookingStarted();
+                setStep(2);
+              }}
             >
               Continue
               <span className="fcb-submit-arw" aria-hidden>
@@ -506,9 +526,6 @@ export function BookingForm() {
               )}
             </button>
             <p className="fcb-foot">{REASSURANCE}</p>
-            <button type="button" className="fcb-back" onClick={() => setStep(1)}>
-              Back
-            </button>
           </form>
         )}
       </div>
