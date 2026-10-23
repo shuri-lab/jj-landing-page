@@ -2,14 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import {
   Award,
-  BadgeCheck,
   CalendarCheck,
   ClipboardCheck,
   Gift,
-  Hourglass,
   PhoneCall,
-  Puzzle,
-  RotateCcw,
   Search,
   TrendingDown,
   UserCheck,
@@ -23,6 +19,7 @@ import { BookingForm } from "@/components/free-call/BookingForm";
 import {
   BOOKING_ANCHOR_ID,
   BOOKING_CTA_LABEL,
+  CALLER_LABEL,
   CALL_MINUTES,
   COACH_LABEL,
   REASSURANCE,
@@ -31,6 +28,10 @@ import jjSmithLogo from "@/assets/landing/jj-smith-logo.png";
 import jjCutout from "@/assets/landing/hero-jj-no-video.png";
 import jjOnTv from "@/assets/landing/jj-smith-on-tv-v3.png";
 import jjOwnTransformation from "@/assets/landing/jj-own-transformation.png";
+import clarityImage from "@/assets/landing/clarity-image.png";
+import whyEatingLess from "@/assets/landing/why-eating-less-backfires.jpg";
+import whyOutTrain from "@/assets/landing/why-out-train-your-plate.jpg";
+import whyOnYourOwn from "@/assets/landing/why-on-your-own.jpg";
 import jjBefore1 from "@/assets/landing/jj-before-1.png";
 import jjBefore2 from "@/assets/landing/jj-before-2.png";
 import jjAfter1 from "@/assets/landing/jj-after-1.png";
@@ -95,24 +96,23 @@ export const Route = createFileRoute("/free-call")({
 // Harvey Show and in The Washington Post. No count of women helped goes on
 // the page until the team verifies a figure.
 
+// The photos are the main landing page's own "Sound familiar?" cards, reused
+// one for one: eating less backfires, you cannot out-train your plate, and on
+// your own it never lasts.
 const PAIN_POINTS = [
-  { Icon: RotateCcw, text: "You've done the diets, and the weight always creeps back." },
-  { Icon: Hourglass, text: "After 40, the old rules just stopped working." },
-  { Icon: Puzzle, text: "None of it was built for your body or your life." },
-];
-
-const CREDENTIALS = [
-  "Certified nutritionist",
-  "Number one bestselling author",
-  "Featured on The Steve Harvey Show",
-  "Featured in The Washington Post",
+  {
+    img: whyEatingLess,
+    text: "You've eaten less and tried every diet, and your body just holds on tighter.",
+  },
+  { img: whyOutTrain, text: "After 40, the old rules just stopped working." },
+  { img: whyOnYourOwn, text: "None of it was built for your body or your life." },
 ];
 
 const STEPS = [
   { Icon: CalendarCheck, title: "Book your call", text: "Pick a time that works for you." },
   {
     Icon: PhoneCall,
-    title: `${COACH_LABEL} gets on the phone with you`,
+    title: `${CALLER_LABEL} gets on the phone with you`,
     text: `About ${CALL_MINUTES} minutes. She listens and figures out what's really going on.`,
   },
   {
@@ -133,10 +133,17 @@ const VALUE_PROPS = [
 const FAQ_ITEMS = [
   { q: "Is it really free?", a: "Yes, and you don't need a card to book." },
   { q: "How long is the call?", a: `About ${CALL_MINUTES} minutes.` },
-  { q: "Who calls me?", a: `${COACH_LABEL}, at the time you pick.` },
+  {
+    q: "Who calls me?",
+    a: `${CALLER_LABEL}, her AI voice, trained on JJ's method, at the time you pick.`,
+  },
+  {
+    q: "Am I really talking to JJ?",
+    a: `You're talking with ${CALLER_LABEL}, built from JJ's own voice and her exact method. JJ can't personally sit down with every woman who needs her, so she created a coach that can, so you get her approach one on one, today. It listens, asks about your life, and builds your plan with you.`,
+  },
   {
     q: "I've tried everything, why is this different?",
-    a: `Because ${COACH_LABEL} builds the plan with you, around your body and your life. That's the part every diet skips.`,
+    a: `Because ${CALLER_LABEL} builds the plan with you, around your body and your life. That's the part every diet skips.`,
   },
   { q: "Do I have to buy anything?", a: "No. You leave with a real plan either way." },
   {
@@ -333,6 +340,7 @@ function FreeCall() {
         <WhatYouGet />
         <Faq />
         <Closer />
+        <EveryDay />
       </main>
       <Footer />
       <StickyCta show={showSticky && !formVisible} />
@@ -431,6 +439,18 @@ function Hero() {
 
       <PhotoStrip />
       <PressStrip />
+
+      {/* the credibility composite the main landing page runs straight after
+          its own featured-on strip */}
+      <div className="fc-press-tv">
+        <div className="ly-wrap">
+          <img
+            src={jjOnTv}
+            alt="JJ Smith on The Steve Harvey Show and The Dr. Oz Show, and her bestselling books"
+            loading="lazy"
+          />
+        </div>
+      </div>
     </section>
   );
 }
@@ -460,28 +480,63 @@ function HeroTrust() {
   );
 }
 
-/** The women carousel. Reverse scrolling, and big enough on a phone to carry the hero. */
+function PhotoCard({ photo }: { photo: { src: string; caption: string } }) {
+  return (
+    <figure className="fc-tf-card">
+      <img src={photo.src} alt="A woman's before and after transformation" loading="lazy" />
+      <figcaption>{photo.caption}</figcaption>
+    </figure>
+  );
+}
+
+/**
+ * The main landing page's transformations marquee, same component: one row on
+ * desktop, and two stacked rows running in opposite directions on a phone,
+ * where the strip stands in for the hero image.
+ */
 function PhotoStrip() {
-  const loop = [...PHOTOS, ...PHOTOS];
+  const mid = Math.ceil(PHOTOS.length / 2);
+  const rowTop = PHOTOS.slice(0, mid);
+  const rowBottom = PHOTOS.slice(mid);
+  const full = [...PHOTOS, ...PHOTOS];
+  const top = [...rowTop, ...rowTop];
+  const bottom = [...rowBottom, ...rowBottom];
   return (
     <div className="fc-photos">
-      <div className="fc-photos-view">
-        <div className="fc-photos-track">
-          {loop.map((photo, i) => (
-            <figure className="fc-photo" key={i}>
-              <img src={photo.src} alt="A woman's before and after transformation" loading="lazy" />
-              <figcaption>{photo.caption}</figcaption>
-            </figure>
+      <div className="fc-tf fc-tf-desk">
+        <div className="fc-tf-track">
+          {full.map((photo, i) => (
+            <PhotoCard key={i} photo={photo} />
           ))}
+        </div>
+      </div>
+      <div className="fc-tf-mob">
+        <div className="fc-tf">
+          <div className="fc-tf-track is-rev">
+            {top.map((photo, i) => (
+              <PhotoCard key={i} photo={photo} />
+            ))}
+          </div>
+        </div>
+        <div className="fc-tf">
+          <div className="fc-tf-track">
+            {bottom.map((photo, i) => (
+              <PhotoCard key={i} photo={photo} />
+            ))}
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function PressStrip() {
+/** `inset` is the founder section's variant: a white panel inside the dark band. */
+function PressStrip({ inset = false }: { inset?: boolean }) {
   return (
-    <div className="fc-press" data-yb-section="press_features">
+    <div
+      className={`fc-press ${inset ? "is-inset" : ""}`}
+      data-yb-section={inset ? undefined : "press_features"}
+    >
       <p className="fc-press-lbl">JJ Smith has been featured on</p>
       <div className="fc-marquee">
         <div className="fc-marquee-track">
@@ -501,16 +556,18 @@ function Pain() {
       <div className="ly-wrap">
         <span className="ly-eyebrow">Sound familiar?</span>
         <h2 className="ly-h2 ly-narrow">
-          If you&rsquo;ve tried everything and the weight keeps coming back,{" "}
+          If you&rsquo;ve tried everything and the weight still won&rsquo;t come off,{" "}
           <Hi>it&rsquo;s not your fault.</Hi>
         </h2>
-        <div className="fc-pains">
-          {PAIN_POINTS.map(({ Icon, text }) => (
-            <div className="fc-pain" key={text}>
-              <span className="fc-pain-ico" aria-hidden>
-                <Icon size={20} strokeWidth={2} />
-              </span>
-              <p>{text}</p>
+        <div className="ly-rcards">
+          {PAIN_POINTS.map(({ img, text }) => (
+            <div className="ly-rcard" key={text}>
+              <div className="ly-rcard-media">
+                <img src={img} alt="" loading="lazy" />
+              </div>
+              <div className="ly-rcard-in">
+                <h3 className="ly-rcard-h">{text}</h3>
+              </div>
             </div>
           ))}
         </div>
@@ -553,26 +610,34 @@ function MeetJJ() {
             I know exactly where you are, <Hi>because I&rsquo;ve been there.</Hi>
           </h2>
           <p className="ly-lead on-dark-soft ly-mt">
-            For years I did everything right and my body wouldn&rsquo;t budge. So I stopped
-            following everyone else&rsquo;s rules and built a way of eating that finally worked,{" "}
-            <strong className="on-dark">first for me, then for women all over the country.</strong>
+            In my late 30s, my body turned on me. Weight out of nowhere, exhausted, foggy, a
+            stranger in the mirror. So I did everything they tell you.{" "}
+            <strong className="on-dark">
+              Skipped meals, cut carbs, dragged myself to the gym.
+            </strong>{" "}
+            Nothing moved.
+          </p>
+          <p className="ly-story-quote">
+            Nobody warned me my body had changed, and the old rules would never work again.
+          </p>
+          <p className="ly-lead on-dark-soft ly-mt">
+            So I stopped fighting my body and started working with it.{" "}
+            <strong className="on-dark">The weight came off, my energy roared back,</strong> and in
+            my 40s I felt better than I did at 30. My books became bestsellers, and hundreds of
+            thousands of women used them to get themselves back.
           </p>
           <p className="ly-story-quote">
             I&rsquo;m JJ Smith, a certified nutritionist and the author of the 10-Day Green Smoothie
             Cleanse.
           </p>
           <p className="ly-lead on-dark-soft ly-mt">
-            On your free call, I&rsquo;ll help you find what&rsquo;s getting in your way, and
+            On your free call, I&rsquo;ll help you find what&rsquo;s really getting in your way, and
             we&rsquo;ll build your plan together.
           </p>
           <p className="ly-guar-sig">JJ</p>
 
-          <div className="ly-pills fc-creds">
-            {CREDENTIALS.map((c) => (
-              <span className="ly-pill" key={c}>
-                <BadgeCheck size={15} aria-hidden /> {c}
-              </span>
-            ))}
+          <div className="ly-story-featured">
+            <PressStrip inset />
           </div>
 
           <div className="ly-mt-l">
@@ -636,7 +701,7 @@ function SocialProof() {
       <div className="ly-wrap">
         <span className="ly-eyebrow">Real women, real results</span>
         <h2 className="ly-h2 ly-narrow">
-          Join the women who stopped dieting and <Hi>finally kept the weight off.</Hi>
+          They got themselves back. <Hi>So will you.</Hi>
         </h2>
         <div className="ly-results">
           {RESULTS.map((r) => (
@@ -715,17 +780,63 @@ function Faq() {
 // ── closer and the booking form ──────────────────────────────────────────────
 function Closer() {
   return (
-    <section data-yb-section="free_call_booking" className="ly-band ly-lav ly-center">
+    <section data-yb-section="free_call_booking" className="ly-band ly-dark ly-center">
       <div className="ly-wrap">
-        <h2 className="ly-h2">
+        <h2 className="ly-h2 on-dark">
           Your plan is <Hi>one short call away.</Hi>
         </h2>
-        <p className="ly-lead ly-soft ly-mt ly-narrow">
-          Book your free call with {COACH_LABEL}. No card, no pressure, and you keep the plan either
-          way.
+        {/* no name here: the form directly below says who takes the call, and
+            the two must not disagree */}
+        <p className="ly-lead on-dark-soft ly-mt ly-narrow">
+          Book your free call. No card, no pressure, and you keep the plan either way.
         </p>
         <div className="fc-form-slot">
           <BookingForm />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/**
+ * The main landing page's "How I can finally be there for you every day"
+ * section, same component and the same photo, adapted twice: it names the
+ * coach as AI, and it ends by connecting that coach to the free call. The
+ * warm place to land the disclosure, after the form rather than in the hero.
+ */
+function EveryDay() {
+  return (
+    <section data-yb-section="free_call_every_day" className="ly-band ly-cream">
+      <div className="ly-wrap ly-clarity">
+        <div className="ly-clarity-media">
+          <img src={clarityImage} alt="JJ Smith" loading="lazy" />
+        </div>
+        <div>
+          <span className="ly-eyebrow">A word from me</span>
+          <h2 className="ly-h2">
+            Why I built a coach to be there for you <Hi>every day</Hi>
+          </h2>
+          <p className="ly-lead ly-soft ly-mt">
+            For fifteen years, my books and group coaching have helped hundreds of thousands of
+            women get themselves back. But I could never be right there with each of you,{" "}
+            <strong>one on one, on the hard days.</strong> There was only ever one of me.
+          </p>
+          <p className="ly-lead ly-soft ly-mt">
+            So I built my AI coach. <strong>It is my exact voice, my exact coaching,</strong>{" "}
+            everything I know and everything I would tell you if we were sitting together.
+          </p>
+          <p className="ly-clarity-quote">
+            You can talk to me any time, day or night, and it feels like sitting down with me.
+          </p>
+          <p className="ly-lead ly-soft ly-mt">
+            This is how I finally keep the promise I could never keep before: to be there for you,
+            every single day. Not a book. Not a plan you follow alone.{" "}
+            <strong>And she is the one who sits down with you on your free call.</strong>
+          </p>
+          <p className="ly-guar-sig ly-sig-light">JJ</p>
+          <div className="ly-mt-l">
+            <Cta position="every_day" />
+          </div>
         </div>
       </div>
     </section>
@@ -896,16 +1007,18 @@ const CSS = `
   .fc-btn{width:100%;max-width:520px;padding-inline:18px}
 }
 
-/* ── hero photo strip ─────────────────────────────────────────────────── */
-.fc-photos{background:var(--white);border-top:1px solid var(--hair);padding:clamp(18px,2.4vw,32px) 0 clamp(14px,1.6vw,20px)}
+/* ── hero photo strip, the main landing page's marquee ────────────────── */
+.fc-photos{background:var(--white);border-top:1px solid var(--hair);padding:clamp(14px,2vw,24px) 0 clamp(12px,1.6vw,18px)}
 /* the fade masks the strip, not the band: a mask on .fc-photos would eat its
    own background and split the white band it shares with the logos */
-.fc-photos-view{overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
-.fc-photos-track{display:flex;gap:16px;width:max-content;animation:fc-scroll 70s linear infinite;animation-direction:reverse}
-.fc-photos:hover .fc-photos-track{animation-play-state:paused}
-.fc-photo{position:relative;flex:0 0 auto;width:166px;margin:0;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm)}
-.fc-photo img{width:100%;height:204px;object-fit:cover;object-position:top}
-.fc-photo figcaption{position:absolute;left:0;right:0;bottom:9px;margin:0 auto;width:fit-content;background:rgba(255,255,255,.96);border-radius:999px;padding:4px 11px;font-family:var(--head);font-size:12px;font-weight:800;color:var(--purple-deep);box-shadow:0 6px 14px -6px rgba(0,0,0,.3)}
+.fc-tf{padding:10px 0 4px;overflow:hidden;-webkit-mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent);mask-image:linear-gradient(90deg,transparent,#000 5%,#000 95%,transparent)}
+.fc-tf-track{display:flex;gap:16px;width:max-content;animation:fc-scroll 60s linear infinite}
+.fc-tf:hover .fc-tf-track{animation-play-state:paused}
+.fc-tf-track.is-rev{animation-direction:reverse}
+.fc-tf-mob{display:none}
+.fc-tf-card{position:relative;flex:0 0 auto;width:180px;border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);margin:0}
+.fc-tf-card img{width:100%;height:220px;object-fit:cover;object-position:top}
+.fc-tf-card figcaption{position:absolute;left:0;right:0;bottom:10px;margin:0 auto;width:fit-content;background:rgba(255,255,255,.96);border-radius:999px;padding:5px 12px;font-family:var(--head);font-size:13px;font-weight:800;color:var(--purple-deep);box-shadow:0 6px 14px -6px rgba(0,0,0,.3)}
 
 /* ── hero logo slider ─────────────────────────────────────────────────── */
 .fc-press{background:var(--white);border-bottom:1px solid var(--hair);padding:0 0 clamp(18px,2.2vw,26px)}
@@ -916,6 +1029,14 @@ const CSS = `
 .fc-marquee-track{display:flex;align-items:center;gap:50px;width:max-content;animation:fc-scroll 40s linear infinite}
 .fc-marquee-track img{height:64px;width:auto;object-fit:contain}
 @keyframes fc-scroll{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* the founder section's variant: the same strip as a white panel on the dark band */
+.fc-press.is-inset{background:transparent;border:0;padding:0;margin-top:6px}
+.fc-press.is-inset .fc-press-lbl{color:#C7B2DE;margin-bottom:12px}
+.fc-press.is-inset .fc-marquee{background:#fff;border-radius:14px;padding:14px 0}
+
+/* the credibility composite, straight after the featured-on strip */
+.fc-press-tv{background:var(--white);padding:22px 0 30px;border-bottom:1px solid var(--hair);margin-top:-1px}
+.fc-press-tv img{display:block;width:100%;height:auto;aspect-ratio:1280/720;border-radius:14px}
 
 /* ── hero: the phone layout ───────────────────────────────────────────────
    On a phone the cut-out gives way to the photo strip, which does the hero
@@ -927,24 +1048,32 @@ const CSS = `
   .fc-hero-copy{order:1;width:100%;max-width:1120px;margin-inline:auto;padding:0 20px}
   .fc-photos{order:2}
   .fc-press{order:3}
+  .fc-press-tv{order:4}
   /* out-specifies .lyx img{display:block}, which is (0,1,1) and would win */
   .lyx .fc-hero-shot{display:none}
 
-  .fc-photos{background:transparent;border-top:0;padding:clamp(24px,4.4vw,34px) 0 0}
-  .fc-photos-track{gap:12px;animation-duration:80s}
-  .fc-photo{width:clamp(196px,56vw,268px);border-radius:20px}
-  .fc-photo img{height:clamp(242px,70vw,330px)}
-  .fc-photo figcaption{bottom:11px;font-size:13.5px;padding:5px 13px}
+  /* two stacked rows running opposite ways, as on the main landing page */
+  .fc-photos{background:transparent;border-top:0;padding:clamp(20px,4vw,30px) 0 0}
+  .fc-tf-desk{display:none}
+  .fc-tf-mob{display:flex;flex-direction:column;gap:12px;padding:0}
+  .fc-tf-mob .fc-tf{padding:0}
+  .fc-tf-mob .fc-tf-track{animation-duration:75s}
+  .fc-tf-card{width:212px}
+  .fc-tf-card img{height:258px}
 
   .fc-press{margin-top:clamp(22px,3.4vw,32px);padding-top:clamp(24px,5vw,34px);border-top:1px solid var(--hair)}
 }
-@media (prefers-reduced-motion:reduce){ .fc-photos-track,.fc-marquee-track{animation:none} }
+@media (prefers-reduced-motion:reduce){ .fc-tf-track,.fc-marquee-track{animation:none} }
 
-/* ═══ pain ═══════════════════════════════════════════════════════════════ */
-.fc-pains{display:grid;grid-template-columns:1fr;gap:13px;margin-top:32px;text-align:left}
-.fc-pain{display:flex;gap:14px;align-items:center;background:#fff;border:1px solid var(--hair);border-radius:18px;box-shadow:var(--shadow-sm);padding:18px 20px}
-.fc-pain-ico{display:flex;align-items:center;justify-content:center;width:44px;height:44px;flex:0 0 auto;border-radius:13px;background:var(--purple-soft);color:var(--purple)}
-.fc-pain p{margin:0;font-size:17px;line-height:1.45;font-weight:700;color:var(--ink)}
+/* ═══ pain, on the main landing page's photo cards ══════════════════════ */
+.ly-rcards{display:grid;grid-template-columns:1fr;gap:16px;margin-top:34px;text-align:left}
+.ly-rcard{background:var(--white);border:1px solid var(--hair);border-radius:18px;overflow:hidden;box-shadow:var(--shadow-sm);display:flex;flex-direction:column}
+.ly-rcard-media{aspect-ratio:4/3;overflow:hidden;background:var(--purple-soft)}
+.ly-rcard-media img{width:100%;height:100%;object-fit:cover;display:block}
+.ly-rcard-in{padding:20px 22px 24px}
+/* the main page splits a bold title and a paragraph. Each of these cards is a
+   single line, so it carries the title weight at a size that fits three up. */
+.ly-rcard-h{margin:0;font-family:var(--head);font-weight:800;font-size:19px;line-height:1.3;letter-spacing:-.01em;color:var(--ink)}
 .fc-turn{margin:26px 0 0;font-family:var(--head);font-weight:800;font-size:clamp(19px,2.6vw,25px);line-height:1.35;color:var(--purple)}
 
 /* ═══ founder section, as on the main landing page ══════════════════════ */
@@ -957,7 +1086,14 @@ const CSS = `
 .ly-story-quad img{width:100%;height:100%;object-fit:cover;object-position:top}
 .ly-story-tv{display:block;width:100%;height:auto;aspect-ratio:1280/720;border-radius:14px}
 .ly-guar-sig{font-family:var(--head);font-weight:800;letter-spacing:.16em;color:#C7B2DE;margin:14px 0 0;font-size:15px}
-.lyx .fc-creds{justify-content:flex-start;margin-top:18px}
+
+/* ═══ a word from me, the main landing page's clarity section ═══════════ */
+.ly-clarity{display:grid;grid-template-columns:1fr;gap:28px;align-items:center}
+.ly-clarity>*{min-width:0}
+.ly-clarity-media img{width:100%;height:auto;aspect-ratio:1152/2048;border-radius:22px;box-shadow:var(--shadow)}
+.ly-clarity-quote{margin:22px 0 0;font-family:var(--head);font-style:italic;font-weight:700;font-size:clamp(21px,2.6vw,26px);line-height:1.32;color:var(--purple-deep);border-left:3px solid var(--purple);padding-left:20px}
+/* the founder section's signature sits on a dark band, this one does not */
+.lyx .ly-sig-light{color:var(--ink-soft)}
 
 /* ═══ how it works ═══════════════════════════════════════════════════════ */
 .fc-steps{display:grid;grid-template-columns:1fr;gap:34px;margin-top:44px;text-align:left}
@@ -1011,13 +1147,14 @@ const CSS = `
 /* ═══ desktop ════════════════════════════════════════════════════════════ */
 @media (min-width:860px){
   .ly-band{padding:92px 0}
-  .fc-pains{grid-template-columns:repeat(3,1fr);gap:20px}
+  .ly-rcards{grid-template-columns:repeat(3,1fr);gap:20px}
   .fc-gets{grid-template-columns:repeat(3,1fr);gap:18px}
   .fc-marquee-track{gap:72px}
   .fc-marquee-track img{height:58px}
   .ly-trust{display:flex;background:transparent;border:0;padding:0;box-shadow:none;font-size:13px}
   .ly-trust .ly-tdesk{display:inline-flex}
   .ly-results{grid-template-columns:1fr 1fr 1fr;gap:22px}
+  .ly-clarity{grid-template-columns:0.82fr 1.18fr;gap:54px}
   .ly-story-grid{grid-template-columns:.85fr 1fr;gap:28px 48px;align-items:start}
   .ly-story-media{grid-column:1;grid-row:1}
   .ly-story-copy{grid-column:2;grid-row:1 / span 2}

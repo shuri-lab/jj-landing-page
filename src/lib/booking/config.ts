@@ -7,8 +7,19 @@
  * every one of them follows.
  */
 
-/** v2: the call is with JJ personally, not an unnamed coach. */
+/**
+ * Two labels, and the difference matters.
+ *
+ * COACH_LABEL is the brand, the story and the method: the hero, the founder
+ * section, the page title. All of that is JJ herself and all of it is true.
+ *
+ * CALLER_LABEL is who is actually on the phone. The call is taken by JJ's AI
+ * coach, built from her voice and her method, so anywhere the page says who
+ * makes the call it has to say this instead. Never mix the two inside one
+ * sentence about the call.
+ */
 export const COACH_LABEL = "JJ Smith";
+export const CALLER_LABEL = "JJ's coach";
 
 /** [CONFIRM with David] draft call length. Drives the copy and the calendar event. */
 export const CALL_MINUTES = 15;

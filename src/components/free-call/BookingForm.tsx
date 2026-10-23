@@ -11,8 +11,8 @@ import {
   BOOKING_CTA_LABEL,
   BOOKING_CTA_NOW_LABEL,
   CALLER_ID_NUMBER,
+  CALLER_LABEL,
   CALL_MINUTES,
-  COACH_LABEL,
   FREE_CALL_PATH,
   REASSURANCE,
 } from "@/lib/booking/config";
@@ -30,11 +30,11 @@ import type { BookingPayload } from "@/lib/booking/types";
 import "./booking-form.css";
 
 /**
- * [CONFIRM with David] the "message and data rates may apply" line was removed
- * on request. It is the standard CTIA disclosure for an SMS opt in, so it is
- * worth a legal read before launch.
+ * The default path books an immediate outbound call and text, so the consent
+ * carries the standard SMS disclosure. [Pending a legal read before launch.]
  */
-export const CONSENT_COPY = "I agree that JJ's team can call and text me about my session.";
+export const CONSENT_COPY =
+  "I agree that JJ's team can call and text me about my session. Message and data rates may apply.";
 
 const RETRY_COPY =
   "Something went wrong on our end. Everything you typed is still here, please try again.";
@@ -46,7 +46,7 @@ const DAY_OPTIONS: { id: DayChoice; title: string; sub: string; tag?: string }[]
   {
     id: "now",
     title: "Now",
-    sub: `${COACH_LABEL} calls you in the next few minutes`,
+    sub: `${CALLER_LABEL} calls you in the next few minutes`,
     tag: "Fastest",
   },
   { id: "today", title: "Later today", sub: "Choose any time this afternoon or evening" },
@@ -229,7 +229,7 @@ export function BookingForm() {
                 When works for you?
               </h2>
               <p className="fcb-sub">
-                Your free {CALL_MINUTES} minute call with {COACH_LABEL}.
+                Your free {CALL_MINUTES} minute call with {CALLER_LABEL}.
               </p>
             </div>
 
@@ -295,7 +295,7 @@ export function BookingForm() {
                   </fieldset>
                 ) : (
                   <p className="fcb-empty">
-                    No more times today. Pick <strong>Now</strong> and {COACH_LABEL} calls you in
+                    No more times today. Pick <strong>Now</strong> and {CALLER_LABEL} calls you in
                     the next few minutes, or choose <strong>Tomorrow</strong>.
                   </p>
                 )}
@@ -318,7 +318,7 @@ export function BookingForm() {
           <form onSubmit={handleSubmit} noValidate>
             <div className="fcb-head">
               <h2 className="fcb-h" ref={stepHeading} tabIndex={-1}>
-                Where should {COACH_LABEL} call you?
+                Where should {CALLER_LABEL} call you?
               </h2>
             </div>
 
@@ -552,7 +552,7 @@ function BookedCard({ firstName, when }: { firstName: string; when: WhenSelectio
         </h2>
 
         <p className="fcb-done-when">
-          {COACH_LABEL} will call you {spokenWhen(when)} from {CALLER_ID_NUMBER}.
+          {CALLER_LABEL} will call you {spokenWhen(when)} from {CALLER_ID_NUMBER}.
         </p>
 
         <p className="fcb-done-p">

@@ -12,14 +12,17 @@ Nothing in this document's contract changed. The payload, the stub, the slot
 source and the analytics event are all the same as v1. What moved is the copy
 and the layout:
 
-- The page says **JJ Smith**, not "JJ's coach". `COACH_LABEL` in
-  `src/lib/booking/config.ts` is now `"JJ Smith"`, and it still drives the
-  page, the confirmation screen and the label in the payload.
+- **Two labels, and the difference matters.** `COACH_LABEL` ("JJ Smith") is
+  the brand, the story and the method: the hero, the founder section, the page
+  title. `CALLER_LABEL` ("JJ's coach") is who is actually on the phone, which
+  is JJ's AI coach, built from her voice and her method. Both are in
+  `src/lib/booking/config.ts`. **Anywhere the copy says who makes the call it
+  uses `CALLER_LABEL`,** including the whole booking form and the
+  confirmation. The SMS and the email have to follow the same rule.
 - The consent line reads "I agree that JJ's team can call and text me about my
-  session." It is still required, unticked by default, and `consentAt` is
-  still recorded. The "message and data rates may apply" line was removed on
-  request. **Worth a legal read before launch**: it is the standard CTIA
-  disclosure for an SMS opt in, and the page now promises JJ personally.
+  session. Message and data rates may apply." It is required, unticked by
+  default, and `consentAt` is recorded. **Worth a legal read before launch**,
+  since the default path books an immediate outbound call and text.
 - The booking form moved out of the hero and into the closing section, and it
   is now **two steps**. Step 1 asks when (Now, Later today, Tomorrow), step 2
   asks for her details. Every button on the page scrolls to it.
@@ -154,22 +157,23 @@ expect them.
 
 Confirmation, right after booking:
 
-> Hi [First name], you're booked. [COACH_LABEL] will call you [when.label].
+> Hi [First name], you're booked. [CALLER_LABEL] will call you [when.label].
 > Find a quiet spot where you can talk for about 15 minutes. Reply R to
 > reschedule.
 
-With `COACH_LABEL` set to "JJ Smith", that reads "JJ Smith will call you
-Tomorrow at 9:00 AM." The page makes that promise in the hero, the FAQ and the
-confirmation, so whoever actually dials has to match it. On the `"now"` path
-the label is just "Now", so that copy needs its own variant.
+`CALLER_LABEL` is "JJ's coach", so that reads "JJ's coach will call you
+Tomorrow at 9:00 AM", which is what the page's confirmation screen says too.
+**Do not substitute "JJ Smith" here**: the page is deliberate about saying the
+call is taken by her AI coach. On the `"now"` path the label is just "Now", so
+that copy needs its own variant.
 
 Reminder, about one hour before:
 
-> Hi [First name], [COACH_LABEL] calls you in about an hour, at [time]. Be
+> Hi [First name], [CALLER_LABEL] calls you in about an hour, at [time]. Be
 > somewhere you can talk. Talk soon.
 
-`[when.label]` is `when.label` from the payload, verbatim. `[COACH_LABEL]` is
-`COACH_LABEL` from `src/lib/booking/config.ts`, so the page and the texts stay
+`[when.label]` is `when.label` from the payload, verbatim. `[CALLER_LABEL]` is
+`CALLER_LABEL` from `src/lib/booking/config.ts`, so the page and the texts stay
 in step when David changes the wording.
 
 The confirmation text promises "Reply R to reschedule", and the FAQ on the
@@ -182,7 +186,7 @@ David owns the full sequence. The confirmation email is the first step.
 
 Subject:
 
-> You're booked with JJ Smith
+> You're booked with JJ's coach
 
 Body:
 
@@ -261,11 +265,21 @@ drop the campaign that paid for the click. The values arrive in the payload as
    the Steve Harvey and Dr. Oz stills. A clean cover shot would be better if
    one exists.
 12. **Consent wording.** "I agree that JJ's team can call and text me about my
-   session." The "message and data rates may apply" disclosure was removed on
-   request. Worth a legal read before launch, since that line is the standard
-   CTIA disclosure for an SMS opt in, the page promises JJ personally, and the
-   form's default path is an immediate outbound call.
-13. **The caller ID is a placeholder.** See section 2b.
+   session. Message and data rates may apply." Carries the standard SMS
+   disclosure, since the default path books an immediate outbound call and
+   text. Still worth a legal read before launch.
+13. **The caller ID is a placeholder.** `(555) 012-3456` must be swapped for
+   the phone system's real outbound number. See section 2b. Not guessed at
+   here: Christophe and David own it.
+14. **The AI disclosure.** The page says plainly, in the FAQ and in the "A
+   word from me" section, that the call is taken by JJ's AI coach built from
+   her voice and her method. The hero, the founder section and the page title
+   stay JJ Smith, which is the brand and the method and is true. If legal or
+   marketing wants that worded differently, `CALLER_LABEL` and the two FAQ
+   answers are where it lives.
+15. **What "now" means outside calling hours** is undecided and deliberately
+   left open. The page promises a call "in the next few minutes" on that path,
+   so it needs an operational answer before launch. See section 2.
 
 ## What this page deliberately does not do
 
