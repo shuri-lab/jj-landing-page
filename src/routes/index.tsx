@@ -823,7 +823,7 @@ const CSS = `
 .ly-hero-badge-2{top:46%;right:-4%}
 .ly-hero-badge-3{bottom:14%;left:-5%}
 .ly-hero-action{max-width:480px;margin-top:24px}
-.ly-free-link{color:var(--purple);font-weight:700;text-decoration:underline}
+.lyx a.ly-free-link{color:var(--purple);font-weight:700;text-decoration:underline}
 .ly-hero-action .ly-free-link{display:inline-block;margin-top:12px;font-size:16px}
 .ly-free-line{margin:16px 0 0;font-size:16px;color:var(--ink-soft)}
 
@@ -1025,7 +1025,8 @@ const CSS = `
 .ly-sticky-lbl strong{color:var(--purple);font-weight:800}
 .ly-sticky-more{display:none}
 .ly-sticky-btn{flex:1;font-size:15px;padding:14px 16px;min-height:52px;border-radius:12px}
-.ly-sticky-free{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--purple);text-decoration:underline;white-space:nowrap}
+.lyx a.ly-sticky-free{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--purple);text-decoration:underline;white-space:nowrap}
+@media (max-width:429px){.lyx a.ly-sticky-free{display:none}}
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
