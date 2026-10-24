@@ -18,6 +18,7 @@ import { sectionNameOf, trackCtaClicked } from "@/lib/analytics/events";
 import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
 import { trackFcCtaClicked } from "@/lib/analytics/free-call";
 import type { FcCtaLocation } from "@/lib/analytics/free-call";
+import { TERMS_URL } from "@/lib/booking/free-call-href";
 import { BookingForm } from "@/components/free-call/BookingForm";
 import {
   BOOKING_ANCHOR_ID,
@@ -999,7 +1000,7 @@ function Footer() {
   return (
     <footer className="ly-footer">
       &copy; {new Date().getFullYear()} JJ Smith. All rights reserved. · <a href="#">Privacy</a> ·{" "}
-      <a href="#">Terms</a>
+      <a href={TERMS_URL}>Terms</a>
     </footer>
   );
 }
