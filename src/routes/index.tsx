@@ -9,7 +9,6 @@ import { OFFER_PLANS } from "@/lib/signup/plans";
 import { readCheckoutSessionIdFromUrl, readLandingPrefill } from "@/lib/signup/attribution";
 import { trackSelectPlan } from "@/lib/signup/tracking";
 import { sectionNameOf, trackCtaClicked } from "@/lib/analytics/events";
-import { FreeCallLink } from "@/lib/booking/free-call-link";
 import { TERMS_URL } from "@/lib/booking/free-call-href";
 import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
 import type { OfferPlan } from "@/lib/signup/types";
@@ -204,7 +203,6 @@ function Hero() {
             <p className="ly-hero-sub">Lose up to <Mark>15 pounds in your first 30 days</Mark>, and we keep going together, with food you actually love, until every last pound is gone.</p>
             <div className="ly-hero-action">
               <Cta label="Start today" sub={CTA_SUB} full />
-              <FreeCallLink location="hero" className="ly-free-link">Not ready? Book a free call</FreeCallLink>
             </div>
           </div>
           <div className="ly-hero-media">
@@ -695,7 +693,6 @@ function Faq() {
           ))}
         </div>
         <div className="ly-mt-l ly-cta-center"><Cta label="Start today" /></div>
-        <p className="ly-free-line">Still deciding? <FreeCallLink location="faq" className="ly-free-link">Book a free call</FreeCallLink></p>
       </div>
     </section>
   );
@@ -710,7 +707,6 @@ function StickyCta({ show }: { show: boolean }) {
     <div className={`ly-sticky ${show ? "is-show" : ""}`} aria-hidden={!show}>
       <div className="ly-sticky-in">
         <span className="ly-sticky-lbl"><strong>$1.57 a day</strong> · cancel anytime<span className="ly-sticky-more"> · 14-day money-back guarantee</span></span>
-        <FreeCallLink location="sticky" className="ly-sticky-free">Free call</FreeCallLink>
         <button
           className="ly-cta ly-sticky-btn"
           onClick={() => {
@@ -823,9 +819,6 @@ const CSS = `
 .ly-hero-badge-2{top:46%;right:-4%}
 .ly-hero-badge-3{bottom:14%;left:-5%}
 .ly-hero-action{max-width:480px;margin-top:24px}
-.lyx a.ly-free-link{color:var(--purple);font-weight:700;text-decoration:underline}
-.ly-hero-action .ly-free-link{display:inline-block;margin-top:12px;font-size:16px}
-.ly-free-line{margin:16px 0 0;font-size:16px;color:var(--ink-soft)}
 
 /* hero trust (eyebrow / mobile pill) */
 .ly-trust .ly-tdesk{display:none} .ly-bdesk{display:none}
@@ -1025,8 +1018,6 @@ const CSS = `
 .ly-sticky-lbl strong{color:var(--purple);font-weight:800}
 .ly-sticky-more{display:none}
 .ly-sticky-btn{flex:1;font-size:15px;padding:14px 16px;min-height:52px;border-radius:12px}
-.lyx a.ly-sticky-free{flex:0 0 auto;font-size:13px;font-weight:700;color:var(--purple);text-decoration:underline;white-space:nowrap}
-@media (max-width:429px){.lyx a.ly-sticky-free{display:none}}
 
 @media (min-width:860px){
   .ly-band{padding:92px 0}
