@@ -74,3 +74,23 @@ export function trackFcTimeSelected(when_mode: FcWhenMode): void {
 export function trackFcBooked(props: { when_mode: FcWhenMode; had_time: boolean }): void {
   capture("fc_booked", props);
 }
+
+/** What the confirmation showed when she asked to be called now. */
+export type FcCallNowAfter = "missed" | "cut_off" | "callback" | "open";
+
+let missedShown = false;
+
+/**
+ * The confirmation turned into "We missed you": a dial went unanswered after
+ * she booked. Fires once per page load.
+ */
+export function trackFcCallMissedShown(): void {
+  if (missedShown) return;
+  missedShown = true;
+  capture("fc_call_missed_shown");
+}
+
+/** She pressed "Call me now" (or "Call me back now") on the confirmation. */
+export function trackFcCallMeNow(props: { after: FcCallNowAfter; ok: boolean }): void {
+  capture("fc_call_me_now", props);
+}

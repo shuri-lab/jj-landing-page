@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { AlertCircle, CalendarDays, CalendarPlus, Check, Clock, Zap } from "lucide-react";
+import { AlertCircle, Check, Clock } from "lucide-react";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import { nextNationalPhoneInput, parseValidE164, reformatNationalPhone } from "@/lib/signup/phone";
 import { pushDataLayer } from "@/lib/analytics/data-layer";
@@ -10,28 +10,23 @@ import {
 } from "@/lib/analytics/free-call";
 import { submitBooking } from "@/lib/booking/api";
 import { readBookingContext } from "@/lib/booking/attribution";
-import { buildGoogleCalendarUrl, downloadIcs } from "@/lib/booking/calendar";
 import {
   BOOKING_ANCHOR_ID,
   BOOKING_CTA_LABEL,
   BOOKING_CTA_NOW_LABEL,
-  CALLER_ID_NUMBER,
   CALLER_LABEL,
   CALL_MINUTES,
   FREE_CALL_PATH,
   REASSURANCE,
 } from "@/lib/booking/config";
 import { BOOKING_COUNTRIES, DEFAULT_BOOKING_COUNTRY } from "@/lib/booking/countries";
-import {
-  WHEN_NOW,
-  buildDayTimes,
-  scheduledLabel,
-  spokenWhen,
-  timeZoneLabel,
-} from "@/lib/booking/slots";
+import { WHEN_NOW, buildDayTimes, scheduledLabel, timeZoneLabel } from "@/lib/booking/slots";
 import type { CallTime, WhenSelection } from "@/lib/booking/slots";
 import type { BookingContext } from "@/lib/booking/attribution";
 import type { BookingPayload } from "@/lib/booking/types";
+import { clearBooking, loadBooking, saveBooking } from "@/lib/booking/saved-booking";
+import { BookingConfirmation } from "./BookingConfirmation";
+import type { ConfirmedBooking } from "./BookingConfirmation";
 import "./booking-form.css";
 
 /**
@@ -119,7 +114,19 @@ export function BookingForm() {
   const [errors, setErrors] = useState<Errors>({});
   const [submitting, setSubmitting] = useState(false);
   const [formError, setFormError] = useState("");
-  const [booked, setBooked] = useState<{ firstName: string; when: WhenSelection } | null>(null);
+  const [booked, setBooked] = useState<ConfirmedBooking | null>(null);
+
+  // A booking from an earlier visit on this device (7 days): she comes back to
+  // where her call stands, not to an empty form. Read after mount, since the
+  // server has no storage.
+  useEffect(() => {
+    const saved = loadBooking();
+    if (saved) setBooked({ ...saved, restored: true });
+  }, []);
+  const startOver = useCallback(() => {
+    clearBooking();
+    setBooked(null);
+  }, []);
 
   const phoneE164 = useMemo(() => parseValidE164(phone, phoneIso), [phone, phoneIso]);
 
@@ -212,7 +219,23 @@ export function BookingForm() {
         // conversion step on the "Free Call Funnel" dashboard.
         pushDataLayer({ event: "free_call_booked" });
         trackFcBooked({ when_mode: day, had_time: payload.when.iso !== null });
-        setBooked({ firstName: payload.firstName, when: payload.when });
+        const confirmed: ConfirmedBooking = {
+          firstName: payload.firstName,
+          when: payload.when,
+          token: result.statusToken,
+          rescheduleUrl: result.rescheduleUrl,
+          restored: false,
+        };
+        if (confirmed.token) {
+          saveBooking({
+            firstName: confirmed.firstName,
+            when: confirmed.when,
+            token: confirmed.token,
+            rescheduleUrl: confirmed.rescheduleUrl,
+            savedAt: new Date().toISOString(),
+          });
+        }
+        setBooked(confirmed);
       } catch {
         setFormError(RETRY_COPY);
       } finally {
@@ -223,7 +246,7 @@ export function BookingForm() {
   );
 
   if (booked) {
-    return <BookedCard firstName={booked.firstName} when={booked.when} />;
+    return <BookingConfirmation booking={booked} onStartOver={startOver} />;
   }
 
   return (
@@ -540,65 +563,5 @@ function FieldError({ id, message }: { id: string; message?: string }) {
       <AlertCircle size={15} aria-hidden />
       {message}
     </p>
-  );
-}
-
-/**
- * Confirmation, shown in place of the form.
- *
- * The text and the email she is promised here are sent by the backend, not by
- * this page, and the caller ID is a placeholder until the phone system's real
- * number is known. See docs/free-call-backend-handoff.md.
- */
-function BookedCard({ firstName, when }: { firstName: string; when: WhenSelection }) {
-  const heading = useRef<HTMLHeadingElement>(null);
-  const iso = when.iso;
-
-  // Land screen readers and keyboard users on the confirmation rather than
-  // wherever the submit button used to be.
-  useEffect(() => heading.current?.focus(), []);
-
-  return (
-    <div className="fcb" id={BOOKING_ANCHOR_ID}>
-      <div className="fcb-card fcb-done">
-        <span className="fcb-done-ico" aria-hidden>
-          <Check strokeWidth={3} />
-        </span>
-        <h2 className="fcb-done-h" ref={heading} tabIndex={-1}>
-          You&rsquo;re booked, {firstName}!
-        </h2>
-
-        <p className="fcb-done-when">
-          {CALLER_LABEL} will call you {spokenWhen(when)} from {CALLER_ID_NUMBER}.
-        </p>
-
-        <p className="fcb-done-p">
-          Find a quiet spot where you can talk for about {CALL_MINUTES} minutes. We just texted you
-          to confirm.
-        </p>
-
-        {iso ? (
-          <div className="fcb-cal">
-            <button type="button" className="fcb-cal-btn" onClick={() => downloadIcs(iso)}>
-              <CalendarPlus aria-hidden />
-              Add to calendar
-            </button>
-            <a
-              className="fcb-cal-btn"
-              href={buildGoogleCalendarUrl(iso)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <CalendarDays aria-hidden />
-              Add to Google Calendar
-            </a>
-          </div>
-        ) : (
-          <p className="fcb-done-soon">
-            <Zap size={15} aria-hidden /> Keep your phone close.
-          </p>
-        )}
-      </div>
-    </div>
   );
 }

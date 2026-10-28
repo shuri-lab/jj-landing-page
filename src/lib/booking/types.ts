@@ -37,4 +37,39 @@ export interface BookingPayload {
   submittedAt: string;
 }
 
-export type BookingResult = { ok: true; bookingId: string | null } | { ok: false; reason: string };
+export type BookingResult =
+  | {
+      ok: true;
+      bookingId: string | null;
+      /**
+       * Her free-call link token, the one her texts carry (7 days). The
+       * confirmation uses it to see how the call went and, after a missed
+       * call, to get her called again. Null from an older backend.
+       */
+      statusToken: string | null;
+      /** Her reschedule page on the coach's site, for picking another time. */
+      rescheduleUrl: string | null;
+    }
+  | { ok: false; reason: string };
+
+/** Where her free call stands, as GET /public/free-call/reschedule reports it. */
+export type CallState = "open" | "scheduled" | "calling" | "done" | "member" | "closed";
+
+/**
+ * Why the call is where it is. `unreachable` comes with `closed`: her number
+ * cannot be called, so the page offers to book with another one.
+ */
+export type CallReason = "cut_off" | "missed" | "callback" | "booked" | "unreachable";
+
+export interface CallStatus {
+  state: CallState;
+  reason: CallReason;
+  /** When the newest dial ended without reaching her; null otherwise. */
+  missedAt: string | null;
+  firstName: string | null;
+  /** Who is on the phone, e.g. "JJ's coach". */
+  caller: string;
+  /** The next dial, when one is booked. `label` reads "Today at 8:15 PM". */
+  scheduledFor: { iso: string; label: string } | null;
+  slots: { now: { available: boolean } };
+}
