@@ -1,4 +1,4 @@
-import type { BookingPayload, BookingResult, CallStatus } from "./types";
+import type { BookingPayload, BookingResult, CallReason, CallState, CallStatus } from "./types";
 
 /** Yobody's dev API until the free-call engine launches on production. */
 function apiBase(): string {
@@ -117,14 +117,64 @@ export async function fetchCallStatus(
   if (!response.ok) {
     return { ok: false, expired: errorCode(json) === "LEAD_LINK_INVALID" };
   }
-  const status = json?.data as CallStatus | undefined;
-  if (!status?.state) return { ok: false, expired: false };
-  return { ok: true, status };
+  const status = callStatusFrom(json?.data);
+  return status ? { ok: true, status } : { ok: false, expired: false };
 }
+
+const CALL_STATES: CallState[] = ["open", "scheduled", "calling", "done", "member", "closed"];
+const CALL_REASONS: CallReason[] = [
+  "cut_off",
+  "missed",
+  "callback",
+  "booked",
+  "unreachable",
+  "replaced",
+];
+
+/**
+ * The status as this page reads it. Anything a backend leaves out (an older
+ * one has no `missedAt`) reads as nothing to show, never as a missed call.
+ */
+export function callStatusFrom(raw: unknown): CallStatus | null {
+  if (!raw || typeof raw !== "object") return null;
+  const data = raw as Record<string, unknown>;
+  const state = CALL_STATES.find((value) => value === data.state);
+  if (!state) return null;
+  const reason = CALL_REASONS.find((value) => value === data.reason) ?? "booked";
+  const scheduled = data.scheduledFor as { iso?: unknown; label?: unknown } | null | undefined;
+  const slots = data.slots as { now?: { available?: unknown } } | undefined;
+  return {
+    state,
+    reason,
+    missedAt:
+      typeof data.missedAt === "string" && Number.isFinite(Date.parse(data.missedAt))
+        ? data.missedAt
+        : null,
+    firstName: typeof data.firstName === "string" ? data.firstName : null,
+    caller: typeof data.caller === "string" ? data.caller : "",
+    scheduledFor:
+      scheduled && typeof scheduled.iso === "string" && typeof scheduled.label === "string"
+        ? { iso: scheduled.iso, label: scheduled.label }
+        : null,
+    slots: { now: { available: slots?.now?.available === true } },
+  };
+}
+
+/** Longer than the backend needs to book and start dialing; then we check instead. */
+const CALL_NOW_TIMEOUT_MS = 15_000;
 
 export type CallNowResult =
   | { ok: true; state: "calling" | "scheduled" }
-  | { ok: false; kind: "closed" | "expired" | "limit" | "unavailable" | "error"; message?: string };
+  | {
+      ok: false;
+      /**
+       * `unknown`: no answer came back (dropped or too slow), so the call may
+       * or may not be booked. The page checks the status rather than asking
+       * again on its own.
+       */
+      kind: "closed" | "expired" | "limit" | "unavailable" | "unknown" | "error";
+      message?: string;
+    };
 
 /**
  * "Call me now" after a missed or cut-off call. The backend books it like a
@@ -132,17 +182,23 @@ export type CallNowResult =
  * a call is live, and never to a number it cannot call.
  */
 export async function requestCallNow(token: string): Promise<CallNowResult> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CALL_NOW_TIMEOUT_MS);
   let response: Response;
+  let json: ApiBody;
   try {
     response = await fetch(`${apiBase()}/public/free-call/reschedule`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ t: token, when: { mode: "now" } }),
+      signal: controller.signal,
     });
+    json = (await response.json().catch(() => null)) as ApiBody;
   } catch {
-    return { ok: false, kind: "error" };
+    return { ok: false, kind: "unknown" };
+  } finally {
+    clearTimeout(timer);
   }
-  const json = (await response.json().catch(() => null)) as ApiBody;
   if (response.ok) {
     const state = json?.data?.state;
     return { ok: true, state: state === "scheduled" ? "scheduled" : "calling" };

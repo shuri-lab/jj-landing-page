@@ -10,7 +10,8 @@
  *    her way back to the call;
  *  - she asked for a call now on this page: "Calling you now", until a newer
  *    dial goes unanswered;
- *  - finished, joined, closed, or a number we cannot call.
+ *  - finished, joined, closed, a number we cannot call, or a booking someone
+ *    replaced by booking this number again on the page.
  */
 
 import type { CallStatus } from "./types";
@@ -26,11 +27,16 @@ export type CallCard =
   | { kind: "done" }
   | { kind: "member" }
   | { kind: "closed" }
-  | { kind: "unreachable" };
+  | { kind: "unreachable" }
+  | { kind: "replaced" };
 
-/** She pressed "Call me now" on this page. */
+/** She pressed "Call me now" on this page, and the backend took it. */
 export interface AskedNow {
-  /** Her clock (ms), compared only with `checkedAt`, which is her clock too. */
+  /**
+   * When she pressed it (her clock, ms), compared only with `checkedAt`,
+   * which is her clock too. Status checks are held while the request is in
+   * flight, so every status checked after this comes from after it.
+   */
   at: number;
   /** The miss on screen when she asked; any other miss is a new one. */
   missedBefore: string | null;
@@ -58,7 +64,11 @@ export function callCard(
     case "member":
       return { kind: "member" };
     case "closed":
-      return status.reason === "unreachable" ? { kind: "unreachable" } : { kind: "closed" };
+      return status.reason === "unreachable"
+        ? { kind: "unreachable" }
+        : status.reason === "replaced"
+          ? { kind: "replaced" }
+          : { kind: "closed" };
   }
 
   // Server times only: a phone's clock can be minutes off.

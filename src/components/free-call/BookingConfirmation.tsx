@@ -40,6 +40,7 @@ export interface ConfirmedBooking {
 const CALL_NOW_ERRORS = {
   limit: "You've asked for a lot of calls in the last hour. Please try again a little later.",
   unavailable: "A call right now isn't available. Please pick a time instead.",
+  unknown: "We couldn't confirm that. If your phone doesn't ring in a minute, please try again.",
   error: "Something went wrong on our end. Please try again.",
 } as const;
 
@@ -60,7 +61,7 @@ export function BookingConfirmation({
   /** Forget this booking and show the form again. */
   onStartOver: () => void;
 }) {
-  const { status, checkedAt, refresh } = useCallStatus(booking.token, onStartOver);
+  const { status, checkedAt, hold, release } = useCallStatus(booking.token, onStartOver);
   const [asked, setAsked] = useState<AskedNow | null>(null);
   const [calling, setCalling] = useState(false);
   const [error, setError] = useState("");
@@ -92,29 +93,33 @@ export function BookingConfirmation({
     setCalling(true);
     setError("");
     const missedBefore = status?.missedAt ?? null;
+    // Every status shown from here on is asked for after this press: answers
+    // already on their way are dropped, and nothing is asked until it settles.
+    const pressedAt = Date.now();
+    hold();
     const result = await requestCallNow(booking.token);
     trackFcCallMeNow({ after, ok: result.ok });
     setCalling(false);
     focusNext.current = true;
-    if (result.ok) {
-      setAsked({ at: Date.now(), missedBefore });
-      void refresh();
-      return;
-    }
+    if (result.ok) setAsked({ at: pressedAt, missedBefore });
+    if (result.ok || result.kind !== "expired") release();
+    if (result.ok || result.kind === "closed") return;
     if (result.kind === "expired") return onStartOver();
-    if (result.kind === "closed") return void refresh();
     setError(
       result.kind === "unavailable" && result.message
         ? result.message
         : CALL_NOW_ERRORS[result.kind],
     );
-  }, [booking.token, calling, card.kind, onStartOver, refresh, status?.missedAt]);
+  }, [booking.token, calling, card.kind, hold, onStartOver, release, status?.missedAt]);
 
-  // The next dial on her own clock when one is booked; else the time she picked.
+  // The next dial on her own clock when one is booked; "in the next few
+  // minutes" once one is due or ringing; else the time she picked.
   const when: WhenSelection =
     status?.state === "scheduled" && status.scheduledFor
       ? { mode: "scheduled", iso: status.scheduledFor.iso, label: status.scheduledFor.label }
-      : booking.when;
+      : status?.state === "calling"
+        ? { mode: "now", iso: null, label: "Now" }
+        : booking.when;
 
   return (
     <div className="fcb" id={BOOKING_ANCHOR_ID}>
@@ -324,6 +329,22 @@ function CardBody({
         <>
           {head(<Phone />, <>This free call is closed</>, "soft")}
           <p className="fcb-done-p">Want to talk with {CALLER_LABEL}? Book a new call.</p>
+          <div className="fcb-done-actions">
+            <button type="button" className="fcb-submit" onClick={onStartOver}>
+              Book a new call
+            </button>
+          </div>
+        </>
+      );
+
+    case "replaced":
+      return (
+        <>
+          {head(<Phone />, <>Your call has changed</>, "soft")}
+          <p className="fcb-done-p">
+            This number was booked again on this page. Check your texts for your latest call time,
+            or book a new call.
+          </p>
           <div className="fcb-done-actions">
             <button type="button" className="fcb-submit" onClick={onStartOver}>
               Book a new call

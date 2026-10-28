@@ -56,10 +56,12 @@ export type BookingResult =
 export type CallState = "open" | "scheduled" | "calling" | "done" | "member" | "closed";
 
 /**
- * Why the call is where it is. `unreachable` comes with `closed`: her number
- * cannot be called, so the page offers to book with another one.
+ * Why the call is where it is. Two come with `closed`: `unreachable`, her
+ * number cannot be called, so the page offers to book with another one;
+ * `replaced`, someone booked this number again on the page, so this page's
+ * booking is no longer the current one.
  */
-export type CallReason = "cut_off" | "missed" | "callback" | "booked" | "unreachable";
+export type CallReason = "cut_off" | "missed" | "callback" | "booked" | "unreachable" | "replaced";
 
 export interface CallStatus {
   state: CallState;
