@@ -1,4 +1,27 @@
-import type { BookingPayload, BookingResult } from "./types";
+import type { BookingPayload, BookingResult, CallReason, CallState, CallStatus } from "./types";
+
+/** Yobody's dev API until the free-call engine launches on production. */
+function apiBase(): string {
+  return (import.meta.env.VITE_FREE_CALL_API_URL ?? "https://api-dev.yobyinfra.cloud").replace(
+    /\/$/,
+    "",
+  );
+}
+
+type ApiBody = {
+  code?: string;
+  message?: string | string[];
+  data?: Record<string, unknown> & { code?: string };
+} | null;
+
+function errorCode(json: ApiBody): string | undefined {
+  return json?.code ?? json?.data?.code;
+}
+
+function errorMessage(json: ApiBody): string | undefined {
+  const message = json?.message ?? (json?.data?.message as string | string[] | undefined);
+  return Array.isArray(message) ? message.join(" ") : message;
+}
 
 /**
  * ──────────────────────────────────────────────────────────────────────────
@@ -21,10 +44,7 @@ import type { BookingPayload, BookingResult } from "./types";
  * ──────────────────────────────────────────────────────────────────────────
  */
 export async function submitBooking(payload: BookingPayload): Promise<BookingResult> {
-  // Yobody's dev API until the free-call engine launches on production.
-  const base = (
-    import.meta.env.VITE_FREE_CALL_API_URL ?? "https://api-dev.yobyinfra.cloud"
-  ).replace(/\/$/, "");
+  const base = apiBase();
   // Her browser time zone, so calling hours run on her clock.
   const body = JSON.stringify({
     ...payload,
@@ -54,7 +74,13 @@ export async function submitBooking(payload: BookingPayload): Promise<BookingRes
 
   const json = (await response.json().catch(() => null)) as {
     message?: string | string[];
-    data?: { id?: string; moved?: boolean; when?: BookingPayload["when"] };
+    data?: {
+      id?: string;
+      moved?: boolean;
+      when?: BookingPayload["when"];
+      statusToken?: string | null;
+      rescheduleUrl?: string | null;
+    };
   } | null;
   if (response.status >= 500) throw new Error(`Booking failed (${response.status})`);
   if (!response.ok) {
@@ -66,5 +92,123 @@ export async function submitBooking(payload: BookingPayload): Promise<BookingRes
   // "Now" late at night, or a time past calling hours, is booked for the next
   // opening. The confirmation reads payload.when, so it shows that time.
   if (data.moved && data.when) payload.when = data.when;
-  return { ok: true, bookingId: data.id };
+  return {
+    ok: true,
+    bookingId: data.id,
+    statusToken: data.statusToken || null,
+    rescheduleUrl: data.rescheduleUrl || null,
+  };
+}
+
+/**
+ * Where her call stands, read with her link token. `expired` means the token
+ * no longer opens her call (7 days on, or the booking is gone): the page then
+ * forgets it and shows the form again.
+ */
+export async function fetchCallStatus(
+  token: string,
+  signal?: AbortSignal,
+): Promise<{ ok: true; status: CallStatus } | { ok: false; expired: boolean }> {
+  const response = await fetch(
+    `${apiBase()}/public/free-call/reschedule?t=${encodeURIComponent(token)}`,
+    { headers: { Accept: "application/json" }, signal },
+  );
+  const json = (await response.json().catch(() => null)) as ApiBody;
+  if (!response.ok) {
+    return { ok: false, expired: errorCode(json) === "LEAD_LINK_INVALID" };
+  }
+  const status = callStatusFrom(json?.data);
+  return status ? { ok: true, status } : { ok: false, expired: false };
+}
+
+const CALL_STATES: CallState[] = ["open", "scheduled", "calling", "done", "member", "closed"];
+const CALL_REASONS: CallReason[] = [
+  "cut_off",
+  "missed",
+  "callback",
+  "booked",
+  "unreachable",
+  "replaced",
+];
+
+/**
+ * The status as this page reads it. Anything a backend leaves out (an older
+ * one has no `missedAt`) reads as nothing to show, never as a missed call.
+ */
+export function callStatusFrom(raw: unknown): CallStatus | null {
+  if (!raw || typeof raw !== "object") return null;
+  const data = raw as Record<string, unknown>;
+  const state = CALL_STATES.find((value) => value === data.state);
+  if (!state) return null;
+  const reason = CALL_REASONS.find((value) => value === data.reason) ?? "booked";
+  const scheduled = data.scheduledFor as { iso?: unknown; label?: unknown } | null | undefined;
+  const slots = data.slots as { now?: { available?: unknown } } | undefined;
+  return {
+    state,
+    reason,
+    missedAt:
+      typeof data.missedAt === "string" && Number.isFinite(Date.parse(data.missedAt))
+        ? data.missedAt
+        : null,
+    firstName: typeof data.firstName === "string" ? data.firstName : null,
+    caller: typeof data.caller === "string" ? data.caller : "",
+    scheduledFor:
+      scheduled && typeof scheduled.iso === "string" && typeof scheduled.label === "string"
+        ? { iso: scheduled.iso, label: scheduled.label }
+        : null,
+    slots: { now: { available: slots?.now?.available === true } },
+  };
+}
+
+/** Longer than the backend needs to book and start dialing; then we check instead. */
+const CALL_NOW_TIMEOUT_MS = 15_000;
+
+export type CallNowResult =
+  | { ok: true; state: "calling" | "scheduled" }
+  | {
+      ok: false;
+      /**
+       * `unknown`: no answer came back (dropped or too slow), so the call may
+       * or may not be booked. The page checks the status rather than asking
+       * again on its own.
+       */
+      kind: "closed" | "expired" | "limit" | "unavailable" | "unknown" | "error";
+      message?: string;
+    };
+
+/**
+ * "Call me now" after a missed or cut-off call. The backend books it like a
+ * fresh "now" booking (three dials, the hourly limit per phone), never while
+ * a call is live, and never to a number it cannot call.
+ */
+export async function requestCallNow(token: string): Promise<CallNowResult> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), CALL_NOW_TIMEOUT_MS);
+  let response: Response;
+  let json: ApiBody;
+  try {
+    response = await fetch(`${apiBase()}/public/free-call/reschedule`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify({ t: token, when: { mode: "now" } }),
+      signal: controller.signal,
+    });
+    json = (await response.json().catch(() => null)) as ApiBody;
+  } catch {
+    return { ok: false, kind: "unknown" };
+  } finally {
+    clearTimeout(timer);
+  }
+  if (response.ok) {
+    const state = json?.data?.state;
+    return { ok: true, state: state === "scheduled" ? "scheduled" : "calling" };
+  }
+  const code = errorCode(json);
+  if (code === "LEAD_LINK_INVALID") return { ok: false, kind: "expired" };
+  if (code === "LEAD_LINK_CLOSED") return { ok: false, kind: "closed" };
+  if (response.status === 429) return { ok: false, kind: "limit" };
+  if (response.status === 400) {
+    return { ok: false, kind: "unavailable", message: errorMessage(json) };
+  }
+  return { ok: false, kind: "error" };
 }

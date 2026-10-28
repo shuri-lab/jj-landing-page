@@ -203,6 +203,8 @@ visits both.
 | `fc_booking_started` | first touch of the booking form — **funnel step 2**       | none                       | once per page load  |
 | `fc_time_selected`   | the "when" becomes a real choice                          | `when_mode`                | none                |
 | `fc_booked`          | successful booking submit — **funnel step 3, conversion** | `when_mode`, `had_time`    | none                |
+| `fc_call_missed_shown` | the confirmation turns into "We missed you" (a dial went unanswered) | none            | once per page load  |
+| `fc_call_me_now`     | "Call me now" / "Call me back now" on the confirmation    | `after`, `ok`              | none                |
 
 `location` ∈ `hero`, `pain`, `jj`, `howitworks`, `valueprops`, `faq`,
 `everyday`, `header`, `sticky`. There is no `closer` value: the closing
@@ -212,6 +214,10 @@ section *is* the form, so it has no button of its own.
 the `when.mode` in the booking payload (which is `now` or `scheduled`).
 `had_time` is true only when a specific time was chosen, so it is always false
 on the `now` path.
+
+`after` ∈ `missed`, `cut_off`, `callback`, `open` — what the confirmation
+showed when she asked for the call. `ok` is false when the backend refused it
+(the hourly limit per phone, a closed call, or an error).
 
 `fc_time_selected` fires when the choice is actually complete: immediately for
 `now`, which needs no time, and on the time row for `today` and `tomorrow`.

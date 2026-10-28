@@ -140,6 +140,46 @@ The confirmation screen tells her which number to expect the call from.
 phone system's real outbound caller ID before launch**, or she will not
 recognise the call.
 
+## 2c. After she books: a missed call, and "Call me now"
+
+The confirmation no longer stays "You're booked" forever. The booking
+response also carries `statusToken`, the page's own token for the booking
+this submission made (good for 7 days), and `rescheduleUrl` (her reschedule
+page on the coach's site, carrying the same token). The token never shows her
+name or whether she joined. It follows its booking when she asks for a call
+now or names a time on the call, and closes (`reason: replaced`) once anyone
+books this number again on the page. A repeat submit of the same number by a
+different name or email gets no token (`null`), and that page keeps the plain
+confirmation. The page keeps `{ firstName, when, token, rescheduleUrl }` in
+`localStorage` (`jj-free-call-booking`, never her phone or email), so a reload
+or a phone that dropped the tab comes back to her call, not an empty form.
+
+While the confirmation is on screen it asks
+`GET /public/free-call/reschedule?t=<token>` on load, every 15 seconds while
+the tab is visible, and the moment she switches back to the tab:
+
+| Backend says | She sees |
+| --- | --- |
+| `missedAt` set, `state: scheduled` | "We missed you": when we tried, when we'll try again, **Call me now**, Pick another time |
+| `missedAt` set, `state: calling` | "We missed you", trying again now (no button: a dial is due) |
+| `missedAt` set, `state: open` (all dials used) | "We missed you", your call is still yours, **Call me now**, Pick another time |
+| `state: open`, `reason: cut_off` / `callback` | "Our call got cut off" / "When's a better time?", **Call me back now** |
+| `state: done` / `member` | Thanks for your call / You're already in |
+| `state: closed`, `reason: unreachable` | "We can't call this number", book with another number |
+| `state: closed`, `reason: replaced` | "Your call has changed", check your texts or book a new call |
+| `state: closed` | This free call is closed, book a new call |
+| anything else | the original "You're booked" card |
+
+**Call me now** is `POST /public/free-call/reschedule { t, when: { mode: "now" } }`:
+a fresh "now" booking with the same rules as the form (three dials, the hourly
+limit per phone, never while a call is live, never to a suppressed number).
+A 429 shows "You've asked for a lot of calls in the last hour". An expired
+link forgets the booking and shows the form again. Status checks pause while
+the request is in flight and answers asked before it are dropped, so the card
+after it always reflects the call she just asked for. A request with no answer
+in 15 seconds is not retried: the page checks the status and lets her try
+again.
+
 ## 3. Create the person as a lead, not a customer
 
 She has not paid. Create her in Yobody as a **lead**, kept separate from
