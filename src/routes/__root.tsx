@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { initPostHog } from "@/lib/analytics/posthog";
+import { JOIN_TOKEN_EARLY_SCRIPT } from "@/lib/start/lead";
 
 import appCss from "../styles.css?url";
 
@@ -113,6 +114,8 @@ function RootShell({ children }: { children: React.ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        {/* /start only: move the join token out of the URL before any tag below reads it. */}
+        <script dangerouslySetInnerHTML={{ __html: JOIN_TOKEN_EARLY_SCRIPT }} />
         {/* HYROS universal script — must load in <head> before the rest of the tags */}
         <script
           dangerouslySetInnerHTML={{

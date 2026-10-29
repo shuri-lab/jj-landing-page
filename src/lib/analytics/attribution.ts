@@ -70,6 +70,8 @@ const PII_PARAMS = [
   "fullName",
   "full_name",
   "phone",
+  // The /start join token: it looks up her name, email and phone.
+  "t",
 ];
 
 export function scrubUrl(input: string): string {

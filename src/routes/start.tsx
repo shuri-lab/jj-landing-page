@@ -16,7 +16,12 @@ import {
   trackStartViewed,
 } from "@/lib/analytics/start";
 import type { StartCtaLocation } from "@/lib/analytics/start";
-import { fetchLead, readFirstNameFromUrl, readLeadIdFromUrl } from "@/lib/start/lead";
+import {
+  fetchLead,
+  hideJoinTokenFromUrl,
+  readFirstNameFromUrl,
+  readJoinToken,
+} from "@/lib/start/lead";
 import type { StartLead } from "@/lib/start/lead";
 import { TERMS_URL } from "@/lib/booking/free-call-href";
 import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
@@ -143,16 +148,17 @@ function StartPage() {
   // Section reach + scroll depth (PostHog). Autocapture/replay covers the rest.
   useLandingBehaviorTracking();
 
-  // Who she is, in three tiers: the lead the join link points at, then the
+  // Who she is, in three tiers: the lead her join token points at, then the
   // first name the link itself carries, then nothing at all. Each tier renders
-  // a page that reads correctly, so a missing id or a failed lookup is never
+  // a page that reads correctly, so a missing token or a failed lookup is never
   // visible to her.
   useEffect(() => {
     let cancelled = false;
-    const leadId = readLeadIdFromUrl();
+    const token = readJoinToken();
+    hideJoinTokenFromUrl();
     const linkFirstName = readFirstNameFromUrl();
 
-    // Tier two: the name on the link. Used when there is no id to look up,
+    // Tier two: the name on the link. Used when there is no token to look up,
     // and when the lookup comes back empty or fails.
     const fallback: StartLead | null = linkFirstName
       ? { firstName: linkFirstName, planReference: null }
@@ -164,9 +170,11 @@ function StartPage() {
       trackStartViewed(Boolean(resolved?.firstName));
     };
 
-    if (leadId) {
-      fetchLead(leadId)
-        .then((found) => settle(found ?? fallback))
+    if (token) {
+      fetchLead(token)
+        .then((found) =>
+          settle(found ? { ...found, firstName: found.firstName ?? linkFirstName } : fallback),
+        )
         .catch(() => settle(fallback));
     } else {
       settle(fallback);
@@ -489,16 +497,16 @@ function Pricing() {
   const openedFromUrl = useRef(false);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
 
-  // Read once: the id is on the URL for the life of the visit, and the card
-  // must not see a new object on every render.
+  // Read once: the card must not see a new object on every render. The free
+  // call is linked by the join token (leadToken below), not by attribution.
   const checkoutAttribution = useMemo(
     () => ({
       sourceSurface: "landing" as const,
       sourceContext: "post-call-start",
-      freeCallLeadId: readLeadIdFromUrl(),
     }),
     [],
   );
+  const leadToken = useMemo(() => readJoinToken(), []);
 
   const choosePlan = (id: "monthly" | "quarter") => {
     const plan = OFFER_PLANS[id];
@@ -603,10 +611,20 @@ function Pricing() {
             key={selectedPlan.id}
             plan={selectedPlan}
             onChangePlan={() => setSelectedPlan(null)}
-            // The free-call lead rides along, so the backend promotes that
+            // The join token rides along, so the backend promotes her free-call
             // lead instead of opening a new one and her call data follows her.
             attribution={checkoutAttribution}
-            prefill={lead?.firstName ? { firstName: lead.firstName } : undefined}
+            leadToken={leadToken}
+            prefill={
+              lead
+                ? {
+                    firstName: lead.firstName ?? undefined,
+                    lastName: lead.lastName ?? undefined,
+                    email: lead.email ?? undefined,
+                    phone: lead.phone ?? undefined,
+                  }
+                : undefined
+            }
             onPurchaseComplete={() =>
               trackStartPurchaseCompleted({ plan: selectedPlan.id, value: selectedPlan.price })
             }

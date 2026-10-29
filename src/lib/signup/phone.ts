@@ -164,6 +164,25 @@ export function parseValidE164(
   }
 }
 
+/**
+ * A known E.164 number as the card's country + phone input: national format
+ * for +1 numbers ("(555) 123-4567"), international otherwise, so it still
+ * parses if her country is missing from the select. null when invalid.
+ */
+export function phoneFieldFromE164(e164: string): { iso: string; input: string } | null {
+  try {
+    const parsed = parsePhoneNumberFromString(e164.trim());
+    if (!parsed?.isValid() || !parsed.country) return null;
+    return {
+      iso: parsed.country,
+      input:
+        parsed.countryCallingCode === "1" ? parsed.formatNational() : parsed.formatInternational(),
+    };
+  } catch {
+    return null;
+  }
+}
+
 export const SMS_CONSENT_COPY =
   "Text me my link and a check-in from JJ (msg & data rates may apply, reply STOP to opt out)";
 
