@@ -93,10 +93,6 @@ export function buildMarketingAttribution(
       overrides?.metaEventId ??
       readQueryValue(params, ["meta_event_id", "metaEventId"]) ??
       clickIds.metaEventId,
-    // Arrives on the /start join link. Read here so it reaches the backend
-    // through the same path as every other attribution field.
-    freeCallLeadId:
-      overrides?.freeCallLeadId ?? readQueryValue(params, ["lead", "leadId", "lead_id"]) ?? "",
   };
 
   const compact: SignupMarketingAttribution = {};

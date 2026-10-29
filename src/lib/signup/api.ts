@@ -94,6 +94,8 @@ export const landingSignupApi = {
 
   startEmail(payload: {
     email: string;
+    /** The /start join token: links this signup to her free call. */
+    leadToken?: string | null;
     coachId: string;
     coachProgramConfigId?: string | null;
     billingInterval?: SignupBillingInterval | null;
@@ -137,6 +139,8 @@ export const landingSignupApi = {
 
   createCheckout(payload: {
     intentToken: string;
+    /** The /start join token: links this signup to her free call. */
+    leadToken?: string | null;
     coachProgramConfigId?: string | null;
     discountCode?: string | null;
     billingInterval?: SignupBillingInterval | null;

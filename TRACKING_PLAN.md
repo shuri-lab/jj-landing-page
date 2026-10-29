@@ -79,7 +79,10 @@ Non-negotiable: name, email, phone and payment data never reach PostHog.
    writes them back into the Stripe return URL). `scrubUrl()` rewrites those
    params to `redacted` in every URL-shaped property (`$current_url`,
    `$referrer`, `$initial_current_url`, `$session_entry_url`, `landing_url`, …)
-   and in replay network-request URLs.
+   and in replay network-request URLs. `?t=` (the /start join token, which
+   looks up her name, email and phone) is scrubbed the same way; on /start an
+   inline script at the top of `<head>` also moves it out of the address bar
+   before HYROS, the Meta Pixel, GA or PostHog read the URL.
 3. **Property scrubbing** — `sanitize_properties` deletes any property keyed
    `email`, `phone`, `name`, `first_name`, `last_name`, `card_number`, `cvc`,
    `iban`, `ssn`, `password` (and `*_email` / `*_phone` / `*_first_name` style

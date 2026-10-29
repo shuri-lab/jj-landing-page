@@ -18,6 +18,7 @@ import {
   SMS_CONSENT_COPY,
   nextNationalPhoneInput,
   parseValidE164,
+  phoneFieldFromE164,
   pickDefaultCountry,
   reformatNationalPhone,
   startEmailPhoneField,
@@ -75,9 +76,16 @@ type Props = {
   /**
    * Known contact details, when the page already knows who she is. /start
    * fills these from the lead on her join link so she is not asked twice.
-   * The URL prefill still wins, since that is an explicit hand-off.
+   * The URL prefill still wins, since that is an explicit hand-off. They can
+   * arrive after the card opens; they only ever fill a field that is still
+   * empty and that she has not touched. `phone` is E.164.
    */
-  prefill?: { firstName?: string; lastName?: string; email?: string };
+  prefill?: { firstName?: string; lastName?: string; email?: string; phone?: string };
+  /**
+   * /start's join token. Sent with the signup and checkout calls so the
+   * backend links this signup to her free call. Omitted everywhere else.
+   */
+  leadToken?: string | null;
   /** Fired once the browser has seen the payment complete. */
   onPurchaseComplete?: (orderId: string | undefined) => void;
 };
@@ -123,6 +131,7 @@ export function SignupCheckoutCard({
   plan,
   attribution,
   prefill: knownContact,
+  leadToken,
   onPurchaseComplete,
 }: Props) {
   const urlPrefill = useMemo(() => readLandingPrefill(), []);
@@ -149,8 +158,14 @@ export function SignupCheckoutCard({
   const [emailSuggestion, setEmailSuggestion] = useState<string | null>(() =>
     prefill.email ? suggestEmail(prefill.email) : null,
   );
-  const [phone, setPhone] = useState("");
-  const [phoneIso, setPhoneIso] = useState("US");
+  const knownPhone = useMemo(
+    () => (knownContact?.phone ? phoneFieldFromE164(knownContact.phone) : null),
+    [knownContact?.phone],
+  );
+  const [phone, setPhone] = useState(knownPhone?.input ?? "");
+  const [phoneIso, setPhoneIso] = useState(knownPhone?.iso ?? "US");
+  // Fields she has typed in. Known details never overwrite these.
+  const editedRef = useRef({ email: false, name: false, phone: false });
   const [smsConsent, setSmsConsent] = useState(false);
   const [step, setStep] = useState<CheckoutCardStep>("contact");
   const [intentToken, setIntentToken] = useState<string | null>(null);
@@ -230,6 +245,34 @@ export function SignupCheckoutCard({
     setPhone((prev) => reformatNationalPhone(prev, iso));
     setError("");
   }, []);
+
+  // The /start lookup can settle after the card has opened. Fill only what is
+  // still empty and untouched, so nothing she typed is ever replaced.
+  useEffect(() => {
+    const edited = editedRef.current;
+    if (!edited.email && !email.trim() && prefill.email) {
+      setEmail(prefill.email);
+      setEmailSuggestion(suggestEmail(prefill.email));
+    }
+    if (!edited.name && !fullName.trim() && prefill.fullName) {
+      setFullName(prefill.fullName);
+      setFirstName((prev) => prev || prefill.firstName);
+      setLastName((prev) => prev || prefill.lastName);
+    }
+    if (!edited.phone && !phone.trim() && knownPhone) {
+      setPhone(knownPhone.input);
+      setPhoneIso(knownPhone.iso);
+    }
+  }, [
+    email,
+    fullName,
+    knownPhone,
+    phone,
+    prefill.email,
+    prefill.firstName,
+    prefill.fullName,
+    prefill.lastName,
+  ]);
 
   const trackingBase = useMemo(
     () => ({
@@ -493,6 +536,7 @@ export function SignupCheckoutCard({
           }
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
+            leadToken: leadToken || undefined,
             coachProgramConfigId: program?.id,
             discountCode: appliedDiscountCode,
             billingInterval: plan.billingInterval,
@@ -534,6 +578,7 @@ export function SignupCheckoutCard({
     enterPaidSuccess,
     firstName,
     lastName,
+    leadToken,
     persistIntent,
     plan,
     prefill.email,
@@ -566,6 +611,7 @@ export function SignupCheckoutCard({
       const hadSession = Boolean(token);
       const started = await landingSignupApi.startEmail({
         email: email.trim(),
+        leadToken: leadToken || undefined,
         coachId: config.coachId,
         coachProgramConfigId: program?.id,
         billingInterval: plan.billingInterval,
@@ -611,6 +657,7 @@ export function SignupCheckoutCard({
       config?.coachId,
       email,
       intentToken,
+      leadToken,
       persistIntent,
       phoneE164,
       smsConsent,
@@ -740,6 +787,7 @@ export function SignupCheckoutCard({
       // resolved program instead of overriding it with a local guess.
       const checkout = await landingSignupApi.createCheckout({
         intentToken: token,
+        leadToken: leadToken || undefined,
         discountCode: appliedDiscountCode,
         billingInterval: plan.billingInterval,
         returnUrl: buildEmbeddedReturnUrl({
@@ -820,6 +868,7 @@ export function SignupCheckoutCard({
     enterPaidSuccess,
     fullName,
     handleExistingEmail,
+    leadToken,
     persistIntent,
     phone,
     phoneE164,
@@ -1023,6 +1072,7 @@ export function SignupCheckoutCard({
             value={email}
             onChange={(e) => {
               noteFormStarted();
+              editedRef.current.email = true;
               setEmail(e.target.value);
               setEmailSuggestion(suggestEmail(e.target.value));
               setError("");
@@ -1036,6 +1086,7 @@ export function SignupCheckoutCard({
                 type="button"
                 className="chk-link"
                 onClick={() => {
+                  editedRef.current.email = true;
                   setEmail(emailSuggestion);
                   setEmailSuggestion(null);
                 }}
@@ -1057,6 +1108,7 @@ export function SignupCheckoutCard({
             value={fullName}
             onChange={(e) => {
               noteFormStarted();
+              editedRef.current.name = true;
               setFullName(e.target.value);
               setError("");
             }}
@@ -1072,7 +1124,10 @@ export function SignupCheckoutCard({
               className="chk-country"
               aria-label="Country code"
               value={effectivePhoneIso}
-              onChange={(e) => handlePhoneCountryChange(e.target.value)}
+              onChange={(e) => {
+                editedRef.current.phone = true;
+                handlePhoneCountryChange(e.target.value);
+              }}
               disabled={isPreparing || isVerifyingDiscount}
             >
               {phoneCountries.map((c) => (
@@ -1091,6 +1146,7 @@ export function SignupCheckoutCard({
               value={phone}
               onChange={(e) => {
                 noteFormStarted();
+                editedRef.current.phone = true;
                 handlePhoneChange(e.target.value);
               }}
               disabled={isPreparing || isVerifyingDiscount}

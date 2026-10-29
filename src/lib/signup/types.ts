@@ -33,12 +33,6 @@ export interface SignupMarketingAttribution {
   fbc?: string | null;
   fbp?: string | null;
   metaEventId?: string | null;
-  /**
-   * The free-call lead this signup came from, so the backend can promote that
-   * lead rather than starting a new one. Set by /start, which receives it on
-   * the join link. Absent everywhere else.
-   */
-  freeCallLeadId?: string | null;
 }
 
 export interface PublicCoachProgram {
