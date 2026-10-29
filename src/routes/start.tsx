@@ -17,12 +17,14 @@ import {
 } from "@/lib/analytics/start";
 import type { StartCtaLocation } from "@/lib/analytics/start";
 import {
+  fetchJoinPrefill,
   fetchLead,
   hideJoinTokenFromUrl,
   readFirstNameFromUrl,
   readJoinToken,
+  readLeadIdFromUrl,
 } from "@/lib/start/lead";
-import type { StartLead } from "@/lib/start/lead";
+import type { JoinPrefill, StartLead } from "@/lib/start/lead";
 import { TERMS_URL } from "@/lib/booking/free-call-href";
 import { useLandingBehaviorTracking } from "@/lib/analytics/use-landing-behavior";
 import type { OfferPlan } from "@/lib/signup/types";
@@ -101,8 +103,17 @@ const scroll = () => scrollToOffer();
  * `lead` is null until the lookup settles and stays null when there is nothing
  * to show, which is what every generic fallback below keys off.
  */
-type StartContextValue = { lead: StartLead | null; personalized: boolean };
-const StartContext = createContext<StartContextValue>({ lead: null, personalized: false });
+type StartContextValue = {
+  lead: StartLead | null;
+  personalized: boolean;
+  /** Her join token's checkout fields. Fills the card only, never the page copy. */
+  contact: JoinPrefill | null;
+};
+const StartContext = createContext<StartContextValue>({
+  lead: null,
+  personalized: false,
+  contact: null,
+});
 const useStartLead = () => useContext(StartContext);
 
 /** "Tanya" when we know her, null otherwise. Never a placeholder name. */
@@ -145,20 +156,20 @@ function StartPage() {
   const [showSticky, setShowSticky] = useState(false);
   const [offerVisible, setOfferVisible] = useState(false);
   const [lead, setLead] = useState<StartLead | null>(null);
+  const [contact, setContact] = useState<JoinPrefill | null>(null);
   // Section reach + scroll depth (PostHog). Autocapture/replay covers the rest.
   useLandingBehaviorTracking();
 
-  // Who she is, in three tiers: the lead her join token points at, then the
+  // Who she is, in three tiers: the lead the join link points at, then the
   // first name the link itself carries, then nothing at all. Each tier renders
-  // a page that reads correctly, so a missing token or a failed lookup is never
+  // a page that reads correctly, so a missing id or a failed lookup is never
   // visible to her.
   useEffect(() => {
     let cancelled = false;
-    const token = readJoinToken();
-    hideJoinTokenFromUrl();
+    const leadId = readLeadIdFromUrl();
     const linkFirstName = readFirstNameFromUrl();
 
-    // Tier two: the name on the link. Used when there is no token to look up,
+    // Tier two: the name on the link. Used when there is no id to look up,
     // and when the lookup comes back empty or fails.
     const fallback: StartLead | null = linkFirstName
       ? { firstName: linkFirstName, planReference: null }
@@ -170,11 +181,9 @@ function StartPage() {
       trackStartViewed(Boolean(resolved?.firstName));
     };
 
-    if (token) {
-      fetchLead(token)
-        .then((found) =>
-          settle(found ? { ...found, firstName: found.firstName ?? linkFirstName } : fallback),
-        )
+    if (leadId) {
+      fetchLead(leadId)
+        .then((found) => settle(found ?? fallback))
         .catch(() => settle(fallback));
     } else {
       settle(fallback);
@@ -185,9 +194,25 @@ function StartPage() {
     };
   }, []);
 
+  // Her join token fills the checkout fields, nothing else: the page copy
+  // above reads the same for everyone (Christophe, 2026-10-29).
+  useEffect(() => {
+    let cancelled = false;
+    const token = readJoinToken();
+    hideJoinTokenFromUrl();
+    if (token) {
+      void fetchJoinPrefill(token).then((found) => {
+        if (!cancelled) setContact(found);
+      });
+    }
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const startContext = useMemo(
-    () => ({ lead, personalized: Boolean(lead?.firstName) }),
-    [lead],
+    () => ({ lead, personalized: Boolean(lead?.firstName), contact }),
+    [contact, lead],
   );
   // Meta Pixel ViewContent is fired globally in __root.tsx for every landing page.
   useEffect(() => {
@@ -492,7 +517,7 @@ const VALUE_STACK: { label: string; value: number; note?: string; bonus?: boolea
 
 function Pricing() {
   const { premium: program } = useCoachPrograms();
-  const { lead, personalized } = useStartLead();
+  const { lead, personalized, contact } = useStartLead();
   const [selectedPlan, setSelectedPlan] = useState<OfferPlan | null>(null);
   const openedFromUrl = useRef(false);
   const totalValue = VALUE_STACK.reduce((n, it) => n + it.value, 0);
@@ -616,12 +641,12 @@ function Pricing() {
             attribution={checkoutAttribution}
             leadToken={leadToken}
             prefill={
-              lead
+              contact || lead?.firstName
                 ? {
-                    firstName: lead.firstName ?? undefined,
-                    lastName: lead.lastName ?? undefined,
-                    email: lead.email ?? undefined,
-                    phone: lead.phone ?? undefined,
+                    firstName: contact?.firstName ?? lead?.firstName ?? undefined,
+                    lastName: contact?.lastName ?? undefined,
+                    email: contact?.email ?? undefined,
+                    phone: contact?.phone ?? undefined,
                   }
                 : undefined
             }
