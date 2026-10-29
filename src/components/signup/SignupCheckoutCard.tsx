@@ -22,11 +22,7 @@ import {
   reformatNationalPhone,
   startEmailPhoneField,
 } from "@/lib/signup/phone";
-import {
-  envStripePublishableKey,
-  envYobodyAuthUrl,
-  envYobodyTermsUrl,
-} from "@/lib/signup/env";
+import { envStripePublishableKey, envYobodyAuthUrl, envYobodyTermsUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
 import {
@@ -61,6 +57,7 @@ import type {
   OfferPlan,
   PublicCoachProgram,
   SignupIntentResponse,
+  SignupMarketingAttribution,
 } from "@/lib/signup/types";
 import { mapIntentToWizardStep, wizardIndex } from "@/lib/signup/wizard";
 import productMark from "@/assets/yobody-jj-smith-logo.png";
@@ -69,6 +66,20 @@ import "./signup-checkout-card.css";
 type Props = {
   plan: OfferPlan;
   onChangePlan: () => void;
+  /**
+   * Attribution overrides for the lead this checkout creates. /start uses it
+   * to carry the free-call lead id and its own source context. Omitted
+   * everywhere else, so the landing pages behave exactly as before.
+   */
+  attribution?: Partial<SignupMarketingAttribution>;
+  /**
+   * Known contact details, when the page already knows who she is. /start
+   * fills these from the lead on her join link so she is not asked twice.
+   * The URL prefill still wins, since that is an explicit hand-off.
+   */
+  prefill?: { firstName?: string; lastName?: string; email?: string };
+  /** Fired once the browser has seen the payment complete. */
+  onPurchaseComplete?: (orderId: string | undefined) => void;
 };
 
 const STEP_COPY: Record<CheckoutCardStep, { title: string; sub: string }> = {
@@ -108,8 +119,26 @@ function Progress({ step }: { step: CheckoutCardStep }) {
   );
 }
 
-export function SignupCheckoutCard({ plan }: Props) {
-  const prefill = useMemo(() => readLandingPrefill(), []);
+export function SignupCheckoutCard({
+  plan,
+  attribution,
+  prefill: knownContact,
+  onPurchaseComplete,
+}: Props) {
+  const urlPrefill = useMemo(() => readLandingPrefill(), []);
+  // The URL wins: it is an explicit hand-off, for example the in-app browser
+  // escape. A known lead only fills what the URL left empty.
+  const prefill = useMemo(() => {
+    const firstName = urlPrefill.firstName || knownContact?.firstName || "";
+    const lastName = urlPrefill.lastName || knownContact?.lastName || "";
+    return {
+      ...urlPrefill,
+      email: urlPrefill.email || knownContact?.email || "",
+      firstName,
+      lastName,
+      fullName: urlPrefill.fullName || [firstName, lastName].filter(Boolean).join(" "),
+    };
+  }, [urlPrefill, knownContact?.email, knownContact?.firstName, knownContact?.lastName]);
   const urlDiscountCode = useMemo(() => (readDiscountCodeFromUrl() ?? "").trim().toUpperCase(), []);
   const [config, setConfig] = useState<LovablePublicConfig | null>(null);
   const [configError, setConfigError] = useState("");
@@ -160,7 +189,7 @@ export function SignupCheckoutCard({ plan }: Props) {
   const totalAmount = Math.max(0, amount - amountOff);
   const appliedDiscountCode =
     discountInput.trim() && discountState.verified
-      ? discountState.code ?? discountInput.trim()
+      ? (discountState.code ?? discountInput.trim())
       : null;
   const stripeKey = config?.stripePublishableKey || envStripePublishableKey();
   const stripePromise = useMemo(() => (stripeKey ? loadStripe(stripeKey) : null), [stripeKey]);
@@ -349,8 +378,11 @@ export function SignupCheckoutCard({ plan }: Props) {
         currency: response.purchaseTracking?.currency ?? "USD",
         offer_id: response.purchaseTracking?.contentId ?? program?.id,
       });
+      onPurchaseComplete?.(
+        response.purchaseTracking?.orderId ?? fallbackId ?? response.intentId ?? undefined,
+      );
     },
-    [program?.id, totalAmount],
+    [onPurchaseComplete, program?.id, totalAmount],
   );
 
   const enterPaidSuccess = useCallback(
@@ -546,6 +578,7 @@ export function SignupCheckoutCard({ plan }: Props) {
           buttonPosition: plan.buttonPosition,
           ctaText: plan.ctaLabel,
           tier: trackingBase.tier,
+          ...attribution,
         }),
       });
       persistIntent(started, { firstName: contactFirst, lastName: contactLast });
@@ -574,6 +607,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       return { token, started, hadSession };
     },
     [
+      attribution,
       config?.coachId,
       email,
       intentToken,
@@ -642,10 +676,7 @@ export function SignupCheckoutCard({ plan }: Props) {
       }
       setDiscountState({
         verified: false,
-        message:
-          err instanceof SignupApiError
-            ? err.message
-            : "Invalid or expired discount code.",
+        message: err instanceof SignupApiError ? err.message : "Invalid or expired discount code.",
       });
     } finally {
       setIsVerifyingDiscount(false);
@@ -693,10 +724,7 @@ export function SignupCheckoutCard({ plan }: Props) {
     setStep("payment");
     let stage: "start_email" | "create_checkout" = "start_email";
     try {
-      const { token, started, hadSession } = await ensureSignupIntent(
-        contactFirst,
-        contactLast,
-      );
+      const { token, started, hadSession } = await ensureSignupIntent(contactFirst, contactLast);
       if (!hadSession) {
         trackSignupMethodSelect("email", trackingBase);
         trackSignupLead(trackingBase);
@@ -919,7 +947,12 @@ export function SignupCheckoutCard({ plan }: Props) {
               <a
                 className="chk-pay"
                 href={handoffUrl}
-                style={{ display: "grid", placeItems: "center", textDecoration: "none", color: "white" }}
+                style={{
+                  display: "grid",
+                  placeItems: "center",
+                  textDecoration: "none",
+                  color: "white",
+                }}
               >
                 Continue
               </a>
@@ -1171,11 +1204,7 @@ export function SignupCheckoutCard({ plan }: Props) {
                       </button>
                     </div>
                     {discountState.message ? (
-                      <p
-                        className={
-                          discountState.verified ? "chk-discount-ok" : "chk-error"
-                        }
-                      >
+                      <p className={discountState.verified ? "chk-discount-ok" : "chk-error"}>
                         {discountState.message}
                       </p>
                     ) : null}
