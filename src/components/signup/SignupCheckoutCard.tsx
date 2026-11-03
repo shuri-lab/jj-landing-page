@@ -31,6 +31,7 @@ import {
 import { envStripePublishableKey, envYobodyAuthUrl, envYobodyTermsUrl } from "@/lib/signup/env";
 import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
+import { checkoutTermsCadence } from "@/lib/signup/terms";
 import {
   clearSignupIntentSession,
   forgetSignupDiscountCode,
@@ -1031,15 +1032,11 @@ export function SignupCheckoutCard({
     }
 
     if (step === "payment") {
-      const termsAmount = Number.isInteger(totalAmount)
-        ? `$${totalAmount}`
-        : formatUsd(totalAmount);
-      const termsCadence =
-        plan.billingInterval === "FULL_PROGRAM"
-          ? `One payment of ${termsAmount} for the full program — no renewal.`
-          : plan.billingInterval === "MULTI_MONTH"
-            ? `${termsAmount} every 3 months, cancel anytime.`
-            : `${termsAmount}/month, cancel anytime.`;
+      const termsCadence = checkoutTermsCadence({
+        billingInterval: plan.billingInterval,
+        planAmount: amount,
+        totalAmount,
+      });
       return (
         <>
           {clientSecret && stripePromise ? (
