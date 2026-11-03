@@ -10,6 +10,12 @@ export interface SignupIntentSession {
 }
 
 const KEY = "yobody-signup-intent";
+/**
+ * The discount code she applied to this signup, kept so that reloading the
+ * checkout resumes with it. It has its own key so that saving the session
+ * again never drops it, and it is ignored once the session is another signup's.
+ */
+const DISCOUNT_KEY = "yobody-signup-discount";
 
 export function saveSignupIntentSession(value: SignupIntentSession): void {
   if (typeof window === "undefined") return;
@@ -49,7 +55,41 @@ export function clearSignupIntentSession(): void {
   if (typeof window === "undefined") return;
   try {
     localStorage.removeItem(KEY);
+    localStorage.removeItem(DISCOUNT_KEY);
   } catch {
     /* ignore */
+  }
+}
+
+export function rememberSignupDiscountCode(intentId: string, code: string): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(DISCOUNT_KEY, JSON.stringify({ intentId, code }));
+  } catch {
+    /* ignore */
+  }
+}
+
+/** She changed or removed the code: a reload must not bring the old one back. */
+export function forgetSignupDiscountCode(): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.removeItem(DISCOUNT_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+export function getRememberedSignupDiscountCode(intentId: string): string | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = localStorage.getItem(DISCOUNT_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { intentId?: unknown; code?: unknown };
+    return parsed.intentId === intentId && typeof parsed.code === "string" && parsed.code
+      ? parsed.code
+      : null;
+  } catch {
+    return null;
   }
 }

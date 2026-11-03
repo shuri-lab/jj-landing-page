@@ -12,6 +12,11 @@ import {
   readLandingPrefill,
 } from "@/lib/signup/attribution";
 import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
+import {
+  restoreRememberedDiscount,
+  verifiedDiscountState,
+  type DiscountState,
+} from "@/lib/signup/discount";
 import { copyText, inAppName, isInAppBrowser, openInSystemBrowser } from "@/lib/signup/inapp";
 import { isValidEmail, suggestEmail } from "@/lib/signup/email";
 import {
@@ -28,7 +33,10 @@ import { hydrateMetaClickIdsFromUrl } from "@/lib/signup/meta-pixel";
 import { amountForInterval, formatUsd, pickLandingProgram } from "@/lib/signup/plans";
 import {
   clearSignupIntentSession,
+  forgetSignupDiscountCode,
+  getRememberedSignupDiscountCode,
   getSignupIntentSession,
+  rememberSignupDiscountCode,
   saveSignupIntentSession,
 } from "@/lib/signup/session";
 import {
@@ -180,13 +188,7 @@ export function SignupCheckoutCard({
   const [escapeUrl, setEscapeUrl] = useState<string | null>(null);
   const [escapeHint, setEscapeHint] = useState<"idle" | "manual" | "copied">("idle");
   const [discountInput, setDiscountInput] = useState(urlDiscountCode);
-  const [discountState, setDiscountState] = useState<{
-    verified: boolean;
-    code?: string;
-    amountOff?: number;
-    discountedAmount?: number;
-    message?: string;
-  }>({ verified: false });
+  const [discountState, setDiscountState] = useState<DiscountState>({ verified: false });
   const [isVerifyingDiscount, setIsVerifyingDiscount] = useState(false);
   const [discountOpen, setDiscountOpen] = useState(() => Boolean(urlDiscountCode));
   const [leadId, setLeadId] = useState<string | null>(null);
@@ -534,11 +536,30 @@ export function SignupCheckoutCard({
               return;
             }
           }
+          // The reload cleared the card's discount. Bring back the code she
+          // applied: a checkout created without it clears the discount saved
+          // on her signup and charges the full price.
+          const restored = appliedDiscountCode
+            ? null
+            : await restoreRememberedDiscount({
+                rememberedCode: getRememberedSignupDiscountCode(session.intentId),
+                verify: (code) =>
+                  landingSignupApi.verifyDiscount({
+                    intentToken: session.intentToken,
+                    discountCode: code,
+                    billingInterval: plan.billingInterval,
+                  }),
+              });
+          if (restored) {
+            setDiscountState(restored.state);
+            setDiscountInput(restored.code);
+            setDiscountOpen(false);
+          }
           const checkout = await landingSignupApi.createCheckout({
             intentToken: session.intentToken,
             leadToken: leadToken || undefined,
             coachProgramConfigId: program?.id,
-            discountCode: appliedDiscountCode,
+            discountCode: restored?.code ?? appliedDiscountCode,
             billingInterval: plan.billingInterval,
             returnUrl: buildEmbeddedReturnUrl({
               plan: plan.id,
@@ -694,7 +715,7 @@ export function SignupCheckoutCard({
     try {
       setFirstName(contactFirst);
       setLastName(contactLast);
-      const { token } = await ensureSignupIntent(contactFirst, contactLast, {
+      const { token, started } = await ensureSignupIntent(contactFirst, contactLast, {
         includePhone: false,
       });
       // No coachProgramConfigId: the intent already carries the
@@ -705,13 +726,9 @@ export function SignupCheckoutCard({
         discountCode: code,
         billingInterval: plan.billingInterval,
       });
-      setDiscountState({
-        verified: true,
-        code: verified.discount.code,
-        amountOff: verified.discount.amountOff,
-        discountedAmount: verified.discount.discountedAmount,
-        message: "Discount applied.",
-      });
+      setDiscountState(verifiedDiscountState(verified));
+      // Kept with her signup, so a reload resumes the checkout with this code.
+      rememberSignupDiscountCode(started.intentId, verified.discount.code);
       setDiscountInput(verified.discount.code);
       setDiscountOpen(false);
       setClientSecret(null);
@@ -1229,6 +1246,7 @@ export function SignupCheckoutCard({
                           if (discountState.verified || discountState.message) {
                             setDiscountState({ verified: false });
                           }
+                          if (discountState.verified) forgetSignupDiscountCode();
                           setClientSecret(null);
                           prepareKeyRef.current = "";
                           setError("");
