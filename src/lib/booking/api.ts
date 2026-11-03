@@ -1,8 +1,8 @@
 import type { BookingPayload, BookingResult, CallReason, CallState, CallStatus } from "./types";
 
-/** Yobody's dev API until the free-call engine launches on production. */
+/** Yobody's production API; set VITE_FREE_CALL_API_URL to point a local or preview build elsewhere. */
 export function apiBase(): string {
-  return (import.meta.env.VITE_FREE_CALL_API_URL ?? "https://api-dev.yobyinfra.cloud").replace(
+  return (import.meta.env.VITE_FREE_CALL_API_URL ?? "https://api.yoplatform.ai").replace(
     /\/$/,
     "",
   );
