@@ -5,13 +5,15 @@
  * booked call back to the ad that paid for it.
  */
 
-import { getAttribution } from "@/lib/analytics/attribution";
+import { deriveTrafficChannel, getAttribution } from "@/lib/analytics/attribution";
 import { FREE_CALL_PATH } from "./config";
 import type { BookingUtm } from "./types";
 
 export interface BookingContext {
   utm: BookingUtm;
   referrer: string | null;
+  /** The reporting channel: an Instagram click with no UTMs is instagram_organic, not direct. */
+  trafficChannel: string | null;
   pagePath: string;
 }
 
@@ -26,6 +28,7 @@ const UTM_KEYS = {
 export const EMPTY_BOOKING_CONTEXT: BookingContext = {
   utm: { source: null, medium: null, campaign: null, content: null, term: null },
   referrer: null,
+  trafficChannel: null,
   pagePath: FREE_CALL_PATH,
 };
 
@@ -57,6 +60,7 @@ export function readBookingContext(): BookingContext {
       term: pick(UTM_KEYS.term),
     },
     referrer: document.referrer || last.referrer || first.referrer || null,
+    trafficChannel: deriveTrafficChannel(last),
     pagePath: window.location.pathname || FREE_CALL_PATH,
   };
 }

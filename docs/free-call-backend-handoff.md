@@ -89,6 +89,7 @@ The payload is exactly this shape:
     "term": "string or null"
   },
   "referrer": "string or null",
+  "trafficChannel": "string or null",
   "pagePath": "/free-call",
   "submittedAt": "ISO 8601 datetime"
 }

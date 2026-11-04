@@ -185,6 +185,7 @@ export function BookingForm() {
       consentAt: consentAt.current ?? now,
       utm: ctx.utm,
       referrer: ctx.referrer,
+      trafficChannel: ctx.trafficChannel,
       pagePath: ctx.pagePath || FREE_CALL_PATH,
       submittedAt: now,
     };
