@@ -298,7 +298,6 @@ function Hero() {
     { Icon: UtensilsCrossed, label: "Food you love" },
   ];
   const firstName = useFirstName();
-  const planReference = useStartLead().lead?.planReference;
   return (
     <section data-yb-section="hero" className="ly-band ly-hero">
       <div className="ly-hero-stage">
@@ -307,14 +306,11 @@ function Hero() {
             {/* The trust pill stays exactly as the main page has it. This is
                 still a sales page: nothing here is swapped for a soft welcome. */}
             <HeroTrust />
-            {/* Her name when we have it, and the main page's promise either
-                way. The generic headline has to read as the intended one. */}
-            <h1 className="ly-h1 ly-hero-h1 ly-start-h1">{firstName ? `${firstName}, finally` : "Finally"} lose the weight, <Hi>without giving up the food you love.</Hi></h1>
-            <p className="ly-hero-sub">You&rsquo;ve talked to me and your first week is built. Now we keep going together, <Mark>up to 15 pounds in your first 30 days</Mark>, with food you actually love, until every last pound is gone.</p>
-            <p className="ly-start-saved">
-              <span className="ly-start-saved-ico" aria-hidden><Check className="ly-ico-12" /></span>
-              {planReference ? <><strong>{planReference}</strong> from our call is saved.</> : <>Your plan from our call is saved.</>} We pick up right where we left off, nothing restarts.
-            </p>
+            {/* With her name the headline drops "after 40", since it is already
+                personal. With no name it falls back to the main page's headline
+                word for word, so the hero is then identical to /. */}
+            <h1 className="ly-h1 ly-hero-h1">{firstName ? `${firstName}, finally lose the weight,` : "Finally lose the weight after 40,"} <Hi>without giving up the food you love.</Hi></h1>
+            <p className="ly-hero-sub">Lose up to <Mark>15 pounds in your first 30 days</Mark>, and we keep going together, with food you actually love, until every last pound is gone.</p>
             <div className="ly-hero-action">
               <Cta label="Start today" sub={CTA_SUB} full />
             </div>
@@ -876,13 +872,6 @@ const CSS = `
 .ly-hero-badge-2{top:46%;right:-4%}
 .ly-hero-badge-3{bottom:14%;left:-5%}
 .ly-hero-action{max-width:480px;margin-top:24px}
-
-/* ── /start: the warm top ─────────────────────────────────────────────── */
-/* balanced, so a name never lands alone on the last line */
-.ly-start-h1{text-wrap:balance}
-.ly-start-saved{display:flex;align-items:flex-start;gap:9px;margin:16px 0 0;max-width:540px;font-size:15px;line-height:1.5;font-weight:600;color:var(--ink-soft)}
-.ly-start-saved strong{color:var(--purple-deep);font-weight:800}
-.ly-start-saved-ico{display:flex;align-items:center;justify-content:center;width:22px;height:22px;flex:0 0 auto;margin-top:1px;border-radius:999px;background:var(--grad);color:#fff}
 
 /* hero trust (eyebrow / mobile pill) */
 .ly-trust .ly-tdesk{display:none} .ly-bdesk{display:none}
