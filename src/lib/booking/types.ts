@@ -33,6 +33,7 @@ export interface BookingPayload {
   consentAt: string;
   utm: BookingUtm;
   referrer: string | null;
+  trafficChannel: string | null;
   pagePath: string;
   submittedAt: string;
 }
