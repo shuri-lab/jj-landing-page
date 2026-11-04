@@ -38,3 +38,26 @@ export function buildContinueSignupUrl(input: {
   params.set("step", "success");
   return `${resolveContinueSignupBase(input.config)}?${params.toString()}`;
 }
+
+/**
+ * The hand-off URL with her free-call join token in the URL fragment (#t=).
+ *
+ * The app reads it to fill her phone from her call (and to skip the text code
+ * for the number her link was texted to). A fragment never reaches a server
+ * log, and the app moves it into storage before its trackers read the address
+ * bar. It is added only here, at the moment she is sent on, so the token is
+ * never in the page's DOM (the "Continue" link's href), where a session
+ * recording could keep it. No token, no change.
+ */
+export function withLeadTokenFragment(url: string, leadToken?: string | null): string {
+  const token = leadToken?.trim();
+  if (!url || !token) return url;
+  try {
+    const target = new URL(url);
+    const part = `t=${encodeURIComponent(token)}`;
+    target.hash = target.hash.length > 1 ? `${target.hash.slice(1)}&${part}` : part;
+    return target.toString();
+  } catch {
+    return url;
+  }
+}

@@ -11,7 +11,7 @@ import {
   readDiscountCodeFromUrl,
   readLandingPrefill,
 } from "@/lib/signup/attribution";
-import { buildContinueSignupUrl } from "@/lib/signup/continue-signup";
+import { buildContinueSignupUrl, withLeadTokenFragment } from "@/lib/signup/continue-signup";
 import {
   restoreRememberedDiscount,
   verifiedDiscountState,
@@ -445,10 +445,10 @@ export function SignupCheckoutCard({
   useEffect(() => {
     if (step !== "success" || !handoffUrl) return;
     const redirect = window.setTimeout(() => {
-      window.location.assign(handoffUrl);
+      window.location.assign(withLeadTokenFragment(handoffUrl, leadToken));
     }, 4500);
     return () => window.clearTimeout(redirect);
-  }, [handoffUrl, step]);
+  }, [handoffUrl, leadToken, step]);
 
   // Keep lastActivityAt fresh while the prospect is on contact/payment so the
   // 30-minute cart-abandon clock does not fire mid-checkout.
@@ -1014,6 +1014,12 @@ export function SignupCheckoutCard({
               <a
                 className="chk-pay"
                 href={handoffUrl}
+                onClick={(event) => {
+                  // Her free-call token goes along only now, never in the page.
+                  if (!leadToken) return;
+                  event.preventDefault();
+                  window.location.assign(withLeadTokenFragment(handoffUrl, leadToken));
+                }}
                 style={{
                   display: "grid",
                   placeItems: "center",
