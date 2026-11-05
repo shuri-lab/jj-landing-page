@@ -10,6 +10,7 @@ import {
 } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { initPostHog } from "@/lib/analytics/posthog";
+import { EARLY_PAGE_SCRIPT, EARLY_PAGE_STYLE, markAppReady } from "@/lib/analytics/early-page";
 import { JOIN_TOKEN_EARLY_SCRIPT } from "@/lib/start/lead";
 
 import appCss from "../styles.css?url";
@@ -116,24 +117,15 @@ function RootShell({ children }: { children: React.ReactNode }) {
         <HeadContent />
         {/* /start only: move the join token out of the URL before any tag below reads it. */}
         <script dangerouslySetInnerHTML={{ __html: JOIN_TOKEN_EARLY_SCRIPT }} />
-        {/* HYROS universal script — must load in <head> before the rest of the tags */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `var hyrosHead = document.head;
-var hyrosScript = document.createElement('script');
-hyrosScript.type = 'text/javascript';
-hyrosScript.src = "https://224254.t.hyros.com/v1/lst/universal-script?ph=01be9e27086bea56a534993ace52a5cd7b38088eb9e5420fe8c09b155e83f308&tag=!clicked&ref_url=" + encodeURI(document.URL) ;
-hyrosHead.appendChild(hyrosScript);`,
-          }}
-        />
+        {/* Loads the tags (HYROS first) once the app is interactive; see early-page.ts. */}
+        <style dangerouslySetInnerHTML={{ __html: EARLY_PAGE_STYLE }} />
+        <script dangerouslySetInnerHTML={{ __html: EARLY_PAGE_SCRIPT }} />
         {/* Meta Pixel bootstrap — kept inline so calls queue before the library loads */}
         <script
           dangerouslySetInnerHTML={{
             __html: `!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[]}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');`,
           }}
         />
-        {/* A literal script URL is easier for Meta's Event Setup detector to identify. */}
-        <script async src="https://connect.facebook.net/en_US/fbevents.js" />
         <script
           dangerouslySetInnerHTML={{
             __html: `fbq('init','920675803850327');fbq('track','PageView');`,
@@ -193,16 +185,9 @@ if(!fired.has(a)){fired.add(a);if(typeof window.fbq==='function'){window.fbq('tr
         />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);})(window, document, "clarity", "script", "wu4kkcr0lk");`,
-          }}
-        />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYRYHREW2F" />
-        <script
-          dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-PYRYHREW2F');`,
           }}
         />
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-6NTF2GY6XX" />
         <script
           dangerouslySetInnerHTML={{
             __html: `window.dataLayer = window.dataLayer || [];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'G-6NTF2GY6XX');`,
@@ -231,6 +216,7 @@ function RootComponent() {
   // live in lib/analytics/posthog.ts; this is the single initialization site.
   useEffect(() => {
     initPostHog();
+    markAppReady();
   }, []);
 
   // Meta Pixel ViewContent — fires on every landing page (all routes except checkout flow)

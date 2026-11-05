@@ -33,6 +33,8 @@ Analytics already on the page, all left intact and unchanged:
 | Microsoft Clarity `wu4kkcr0lk` | `__root.tsx` body          |                                                                                                         |
 | HYROS `224254`                 | `__root.tsx` head          |                                                                                                         |
 | Cloudflare Web Analytics       | `__root.tsx` body          |                                                                                                         |
+
+HYROS, Meta, Clarity and both GA libraries download once the app is interactive, or after 4 s if it is not (`lib/analytics/early-page.ts`). Their inline bootstraps still run at once, so events queue from the first moment. HYROS keeps its place first, with the address read in `<head>`.
 | PostHog `phc_kTK9…`            | `lib/analytics/posthog.ts` | added here                                                                                              |
 
 `lib/signup/tracking.ts` fans funnel events out to GA4 + Clarity + Meta. PostHog

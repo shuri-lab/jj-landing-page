@@ -534,6 +534,13 @@ select.fcb-country:disabled {
   filter: brightness(1.05);
 }
 
+/* A press shows on the button at once, before any script runs. */
+.fcb-submit:active:not(:disabled) {
+  filter: brightness(0.9);
+  transform: scale(0.98);
+  transition: none;
+}
+
 .fcb-submit:disabled {
   cursor: not-allowed;
   background: #cdbfdd;
