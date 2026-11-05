@@ -31,13 +31,14 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
   const clearIntervalStub = () => {
     polls.length = 0;
   };
-  new Function("window", "document", "setTimeout", "setInterval", "clearInterval", EARLY_PAGE_SCRIPT)(
-    window,
-    document,
-    setTimeoutStub,
-    setIntervalStub,
-    clearIntervalStub,
-  );
+  new Function(
+    "window",
+    "document",
+    "setTimeout",
+    "setInterval",
+    "clearInterval",
+    EARLY_PAGE_SCRIPT,
+  )(window, document, setTimeoutStub, setIntervalStub, clearIntervalStub);
   /** Marks a button as taken over by React, as hydration does. */
   const hydrate = (button: object) => Object.assign(button, { __reactProps$abc: {} });
   const tick = () => [...polls].forEach((fn) => fn());
