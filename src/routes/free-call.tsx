@@ -1143,6 +1143,7 @@ const CSS = `
 /* ── the one button, used everywhere ──────────────────────────────────── */
 .fc-btn{display:inline-flex;align-items:center;justify-content:center;gap:11px;font-family:var(--head);font-weight:800;font-size:clamp(18px,2vw,21px);line-height:1.15;border:0;border-radius:16px;text-align:center;padding:21px clamp(34px,4.4vw,58px);min-height:68px;background:var(--grad);color:#fff;box-shadow:0 20px 40px -18px rgba(91,42,128,.65);transition:transform .16s ease,filter .16s ease}
 .fc-btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+.fc-btn:active{filter:brightness(.9);transform:scale(.98);transition:none}
 .fc-btn-arw{font-size:1.15em;line-height:1}
 .fc-cta{display:flex;flex-direction:column;gap:10px;width:fit-content;max-width:100%;align-items:stretch}
 .fc-cta.is-center{margin-inline:auto;align-items:center}
