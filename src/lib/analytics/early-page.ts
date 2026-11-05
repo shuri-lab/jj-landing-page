@@ -1,4 +1,4 @@
-import { BOOKING_SECTION_ID } from "@/lib/booking/config";
+import { BOOKING_SECTION_ID } from "../booking/config";
 
 /**
  * Keeps the page's first seconds responsive on a slow phone connection.
