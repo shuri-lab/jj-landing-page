@@ -8,8 +8,11 @@
  * - The tags load once the app is interactive, or after TAG_FALLBACK_MS if it
  *   is not. Their inline bootstraps still run at once, so every event queues
  *   from the first moment and nothing is dropped.
- * - A button pressed before the app is interactive shows it was pressed, and
- *   the press runs as soon as the app can take it. Only the latest one runs.
+ * - A button pressed before React has taken it over shows it was pressed, and
+ *   the press runs as soon as that button can take it. The app's ready signal
+ *   comes before a lazy route's buttons are live, so each button is checked
+ *   itself. Only the latest press runs. If the check never passes (a React
+ *   rename, say), a kept press runs and keeping stops 3 s after the app is ready.
  *
  * Runs inline in <head> after JOIN_TOKEN_EARLY_SCRIPT, so HYROS's ref_url is
  * read here, once the token has left the address bar.
@@ -26,16 +29,23 @@ export const TAG_URLS = [
 
 export const EARLY_PRESS_ATTRIBUTE = "data-early-press";
 
+/** How often a kept press checks whether its button can take it yet. */
+const EARLY_PRESS_POLL_MS = 50;
+/** After the app is ready, stop keeping presses, whatever the check says. */
+const EARLY_PRESS_LIMIT_MS = 3000;
+
 export const EARLY_PAGE_STYLE = `button[${EARLY_PRESS_ATTRIBUTE}]{animation:yb-early-press .7s ease-in-out infinite alternate;transform:scale(.98)}@keyframes yb-early-press{from{opacity:1}to{opacity:.6}}`;
 
-export const EARLY_PAGE_SCRIPT = `(function(){var w=window,d=document,started=false,ready=false,pressed=null;
+export const EARLY_PAGE_SCRIPT = `(function(){var w=window,d=document,started=false,pressed=null,timer=null;
 var urls=${JSON.stringify(TAG_URLS)};urls[0]+=encodeURI(d.URL);
 function loadTags(){if(started)return;started=true;urls.forEach(function(u){var s=d.createElement('script');s.async=true;s.src=u;d.head.appendChild(s);});}
 w.clarity=w.clarity||function(){(w.clarity.q=w.clarity.q||[]).push(arguments);};
 setTimeout(loadTags,${TAG_FALLBACK_MS});
-function onPress(e){var b=e.target&&e.target.closest&&e.target.closest('button');if(ready||!b||b.disabled)return;e.preventDefault();e.stopImmediatePropagation();if(pressed&&pressed!==b)pressed.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');pressed=b;b.setAttribute('${EARLY_PRESS_ATTRIBUTE}','');}
+function live(b){return Object.keys(b).some(function(k){return k.indexOf('__reactProps')===0;});}
+function run(){if(timer){clearInterval(timer);timer=null;}var b=pressed;pressed=null;if(b){b.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');if(b.isConnected&&!b.disabled)b.click();}}
+function onPress(e){var b=e.target&&e.target.closest&&e.target.closest('button');if(!b||b.disabled||live(b))return;e.preventDefault();e.stopImmediatePropagation();if(pressed&&pressed!==b)pressed.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');pressed=b;b.setAttribute('${EARLY_PRESS_ATTRIBUTE}','');if(!timer)timer=setInterval(function(){if(pressed&&live(pressed))run();},${EARLY_PRESS_POLL_MS});}
 w.addEventListener('click',onPress,true);
-w.__ybAppReady=function(){if(ready)return;ready=true;w.removeEventListener('click',onPress,true);var b=pressed;pressed=null;if(b){b.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');if(b.isConnected&&!b.disabled)b.click();}loadTags();};})();`;
+w.__ybAppReady=function(){loadTags();setTimeout(function(){w.removeEventListener('click',onPress,true);run();},${EARLY_PRESS_LIMIT_MS});};})();`;
 
 /** The app is interactive: run a press that came early and load the tags. */
 export function markAppReady(): void {

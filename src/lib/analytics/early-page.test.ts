@@ -8,6 +8,7 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
   const appended: string[] = [];
   const listeners: Listener[] = [];
   const timers: Array<{ fn: () => void; ms: number }> = [];
+  const polls: Array<() => void> = [];
   const window: Record<string, unknown> & { __ybAppReady?: () => void } = {
     addEventListener: (_: string, fn: Listener) => listeners.push(fn),
     removeEventListener: (_: string, fn: Listener) => {
@@ -20,11 +21,20 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
     createElement: () => ({}),
   };
   const setTimeoutStub = (fn: () => void, ms: number) => timers.push({ fn, ms });
-  new Function("window", "document", "setTimeout", EARLY_PAGE_SCRIPT)(
+  const setIntervalStub = (fn: () => void) => polls.push(fn);
+  const clearIntervalStub = () => {
+    polls.length = 0;
+  };
+  new Function("window", "document", "setTimeout", "setInterval", "clearInterval", EARLY_PAGE_SCRIPT)(
     window,
     document,
     setTimeoutStub,
+    setIntervalStub,
+    clearIntervalStub,
   );
+  /** Marks a button as taken over by React, as hydration does. */
+  const hydrate = (button: object) => Object.assign(button, { __reactProps$abc: {} });
+  const tick = () => [...polls].forEach((fn) => fn());
   const makeButton = () => {
     const attrs = new Set<string>();
     const button = {
@@ -56,7 +66,7 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
     [...listeners].forEach((fn) => fn(event));
     return event;
   };
-  return { appended, listeners, timers, window, makeButton, press };
+  return { appended, listeners, timers, polls, window, makeButton, press, hydrate, tick };
 }
 
 describe("the page's first seconds", () => {
@@ -86,7 +96,7 @@ describe("the page's first seconds", () => {
   it("loads the tags only once", () => {
     const page = run();
     page.window.__ybAppReady?.();
-    page.timers.forEach((timer) => timer.fn());
+    page.timers.filter((timer) => timer.ms === TAG_FALLBACK_MS).forEach((timer) => timer.fn());
     page.window.__ybAppReady?.();
     expect(page.appended).toHaveLength(TAG_URLS.length);
   });
@@ -97,17 +107,24 @@ describe("the page's first seconds", () => {
     expect((window.clarity as unknown as { q: unknown[] }).q).toHaveLength(1);
   });
 
-  it("marks an early press at once and runs it when the app is ready", () => {
+  it("marks an early press at once and runs it when its button is live", () => {
     const page = run();
     const button = page.makeButton();
     const event = page.press(button);
     expect(event.prevented).toBe(1);
     expect(event.stopped).toBe(1);
     expect(button.attrs.has(EARLY_PRESS_ATTRIBUTE)).toBe(true);
-    expect(button.clicks).toBe(0);
+
+    // The app's ready signal can come first: the press keeps waiting for its button.
     page.window.__ybAppReady?.();
+    page.tick();
+    expect(button.clicks).toBe(0);
+
+    page.hydrate(button);
+    page.tick();
     expect(button.clicks).toBe(1);
     expect(button.attrs.has(EARLY_PRESS_ATTRIBUTE)).toBe(false);
+    expect(page.polls).toHaveLength(0);
   });
 
   it("runs a double press once", () => {
@@ -115,7 +132,9 @@ describe("the page's first seconds", () => {
     const button = page.makeButton();
     page.press(button);
     page.press(button);
-    page.window.__ybAppReady?.();
+    page.hydrate(button);
+    page.tick();
+    page.tick();
     expect(button.clicks).toBe(1);
   });
 
@@ -126,14 +145,30 @@ describe("the page's first seconds", () => {
     page.press(first);
     page.press(second);
     expect(first.attrs.has(EARLY_PRESS_ATTRIBUTE)).toBe(false);
-    page.window.__ybAppReady?.();
+    page.hydrate(first);
+    page.hydrate(second);
+    page.tick();
     expect(first.clicks).toBe(0);
     expect(second.clicks).toBe(1);
   });
 
-  it("leaves presses alone once the app is ready", () => {
+  it("leaves a press on a live button alone", () => {
     const page = run();
+    const button = page.makeButton();
+    page.hydrate(button);
+    const event = page.press(button);
+    expect(event.prevented).toBe(0);
+    expect(event.stopped).toBe(0);
+    expect(button.attrs.has(EARLY_PRESS_ATTRIBUTE)).toBe(false);
+  });
+
+  it("stops keeping presses soon after the app is ready, even if the check never passes", () => {
+    const page = run();
+    const button = page.makeButton();
+    page.press(button);
     page.window.__ybAppReady?.();
+    page.timers.filter((timer) => timer.ms !== TAG_FALLBACK_MS).forEach((timer) => timer.fn());
+    expect(button.clicks).toBe(1);
     expect(page.listeners).toHaveLength(0);
   });
 
@@ -144,6 +179,7 @@ describe("the page's first seconds", () => {
     const event = page.press(button);
     expect(event.prevented).toBe(0);
     page.window.__ybAppReady?.();
+    page.tick();
     expect(button.clicks).toBe(0);
   });
 });
