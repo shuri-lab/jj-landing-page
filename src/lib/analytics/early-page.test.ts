@@ -4,12 +4,14 @@ import { EARLY_PAGE_SCRIPT, EARLY_PRESS_ATTRIBUTE, TAG_FALLBACK_MS, TAG_URLS } f
 type Listener = (event: unknown) => void;
 
 /** Runs the inline script against just enough of a browser to watch it. */
-function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta") {
+function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta", formTop = 2000) {
+  const scrolled: string[] = [];
   const appended: string[] = [];
   const listeners: Listener[] = [];
   const timers: Array<{ fn: () => void; ms: number }> = [];
   const polls: Array<() => void> = [];
   const window: Record<string, unknown> & { __ybAppReady?: () => void } = {
+    innerHeight: 812,
     addEventListener: (_: string, fn: Listener) => listeners.push(fn),
     removeEventListener: (_: string, fn: Listener) => {
       listeners.splice(listeners.indexOf(fn), 1);
@@ -19,6 +21,10 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
     URL: url,
     head: { appendChild: (script: { src: string }) => appended.push(script.src) },
     createElement: () => ({}),
+    getElementById: (id: string) => ({
+      getBoundingClientRect: () => ({ top: formTop }),
+      scrollIntoView: () => scrolled.push(id),
+    }),
   };
   const setTimeoutStub = (fn: () => void, ms: number) => timers.push({ fn, ms });
   const setIntervalStub = (fn: () => void) => polls.push(fn);
@@ -48,6 +54,7 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
         button.clicks += 1;
       },
       closest: () => button,
+      getAttribute: (_: string): string | null => null,
     };
     return button;
   };
@@ -66,7 +73,7 @@ function run(url = "https://mycoach.jjsmithonline.com/free-call?utm_source=meta"
     [...listeners].forEach((fn) => fn(event));
     return event;
   };
-  return { appended, listeners, timers, polls, window, makeButton, press, hydrate, tick };
+  return { appended, listeners, timers, polls, scrolled, window, makeButton, press, hydrate, tick };
 }
 
 describe("the page's first seconds", () => {
@@ -125,6 +132,24 @@ describe("the page's first seconds", () => {
     expect(button.clicks).toBe(1);
     expect(button.attrs.has(EARLY_PRESS_ATTRIBUTE)).toBe(false);
     expect(page.polls).toHaveLength(0);
+  });
+
+  it("scrolls to the form at once when the booking button is pressed early", () => {
+    const page = run();
+    const button = Object.assign(page.makeButton(), {
+      getAttribute: (name: string) => (name === "data-cta" ? "book-free-call" : null),
+    });
+    page.press(button);
+    expect(page.scrolled).toEqual(["book-section"]);
+  });
+
+  it("does not scroll when the form is already on screen", () => {
+    const page = run(undefined, 100);
+    const button = Object.assign(page.makeButton(), {
+      getAttribute: (name: string) => (name === "data-cta" ? "book-free-call" : null),
+    });
+    page.press(button);
+    expect(page.scrolled).toEqual([]);
   });
 
   it("runs a double press once", () => {

@@ -1,3 +1,5 @@
+import { BOOKING_SECTION_ID } from "@/lib/booking/config";
+
 /**
  * Keeps the page's first seconds responsive on a slow phone connection.
  *
@@ -8,6 +10,8 @@
  * - The tags load once the app is interactive, or after TAG_FALLBACK_MS if it
  *   is not. Their inline bootstraps still run at once, so every event queues
  *   from the first moment and nothing is dropped.
+ * - "Book my free call" pressed that early scrolls to the form at once: the
+ *   form is in the server's HTML, so this needs no app code.
  * - A button pressed before React has taken it over shows it was pressed, and
  *   the press runs as soon as that button can take it. The app's ready signal
  *   comes before a lazy route's buttons are live, so each button is checked
@@ -43,7 +47,7 @@ w.clarity=w.clarity||function(){(w.clarity.q=w.clarity.q||[]).push(arguments);};
 setTimeout(loadTags,${TAG_FALLBACK_MS});
 function live(b){return Object.keys(b).some(function(k){return k.indexOf('__reactProps')===0;});}
 function run(){if(timer){clearInterval(timer);timer=null;}var b=pressed;pressed=null;if(b){b.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');if(b.isConnected&&!b.disabled)b.click();}}
-function onPress(e){var b=e.target&&e.target.closest&&e.target.closest('button');if(!b||b.disabled||live(b))return;e.preventDefault();e.stopImmediatePropagation();if(pressed&&pressed!==b)pressed.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');pressed=b;b.setAttribute('${EARLY_PRESS_ATTRIBUTE}','');if(!timer)timer=setInterval(function(){if(pressed&&live(pressed))run();},${EARLY_PRESS_POLL_MS});}
+function onPress(e){var b=e.target&&e.target.closest&&e.target.closest('button');if(!b||b.disabled||live(b))return;e.preventDefault();e.stopImmediatePropagation();if(pressed&&pressed!==b)pressed.removeAttribute('${EARLY_PRESS_ATTRIBUTE}');pressed=b;b.setAttribute('${EARLY_PRESS_ATTRIBUTE}','');if(b.getAttribute('data-cta')==='book-free-call'){var f=d.getElementById('${BOOKING_SECTION_ID}');if(f&&f.getBoundingClientRect().top>w.innerHeight/2)f.scrollIntoView({behavior:'smooth',block:'start'});}if(!timer)timer=setInterval(function(){if(pressed&&live(pressed))run();},${EARLY_PRESS_POLL_MS});}
 w.addEventListener('click',onPress,true);
 w.__ybAppReady=function(){loadTags();setTimeout(function(){w.removeEventListener('click',onPress,true);run();},${EARLY_PRESS_LIMIT_MS});};})();`;
 
