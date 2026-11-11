@@ -24,7 +24,7 @@ interface Memory {
   journey_state: string;
   loose_threads: LooseThread[];
 }
-type Payload = Record<string, unknown> & { memory: Memory };
+type Payload = Record<string, unknown> & { memory?: Memory };
 
 type FieldType = "text" | "number" | "date" | "select" | "longtext";
 interface FieldDef {
@@ -99,6 +99,7 @@ const SCHEMA: GroupDef[] = [
 ];
 
 const TAG_OPTIONS: Tag[] = ["event", "preference", "relationship", "constraint", "history", "habit"];
+const EMPTY_MEMORY: Memory = { profile: "", journey_state: "", loose_threads: [] };
 const WEIGHT_TREND_OPTIONS = ["losing", "stable", "gaining", "no_data"];
 
 // ── defaults + presets ───────────────────────────────────────────────────────
@@ -148,64 +149,43 @@ const DEBRA_JOURNEY =
   "Debra's recurring obstacle is consistency during busy seasons, rooted in work and family demands disrupting her eating rhythm, water, and recovery. What has worked is simplicity and visibility: the meal plan, Sunday portable-meal prep with a calendar reminder, visible ready snacks, and fruit kept on hand. By mid-June she had stronger hydration awareness, more restful sleep, and manageable movement, and she keeps showing up even when progress feels flat. On her last call, 2026-07-09, she sounded positive but said things had felt like a grind. Physically she felt good, steps and sleep and mood were good, water was getting easier, and a meal-plan issue had been resolved. She recommitted to one breakfast-tied glass of water with a posted note reminder. Scale and clothes have been about the same for a couple of weeks.";
 
 const DEFAULT_PAYLOAD: Payload = {
-  first_name: "Wan",
-  preferred_checkin_day: "Monday",
+  first_name: "Alyssa",
+  plan_name: "Lifestyle Plan",
+  plan_type: "Premium",
+  current_plan_day: "fifty eight",
+  current_plan_total_days: "eighty four",
+  days_remaining: "twenty six",
+  current_week: 8,
+  total_days: "84",
+  days_evaluated: "seven",
+  current_date: "August 15th",
+  current_local_time: "5:40 PM",
+  timezone: "America/Chicago",
+  preferred_checkin_day: "Tuesday",
   preferred_checkin_time: "9:00 AM",
-  current_local_time: "2:30 PM",
-  current_date: "2026-07-20",
-  current_week: 10,
-  current_plan_name: "Lifestyle Reset",
-  current_plan_day: 66,
-  current_plan_total_days: 84,
-  plan_end_date: "2026-08-07",
-  days_evaluated: 7,
-  form_submissions_7d: 6,
-  avg_meals_7d: 3.5,
-  avg_sleep_7d: 7.5,
-  avg_steps_7d: 4200,
-  avg_water_7d: 45,
-  avg_mood_7d: 3,
-  weight_trend: "stable",
-  weight_change_7d: -0.3,
-  current_weight_lbs: 198,
-  weight_checkins_7d: 4,
-  starting_weight_lbs: 205,
-  goal_weight_lbs: 160,
-  previous_main_blocker: "meals",
-  previous_commitment: "start two simple repeat meals so cooking stops being a project",
-  previous_proposed_solution: "reduce meal effort down to two simple repeat meals",
-  memory: {
-    profile: WAN_PROFILE,
-    journey_state:
-      "Wan completed the jump-start phase and by early June reported better energy, more limber movement, and improved clothing fit. Check-ins have become easy and sleep feels restorative. Recently she has been discouraged by a plateau and overwhelmed by a forced move. On her last call, 2026-07-06, she sounded steady and receptive: good follow-through on the post-lunch movement and amazing sleep, but tired and discouraged. The agreement was to reduce meal effort and begin two simple repeat meals starting 2026-07-07. The post-lunch walk is going well and is worth protecting. Current focus is simplification during upheaval.",
-    loose_threads: [
-      { note: "Cooks with her sister", tag: "relationship", mentioned_on: "2026-05-15" },
-      { note: "Evening caregiving for her mother crowds out her evenings", tag: "constraint", mentioned_on: "2026-05-15" },
-      { note: "Weak knees, needs joint-friendly progression", tag: "constraint", mentioned_on: "2026-05-15" },
-      { note: "Cravings for sweet and salty foods", tag: "preference", mentioned_on: "2026-05-15" },
-      { note: "Intermittent fasting worked before, 12-hour window feels doable", tag: "history", mentioned_on: "2026-05-15" },
-      { note: "Going through a forced move, feeling overwhelmed by it", tag: "event", mentioned_on: "2026-07-06" },
-    ],
-  },
-  call_read: {
-    chapter: "plateau",
-    posture: "gentle",
-    posture_note: "Fragile this week from the move. Warm and steady, save hype for a real win in the moment.",
-    call_thesis: "Steady her and simplify. She's plateaued and overwhelmed by the forced move but still showing up. Protect the after-lunch walk that's finally working, keep the ask small, and let steps and water be soft mentions, not the headline.",
-    center: "life: the forced move and staying afloat under stress",
-    threads_to_surface: [
-      { thread: "The forced move she's overwhelmed by", placement: "opening" },
-      { thread: "Good sleep is when everything clicks for her", placement: "celebrate" },
-      { thread: "Evenings are crowded by caregiving for her mother", placement: "deep_dive" },
-      { thread: "The move again, go easy on herself", placement: "close" },
-    ],
-    advice_constraints: [
-      "action earlier in the day before fatigue sets in",
-      "joint-friendly, she has weak knees",
-      "low-prep, nothing that feels like a cooking project",
-      "do not push hydration hard right now, it overwhelms her",
-    ],
-  },
+  form_submissions_7d: "seven",
+  avg_steps_7d: "seven thousand one hundred",
+  avg_water_7d: "forty eight",
+  avg_meals_7d: "four",
+  meal_structure: "three meals, one snack",
+  core_ingredients: "chicken, salmon, leafy greens, sweet potato, berries",
+  snack_options: "almonds, apple slices, hummus and veggies",
+  troublemaker_foods: "chips, ice cream",
+  followup_prompt: "keep her water up at her sister's cookout last weekend",
+  previous_commitment: "prep one simple repeat meal earlier in the day, around 1pm",
+  acc_previous_commitment_kept: "true",
+  acc_memory_profile: "Alyssa is 47, in Austin, Texas. Responds to encouragement tied to energy and feeling better; disengages under pressure, complexity, or anything that feels like a cooking project. Cooks for a household, so plans must fit family meals and stay low prep. Best earlier in the day before evening fatigue. Knee trouble means joint friendly progression only. Working from about 210 toward 168.",
+  acc_memory_journey_state: "On a good run: consistent check-ins, weight moving in the right direction, and the post-lunch meal-prep habit is holding. Water is the one thing her main call is nudging her on right now. Last weekend was her sister's cookout and she committed to keeping her water up through it. Feeling steady and encouraged.",
+  acc_posture: "steady",
+  acc_posture_note: "Solid week heading into the weekend. Warm and practical, keep it fast, she is doing well.",
+  acc_chapter: "momentum",
+  acc_center: "water",
+  acc_threads_to_surface: "- Alyssa cooks for a household (raise if food comes up)\n- Knee trouble, joint friendly only (raise if movement comes up)",
+  acc_advice_constraints: "- Low prep, fits family meals.\n- Avoid pressure or complexity.\n- Joint friendly only because of knee trouble.\n- Earlier in the day where possible.",
+  acc_fresh_tips: "- Bring a big water bottle to any weekend event so hydration is not an afterthought\n- Pair a glass of water with each meal or drink",
+  acc_avoid_openings: "- opened warm and general, asked how the week went\n- asked how she was feeling and how her week had really been",
+  acc_avoid_celebrate_lines: "- sleep is when everything clicks for you\n- you're still showing up, and I see you",
+  acc_avoid_tips: "- prep one simple repeat meal earlier in the day\n- tie your first glass of water to breakfast",
 };
 
 const PRESETS: { id: string; label: string; note: string; build: () => Payload }[] = [
@@ -336,12 +316,7 @@ const PRESETS: { id: string; label: string; note: string; build: () => Payload }
 ];
 
 // ── validation ───────────────────────────────────────────────────────────────
-const REQUIRED = [
-  "first_name", "current_date",
-  "current_plan_name", "current_plan_day", "current_plan_total_days", "plan_end_date",
-  "days_evaluated", "form_submissions_7d", "avg_meals_7d", "avg_sleep_7d", "avg_steps_7d",
-  "avg_water_7d", "avg_mood_7d", "weight_trend", "current_weight_lbs", "weight_checkins_7d",
-];
+const REQUIRED = ["first_name", "current_date"];
 
 function isBlank(v: unknown) {
   return v === undefined || v === null || v === "";
@@ -355,9 +330,13 @@ function validate(p: Payload): Record<string, string> {
   for (const key of REQUIRED) {
     if (isBlank(p[key])) e[key] = "Required.";
   }
+  // The live agent payload sends spoken-form values ("fifty six", "August 6th"),
+  // which are read aloud verbatim. So numeric bounds only apply when a field is
+  // actually a number, and date parsing only applies to ISO-form dates. Any
+  // non-empty string passes.
   const range = (key: string, lo: number, hi: number) => {
     const v = p[key];
-    if (!isBlank(v) && (typeof v !== "number" || Number.isNaN(v) || v < lo || v > hi)) {
+    if (typeof v === "number" && (Number.isNaN(v) || v < lo || v > hi)) {
       e[key] = `Must be between ${lo} and ${hi}.`;
     }
   };
@@ -367,19 +346,45 @@ function validate(p: Payload): Record<string, string> {
   const nonNeg = ["form_submissions_7d", "avg_sleep_7d", "avg_steps_7d", "avg_water_7d", "current_weight_lbs", "weight_checkins_7d", "current_plan_day", "current_plan_total_days", "starting_weight_lbs", "goal_weight_lbs"];
   for (const key of nonNeg) {
     const v = p[key];
-    if (!isBlank(v) && (typeof v !== "number" || Number.isNaN(v) || v < 0)) e[key] = "Must be a number 0 or above.";
+    if (typeof v === "number" && (Number.isNaN(v) || v < 0)) e[key] = "Must be a number 0 or above.";
   }
   if (!isBlank(p.weight_trend) && !WEIGHT_TREND_OPTIONS.includes(p.weight_trend as string)) {
     e.weight_trend = "Not an allowed value.";
   }
   for (const key of ["current_date", "plan_end_date"]) {
-    if (!isBlank(p[key]) && !validDate(p[key])) e[key] = "Not a valid date.";
+    const v = p[key];
+    if (typeof v === "string" && /^\d{4}-\d{2}-\d{2}/.test(v) && !validDate(v)) e[key] = "Not a valid date.";
   }
   return e;
 }
 
 const STORAGE_CONFIGS = "cth:configs";
 const STORAGE_ASSISTANT = "cth:assistant_id";
+
+// Vapi nests errors as opaque objects (error.error.message deep inside), so
+// recursively hunt for the most specific human-readable message.
+function describeVapiError(err: unknown): string {
+  if (err instanceof Error) return err.message;
+  const seen = new Set<unknown>();
+  function dig(v: unknown, depth: number): string | null {
+    if (v == null || depth > 6) return null;
+    if (typeof v === "string") return v.trim() || null;
+    if (typeof v !== "object" || seen.has(v)) return null;
+    seen.add(v);
+    const o = v as Record<string, unknown>;
+    for (const key of ["message", "errorMsg", "reason", "description"]) {
+      if (typeof o[key] === "string" && (o[key] as string).trim()) return (o[key] as string).trim();
+    }
+    for (const key of ["error", "message", "data", "response", "body"]) {
+      const found = dig(o[key], depth + 1);
+      if (found) return found;
+    }
+    return null;
+  }
+  const msg = dig(err, 0);
+  if (msg) return msg;
+  try { return JSON.stringify(err); } catch { return String(err); }
+}
 
 // ── Vapi client type ─────────────────────────────────────────────────────────
 type VapiClient = {
@@ -441,21 +446,28 @@ function CallsTestHarness() {
     setPayload((p) => ({ ...p, [key]: value }));
   }
   function setMemory(key: keyof Memory, value: unknown) {
-    setPayload((p) => ({ ...p, memory: { ...p.memory, [key]: value } }));
+    setPayload((p) => ({ ...p, memory: { ...(p.memory ?? EMPTY_MEMORY), [key]: value } }));
   }
 
   // loose threads
   function addThread() {
-    setPayload((p) => ({ ...p, memory: { ...p.memory, loose_threads: [...p.memory.loose_threads, { note: "", mentioned_on: p.current_date as string || "", tag: "" }] } }));
+    setPayload((p) => {
+      const m = p.memory ?? EMPTY_MEMORY;
+      return { ...p, memory: { ...m, loose_threads: [...m.loose_threads, { note: "", mentioned_on: (p.current_date as string) || "", tag: "" }] } };
+    });
   }
   function updateThread(i: number, patch: Partial<LooseThread>) {
     setPayload((p) => {
-      const next = p.memory.loose_threads.map((t, idx) => (idx === i ? { ...t, ...patch } : t));
-      return { ...p, memory: { ...p.memory, loose_threads: next } };
+      const m = p.memory ?? EMPTY_MEMORY;
+      const next = m.loose_threads.map((t, idx) => (idx === i ? { ...t, ...patch } : t));
+      return { ...p, memory: { ...m, loose_threads: next } };
     });
   }
   function removeThread(i: number) {
-    setPayload((p) => ({ ...p, memory: { ...p.memory, loose_threads: p.memory.loose_threads.filter((_, idx) => idx !== i) } }));
+    setPayload((p) => {
+      const m = p.memory ?? EMPTY_MEMORY;
+      return { ...p, memory: { ...m, loose_threads: m.loose_threads.filter((_, idx) => idx !== i) } };
+    });
   }
 
   // first-call toggle
@@ -577,7 +589,7 @@ function CallsTestHarness() {
       vapi.on("call-end", () => setCallStatus("ended"));
       vapi.on("error", (err: unknown) => {
         console.error("Vapi error", err);
-        setCallError("Call error. Check the console for details.");
+        setCallError("Call error: " + describeVapiError(err));
         setCallStatus("error");
       });
       vapi.on("message", (msg: unknown) => {
@@ -682,19 +694,19 @@ function CallsTestHarness() {
                   <label className="cth-field">
                     <span className="cth-label">memory.profile</span>
                     <span className="cth-hint">The stable picture of who they are. Changes slowly.</span>
-                    <textarea className="cth-textarea" value={payload.memory.profile} onChange={(ev) => setMemory("profile", ev.target.value)} rows={5} />
+                    <textarea className="cth-textarea" value={payload.memory?.profile ?? ""} onChange={(ev) => setMemory("profile", ev.target.value)} rows={5} />
                   </label>
                   <label className="cth-field">
                     <span className="cth-label">memory.journey_state</span>
                     <span className="cth-hint">Where they are right now and how the last week or two went. Rebuilt each call.</span>
-                    <textarea className="cth-textarea" value={payload.memory.journey_state} onChange={(ev) => setMemory("journey_state", ev.target.value)} rows={5} />
+                    <textarea className="cth-textarea" value={payload.memory?.journey_state ?? ""} onChange={(ev) => setMemory("journey_state", ev.target.value)} rows={5} />
                   </label>
 
                   <div className="cth-field">
                     <span className="cth-label">memory.loose_threads</span>
                     <span className="cth-hint">Specific things the user mentioned that should persist and can resurface later.</span>
                     <div className="cth-threads">
-                      {payload.memory.loose_threads.map((t, i) => (
+                      {(payload.memory?.loose_threads ?? []).map((t, i) => (
                         <div className="cth-thread" key={i}>
                           <div className="cth-thread-grid">
                             <label className="cth-mini"><span>note</span>
